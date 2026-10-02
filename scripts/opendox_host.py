@@ -699,6 +699,10 @@ def register_openxfactory() -> Any:
             "openxdox.domain_profile.unregister() first if the swap is "
             "deliberate.")
 
+    from openxdox import projection_contributions
+
+    projection_contributions.register()
+
     registered = registry.register(composite)
 
     # THE HOST ASSERTS ITS OWN REGISTRATION (R1Q4 (a), `#656` comment
