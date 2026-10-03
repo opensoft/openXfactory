@@ -485,9 +485,10 @@ def test_ruling_q7_two_direct_upstreams_in_lockstep() -> None:
     # by moving both to some third commit. It advanced c4c5014d -> dc7aa08f with
     # the nested leg advance (openxFactory#656 5768088437, STEP 2 of the forced
     # order 5767733963), dc7aa08f -> 663ac683 with plan 034 T047, and
-    # 663ac683 -> d5098297 with T064; it is expected to move on every future
+    # 663ac683 -> d5098297 with T064, and to T087's root commit with T094
+    # (SIMULATED in this draft: replace with T087's real commit); it is expected to move on every future
     # bump, as codexFactory's review-lane `PIN` constant moves with its gitlink.
-    assert opendox_pin["commit"] == "d5098297a5c262f9977193305210bccb4ec51e89"
+    assert opendox_pin["commit"] == "dcf72fb76f87e3bbe5cd248d7a2b339274161381"
 
 
 def test_main_prints_one_success_line_and_returns_zero(capsys) -> None:
