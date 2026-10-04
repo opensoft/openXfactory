@@ -159,14 +159,29 @@ def test_the_port_factory_resolves_the_binding_and_the_default_would_not(
     assert trust_mod.current() is policy
 
 
-def test_a_new_intake_binding_is_admitted_as_before(tmp_path):
-    """The console intake asks the policy about the binding it is declaring,
-    before its PENDING declaration is written (openDox-code's
-    `serve_workbench._handle_workbench_model_intake`). That binding is
-    undeclared then, so this host admits the hand-off, where openDox's
-    default refuses it (`INTAKE_BROKER_UNTRUSTED`)."""
+def test_the_console_intake_is_offered_and_admits_a_new_binding(tmp_path):
+    """The console intake asks its OWN question, apart from any binding's trust
+    (`doxbench_trust.intake_verdict_for`, which `serve_workbench`'s intake
+    hand-off asks), and openDox offers the intake only where the registered
+    policy answers `intake_verdict` (`intake_admissible`; openDox-code's T100
+    follow-on, A5). The binding the intake declares is undeclared while its
+    broker runs (its PENDING declaration is written after the hand-off), so
+    this host admits it, where openDox's default refuses every intake
+    (`INTAKE_BROKER_UNTRUSTED`). A binding already pending is refused with the
+    governed reason, and a declarations document that cannot be read admits
+    nothing (RULED `5970369724`: the governed flow, "the console intake
+    included, stays as it is")."""
     root = _repository(tmp_path)
-    assert intake_mod.DeclarationStore(
-        intake_mod.declarations_path(root)).get(BINDING_ID) is None
-    verdict = opendox_host.binding_trust_policy().verdict(_binding(), root=root)
+    assert trust_mod.intake_admissible()
+    verdict = trust_mod.intake_verdict_for(_binding(), root=root)
     assert verdict.admits(_binding())
+    assert verdict.basis == trust_mod.BASIS_HOST
+    _propose(root)
+    pending = trust_mod.intake_verdict_for(_binding(), root=root)
+    assert not pending.trusted
+    assert pending.reason == opendox_host.GOVERNED_PENDING_REASON
+    intake_mod.declarations_path(root).write_text(
+        "schema_version: [unclosed\n", encoding="utf-8")
+    unreadable = trust_mod.intake_verdict_for(_binding(), root=root)
+    assert not unreadable.trusted
+    assert "cannot be read" in unreadable.reason

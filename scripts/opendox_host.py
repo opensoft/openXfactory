@@ -391,7 +391,7 @@ class GovernedBindingTrust:
       declaration names, which is the operator's own binding in the operator's
       own governed checkout. A console intake's binding is undeclared when its
       broker runs (the PENDING declaration is written after the hand-off), so
-      the intake is admitted as it was;
+      the intake is admitted as it was, through `intake_verdict` below;
     * a declarations document that cannot be read admits nothing, naming the
       store's own refusal.
 
@@ -419,6 +419,24 @@ class GovernedBindingTrust:
             binding, root=root, basis=doxbench_trust.BASIS_HOST)
 
     def record(self, binding: Any, *, root: Any) -> Any:
+        return self.verdict(binding, root=root)
+
+    def intake_verdict(self, binding: Any, *, root: Any) -> Any:
+        """THE CONSOLE INTAKE'S OWN QUESTION (#1144 16.3a, T007 batch M): may
+        the intake hand a credential to the broker the served repository's
+        declarations document names, for the binding it is declaring?
+
+        openDox asks it apart from any binding's trust
+        (`doxbench_trust.intake_verdict_for`), and offers the intake only
+        where the registered policy answers it (`intake_admissible`,
+        openDox-code's T100 follow-on, A5). A policy without it admits no
+        intake, so the governed console would lose its intake. The ruling
+        keeps the governed flow, the console intake included, as it is, so it
+        is answered as `verdict` answers: the intake's new binding has no
+        declaration while its broker runs and is admitted, a binding whose
+        declaration is pending is refused, and a declarations document that
+        cannot be read admits nothing. openDox refuses a broker command inside
+        the served repository, or an inline script, before it asks."""
         return self.verdict(binding, root=root)
 
     def __repr__(self) -> str:
