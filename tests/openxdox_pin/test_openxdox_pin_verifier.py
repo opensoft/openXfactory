@@ -488,7 +488,7 @@ def test_ruling_q7_two_direct_upstreams_in_lockstep() -> None:
     # 663ac683 -> d5098297 with T064, and to T087's root commit with T094
     # (SIMULATED in this draft: replace with T087's real commit); it is expected to move on every future
     # bump, as codexFactory's review-lane `PIN` constant moves with its gitlink.
-    assert opendox_pin["commit"] == "2b757e310395bc015c2cd6b6e471cb88f34e426e"
+    assert opendox_pin["commit"] == "e3a8f97567f0a052df513c278c5fc361380d0570"
 
 
 def test_main_prints_one_success_line_and_returns_zero(capsys) -> None:
