@@ -106,6 +106,14 @@ def test_a_pending_binding_is_refused_with_the_governed_reason(tmp_path):
     verdict = opendox_host.binding_trust_policy().verdict(_binding(), root=root)
     assert not verdict.trusted
     assert verdict.reason == opendox_host.GOVERNED_PENDING_REASON
+    # No command that trusts it is printed, since `trust` would be refused
+    # for the same reason, and the remedy's last sentence holds under this
+    # host, whose approval trusts the binding (openDox-code#86, D2).
+    remedy = trust_mod.trust_remedy(BINDING_ID, str(root), verdict.reason)
+    assert remedy == trust_mod.REMEDY_NOT_BY_TRUST
+    assert remedy.endswith(
+        "Then list its bindings again: it is shown trusted, or with the "
+        "command that trusts it")
     with pytest.raises(trust_mod.BindingUntrusted) as refused:
         trust_mod.require_admitted(_binding(), verdict)
     assert BINDING_ID in str(refused.value)
@@ -122,13 +130,66 @@ def test_an_unreadable_declarations_document_admits_nothing(tmp_path):
 
 
 def test_recording_writes_nothing_to_the_operators_state(tmp_path, monkeypatch):
-    """The governed record is the gate's: `add`, `edit` and `set-credential`
-    ask `record()`, which answers the verdict and writes no trust file."""
+    """The governed record is the gate's: `add`, `edit`, `set-credential` and
+    `trust` ask `record()`, which writes no trust file and answers nothing, so
+    openDox reads that nothing was recorded and takes the policy's `verdict`
+    (`doxbench_trust.recording_for`; the holder's ruling `5986391296`)."""
     state = tmp_path / "state"
     monkeypatch.setenv("OPENDOX_STATE_DIR", str(state))
     root = _repository(tmp_path)
-    verdict = opendox_host.binding_trust_policy().record(_binding(), root=root)
-    assert verdict.trusted
+    assert opendox_host.binding_trust_policy().record(
+        _binding(), root=root) is None
+    recording = trust_mod.recording_for(_binding(), root=root)
+    assert recording.verdict.admits(_binding())
+    assert recording.verdict.basis == trust_mod.BASIS_HOST
+    assert recording.recorded is False
+    assert not state.exists()
+
+
+#: What `add` and `edit` declare when their document write is made to fail:
+#: a new binding beside the one `_repository` writes, and that binding again
+#: with another label.
+_FAILED_WRITES = {
+    "add": ("second-model", "Second model"),
+    "edit": (BINDING_ID, "Governed model, relabelled"),
+}
+
+
+@pytest.mark.parametrize("verb", sorted(_FAILED_WRITES))
+def test_a_failed_document_write_says_truthfully_that_nothing_changed(
+        tmp_path, monkeypatch, capsys, verb):
+    """Under this host, `add` and `edit` ask `record()` before they write, and
+    it records nothing. So where the bindings document cannot be written
+    afterwards, there is nothing to take back: the refusal is the write's
+    own, "so nothing in it changed", and never `REASON_NO_WITHDRAWAL`, which
+    openDox gives where a policy recorded a trust it cannot withdraw
+    (openDox-code#86; the holder's rulings `5986391296` and `5988088910`).
+    The document and the operator's state are as they were."""
+    from opendox import cli as cli_mod
+    from opendox import cli_model_binding
+
+    state = tmp_path / "state"
+    monkeypatch.setenv("OPENDOX_STATE_DIR", str(state))
+    root = _repository(tmp_path)
+    document = binding_mod.bindings_path(root)
+    before = document.read_bytes()
+    binding_id, label = _FAILED_WRITES[verb]
+    argv = ["model-binding", verb, "--repo-root", str(root),
+            "--id", binding_id, "--label", label, "--provider", "anyone",
+            "--auth-kind", "none", "--credential-approver", "brett",
+            "--endpoint", "https://models.example.invalid/v1",
+            "--dialect", "openai-chat-v1"]
+    document.parent.chmod(0o500)
+    try:
+        assert cli_mod.main(argv) == 1
+    finally:
+        document.parent.chmod(0o700)
+    refusal = capsys.readouterr().err
+    assert "could not be written" in refusal, refusal
+    assert "so nothing in it changed" in refusal, refusal
+    assert trust_mod.REASON_NO_WITHDRAWAL not in refusal, refusal
+    assert cli_model_binding.RECOVER_FAILED_UNDOING not in refusal, refusal
+    assert document.read_bytes() == before
     assert not state.exists()
 
 
@@ -180,6 +241,13 @@ def test_the_console_intake_is_offered_and_admits_a_new_binding(tmp_path):
     pending = trust_mod.intake_verdict_for(_binding(), root=root)
     assert not pending.trusted
     assert pending.reason == opendox_host.GOVERNED_PENDING_REASON
+    # The hand-off is refused with the host's own sentence, not the one that
+    # sends the operator to a host policy (openDox-code#86, D3).
+    assert trust_mod.intake_refusal_reason(pending) == (
+        trust_mod.INTAKE_HOST_NOT_ADMITTED)
+    assert trust_mod.INTAKE_HOST_NOT_ADMITTED == (
+        "the host's trust policy does not admit this hand-off; model-binding "
+        "list shows why")
     intake_mod.declarations_path(root).write_text(
         "schema_version: [unclosed\n", encoding="utf-8")
     unreadable = trust_mod.intake_verdict_for(_binding(), root=root)

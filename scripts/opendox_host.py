@@ -395,9 +395,11 @@ class GovernedBindingTrust:
     * a declarations document that cannot be read admits nothing, naming the
       store's own refusal.
 
-    `record()` writes nothing: the governed record is the gate's, so `add`,
-    `edit` and `set-credential` answer the same verdict and leave the
-    operator's state directory untouched.
+    `record()` writes nothing and returns nothing: the governed record is the
+    gate's, so `add`, `edit`, `set-credential` and `trust` leave the
+    operator's state directory untouched, openDox asks `verdict` for their
+    verdict, and a failed document write says truthfully that nothing
+    changed (see `record`).
     """
 
     def verdict(self, binding: Any, *, root: Any) -> Any:
@@ -418,8 +420,21 @@ class GovernedBindingTrust:
         return doxbench_trust.TrustVerdict.trusted_for(
             binding, root=root, basis=doxbench_trust.BASIS_HOST)
 
-    def record(self, binding: Any, *, root: Any) -> Any:
-        return self.verdict(binding, root=root)
+    def record(self, binding: Any, *, root: Any) -> None:
+        """RECORDS NOTHING, AND SAYS SO BY RETURNING NOTHING (the holder's
+        ruling, `#656` comment `5986391296`, applied to T094 by `5988088910`).
+
+        openDox asks `record()` when `add`, `edit`, `set-credential` and
+        `trust` declare a binding, and reads the answer as whether the policy
+        recorded anything (`doxbench_trust.recording_for`). A falsy answer is
+        no record, so openDox asks `verdict` for the verdict and, where the
+        document write that follows fails, takes nothing back: the refusal's
+        "nothing in it changed" is then true of trust as well. A verdict here
+        would read as a record that openDox cannot withdraw, and a failed
+        write would be refused with `REASON_NO_WITHDRAWAL`, about a trust
+        this policy never recorded. The governed record is the gate's, so
+        nothing is written to the operator's state either."""
+        return None
 
     def intake_verdict(self, binding: Any, *, root: Any) -> Any:
         """THE CONSOLE INTAKE'S OWN QUESTION (#1144 16.3a, T007 batch M): may
