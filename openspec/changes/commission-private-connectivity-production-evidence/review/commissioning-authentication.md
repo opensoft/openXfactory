@@ -1,12 +1,9 @@
 # Source commissioning authentication
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-14 by Brett Heap, through [commission-private-connectivity-production-evidence](../proposal.md).
 
-Brett Heap is the accepted source-evidence custodian. Actual authentication is
-pending review of the immutable commissioning container and the separate T010
-receipt. Ratifying E, its bootstrap amendment and N did not authenticate unseen
-outputs. This record grants no deployment, spend, enrollment, release or Q0–Q5
-acceptance, and all three PRs remain draft.
+Brett Heap is the accepted source-evidence custodian. At 2026-11-14T15:55:48.576Z he authenticated the exact immutable commissioning container, distinct T010 receipt and original human provenance identified below. This records actual source-only C-08 authentication. Source-scope ratification and runtime/rollout acceptance retain their own decisions. All three PRs remain draft; full Q0 and Q1-Q5 remain pending.
 
 The prepared container preserves the original T001–T005 commands and source
 observations, actual T006 owner/custody decisions, exact committed T007–T009
@@ -30,17 +27,22 @@ new review. Until the actual decision exists, the verifier refuses admission.
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "pending",
+  "decision": "accepted",
   "custodian": "Brett Heap",
-  "reviewed_manifest": null,
-  "content_sha256": null,
-  "reviewed_at": null
+  "reviewed_manifest": {
+    "repository": "opensoft/openxfactory",
+    "commit": "6faaba5ab387d37e13c9c96a797ff7612f883647",
+    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+    "sha256": "0b77c70d66420d4d582ac4806f29b4ee43d00057c14057678b1075d9dc2fe554"
+  },
+  "content_sha256": "0645f3e7f31b9b4c708c94b8ff2298fe530b0d18928355201d9f54cab60b770f",
+  "reviewed_at": "2026-11-14T15:55:48.576Z"
 }
 ```
 
 ## Immutable packet for actual authentication
 
-This is the prepared, concrete review target. The decision above is still pending; preparation, source ratification and successful CI do not authenticate it.
+This is the exact immutable packet Brett reviewed and authenticated through the actual owner input below. Its source/receipt/control identities remain separate.
 
 | Identity | Exact reviewed value |
 | --- | --- |
@@ -73,6 +75,16 @@ Review the retained original human messages and individual raw-record digests ag
 
 The failed development regression, missing nested-checkout refusal, earlier retention failure and superseded cancelled CI remain inspectable; none supplies a passed dependency. Prior containers and original observations remain immutable in Git. The current actual source checks and current required CI provide their own results.
 
-The exact commissioning inventory passes its read-only check. Source/case/CI/original-authority and dependency-order preparation checks pass for T001-T010. The default evidence verifier still refuses admission with actual custodian authentication pending. The measured standing census is 1017 sites across 35 populated members, with zero uncovered sites; foreign production evidence remains FUTURE because no such site exists.
+The exact commissioning inventory passes its read-only check. Source/case/CI/original-authority and dependency-order preparation checks pass for T001-T010. Before this actual decision, the default verifier correctly refused admission while custodian authentication was pending. Binding this accepted review in a later control revision and passing the default verifier are still required before T010 is checked. The measured standing census is 1017 sites across 35 populated members, with zero uncovered sites; foreign production evidence remains FUTURE because no such site exists.
 
-Brett's requested decision is authentication of this exact source-only packet and its original human provenance under the accepted C-08 policy. After that actual decision, record the reviewed manifest/core and actual review time in the decision block, bind the new review reference in a later control revision, verify the same authenticated core, run the default verifier and only then complete T010. This supplies no later operating decision or acceptance of unseen results. Full Q0 and Q1-Q5 remain pending, and all three PRs remain draft.
+Brett authenticated this exact source-only packet and its original human provenance under the accepted C-08 policy. The accepted decision block records the reviewed manifest/core and actual review time. Bind its immutable review reference in a later control revision, verify the same authenticated core, run the default verifier and only then complete T010. This supplies no later operating decision or acceptance of unseen results. Full Q0 and Q1-Q5 remain pending, and all three PRs remain draft.
+
+## Actual custodian input
+
+Brett answered the exact packet question in this Codex session:
+
+> Authenticate this source-only packet (Recommended)
+
+The question named the immutable review packet at commit 7a7dc959d9747e6a826ad976db6bf3b93f7baecf, reviewed manifest 6faaba5ab387d37e13c9c96a797ff7612f883647 and core SHA-256 0645f3e7f31b9b4c708c94b8ff2298fe530b0d18928355201d9f54cab60b770f. It explicitly retained the three draft PRs and all full-Q0/Q1-Q5, deployment, spend, enrollment and commercial gates.
+
+The original user record is timestamped 2026-11-14T15:55:48.576Z in session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 25236, individual raw-record SHA-256 2a930a0729f7e9500f11ef5bcdb82d60d66c22e206e17a296e93c47d4c358185. This records the actual supplied decision and does not fabricate a signature or a prior approval.
