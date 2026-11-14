@@ -48,7 +48,7 @@
       ],
       "command": "bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks",
       "roles": [
-        "Brett Heap (coordinator source owner and E source-evidence custodian)"
+        "Brett Heap (coordinator source owner)"
       ],
       "decisions": [],
       "incidents": [],
@@ -132,7 +132,7 @@
       ],
       "command": "python3 -c 'import json,hashlib; from pathlib import Path; d=json.loads(Path(\"specs/043-private-connectivity-production/evidence/baseline.json\").read_text()); p=Path(\"specs/040-private-connectivity/evidence/T021.json\"); assert d[\"evidence_class\"]==\"historical-lab\"; assert d[\"authorizes_production\"] is False; assert d[\"evidence_sha256\"]==hashlib.sha256(p.read_bytes()).hexdigest(); assert json.loads(p.read_text())[\"verdict\"]==\"pass\"'",
       "roles": [
-        "Brett Heap (coordinator source owner and E source-evidence custodian)"
+        "Brett Heap (coordinator source owner)"
       ],
       "decisions": [],
       "incidents": [],
@@ -237,7 +237,7 @@
       ],
       "command": "python3 scripts/validate-openspec-cli-pin.py --change commission-private-connectivity-production-evidence --strict",
       "roles": [
-        "Brett Heap (coordinator source owner and E source-evidence custodian)"
+        "Brett Heap (coordinator source owner)"
       ],
       "decisions": [],
       "incidents": [],
@@ -457,7 +457,7 @@
       ],
       "command": "python3 scripts/validate-openspec-cli-pin.py --change publish-private-connectivity-production-contract --strict",
       "roles": [
-        "Brett Heap (coordinator source owner and E source-evidence custodian)"
+        "Brett Heap (coordinator source owner)"
       ],
       "decisions": [],
       "incidents": [],
@@ -672,7 +672,7 @@
       ],
       "command": "python3 -c 'import re; from pathlib import Path; p=Path(\"specs/043-private-connectivity-production\"); a=set(re.findall(r\"^- \\[[ xX]\\] (T[0-9]{3}) \",(p/\"tasks.md\").read_text(),re.M)); c=set(re.findall(r\"^\\| (T[0-9]{3}) \\|\",(p/\"contracts/task-evidence.md\").read_text(),re.M)); assert a and a==c; assert len(a)==68'",
       "roles": [
-        "Brett Heap (coordinator source owner and E source-evidence custodian)"
+        "Brett Heap (coordinator source owner)"
       ],
       "decisions": [],
       "incidents": [],
@@ -1590,6 +1590,156 @@
         "object": "T009-import"
       },
       "class": "source-E"
+    },
+    "T010": {
+      "task": "T010",
+      "instance": null,
+      "owner": "C",
+      "scope": {
+        "profile": "not-applicable",
+        "candidate": "043-source-only",
+        "offering": "source-evidence",
+        "run": "043-e-bootstrap",
+        "network": "not-applicable",
+        "region": "not-applicable",
+        "wave": "not-applicable",
+        "site": "not-applicable",
+        "phase": "source",
+        "domain": "not-applicable",
+        "target": "not-applicable",
+        "offer": "not-applicable",
+        "environment": "source",
+        "customer": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "12d6d10cc81640be1839434b5eb826ddc531d1e6",
+        "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+      },
+      "files": [
+        ".github/workflows/pytest-suite.yml",
+        "specs/043-private-connectivity-production/evidence/T010.json",
+        "specs/043-private-connectivity-production/evidence/commissioning.json",
+        "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
+        "scripts/doc_health/pin_class.py",
+        "tests/doc-health/test_sentinel_vocabulary.py"
+      ],
+      "command": "set -euo pipefail\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 287,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
+      "roles": [
+        "Brett Heap (coordinator source owner and E source-evidence custodian)"
+      ],
+      "decisions": [
+        "C-01",
+        "C-08"
+      ],
+      "incidents": [],
+      "cases": {
+        "explicit-suite-collection": [
+          {
+            "id": "actual-ci-observation",
+            "kind": "equal",
+            "expected": {
+              "suites": {
+                "specs/043-private-connectivity-production/tests/test_evidence.py": 287,
+                "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40
+              },
+              "step": "Run private-connectivity production source suites (043)",
+              "source_revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+            }
+          }
+        ],
+        "exact-head-required-ci": [
+          {
+            "id": "actual-ci-observation",
+            "kind": "equal",
+            "expected": {
+              "repository": "opensoft/openxfactory",
+              "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+              "run_id": 43608762372,
+              "job_id": 132489023068,
+              "required_context": "pytest-suite",
+              "conclusion": "success"
+            }
+          }
+        ],
+        "no-skips-or-waivers": [
+          {
+            "id": "actual-ci-observation",
+            "kind": "equal",
+            "expected": {
+              "suites": {
+                "specs/043-private-connectivity-production/tests/test_evidence.py": {
+                  "collected": 287,
+                  "passed": 287,
+                  "skipped": 0,
+                  "failures": 0,
+                  "errors": 0
+                },
+                "specs/043-private-connectivity-production/tests/test_evidence_pins.py": {
+                  "collected": 40,
+                  "passed": 40,
+                  "skipped": 0,
+                  "failures": 0,
+                  "errors": 0
+                }
+              }
+            }
+          }
+        ]
+      },
+      "dependencies": {
+        "T009": "T009"
+      },
+      "history": [],
+      "remediation": null,
+      "metrics": {},
+      "observation": null,
+      "ci": {
+        "specs/043-private-connectivity-production/tests/test_evidence.py": 287,
+        "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40
+      },
+      "artifacts": [
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+          "path": ".github/workflows/pytest-suite.yml",
+          "sha256": "aa3d72d3ec070f2bd3dfb97dca48d76cf7719f04273dd8197358de6156773a47"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+          "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+          "sha256": "c9872f5ba45baf95e2c39cdf3d3bc76a6814762d30fe7386f799a4e58adb98cb"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+          "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
+          "sha256": "3fd5c30e9eb969fa5ba61c15473878f1df7e94febb8875fedd848082119fba9a"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+          "path": "scripts/doc_health/pin_class.py",
+          "sha256": "3e2f2fc5c0d6dede1d95c057197efcb635e6676954b9f426cdfc2e11d74656ae"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+          "path": "tests/doc-health/test_sentinel_vocabulary.py",
+          "sha256": "0fc007f04fd6e69d76b396632a112789370481d5f1e0610d0fd7741fc26ea22d"
+        }
+      ],
+      "authority": {
+        "object": "T010-authority"
+      },
+      "class": "CI-E",
+      "record": {
+        "repository": "opensoft/openxfactory",
+        "commit": "73ea5d8e646f754088733099ef1680ac6d8605d9",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "sha256": "32e7ad066ea67086408ae9241fcfcd3adf909db044c4efdca32481a2dde0ce18"
+      }
     }
   },
   "instances": {},
@@ -1700,7 +1850,7 @@
           "id": "T001-source-authority",
           "owner": "Brett Heap",
           "roles": [
-            "Brett Heap (coordinator source owner and E source-evidence custodian)"
+            "Brett Heap (coordinator source owner)"
           ],
           "decision": "accepted",
           "scope": {
@@ -1918,7 +2068,7 @@
           "id": "T002-source-authority",
           "owner": "Brett Heap",
           "roles": [
-            "Brett Heap (coordinator source owner and E source-evidence custodian)"
+            "Brett Heap (coordinator source owner)"
           ],
           "decision": "accepted",
           "scope": {
@@ -2176,7 +2326,7 @@
           "id": "T003-source-authority",
           "owner": "Brett Heap",
           "roles": [
-            "Brett Heap (coordinator source owner and E source-evidence custodian)"
+            "Brett Heap (coordinator source owner)"
           ],
           "decision": "accepted",
           "scope": {
@@ -2551,7 +2701,7 @@
           "id": "T004-source-authority",
           "owner": "Brett Heap",
           "roles": [
-            "Brett Heap (coordinator source owner and E source-evidence custodian)"
+            "Brett Heap (coordinator source owner)"
           ],
           "decision": "accepted",
           "scope": {
@@ -2923,7 +3073,7 @@
           "id": "T005-source-authority",
           "owner": "Brett Heap",
           "roles": [
-            "Brett Heap (coordinator source owner and E source-evidence custodian)"
+            "Brett Heap (coordinator source owner)"
           ],
           "decision": "accepted",
           "scope": {
@@ -4996,10 +5146,340 @@
           "redaction_method": "Replace only the exact temporary isolated-source checkout path with <isolated-source-checkout>; retain the original raw digest and all source/command/exit/timing identities.",
           "disposition": "Nested declared openDox/openXdox source legs were initially absent in this newly created isolated checkout. Initialize only its exact pinned recursive submodules, preserve this refusal, and repeat the same command at the unchanged source. Not a passed dependency or live qualification."
         }
+      },
+      "T010-C-01": {
+        "tasks": [
+          "T010"
+        ],
+        "evidence_class": "source",
+        "value": {
+          "id": "T010-C-01",
+          "kind": "C-01",
+          "decision": "accepted",
+          "scope": {
+            "profile": "not-applicable",
+            "candidate": "043-source-only",
+            "offering": "source-evidence",
+            "run": "043-e-bootstrap",
+            "network": "not-applicable",
+            "region": "not-applicable",
+            "wave": "not-applicable",
+            "site": "not-applicable",
+            "phase": "source",
+            "domain": "not-applicable",
+            "target": "not-applicable",
+            "offer": "not-applicable",
+            "environment": "source",
+            "customer": "not-applicable"
+          },
+          "owner": "Brett Heap",
+          "valid_from": "2026-11-14T13:36:48.174Z",
+          "valid_until": "until-superseded",
+          "provenance": {
+            "object": "original-human-amendment"
+          }
+        }
+      },
+      "T010-C-08": {
+        "tasks": [
+          "T010"
+        ],
+        "evidence_class": "source",
+        "value": {
+          "id": "T010-C-08",
+          "kind": "C-08",
+          "decision": "accepted",
+          "scope": {
+            "profile": "not-applicable",
+            "candidate": "043-source-only",
+            "offering": "source-evidence",
+            "run": "043-e-bootstrap",
+            "network": "not-applicable",
+            "region": "not-applicable",
+            "wave": "not-applicable",
+            "site": "not-applicable",
+            "phase": "source",
+            "domain": "not-applicable",
+            "target": "not-applicable",
+            "offer": "not-applicable",
+            "environment": "source",
+            "customer": "not-applicable"
+          },
+          "owner": "Brett Heap",
+          "valid_from": "2026-11-14T01:22:01.593Z",
+          "valid_until": "until-superseded",
+          "provenance": {
+            "object": "original-human-3"
+          }
+        }
+      },
+      "T010-authority": {
+        "tasks": [
+          "T010"
+        ],
+        "evidence_class": "source",
+        "value": {
+          "id": "T010-source-authority",
+          "owner": "Brett Heap",
+          "roles": [
+            "Brett Heap (coordinator source owner and E source-evidence custodian)"
+          ],
+          "decision": "accepted",
+          "scope": {
+            "profile": "not-applicable",
+            "candidate": "043-source-only",
+            "offering": "source-evidence",
+            "run": "043-e-bootstrap",
+            "network": "not-applicable",
+            "region": "not-applicable",
+            "wave": "not-applicable",
+            "site": "not-applicable",
+            "phase": "source",
+            "domain": "not-applicable",
+            "target": "not-applicable",
+            "offer": "not-applicable",
+            "environment": "source",
+            "customer": "not-applicable"
+          },
+          "mode": "source",
+          "valid_from": "2026-11-14T13:36:48.174Z",
+          "valid_until": "until-superseded",
+          "decisions": {
+            "C-01": {
+              "object": "T010-C-01"
+            },
+            "C-08": {
+              "object": "T010-C-08"
+            }
+          },
+          "provenance": {
+            "object": "original-human-amendment"
+          }
+        }
+      },
+      "T010-output": {
+        "tasks": [
+          "T010"
+        ],
+        "evidence_class": "source",
+        "value": {
+          "task": "T010",
+          "instance": null,
+          "scope": {
+            "profile": "not-applicable",
+            "candidate": "043-source-only",
+            "offering": "source-evidence",
+            "run": "043-e-bootstrap",
+            "network": "not-applicable",
+            "region": "not-applicable",
+            "wave": "not-applicable",
+            "site": "not-applicable",
+            "phase": "source",
+            "domain": "not-applicable",
+            "target": "not-applicable",
+            "offer": "not-applicable",
+            "environment": "source",
+            "customer": "not-applicable"
+          },
+          "source": {
+            "repository": "opensoft/openxfactory",
+            "base": "12d6d10cc81640be1839434b5eb826ddc531d1e6",
+            "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+          },
+          "command": "set -euo pipefail\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 287,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
+          "exit_code": 0,
+          "started_at": "2026-11-14T15:40:30Z",
+          "ended_at": "2026-11-14T15:40:39Z",
+          "events": {},
+          "metrics": {},
+          "coverage": null,
+          "ci": {
+            "specs/043-private-connectivity-production/tests/test_evidence.py": {
+              "repository": "opensoft/openxfactory",
+              "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+              "conclusion": "success",
+              "required": true,
+              "collected": 287,
+              "passed": 287,
+              "skipped": 0,
+              "run_id": 43608762372,
+              "job_id": 132489023068
+            },
+            "specs/043-private-connectivity-production/tests/test_evidence_pins.py": {
+              "repository": "opensoft/openxfactory",
+              "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+              "conclusion": "success",
+              "required": true,
+              "collected": 40,
+              "passed": 40,
+              "skipped": 0,
+              "run_id": 43608762372,
+              "job_id": 132489023068
+            }
+          },
+          "cases": [
+            {
+              "id": "explicit-suite-collection",
+              "scope": {
+                "profile": "not-applicable",
+                "candidate": "043-source-only",
+                "offering": "source-evidence",
+                "run": "043-e-bootstrap",
+                "network": "not-applicable",
+                "region": "not-applicable",
+                "wave": "not-applicable",
+                "site": "not-applicable",
+                "phase": "source",
+                "domain": "not-applicable",
+                "target": "not-applicable",
+                "offer": "not-applicable",
+                "environment": "source",
+                "customer": "not-applicable"
+              },
+              "source": {
+                "repository": "opensoft/openxfactory",
+                "base": "12d6d10cc81640be1839434b5eb826ddc531d1e6",
+                "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+              },
+              "checks": [
+                {
+                  "id": "actual-ci-observation",
+                  "observed": {
+                    "suites": {
+                      "specs/043-private-connectivity-production/tests/test_evidence.py": 287,
+                      "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40
+                    },
+                    "step": "Run private-connectivity production source suites (043)",
+                    "source_revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "exact-head-required-ci",
+              "scope": {
+                "profile": "not-applicable",
+                "candidate": "043-source-only",
+                "offering": "source-evidence",
+                "run": "043-e-bootstrap",
+                "network": "not-applicable",
+                "region": "not-applicable",
+                "wave": "not-applicable",
+                "site": "not-applicable",
+                "phase": "source",
+                "domain": "not-applicable",
+                "target": "not-applicable",
+                "offer": "not-applicable",
+                "environment": "source",
+                "customer": "not-applicable"
+              },
+              "source": {
+                "repository": "opensoft/openxfactory",
+                "base": "12d6d10cc81640be1839434b5eb826ddc531d1e6",
+                "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+              },
+              "checks": [
+                {
+                  "id": "actual-ci-observation",
+                  "observed": {
+                    "repository": "opensoft/openxfactory",
+                    "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+                    "run_id": 43608762372,
+                    "job_id": 132489023068,
+                    "required_context": "pytest-suite",
+                    "conclusion": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no-skips-or-waivers",
+              "scope": {
+                "profile": "not-applicable",
+                "candidate": "043-source-only",
+                "offering": "source-evidence",
+                "run": "043-e-bootstrap",
+                "network": "not-applicable",
+                "region": "not-applicable",
+                "wave": "not-applicable",
+                "site": "not-applicable",
+                "phase": "source",
+                "domain": "not-applicable",
+                "target": "not-applicable",
+                "offer": "not-applicable",
+                "environment": "source",
+                "customer": "not-applicable"
+              },
+              "source": {
+                "repository": "opensoft/openxfactory",
+                "base": "12d6d10cc81640be1839434b5eb826ddc531d1e6",
+                "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+              },
+              "checks": [
+                {
+                  "id": "actual-ci-observation",
+                  "observed": {
+                    "suites": {
+                      "specs/043-private-connectivity-production/tests/test_evidence.py": {
+                        "collected": 287,
+                        "passed": 287,
+                        "skipped": 0,
+                        "failures": 0,
+                        "errors": 0
+                      },
+                      "specs/043-private-connectivity-production/tests/test_evidence_pins.py": {
+                        "collected": 40,
+                        "passed": 40,
+                        "skipped": 0,
+                        "failures": 0,
+                        "errors": 0
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "original": {
+            "command": "set -euo pipefail\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 287,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
+            "repository": "opensoft/openxfactory",
+            "source_revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+            "started_at": "2026-11-14T15:40:30Z",
+            "ended_at": "2026-11-14T15:40:39Z",
+            "exit_code": 0,
+            "stdout": "pytest-suite\tRun private-connectivity production source suites (043)\t﻿2026-11-14T15:40:30.2458163Z ##[group]Run set -euo pipefail\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2458617Z ^[[36;1mset -euo pipefail^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2458972Z ^[[36;1moriginal_tree=\"$(pwd)\"^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2459466Z ^[[36;1mfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2460197Z ^[[36;1mgit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2460824Z ^[[36;1mcd \"$feature_tree\"^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2461269Z ^[[36;1m[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2461790Z ^[[36;1mecho \"043 tested source: $(git rev-parse HEAD)\"^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2462244Z ^[[36;1mpython3 -m pytest -q \\^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2463069Z ^[[36;1m  specs/043-private-connectivity-production/tests/test_evidence.py \\^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2463761Z ^[[36;1m  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2464425Z ^[[36;1m  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2465057Z ^[[36;1m[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2465509Z ^[[36;1mpython3 - <<'PY'^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2465870Z ^[[36;1mfrom collections import Counter^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2466257Z ^[[36;1mimport os^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2466582Z ^[[36;1mfrom pathlib import Path^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2466966Z ^[[36;1mimport xml.etree.ElementTree as ET^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2467349Z ^[[36;1m^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2467631Z ^[[36;1mexpected = {^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2468116Z ^[[36;1m    \"specs.043-private-connectivity-production.tests.test_evidence\": 287,^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2468998Z ^[[36;1m    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2469535Z ^[[36;1m}^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2470059Z ^[[36;1mreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2470696Z ^[[36;1mcases = list(report.iter(\"testcase\"))^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2471222Z ^[[36;1mactual = Counter(case.get(\"classname\") for case in cases)^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2471693Z ^[[36;1mif dict(actual) != expected:^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2472297Z ^[[36;1m    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2473241Z ^[[36;1midentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2473806Z ^[[36;1mif len(identities) != len(set(identities)):^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2474357Z ^[[36;1m    raise SystemExit(\"043 source report contains duplicate test identities\")^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2474981Z ^[[36;1mfor suite in report.iter(\"testsuite\"):^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2475546Z ^[[36;1m    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2476257Z ^[[36;1m        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2476978Z ^[[36;1mif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2477633Z ^[[36;1m    raise SystemExit(\"043 source testcase did not run and pass\")^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2478156Z ^[[36;1mfor name, count in sorted(actual.items()):^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2478808Z ^[[36;1m    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2479396Z ^[[36;1mPY^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2479727Z ^[[36;1m[ -z \"$(git status --porcelain)\" ]^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2480121Z ^[[36;1mcd \"$original_tree\"^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2480494Z ^[[36;1mgit worktree remove \"$feature_tree\"^[[0m\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2529658Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2530118Z env:\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2530398Z   HAS_APP_KEY: true\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2530785Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.16/x64\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2531345Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib/pkgconfig\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2532109Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2532855Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2533710Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2534248Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2535137Z   PC043_EXPECTED_REVISION: c4e70f66d0d0ca8ca50668a318ce1360fe53b443\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2535615Z ##[endgroup]\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.2626495Z Preparing worktree (detached HEAD c4e70f66)\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.9225088Z HEAD is now at c4e70f66 docs(043): bind the qualified source bridge and preserve prior containers\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:30.9331401Z 043 tested source: c4e70f66d0d0ca8ca50668a318ce1360fe53b443\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:32.2817087Z ........................................................................ [ 22%]\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:34.6500928Z ........................................................................ [ 44%]\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:35.7801480Z ........................................................................ [ 66%]\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:37.3917562Z ........................................................................ [ 88%]\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:39.0103348Z .......................................                                  [100%]\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:39.0104094Z 327 passed in 7.88s\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:39.0642067Z 043 source suite specs.043-private-connectivity-production.tests.test_evidence: collected=287 passed=287 skipped=0 failures=0 errors=0\npytest-suite\tRun private-connectivity production source suites (043)\t2026-11-14T15:40:39.0644753Z 043 source suite specs.043-private-connectivity-production.tests.test_evidence_pins: collected=40 passed=40 skipped=0 failures=0 errors=0\n",
+            "original_sha256": "fe744b346844a43afed537f8b32328ca6cd2c37de7bbddd311e86eda5e6b99f5",
+            "export_sha256": "fe744b346844a43afed537f8b32328ca6cd2c37de7bbddd311e86eda5e6b99f5",
+            "redaction_method": "Select every complete gh log line labelled exactly as the source-suite step, including GitHub timestamps and step identity; replace only the GitHub workspace prefix with <github-workspace>. No line inside that source step is omitted. Retain the full job-log digest separately."
+          },
+          "ci_log_provenance": {
+            "repository": "opensoft/openxfactory",
+            "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+            "run_id": 43608762372,
+            "job_id": 132489023068,
+            "job_url": "https://github.com/opensoft/openXfactory/actions/runs/43608762372/job/132489023068",
+            "full_job_log_sha256": "c8b11f7c8880cd8fad5484d8859a6842c368312e83b9c87563e4fc99f335c687",
+            "source_step_original_sha256": "fe744b346844a43afed537f8b32328ca6cd2c37de7bbddd311e86eda5e6b99f5",
+            "required_context": "pytest-suite",
+            "observed_required_checks": [
+              "signed-execution-chain-gate",
+              "lane-line",
+              "former-id-arrival-gate",
+              "openspec-cli-pin",
+              "wallet-validation",
+              "pytest-suite",
+              "lane-line",
+              "release-tag-gate",
+              "openxdox-consumer-gate"
+            ],
+            "run_attempt": 1
+          },
+          "import_method": "Derived from the actual completed required GitHub job and its exact source-step output; neither a local rerun nor an inferred CI result."
+        }
       }
     }
   },
-  "custody_status": "pending actual custodian authentication",
+  "custody_status": "Actual authentication is determined solely by the referenced custody decision. Source exports preserve their original candidate states.",
   "authorizes_production": false,
   "review": {
     "repository": "opensoft/openxfactory",
@@ -5028,17 +5508,30 @@
       "job_id": 132481239980,
       "conclusion": "failure",
       "disposition": "The actual Python 3.14 doc-health job found source pins not reachable from main or exact retention refs. Publish and independently read back the nine computed retention refs without changing original source identities; fresh current-head qualification is required. This failed job supplies no passed dependency."
+    },
+    {
+      "kind": "superseded-ci",
+      "repository": "opensoft/openxfactory",
+      "revision": "2eb17c55bfad04c9e7aad8f2966dab2041ddb00f",
+      "run_id": 43606195335,
+      "job_id": 132481240607,
+      "conclusion": "cancelled",
+      "disposition": "GitHub reports this superseded source run cancelled. It supplies no passed dependency. The actual required successful source execution is retained separately with its precise repaired head, run/job, step output and collection counts."
     }
   ],
   "prior_containers": [
     {
       "repository": "opensoft/openxfactory",
-      "commit": "4e41b953c4982a69b86b764edeeb70f306a65b86",
+      "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
       "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-      "sha256": "efbbd2001370a83a3e89b9feaa092f36452668592087ba14d42f996a592fac46"
+      "sha256": "c9872f5ba45baf95e2c39cdf3d3bc76a6814762d30fe7386f799a4e58adb98cb"
     }
   ],
   "pin_inventory": [
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "12d6d10cc81640be1839434b5eb826ddc531d1e6"
+    },
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "1427b581493e660e9e5e1e84bbfdee13eab109be"
@@ -5054,6 +5547,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "6321b4b19273fde40635da41f1af0484fd787081"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "73ea5d8e646f754088733099ef1680ac6d8605d9"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -5073,6 +5570,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "cdf5e16be467c38c49a2991663d9cec76b71c53d"
     },
     {
@@ -5082,6 +5583,19 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "e2953ac579c65ef2a5bd680fbc7aead12587e415"
+    }
+  ],
+  "import_corrections": [
+    {
+      "kind": "original-preparation-role-clarification",
+      "tasks": [
+        "T001",
+        "T002",
+        "T003",
+        "T004",
+        "T005"
+      ],
+      "disposition": "The original T001-T005 instruction supplied coordinator source-owner preparation authority before E custody was accepted. Label those original roles as coordinator source owner only; later E custodian acceptance is not retroactive authority. Original user text, timestamps, source observations and earlier containers remain unchanged in Git. This metadata correction supplies no new permission."
     }
   ]
 }
