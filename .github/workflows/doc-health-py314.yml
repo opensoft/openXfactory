@@ -255,7 +255,40 @@ jobs:
       - run: python -m pytest tests/doc-health -q -rs
 
       - name: Exercise source proof under Python 3.14 (043)
-        run: python -m pytest specs/043-private-connectivity-production/tests/test_source_roots.py -q -rs
+        shell: bash
+        env:
+          PC043_EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          original_tree="$(pwd)"
+          source_tree="$RUNNER_TEMP/pc043-py314-source"
+          git -c core.hooksPath=/dev/null worktree add --detach "$source_tree" "$PC043_EXPECTED_REVISION"
+          cd "$source_tree"
+          [ "$(git rev-parse HEAD)" = "$PC043_EXPECTED_REVISION" ]
+          python -m pytest specs/043-private-connectivity-production/tests/test_source_roots.py -q -rs \
+            --junitxml="$RUNNER_TEMP/pc043-py314.xml"
+          python - <<'PY'
+          from collections import Counter
+          import os
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "pc043-py314.xml").getroot()
+          cases = list(report.iter("testcase"))
+          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 42}
+          if dict(Counter(case.get("classname") for case in cases)) != expected:
+              raise SystemExit("Python 3.14 proof suite collection mismatch")
+          identities = {(case.get("classname"), case.get("name")) for case in cases}
+          if len(identities) != len(cases):
+              raise SystemExit("duplicate Python 3.14 proof cases")
+          if any(int(suite.get(field, 0)) for suite in report.iter("testsuite") for field in ("skipped", "failures", "errors")):
+              raise SystemExit("Python 3.14 proof suite must run and pass without skips")
+          if any(child.tag in ("skipped", "failure", "error") for case in cases for child in case):
+              raise SystemExit("Python 3.14 proof case did not pass")
+          print("043 Python 3.14 proof: collected=42 passed=42 skipped=0 failures=0 errors=0 revision=" + os.environ["PC043_EXPECTED_REVISION"])
+          PY
+          [ -z "$(git status --porcelain)" ]
+          cd "$original_tree"
+          git worktree remove "$source_tree"
 
       - name: Remove ephemeral source proof (043)
         id: pc043_cleanup
