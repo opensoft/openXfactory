@@ -1,0 +1,8 @@
+schema: spec-driven
+created: 2026-11-14
+origin:
+  kind: ad_hoc
+  id: openxFactory:adhoc:2026-11-14-sonar-quality-remediation
+  reason: Repair remaining Sonar findings and import real coverage under unchanged acceptance conditions.
+  approved_by: Brett Heap, direct instruction in the current chat to fix findings and real coverage until main is green without weakening checks or changing billing.
+  approved_on: 2026-11-14
