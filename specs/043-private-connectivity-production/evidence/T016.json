@@ -192,7 +192,120 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "56ba140d205e6d3794fbdb05c5882eb7933acc59"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "73ea5d8e646f754088733099ef1680ac6d8605d9"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "81388ed7bdca445601bfef44880669330b1d659d"
     }
-  ]
+  ],
+  "schema": "043-task-evidence-v1",
+  "owner": "C",
+  "evidence_class": "Q0-N",
+  "attempt": "neutral-source-acceptance-candidate-1",
+  "verdict": "pass",
+  "authority": {
+    "repository": "opensoft/openxfactory",
+    "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+    "path": "openspec/changes/publish-private-connectivity-production-contract/review/source-owner-permission.json",
+    "sha256": "dd28325e35715f403249319991a336f315dd38be16eaa5366c8300a842b4af36"
+  },
+  "artifacts": [
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "README.md",
+      "sha256": "b0946b91921c5c83d2925991b9745ab5b1284f4a508af7517194373362009f93"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "contracts/manifest.yaml",
+      "sha256": "7ad5e870e3e11d69d45e3b3aeb1cb2dfa3b5bd5d432237e4f9f6ab3f8503128e"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "contracts/openspec-cli-pin.yaml",
+      "sha256": "1bab358ce6d5275fcad6fd1af3a4320aebe42d25c158aa0364d680fd4d8fa482"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "docs/contract-versioning-policy.md",
+      "sha256": "3ac92fc7dcd2c909be646e122d5bee2ab5969be7aab0882835255e545ffd89fe"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/.openspec.yaml",
+      "sha256": "ee0841d877aa8b15f29a281408d755df02f2205d3f6a74afd12919ef69231e7c"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/design.md",
+      "sha256": "8deecf09430c1389a0d68c324b678a45f0568cf683642cfd69e4907f8bb50ab0"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/proposal.md",
+      "sha256": "ddca9eb960677c53e37005b6cc79b5b9c63a25eda5692f842845acf7b0720d27"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/review/ratification.md",
+      "sha256": "634d36c24408d97ced0fdb71e1d4cf4b679fd9ea1a1c51a165cca710cd0507cc"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/review/source-owner-permission.json",
+      "sha256": "dd28325e35715f403249319991a336f315dd38be16eaa5366c8300a842b4af36"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/specs/private-connectivity-contract-publication/spec.md",
+      "sha256": "7fabab792e22460114ef0b912dac14e79103b069062fbf5a12006acee1ade20a"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/tasks.md",
+      "sha256": "03b26a7a778ccb15a7a12ffa7afbbeff3b99d8379fec66b7d28efdb22fce8ed0"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "tests/sequenced_after/corpus-ledger.yaml",
+      "sha256": "83e6e01d53da44074be063eef10f062329294ba4ad5950954b02c8b56121becf"
+    }
+  ],
+  "incidents": [],
+  "history": [],
+  "dependencies": {
+    "T010": {
+      "repository": "opensoft/openxfactory",
+      "commit": "73ea5d8e646f754088733099ef1680ac6d8605d9",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "sha256": "32e7ad066ea67086408ae9241fcfcd3adf909db044c4efdca32481a2dde0ce18"
+    },
+    "T004": {
+      "object": "T004-import"
+    }
+  },
+  "output": {
+    "repository": "opensoft/openxfactory",
+    "commit": "56ba140d205e6d3794fbdb05c5882eb7933acc59",
+    "path": "specs/043-private-connectivity-production/evidence/T016.json",
+    "sha256": "91adc0470c652cd25404c9bb265c10bd9082047cf9f0a51c919833165717a242"
+  },
+  "admission_state": "Pending actual neutral source-evidence/control review and default verification. The earlier unreviewed output blob is preserved at its exact separate Git identity; its observation fields are unchanged."
 }
