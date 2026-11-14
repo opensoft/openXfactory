@@ -1150,8 +1150,8 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # populated members, measured from its committed tree. The foreign member
     # has no site and remains FUTURE; presence does not authenticate evidence.
     # The repaired source export preserves its prior container and failed
-    # prerequisite/ref-retention history: six additional measured sites.
-    assert (standing_sites, standing_members) == (985, 35)
+    # prerequisite/ref-retention history: seven additional measured sites.
+    assert (standing_sites, standing_members) == (986, 35)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
