@@ -1,90 +1,63 @@
-# Source commissioning authentication
+# Source commissioning authentication: neutral acceptance candidate
 
-Status: ratified
-Ratified: 2026-11-14 by Brett Heap, through [commission-private-connectivity-production-evidence](../proposal.md).
+Status: draft
+Created: 2026-11-14
 
-Brett Heap is the accepted source-evidence custodian. At 2026-11-14T15:55:48.576Z he authenticated the exact immutable commissioning container, distinct T010 receipt and original human provenance identified below. This records actual source-only C-08 authentication. Source-scope ratification and runtime/rollout acceptance retain their own decisions. All three PRs remain draft; full Q0 and Q1-Q5 remain pending.
+## Existing accepted E evidence
 
-The prepared container preserves the original T001–T005 commands and source
-observations, actual T006 owner/custody decisions, exact committed T007–T009
-regression outputs, original human-message timestamps and individual raw-record
-digests. The failed development regression remains visible. Source/governance
-artifacts retain their real Git references. No T001.json–T009.json is created.
+Brett authenticated the original T001-T010 source/CI packet at
+2026-11-14T15:55:48.576Z. That actual decision remains immutable in
+[review record 73a8be34d](https://github.com/opensoft/openXfactory/blob/73a8be34dcabc0b2d9b3329ca07be0708027b7b3/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md).
+Its [accepted control de9637eb7](https://github.com/opensoft/openXfactory/blob/de9637eb7215f2f11b98bd7a874420c8692d03aa/specs/043-private-connectivity-production/evidence/commissioning.json)
+retains reviewed core 0645f3e7f31b9b4c708c94b8ff2298fe530b0d18928355201d9f54cab60b770f.
+The default T010 verification command passed against that independent anchor
+before T010 was checked. The reviewed manifest, actual review and accepted
+control have published computed retention refs.
 
-Before acceptance, review the actual command, source, exit, timing, original
-stdout, original/export digests and stated redaction method for each import.
-Confirm the source-only scope and original human provenance; successful source
-tests and synthetic fixtures supply no provider/customer/live qualification.
-T010 additionally requires the actual successful exact-head required GitHub
-run/job and explicit zero-skip collection of both feature suites.
+This new draft review context does not revoke that accepted E evidence.
+T010 is historical completed source qualification, while each later control
+candidate needs its own actual review before use. Existing E contained
+objects remain unchanged and limited to T001-T010.
 
-The final decision must name the reviewed immutable manifest and its canonical
-content SHA-256. That core excludes only the review pointer and derived pin
-inventory, so authentication and the final control manifest can occupy distinct
-commits without a self-containing hash. A payload/binding/authority change needs
-new review. Until the actual decision exists, the verifier refuses admission.
+## New neutral source acceptance evidence
+
+Brett's neutral publication/release-owner role and exact N scope were accepted
+at 2026-11-14T13:36:48.174Z. The new T016 candidate records that existing
+permission, a real read-only source command at its exact committed revision,
+the exact publication/reader surfaces and unchanged deferred version allocation.
+It grants no additional source scope or tag/release operation.
+
+The command checks the actual ratified origin/owner metadata and publication
+table, runs pinned strict OpenSpec, verifies the contract tree/version are
+unchanged and confirms the supported schema has not yet been published.
+The initial check's incorrect exact-name assertion and its corrected same-source
+rerun remain inspectable.
+
+The original output is a separate immutable Git blob. The later new receipt
+candidate adds control metadata without changing any original observation
+field. Neither candidate had been accepted or commissioned previously.
+No accepted observation was overwritten. Source permission, output and receipt
+identities remain separate, and the proposed frozen binding uses ordinary
+immutable Git references for N rather than extending E's contained-object scope.
+
+The pending decision below concerns the concrete extended control packet
+identified in the review target. It does not repeat role/scope ratification or
+accept unseen runtime results. Default admission of this new candidate remains
+blocked until the actual decision is recorded and its authenticated core passes
+verification.
 
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "accepted",
+  "decision": "pending",
   "custodian": "Brett Heap",
-  "reviewed_manifest": {
-    "repository": "opensoft/openxfactory",
-    "commit": "6faaba5ab387d37e13c9c96a797ff7612f883647",
-    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "sha256": "0b77c70d66420d4d582ac4806f29b4ee43d00057c14057678b1075d9dc2fe554"
-  },
-  "content_sha256": "0645f3e7f31b9b4c708c94b8ff2298fe530b0d18928355201d9f54cab60b770f",
-  "reviewed_at": "2026-11-14T15:55:48.576Z"
+  "reviewed_manifest": null,
+  "content_sha256": null,
+  "reviewed_at": null
 }
 ```
 
-## Immutable packet for actual authentication
-
-This is the exact immutable packet Brett reviewed and authenticated through the actual owner input below. Its source/receipt/control identities remain separate.
-
-| Identity | Exact reviewed value |
-| --- | --- |
-| Manifest | [commissioning.json](https://github.com/opensoft/openXfactory/blob/6faaba5ab387d37e13c9c96a797ff7612f883647/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Manifest commit | `6faaba5ab387d37e13c9c96a797ff7612f883647` |
-| Manifest file SHA-256 | `0b77c70d66420d4d582ac4806f29b4ee43d00057c14057678b1075d9dc2fe554` |
-| Authenticated core SHA-256 | `0645f3e7f31b9b4c708c94b8ff2298fe530b0d18928355201d9f54cab60b770f` |
-| Task-definition freeze | `66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0` |
-| Distinct CI receipt | [T010.json](https://github.com/opensoft/openXfactory/blob/73ea5d8e646f754088733099ef1680ac6d8605d9/specs/043-private-connectivity-production/evidence/T010.json) |
-| Actual tested source | `c4e70f66d0d0ca8ca50668a318ce1360fe53b443` |
-| Actual required CI | [pytest-suite run 43608762372 / job 132489023068](https://github.com/opensoft/openXfactory/actions/runs/43608762372/job/132489023068), success |
-| Explicit source collection | 287 verifier tests and 40 inventory tests, all passed; zero source-suite skips, failures or errors |
-
-The actual source-suite step ran from 2026-11-14 15:40:30Z through 15:40:39Z. Its complete labelled step output, original/export digests, full job-log digest, source identity and required-check readback are retained in the T010-output object. Existing root-suite skip policy is separate from the zero-skip feature collection.
-
-| Original import | Tested source | Actual execution result |
-| --- | --- | --- |
-| T001 | `b1896c4719dedee4d2f02bc7534c73c4df9fbbb5` | exit 0; completed 2026-11-13T16:28:22.421179+00:00 |
-| T002 | `b1896c4719dedee4d2f02bc7534c73c4df9fbbb5` | exit 0; completed 2026-11-13T16:28:22.487254+00:00 |
-| T003 | `b1896c4719dedee4d2f02bc7534c73c4df9fbbb5` | exit 0; completed 2026-11-13T16:28:25.623787+00:00 |
-| T004 | `b1896c4719dedee4d2f02bc7534c73c4df9fbbb5` | exit 0; completed 2026-11-13T16:28:28.870446+00:00 |
-| T005 | `b1896c4719dedee4d2f02bc7534c73c4df9fbbb5` | exit 0; completed 2026-11-13T16:28:28.919270+00:00 |
-| T006 | `cdf5e16be467c38c49a2991663d9cec76b71c53d` | exit 0; completed 2026-11-14T06:54:24.704567+00:00 |
-| T007 | `1427b581493e660e9e5e1e84bbfdee13eab109be` | exit 0; 287 tests passed; completed 2026-11-14T14:50:37.424306+00:00 |
-| T008 | `de1fc5640b4074b0e61ef4b0b54b04fc5f4a9b86` | exit 0; 40 tests passed; completed 2026-11-14T14:19:04.534581+00:00 |
-| T009 | `ae7e13b40887d9d13cf8d9f4dbdd0dea2396405d` | exit 0; 175 tests passed; completed 2026-11-14T15:06:59.916701+00:00 |
-| T010 | `c4e70f66d0d0ca8ca50668a318ce1360fe53b443` | exit 0; required GitHub job and both feature suites passed; completed 2026-11-14T15:40:39Z |
-
-Review the retained original human messages and individual raw-record digests against this Codex session. T001-T005 used their original coordinator source-owner preparation instruction before E custody acceptance; the import-role clarification explicitly avoids backdating the later E custodian role. E owner and source-only custody acceptance occurred before their consumers. All nine original imports retain their actual commands, source artifacts, exit/timing, stdout/redaction identities and dependency order.
-
-The failed development regression, missing nested-checkout refusal, earlier retention failure and superseded cancelled CI remain inspectable; none supplies a passed dependency. Prior containers and original observations remain immutable in Git. The current actual source checks and current required CI provide their own results.
-
-The exact commissioning inventory passes its read-only check. Source/case/CI/original-authority and dependency-order preparation checks pass for T001-T010. Before this actual decision, the default verifier correctly refused admission while custodian authentication was pending. Binding this accepted review in a later control revision and passing the default verifier are still required before T010 is checked. The measured standing census is 1017 sites across 35 populated members, with zero uncovered sites; foreign production evidence remains FUTURE because no such site exists.
-
-Brett authenticated this exact source-only packet and its original human provenance under the accepted C-08 policy. The accepted decision block records the reviewed manifest/core and actual review time. Bind its immutable review reference in a later control revision, verify the same authenticated core, run the default verifier and only then complete T010. This supplies no later operating decision or acceptance of unseen results. Full Q0 and Q1-Q5 remain pending, and all three PRs remain draft.
-
-## Actual custodian input
-
-Brett answered the exact packet question in this Codex session:
-
-> Authenticate this source-only packet (Recommended)
-
-The question named the immutable review packet at commit 7a7dc959d9747e6a826ad976db6bf3b93f7baecf, reviewed manifest 6faaba5ab387d37e13c9c96a797ff7612f883647 and core SHA-256 0645f3e7f31b9b4c708c94b8ff2298fe530b0d18928355201d9f54cab60b770f. It explicitly retained the three draft PRs and all full-Q0/Q1-Q5, deployment, spend, enrollment and commercial gates.
-
-The original user record is timestamped 2026-11-14T15:55:48.576Z in session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 25236, individual raw-record SHA-256 2a930a0729f7e9500f11ef5bcdb82d60d66c22e206e17a296e93c47d4c358185. This records the actual supplied decision and does not fabricate a signature or a prior approval.
+Full Q0 and Q1-Q5 remain pending. The local/installer/hosted/domain/Ops
+acceptances still consume their own operating decisions. No deployment,
+installation, spend, enrollment, version allocation, tag, pin advancement or
+commercial admission is authorized. All three PRs remain draft.

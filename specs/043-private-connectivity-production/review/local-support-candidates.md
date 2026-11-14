@@ -37,6 +37,10 @@ That is an observed development runtime. It does not establish qualification
 of the proposed native Ubuntu server profile; the actual target and runtime
 identities are closed before execution.
 
+The [official Ubuntu Noble amd64 stable package index](https://download.docker.com/linux/ubuntu/dists/noble/pool/stable/amd64/)
+also lists Docker Engine and CLI 29.9.3 packages. Their signed repository
+metadata and exact artifact identities remain qualification inputs.
+
 ## Mac evidence boundary
 
 Tailscale documents [Standalone, App Store and CLI variants](https://tailscale.com/docs/concepts/macos-variants)
