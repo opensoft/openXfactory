@@ -2674,6 +2674,32 @@ def test_production_commissioning_original_nested_refs_keep_coverage_and_localit
     assert any(item.site.path == path and item.site.pin == orphan for item in report.orphans)
 
 
+def test_real_production_connectivity_records_have_exact_reachable_inventories():
+    """Check actual committed data, independently of evidence/gate admission.
+
+    The commissioned source bootstrap uses coordinator Git only. Foreign data
+    must wait for an explicitly commissioned CI checkout/custody scope; absence
+    of that proof must never turn into a foreign-owner pass.
+    """
+    import json
+    import runpy
+    from types import SimpleNamespace
+    feature = REPO_ROOT / "specs/043-private-connectivity-production"
+    reader = SimpleNamespace(**runpy.run_path(str(feature / "verify-evidence.py")))
+    inventory = SimpleNamespace(**runpy.run_path(str(feature / "register-evidence-pins.py")))
+    context = SimpleNamespace(
+        trust={"repositories": {"C": reader.COORDINATOR}},
+        store=reader.GitStore({reader.COORDINATOR: str(REPO_ROOT)}),
+    )
+    members = [m for m in pc.PIN_CLASS if m.id.startswith("private-connectivity-production-")]
+    paths = [path for path in pc.committed_paths(REPO_ROOT, "HEAD")
+             if any(pc.path_matches(path, member.paths) for member in members)]
+    assert "specs/043-private-connectivity-production/evidence/commissioning.json" in paths
+    for path in paths:
+        value = reader.decode(pc.committed_text(REPO_ROOT, "HEAD", path))
+        inventory.validate_inventory(value, inventory.owner_commits(value, context))
+
+
 @pytest.mark.parametrize("task", ["T057", "T061", "T062", "T064"])
 def test_production_connectivity_child_keeps_local_orphan_and_foreign_ownership(tmp_path, task):
     import json
