@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import ast
 import importlib.util
+import json
 import re
 import subprocess
 import sys
@@ -1160,7 +1161,9 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # history: 15 additional sites, with all class obligations intact.
     # The T012 installer source candidate adds 49 measured sites,
     # retaining its separate original output/receipt and accepted L control.
-    assert (standing_sites, standing_members) == (1167, 35)
+    # The parallel Sonar recovery feature adds two measured receipt anchors
+    # under one exact-path standing member; the integrated tree is measured.
+    assert (standing_sites, standing_members) == (1169, 36)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
@@ -1238,3 +1241,55 @@ def test_production_connectivity_registration_matches_actual_source_population()
     assert all(member.population == pc.STANDING and not member.key_expected for member in members)
     assert all(member.reachability == pc.MUST_RESOLVE for member in members)
     assert {member.locality for member in members} == {pc.REPO_LOCAL, pc.CROSS_REPOSITORY}
+
+
+# Feature 043's measured service receipt introduces two repo-local anchors.
+SONAR_RECEIPT_REL = "specs/043-sonar-quality-gate-recovery/acceptance.json"
+
+
+def _sonar_receipt(repo, baseline, observed, *, rel=SONAR_RECEIPT_REL):
+    _write(repo, rel, json.dumps({
+        "reference": {"revision": baseline},
+        "freshMainAnalysis": {"revision": observed},
+    }, indent=2))
+    _commit(repo, "record measured Sonar sources")
+
+
+def test_sonar_receipt_checks_both_reachable_source_anchors(tmp_path):
+    repo = _init(tmp_path / "sonar-receipt")
+    _write(repo, "README.md", "first\n")
+    baseline = _commit(repo)
+    _write(repo, "README.md", "second\n")
+    observed = _commit(repo)
+    _sonar_receipt(repo, baseline, observed)
+    report = pc.verify(repo, allow_remote=False)
+    results = [r for r in report.results if r.site.path == SONAR_RECEIPT_REL]
+    assert len(results) == 2
+    assert {r.site.pin for r in results} == {baseline, observed}
+    assert all(r.site.member_id == "sonar-recovery-analysis-revision" for r in results)
+    assert all(r.verdict == pc.PASS for r in results)
+
+
+def test_sonar_receipt_does_not_waive_an_unlanded_anchor(tmp_path):
+    repo = _init(tmp_path / "sonar-unlanded")
+    _write(repo, "README.md", "main\n")
+    baseline = _commit(repo)
+    _git(repo, "checkout", "-qb", "unrelated-branch")
+    _write(repo, "unlanded.txt", "not reachable from main\n")
+    unlanded = _commit(repo)
+    _git(repo, "checkout", "-q", "main")
+    _sonar_receipt(repo, baseline, unlanded)
+    report = pc.verify(repo, allow_remote=False)
+    result = next(r for r in report.results if r.site.pin == unlanded)
+    assert result.site.member_id == "sonar-recovery-analysis-revision"
+    assert result.verdict == pc.ORPHAN
+
+
+def test_sonar_receipt_member_does_not_cover_another_feature(tmp_path):
+    repo = _init(tmp_path / "sonar-other")
+    _write(repo, "README.md", "main\n")
+    source = _commit(repo)
+    rel = "specs/999-unrelated/acceptance.json"
+    _sonar_receipt(repo, source, source, rel=rel)
+    report = pc.verify(repo, allow_remote=False)
+    assert len([site for site in report.uncovered if site.path == rel]) == 2

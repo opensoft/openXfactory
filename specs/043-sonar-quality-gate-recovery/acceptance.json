@@ -1,0 +1,258 @@
+{
+  "project": "opensoft_openxFactory",
+  "repair": "Missing new-code definition restored; no claim that product quality is green",
+  "reference": {
+    "analysisId": "d20bb52c-64fd-4090-986a-fd993f44ff86",
+    "revision": "8480378acd806b112ebd0462e18a86a9026ab155",
+    "date": "2026-09-09T19:37:08-04:00"
+  },
+  "freshMainAnalysis": {
+    "key": "cf95559d-ec71-4dff-9e6f-54f18227d283",
+    "date": "2026-11-14T12:07:43-04:00",
+    "events": [
+      {
+        "key": "AaHa0mRJHSNS_W3ewJhv",
+        "category": "VERSION",
+        "name": "not provided"
+      },
+      {
+        "key": "AaHa0mRFHSNS_W3ewJhu",
+        "category": "QUALITY_GATE",
+        "name": "Red",
+        "description": "Security Rating on New Code > 1, Reliability Rating on New Code > 1"
+      }
+    ],
+    "projectVersion": "not provided",
+    "manualNewCodePeriodBaseline": false,
+    "revision": "3432baf6d929112be283d3daa1a4330a4130ab64"
+  },
+  "computedGate": {
+    "status": "ERROR",
+    "conditions": [
+      {
+        "status": "ERROR",
+        "metricKey": "new_reliability_rating",
+        "comparator": "GT",
+        "periodIndex": 1,
+        "errorThreshold": "1",
+        "actualValue": "4"
+      },
+      {
+        "status": "ERROR",
+        "metricKey": "new_security_rating",
+        "comparator": "GT",
+        "periodIndex": 1,
+        "errorThreshold": "1",
+        "actualValue": "4"
+      },
+      {
+        "status": "OK",
+        "metricKey": "new_maintainability_rating",
+        "comparator": "GT",
+        "periodIndex": 1,
+        "errorThreshold": "1",
+        "actualValue": "1"
+      },
+      {
+        "status": "OK",
+        "metricKey": "new_duplicated_lines_density",
+        "comparator": "GT",
+        "periodIndex": 1,
+        "errorThreshold": "3",
+        "actualValue": "0.5"
+      },
+      {
+        "status": "OK",
+        "metricKey": "new_security_hotspots_reviewed",
+        "comparator": "LT",
+        "periodIndex": 1,
+        "errorThreshold": "100",
+        "actualValue": "100.0"
+      }
+    ],
+    "periods": [
+      {
+        "index": 1,
+        "mode": "manual_baseline",
+        "date": "2026-09-09T19:37:08-04:00"
+      }
+    ],
+    "ignoredConditions": false
+  },
+  "existingConfiguredGate": {
+    "id": 9,
+    "name": "Sonar way",
+    "conditionCount": 6,
+    "profilesAndConditionsUnchanged": true
+  },
+  "coverage": {
+    "configuredThresholdPercent": 80,
+    "measurementAvailable": false,
+    "coverageConditionInComputedResult": false,
+    "coverageAcceptanceClaimed": false
+  },
+  "newCodeFindings": {
+    "issues": [
+      {
+        "key": "AaEPUEb0xJMgDlVjNjMV",
+        "rule": "pythonsecurity:S8707",
+        "type": "VULNERABILITY",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:scripts/validate-factory-mcp.py",
+        "line": 126,
+        "message": "Path Traversal via faulty LLM-supplied CLI arguments",
+        "creationDate": "2026-10-05T23:37:57-04:00",
+        "updateDate": "2026-10-05T23:42:39-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved existing tool finding; separately governed source remediation required"
+      },
+      {
+        "key": "AaEM-H99UvYsYsbnbKck",
+        "rule": "pythonsecurity:S8707",
+        "type": "VULNERABILITY",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:specs/034-opendox-standalone-operation/evidence/at-r1/at_r1_browser.py",
+        "line": 70,
+        "message": "Path Traversal via faulty LLM-supplied CLI arguments",
+        "creationDate": "2026-10-05T12:42:45-04:00",
+        "updateDate": "2026-10-05T12:47:23-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved historical evidence finding; preserve captured bytes and use separately governed source remediation"
+      },
+      {
+        "key": "AaEM-H99UvYsYsbnbKcl",
+        "rule": "pythonsecurity:S8707",
+        "type": "VULNERABILITY",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:specs/034-opendox-standalone-operation/evidence/at-r1/at_r1_browser.py",
+        "line": 128,
+        "message": "Path Traversal via faulty LLM-supplied CLI arguments in at_r1_browser.read_private_copy()",
+        "creationDate": "2026-10-05T12:42:45-04:00",
+        "updateDate": "2026-10-05T12:47:23-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved historical evidence finding; preserve captured bytes and use separately governed source remediation"
+      },
+      {
+        "key": "AaEM-H99UvYsYsbnbKcg",
+        "rule": "python:S5779",
+        "type": "BUG",
+        "severity": "CRITICAL",
+        "component": "opensoft_openxFactory:specs/034-opendox-standalone-operation/evidence/at-r1/at_r1_browser.py",
+        "line": 166,
+        "message": "Don't use assert inside a try-except that catches AssertionError.",
+        "creationDate": "2026-10-05T12:42:45-04:00",
+        "updateDate": "2026-10-05T12:47:23-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved historical evidence finding; preserve captured bytes and use separately governed source remediation"
+      },
+      {
+        "key": "AaEM-H99UvYsYsbnbKci",
+        "rule": "python:S4143",
+        "type": "BUG",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:specs/034-opendox-standalone-operation/evidence/at-r1/at_r1_browser.py",
+        "line": 396,
+        "message": "Verify this is the key that was intended; a value has already been saved for it on line 393.",
+        "creationDate": "2026-10-05T12:42:45-04:00",
+        "updateDate": "2026-10-05T12:47:23-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved historical evidence finding; preserve captured bytes and use separately governed source remediation"
+      },
+      {
+        "key": "AaEM-H99UvYsYsbnbKcm",
+        "rule": "pythonsecurity:S8707",
+        "type": "VULNERABILITY",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:specs/034-opendox-standalone-operation/evidence/at-r1/at_r1_browser.py",
+        "line": 626,
+        "message": "Path Traversal via faulty LLM-supplied CLI arguments",
+        "creationDate": "2026-10-05T12:42:45-04:00",
+        "updateDate": "2026-10-05T12:47:23-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved historical evidence finding; preserve captured bytes and use separately governed source remediation"
+      },
+      {
+        "key": "AaDmcfxDuh_NfUB9nM-t",
+        "rule": "python:S5443",
+        "type": "VULNERABILITY",
+        "severity": "CRITICAL",
+        "component": "opensoft_openxFactory:scripts/ideation_dashboard/dashboard_refresh_lane.py",
+        "line": 3250,
+        "message": "Make sure publicly writable directories are used safely here.",
+        "creationDate": "2026-09-28T01:10:30-04:00",
+        "updateDate": "2026-09-28T01:15:10-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved existing tool finding; separately governed source remediation required"
+      },
+      {
+        "key": "AaCwQMVMi1DbUmI4Yeo5",
+        "rule": "pythonsecurity:S8707",
+        "type": "VULNERABILITY",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:scripts/measure_opendox_css_census.py",
+        "line": 1462,
+        "message": "Path Traversal via command-line argument in measure_opendox_css_census.main()",
+        "creationDate": "2026-09-17T12:36:20-04:00",
+        "updateDate": "2026-11-10T07:35:33-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved existing tool finding; separately governed source remediation required"
+      },
+      {
+        "key": "AaCSMuPAydsAYN37sBl_",
+        "rule": "pythonsecurity:S8705",
+        "type": "VULNERABILITY",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:scripts/validate-carve-manifest.py",
+        "line": 861,
+        "message": "Command Argument Injection via faulty LLM-supplied CLI arguments",
+        "creationDate": "2026-09-11T16:27:33-04:00",
+        "updateDate": "2026-09-11T16:38:19-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved existing tool finding; separately governed source remediation required"
+      },
+      {
+        "key": "AaCRjhbjeMZvS3_EMWs9",
+        "rule": "pythonbugs:S2259",
+        "type": "BUG",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:scripts/carved_reach.py",
+        "line": 860,
+        "message": "Fix this attribute access on a value that can be 'None'.",
+        "creationDate": "2026-09-11T13:33:37-04:00",
+        "updateDate": "2026-09-11T13:38:15-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved existing tool finding; separately governed source remediation required"
+      },
+      {
+        "key": "AaDs587qFtROB5wN_9BY",
+        "rule": "pythonsecurity:S8707",
+        "type": "VULNERABILITY",
+        "severity": "MAJOR",
+        "component": "opensoft_openxFactory:scripts/attest-openspec-cli-pin-lockfile.py",
+        "line": 676,
+        "message": "Path Traversal via faulty LLM-supplied CLI arguments",
+        "creationDate": "2026-09-09T21:09:55-04:00",
+        "updateDate": "2026-11-14T09:39:32-04:00",
+        "status": "OPEN",
+        "resolution": null,
+        "triage": "Unresolved existing tool finding; separately governed source remediation required"
+      }
+    ],
+    "filter": "sinceLeakPeriod=true",
+    "total": 11
+  },
+  "manualIssueTransitions": false,
+  "sourceExclusionsOrThresholdChanges": false,
+  "billingPermissionVisibilityCredentialOrRuntimeChanges": false,
+  "mainSourceUnchangedByDefinitionRepair": true
+}
