@@ -40,3 +40,19 @@ The first command imported the evidence verifier to read the task freeze. Althou
 The reader's self-verification guard is unchanged. The corrected owner command inspects the frozen task text directly and never invokes or imports that reader. Its actual package source/artifacts/choices are unchanged. Preparation checks must pass before the corrected immutable control is presented for actual authentication.
 
 Preflight also refused the first corrected export wrapper's empty coverage object: a source-only check has no commissioned observation window. A new unreviewed wrapper uses explicit null, with the actual command/stdout/times/digests unchanged and the prior output/receipt retained by immutable reference. This metadata repair does not manufacture a window or alter the reader's refusal. No accepted evidence was edited.
+
+## Exact package review target
+
+| Item | Immutable review identity |
+| --- | --- |
+| Corrected extended control | [commissioning manifest at 1ce855daa](https://github.com/opensoft/openXfactory/blob/1ce855daae8d8f88d8e2fe663a87714f17836799/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Manifest file SHA-256 | `23193a243d9caab371cfcffb4cfe5409f1f0ec817ea5cd2bec7c7af2496f1b18` |
+| Authenticated content SHA-256 | `18f3642fafcd12ca5bd9d4a74cdce97377ffdcd3f2d35004a4f64c2c1f0b30c6` |
+| Prior accepted neutral control | [efafaf9b6](https://github.com/opensoft/openXfactory/blob/efafaf9b6edb02166d2ee3bc445741f681f7b59a/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Unchanged package source | [cd13fe4bc](https://github.com/opensoft/openXfactory/tree/cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d/openspec/changes/commission-headscale-production) |
+| Corrected original output | [cc657b44c](https://github.com/opensoft/openXfactory/blob/cc657b44c5ea25a4f92ecc5d27af25d1b546ad6f/specs/043-private-connectivity-production/evidence/T011.json) |
+| Separate receipt | [2438f54b6](https://github.com/opensoft/openXfactory/blob/2438f54b65e43837a33e3c0f3aff7dbbd4ba0cb4/specs/043-private-connectivity-production/evidence/T011.json) |
+
+The exact committed-data census is 1118 standing sites across 35 members with no uncovered site. Binding, source/cases, original authority/provenance, artifact and dependency-order preparation checks pass for the corrected candidate. Default admission correctly refuses pending authentication. The prior accepted T010/T016 commands still pass independently, with their source objects unchanged.
+
+Authenticate this new actual source-only packet and original provenance under the accepted custody policy. Acceptance permits binding a later review/control pair and completing T011 only after default verification. It does not accept unseen package implementations, builds, releases, compatibility, runtime evidence or any Q1–Q5 result. Full Q0 still depends on the other owner acceptances.
