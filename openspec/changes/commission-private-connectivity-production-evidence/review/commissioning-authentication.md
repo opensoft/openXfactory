@@ -17,7 +17,7 @@ The actual read-only acceptance check ran at cd13fe4bc03a050d3ad2169b3795e05a3a8
 
 The three frozen T011 cases have distinct actual observations: package-owner-scope, local-platform-support and consumed-decisions. The [source permission](https://github.com/opensoft/openXfactory/blob/cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d/openspec/changes/commission-headscale-production/review/source-owner-permission.json), [original output](https://github.com/opensoft/openXfactory/blob/6f9d51291eb9cb7cfe024afb36d859e6d82ba24f/specs/043-private-connectivity-production/evidence/T011.json) and [separate new receipt](https://github.com/opensoft/openXfactory/blob/e3164cc5ea1572d714bd099e896845ad2727652d/specs/043-private-connectivity-production/evidence/T011.json) remain independently inspectable. The receipt preserves every original observation field. No accepted or reviewed original observation was overwritten.
 
-The exact extended manifest and content digest are supplied in the immutable review target below after preparation. Actual review of this new source output/provenance is separate from the already accepted role and candidate choice. Pending authentication cannot complete T011, unlock T020 or supply full Q0.
+The exact extended manifest and content digest are supplied in the immutable review target below. Actual review of this new source output/provenance is separate from the already accepted role and candidate choice. Pending authentication cannot complete T011, unlock T020 or supply full Q0.
 
 ```json
 {
@@ -31,3 +31,19 @@ The exact extended manifest and content digest are supplied in the immutable rev
 ```
 
 All three PRs remain draft. T012 still needs its own installer-runtime/distribution choice and actual source evidence. Hosted/domain/Ops operating inputs, full Q0 and Q1–Q5 remain pending. This candidate grants no installation, runner dispatch, paid resource, enrollment, production version/cut/tag, consumer-pin advancement or commercial admission.
+
+## Exact package review target
+
+| Item | Immutable review identity |
+| --- | --- |
+| Extended control | [commissioning manifest at 3128eeac8](https://github.com/opensoft/openXfactory/blob/3128eeac8ef05efc40095633be8de5762bfd2d17/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Manifest file SHA-256 | `4d4f5599fc3d61f3f9ce2db93cb4e1ea8aacae86717786cb885418ba2c840c36` |
+| Authenticated content SHA-256 | `0f0de804b2c70c9a4ead04eea9b9a2c0311a822c02fc1979de67bd4d9034b73c` |
+| Prior accepted neutral control | [efafaf9b6](https://github.com/opensoft/openXfactory/blob/efafaf9b6edb02166d2ee3bc445741f681f7b59a/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Original package source | [cd13fe4bc](https://github.com/opensoft/openXfactory/tree/cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d/openspec/changes/commission-headscale-production) |
+| Original command output | [6f9d51291](https://github.com/opensoft/openXfactory/blob/6f9d51291eb9cb7cfe024afb36d859e6d82ba24f/specs/043-private-connectivity-production/evidence/T011.json) |
+| Separate receipt | [e3164cc5e](https://github.com/opensoft/openXfactory/blob/e3164cc5ea1572d714bd099e896845ad2727652d/specs/043-private-connectivity-production/evidence/T011.json) |
+
+The exact measured standing census is 1103 sites across 35 members with no uncovered site. Original output, receipt and reviewed control are different immutable identities; the source-only actual observations retain their exact command, revision, timing, exit and original/export digests. No package implementation or runtime qualification was performed by the acceptance check.
+
+Authenticate this new actual source-only packet and original provenance under the accepted custody policy. Acceptance permits binding a later review/control pair and completing T011 only after default verification. It does not accept unseen package builds, releases, platform compatibility, runtime evidence or any Q1–Q5 result. Full Q0 still depends on the other owner acceptances.
