@@ -1,0 +1,311 @@
+{
+  "task": "T016",
+  "instance": null,
+  "scope": {
+    "profile": "neutral-private-connectivity-contract",
+    "network": "not-applicable",
+    "domain": "not-applicable",
+    "offer": "not-applicable",
+    "phase": "source",
+    "offering": "neutral-contract",
+    "target": "not-applicable",
+    "wave": "not-applicable",
+    "candidate": "043-neutral-source",
+    "run": "043-q0-neutral-source",
+    "customer": "not-applicable",
+    "environment": "source",
+    "site": "not-applicable",
+    "region": "not-applicable"
+  },
+  "source": {
+    "repository": "opensoft/openxfactory",
+    "base": "81388ed7bdca445601bfef44880669330b1d659d",
+    "revision": "094eb96f61469b87d9ca8217f77bff5f54069536"
+  },
+  "command": "python3 -c 'import json,re,subprocess,hashlib,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/publish-private-connectivity-production-contract\")\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"mode\"]==\"source\" and permission[\"scope\"][\"phase\"]==\"source\"\nassert all(permission[\"boundaries\"][name] is False for name in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsurfaces=[]\nfor row in (base/\"design.md\").read_text().splitlines():\n if row.startswith(\"| \"):\n  path=row.split(\"|\")[1].strip()\n  if path.startswith((\"contracts/\",\"scripts/\",\"tests/\",\"specs/\")):surfaces.append(path)\nassert permission[\"accepted_publication_surfaces\"]==surfaces and len(surfaces)==11\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nraw=Path(\"contracts/manifest.yaml\").read_bytes()\nprior=subprocess.check_output([\"git\",\"show\",\"HEAD^:contracts/manifest.yaml\"])\nassert raw==prior\nversion=yaml.safe_load(raw)[\"contract_bundle_version\"]\nchanged=subprocess.check_output([\"git\",\"diff\",\"--name-only\",\"HEAD^\",\"HEAD\",\"--\",\"contracts/\"]).decode().splitlines()\nassert changed==[] and not Path(\"contracts/private-connectivity/binding.schema.json\").exists()\nassert re.search(r\"^target_release:\\s*deferred-allocation\",(base/\"proposal.md\").read_text(),re.M)\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"publish-private-connectivity-production-contract\",\"--strict\"],check=True)\nfacts={\n \"neutral-owner-acceptance\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"actual_decision_at\":permission[\"actual_owner_input\"][\"at\"],\"raw_record_sha256\":permission[\"actual_owner_input\"][\"raw_record_sha256\"],\"origin_approved\":True,\"ratified\":True},\n \"publication-reader-scope\":{\"accepted_surfaces\":surfaces,\"proposal_sha256\":permission[\"proposal_sha256\"],\"source_only\":True,\"release_policy\":permission[\"custody_process\"][\"release_policy\"]},\n \"late-version-allocation\":{\"existing_bundle_version_unchanged\":version,\"contract_tree_diff\":changed,\"supported_schema_not_yet_published\":True,\"target_release\":\"deferred-allocation\",\"version_or_inventory_allocated_by_this_check\":False,\"tag_operation_requested_by_this_check\":False}\n}\nprint(\"N_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+  "exit_code": 0,
+  "started_at": "2026-11-14T16:31:13.579198+00:00",
+  "ended_at": "2026-11-14T16:31:16.312891+00:00",
+  "events": {},
+  "metrics": {},
+  "coverage": null,
+  "ci": {},
+  "cases": [
+    {
+      "id": "neutral-owner-acceptance",
+      "scope": {
+        "profile": "neutral-private-connectivity-contract",
+        "network": "not-applicable",
+        "domain": "not-applicable",
+        "offer": "not-applicable",
+        "phase": "source",
+        "offering": "neutral-contract",
+        "target": "not-applicable",
+        "wave": "not-applicable",
+        "candidate": "043-neutral-source",
+        "run": "043-q0-neutral-source",
+        "customer": "not-applicable",
+        "environment": "source",
+        "site": "not-applicable",
+        "region": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "81388ed7bdca445601bfef44880669330b1d659d",
+        "revision": "094eb96f61469b87d9ca8217f77bff5f54069536"
+      },
+      "checks": [
+        {
+          "id": "actual-neutral-source-facts",
+          "observed": {
+            "actual_decision_at": "2026-11-14T13:36:48.174Z",
+            "origin_approved": true,
+            "owner": "Brett Heap",
+            "ratified": true,
+            "raw_record_sha256": "1d2e014c77ecd911b3a090d3d8aed14b657917d9c96d5c39db6ffccb4c2ec78d",
+            "roles": [
+              "Brett Heap (neutral publication and release owner)"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "publication-reader-scope",
+      "scope": {
+        "profile": "neutral-private-connectivity-contract",
+        "network": "not-applicable",
+        "domain": "not-applicable",
+        "offer": "not-applicable",
+        "phase": "source",
+        "offering": "neutral-contract",
+        "target": "not-applicable",
+        "wave": "not-applicable",
+        "candidate": "043-neutral-source",
+        "run": "043-q0-neutral-source",
+        "customer": "not-applicable",
+        "environment": "source",
+        "site": "not-applicable",
+        "region": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "81388ed7bdca445601bfef44880669330b1d659d",
+        "revision": "094eb96f61469b87d9ca8217f77bff5f54069536"
+      },
+      "checks": [
+        {
+          "id": "actual-neutral-source-facts",
+          "observed": {
+            "accepted_surfaces": [
+              "contracts/private-connectivity/binding.schema.json",
+              "contracts/private-connectivity/README.md",
+              "contracts/private-connectivity/conformance.json",
+              "scripts/validate-private-connectivity.py",
+              "tests/private_connectivity/test_binding.py",
+              "tests/private_connectivity/test_published_contract.py",
+              "contracts/manifest.yaml",
+              "contracts/CHANGELOG.md",
+              "contracts/releases/",
+              "specs/043-private-connectivity-production/evidence/T018.json",
+              "specs/043-private-connectivity-production/evidence/T019.json"
+            ],
+            "proposal_sha256": "ddca9eb960677c53e37005b6cc79b5b9c63a25eda5692f842845acf7b0720d27",
+            "release_policy": "docs/contract-versioning-policy.md",
+            "source_only": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "late-version-allocation",
+      "scope": {
+        "profile": "neutral-private-connectivity-contract",
+        "network": "not-applicable",
+        "domain": "not-applicable",
+        "offer": "not-applicable",
+        "phase": "source",
+        "offering": "neutral-contract",
+        "target": "not-applicable",
+        "wave": "not-applicable",
+        "candidate": "043-neutral-source",
+        "run": "043-q0-neutral-source",
+        "customer": "not-applicable",
+        "environment": "source",
+        "site": "not-applicable",
+        "region": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "81388ed7bdca445601bfef44880669330b1d659d",
+        "revision": "094eb96f61469b87d9ca8217f77bff5f54069536"
+      },
+      "checks": [
+        {
+          "id": "actual-neutral-source-facts",
+          "observed": {
+            "contract_tree_diff": [],
+            "existing_bundle_version_unchanged": "contract-v4.1",
+            "supported_schema_not_yet_published": true,
+            "tag_operation_requested_by_this_check": false,
+            "target_release": "deferred-allocation",
+            "version_or_inventory_allocated_by_this_check": false
+          }
+        }
+      ]
+    }
+  ],
+  "original": {
+    "command": "python3 -c 'import json,re,subprocess,hashlib,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/publish-private-connectivity-production-contract\")\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"mode\"]==\"source\" and permission[\"scope\"][\"phase\"]==\"source\"\nassert all(permission[\"boundaries\"][name] is False for name in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsurfaces=[]\nfor row in (base/\"design.md\").read_text().splitlines():\n if row.startswith(\"| \"):\n  path=row.split(\"|\")[1].strip()\n  if path.startswith((\"contracts/\",\"scripts/\",\"tests/\",\"specs/\")):surfaces.append(path)\nassert permission[\"accepted_publication_surfaces\"]==surfaces and len(surfaces)==11\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nraw=Path(\"contracts/manifest.yaml\").read_bytes()\nprior=subprocess.check_output([\"git\",\"show\",\"HEAD^:contracts/manifest.yaml\"])\nassert raw==prior\nversion=yaml.safe_load(raw)[\"contract_bundle_version\"]\nchanged=subprocess.check_output([\"git\",\"diff\",\"--name-only\",\"HEAD^\",\"HEAD\",\"--\",\"contracts/\"]).decode().splitlines()\nassert changed==[] and not Path(\"contracts/private-connectivity/binding.schema.json\").exists()\nassert re.search(r\"^target_release:\\s*deferred-allocation\",(base/\"proposal.md\").read_text(),re.M)\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"publish-private-connectivity-production-contract\",\"--strict\"],check=True)\nfacts={\n \"neutral-owner-acceptance\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"actual_decision_at\":permission[\"actual_owner_input\"][\"at\"],\"raw_record_sha256\":permission[\"actual_owner_input\"][\"raw_record_sha256\"],\"origin_approved\":True,\"ratified\":True},\n \"publication-reader-scope\":{\"accepted_surfaces\":surfaces,\"proposal_sha256\":permission[\"proposal_sha256\"],\"source_only\":True,\"release_policy\":permission[\"custody_process\"][\"release_policy\"]},\n \"late-version-allocation\":{\"existing_bundle_version_unchanged\":version,\"contract_tree_diff\":changed,\"supported_schema_not_yet_published\":True,\"target_release\":\"deferred-allocation\",\"version_or_inventory_allocated_by_this_check\":False,\"tag_operation_requested_by_this_check\":False}\n}\nprint(\"N_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+    "repository": "opensoft/openxfactory",
+    "source_revision": "094eb96f61469b87d9ca8217f77bff5f54069536",
+    "started_at": "2026-11-14T16:31:13.579198+00:00",
+    "ended_at": "2026-11-14T16:31:16.312891+00:00",
+    "exit_code": 0,
+    "stdout": "openspec-cli-pin: @fission-ai/openspec@1.12.0 from pinned artifact (<verified-pinned-cli>); integrity sha512-oFE2Lj7WVSc87nSi… verified\nopenspec-cli-pin: dependency closure openspec-cli-pin.1.12.0.package-lock.json (80 packages); lockfile_integrity sha512-aw5lIN45tQq2WZll… verified; installed with `npm ci --ignore-scripts`\n-> <verified-pinned-cli> validate publish-private-connectivity-production-contract --strict --json  (in <coordinator-worktree>)\nTotals: 1 passed, 0 failed (1 items)\nOK openspec-cli-pin: @fission-ai/openspec@1.12.0 verified against its content address and every target validated --strict clean\nN_ACCEPTANCE_FACTS={\"late-version-allocation\": {\"contract_tree_diff\": [], \"existing_bundle_version_unchanged\": \"contract-v4.1\", \"supported_schema_not_yet_published\": true, \"tag_operation_requested_by_this_check\": false, \"target_release\": \"deferred-allocation\", \"version_or_inventory_allocated_by_this_check\": false}, \"neutral-owner-acceptance\": {\"actual_decision_at\": \"2026-11-14T13:36:48.174Z\", \"origin_approved\": true, \"owner\": \"Brett Heap\", \"ratified\": true, \"raw_record_sha256\": \"1d2e014c77ecd911b3a090d3d8aed14b657917d9c96d5c39db6ffccb4c2ec78d\", \"roles\": [\"Brett Heap (neutral publication and release owner)\"]}, \"publication-reader-scope\": {\"accepted_surfaces\": [\"contracts/private-connectivity/binding.schema.json\", \"contracts/private-connectivity/README.md\", \"contracts/private-connectivity/conformance.json\", \"scripts/validate-private-connectivity.py\", \"tests/private_connectivity/test_binding.py\", \"tests/private_connectivity/test_published_contract.py\", \"contracts/manifest.yaml\", \"contracts/CHANGELOG.md\", \"contracts/releases/\", \"specs/043-private-connectivity-production/evidence/T018.json\", \"specs/043-private-connectivity-production/evidence/T019.json\"], \"proposal_sha256\": \"ddca9eb960677c53e37005b6cc79b5b9c63a25eda5692f842845acf7b0720d27\", \"release_policy\": \"docs/contract-versioning-policy.md\", \"source_only\": true}}\n",
+    "original_sha256": "073749f18e2cd29798ba2f1f434ea84356bdcae9f1a651c354377b7e1c9f0bbe",
+    "export_sha256": "9b2ca61a7ec9a3ef2875a49601ee9f9c8b5dbbef83827e8d548e37351854ec38",
+    "redaction_method": "Replace the exact coordinator worktree prefix and machine-local pinned CLI executable cache path only. The original native distribution address remains verifiable in the immutable source contracts/openspec-cli-pin.yaml artifact; retain the raw output digest and all Git source/command/exit/timing identities."
+  },
+  "preparation_history": [
+    {
+      "kind": "source-check-preparation-refusal",
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "81388ed7bdca445601bfef44880669330b1d659d",
+        "revision": "094eb96f61469b87d9ca8217f77bff5f54069536"
+      },
+      "command": "python3 -c 'import json,re,subprocess,hashlib,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/publish-private-connectivity-production-contract\")\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert origin[\"approved_by\"]==\"Brett Heap\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"mode\"]==\"source\" and permission[\"scope\"][\"phase\"]==\"source\"\nassert all(permission[\"boundaries\"][name] is False for name in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsurfaces=[]\nfor row in (base/\"design.md\").read_text().splitlines():\n if row.startswith(\"| \"):\n  path=row.split(\"|\")[1].strip()\n  if path.startswith((\"contracts/\",\"scripts/\",\"tests/\",\"specs/\")):surfaces.append(path)\nassert permission[\"accepted_publication_surfaces\"]==surfaces and len(surfaces)==11\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nraw=Path(\"contracts/manifest.yaml\").read_bytes()\nprior=subprocess.check_output([\"git\",\"show\",\"HEAD^:contracts/manifest.yaml\"])\nassert raw==prior\nversion=yaml.safe_load(raw)[\"contract_bundle_version\"]\nchanged=subprocess.check_output([\"git\",\"diff\",\"--name-only\",\"HEAD^\",\"HEAD\",\"--\",\"contracts/\"]).decode().splitlines()\nassert changed==[] and not Path(\"contracts/private-connectivity/binding.schema.json\").exists()\nassert re.search(r\"^target_release:\\s*deferred-allocation\",(base/\"proposal.md\").read_text(),re.M)\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"publish-private-connectivity-production-contract\",\"--strict\"],check=True)\nfacts={\n \"neutral-owner-acceptance\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"actual_decision_at\":permission[\"actual_owner_input\"][\"at\"],\"raw_record_sha256\":permission[\"actual_owner_input\"][\"raw_record_sha256\"],\"origin_approved\":True,\"ratified\":True},\n \"publication-reader-scope\":{\"accepted_surfaces\":surfaces,\"proposal_sha256\":permission[\"proposal_sha256\"],\"source_only\":True,\"release_policy\":permission[\"custody_process\"][\"release_policy\"]},\n \"late-version-allocation\":{\"existing_bundle_version_unchanged\":version,\"contract_tree_diff\":changed,\"supported_schema_not_yet_published\":True,\"target_release\":\"deferred-allocation\",\"version_or_inventory_allocated_by_this_check\":False,\"tag_operation_requested_by_this_check\":False}\n}\nprint(\"N_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+      "started_at": "2026-11-14T16:30:27.097832+00:00",
+      "ended_at": "2026-11-14T16:30:27.179031+00:00",
+      "exit_code": 1,
+      "stdout": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\nAssertionError\n",
+      "original_sha256": "b15dc020f7df303c61f39571dfc3aa8080c84415ad76bd42efe07c2a979bb281",
+      "disposition": "The first inline check incorrectly expected the approved_by field to contain only the person's name. The existing metadata correctly names Brett Heap in session and points to the ratification record. Correct the check to that exact recorded value and repeat at unchanged source; no source approval or product behavior was altered."
+    }
+  ],
+  "acceptance": "Unreviewed actual neutral source output candidate. No T016 task acceptance, release allocation, tag, pin or rollout permission is asserted.",
+  "pin_inventory": [
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "094eb96f61469b87d9ca8217f77bff5f54069536"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "56ba140d205e6d3794fbdb05c5882eb7933acc59"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "73ea5d8e646f754088733099ef1680ac6d8605d9"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "81388ed7bdca445601bfef44880669330b1d659d"
+    }
+  ],
+  "schema": "043-task-evidence-v1",
+  "owner": "C",
+  "evidence_class": "Q0-N",
+  "attempt": "neutral-source-acceptance-candidate-1",
+  "verdict": "pass",
+  "authority": {
+    "repository": "opensoft/openxfactory",
+    "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+    "path": "openspec/changes/publish-private-connectivity-production-contract/review/source-owner-permission.json",
+    "sha256": "dd28325e35715f403249319991a336f315dd38be16eaa5366c8300a842b4af36"
+  },
+  "artifacts": [
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "README.md",
+      "sha256": "b0946b91921c5c83d2925991b9745ab5b1284f4a508af7517194373362009f93"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "contracts/manifest.yaml",
+      "sha256": "7ad5e870e3e11d69d45e3b3aeb1cb2dfa3b5bd5d432237e4f9f6ab3f8503128e"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "contracts/openspec-cli-pin.yaml",
+      "sha256": "1bab358ce6d5275fcad6fd1af3a4320aebe42d25c158aa0364d680fd4d8fa482"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "docs/contract-versioning-policy.md",
+      "sha256": "3ac92fc7dcd2c909be646e122d5bee2ab5969be7aab0882835255e545ffd89fe"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/.openspec.yaml",
+      "sha256": "ee0841d877aa8b15f29a281408d755df02f2205d3f6a74afd12919ef69231e7c"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/design.md",
+      "sha256": "8deecf09430c1389a0d68c324b678a45f0568cf683642cfd69e4907f8bb50ab0"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/proposal.md",
+      "sha256": "ddca9eb960677c53e37005b6cc79b5b9c63a25eda5692f842845acf7b0720d27"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/review/ratification.md",
+      "sha256": "634d36c24408d97ced0fdb71e1d4cf4b679fd9ea1a1c51a165cca710cd0507cc"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/review/source-owner-permission.json",
+      "sha256": "dd28325e35715f403249319991a336f315dd38be16eaa5366c8300a842b4af36"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/specs/private-connectivity-contract-publication/spec.md",
+      "sha256": "7fabab792e22460114ef0b912dac14e79103b069062fbf5a12006acee1ade20a"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "openspec/changes/publish-private-connectivity-production-contract/tasks.md",
+      "sha256": "03b26a7a778ccb15a7a12ffa7afbbeff3b99d8379fec66b7d28efdb22fce8ed0"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+      "path": "tests/sequenced_after/corpus-ledger.yaml",
+      "sha256": "83e6e01d53da44074be063eef10f062329294ba4ad5950954b02c8b56121becf"
+    }
+  ],
+  "incidents": [],
+  "history": [],
+  "dependencies": {
+    "T010": {
+      "repository": "opensoft/openxfactory",
+      "commit": "73ea5d8e646f754088733099ef1680ac6d8605d9",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "sha256": "32e7ad066ea67086408ae9241fcfcd3adf909db044c4efdca32481a2dde0ce18"
+    },
+    "T004": {
+      "object": "T004-import"
+    }
+  },
+  "output": {
+    "repository": "opensoft/openxfactory",
+    "commit": "56ba140d205e6d3794fbdb05c5882eb7933acc59",
+    "path": "specs/043-private-connectivity-production/evidence/T016.json",
+    "sha256": "91adc0470c652cd25404c9bb265c10bd9082047cf9f0a51c919833165717a242"
+  },
+  "admission_state": "Pending actual neutral source-evidence/control review and default verification. The earlier unreviewed output blob is preserved at its exact separate Git identity; its observation fields are unchanged."
+}

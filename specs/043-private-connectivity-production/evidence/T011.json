@@ -1,0 +1,444 @@
+{
+  "task": "T011",
+  "instance": null,
+  "scope": {
+    "phase": "source",
+    "candidate": "043-local-source",
+    "environment": "source",
+    "run": "043-q0-package-source",
+    "network": "not-applicable",
+    "target": "not-applicable",
+    "customer": "not-applicable",
+    "offering": "local-headscale",
+    "site": "not-applicable",
+    "region": "not-applicable",
+    "profile": "local-linux-docker",
+    "domain": "not-applicable",
+    "wave": "not-applicable",
+    "offer": "not-applicable"
+  },
+  "source": {
+    "repository": "opensoft/openxfactory",
+    "base": "0392c1c6ce0503ca260655ba2273fd615c934b21",
+    "revision": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d"
+  },
+  "command": "python3 -c 'import json,hashlib,subprocess,re,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\" and permission[\"mode\"]==\"source\"\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"latest_consumed_choice\"][\"at\"]==\"2026-11-14T16:57:52.719Z\"\nassert permission[\"latest_consumed_choice\"][\"raw_record_sha256\"]==\"fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249\"\naccepted=(base/\"review/support-scope-acceptance.md\").read_text()\nfor value in (\"Approve these qualification candidates (Recommended)\",\"v0.29.7\",\"v1.104.7\",\"Ubuntu 24.04\",\"29.9.3\",\"Windows 11\",\"macOS 15\",\"Standalone GUI PKG\",\"Debian\"):\n assert value in accepted, value\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n if line.startswith((\"- [ ] T02\",\"- [x] T02\")):\n  task=line[6:10]\n  if task in (\"T020\",\"T021\",\"T022\",\"T023\"):\n   _,separator,tail=line.partition(\" \u2014 files: \")\n   assert separator\n   files,separator,_=tail.partition(\" \u2014 verify:\")\n   assert separator\n   tasks[task]={\"owner\":\"L\" if \"(Owner=L;\" in line else \"other\",\"files\":re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),files)}\nassert permission[\"definition_sha256\"]==\"66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0\"\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n if re.match(r\"\\| T02[0-3] \\|\",line):\n  cells=line.split(\"|\");declared[cells[1].strip()]=cells[2].strip().split(\"<br>\")\nassert set(declared)==set(permission[\"per_task_source_scope\"])=={\"T020\",\"T021\",\"T022\",\"T023\"}\nfor task,files in declared.items():\n assert tasks[task][\"owner\"]==\"L\" and files==tasks[task][\"files\"]==permission[\"per_task_source_scope\"][task]\nmatrix=permission[\"matrix\"]\nassert matrix=={\"headscale\":\"0.29.7\",\"tailscale\":\"1.104.7\",\"server\":{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"docker_engine\":\"29.9.3\"},\"clients\":[{\"os\":\"Windows 11\",\"architecture\":\"amd64\",\"channel\":\"official MSI\"},{\"os\":\"macOS 15\",\"architecture\":\"Apple Silicon\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"macOS 15\",\"architecture\":\"Intel\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"channel\":\"official Debian package/repository\"}],\"qualified\":False}\nratification=(base/\"review/ratification.md\").read_text()\nfor value in (\"Brett Heap\",\"Project lifetime\",\"Existing owner-repository permissions\",\"review of actual output/provenance\",\"no new export directory\"):\n assert value in ratification, value\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert len(permission[\"later_required_inputs\"])==4\nassert all(permission[\"boundaries\"][k] is False for k in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"package-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":declared,\"definition_sha256\":permission[\"definition_sha256\"]},\n \"local-platform-support\":{\"matrix\":matrix,\"actual_choice_at\":permission[\"latest_consumed_choice\"][\"at\"],\"raw_record_sha256\":permission[\"latest_consumed_choice\"][\"raw_record_sha256\"],\"compatibility_qualified\":False},\n \"consumed-decisions\":{\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False}\n}\nprint(\"L_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+  "exit_code": 0,
+  "started_at": "2026-11-14T17:14:32.701475+00:00",
+  "ended_at": "2026-11-14T17:14:35.780447+00:00",
+  "events": [],
+  "metrics": {},
+  "coverage": null,
+  "ci": {},
+  "cases": [
+    {
+      "id": "consumed-decisions",
+      "scope": {
+        "phase": "source",
+        "candidate": "043-local-source",
+        "environment": "source",
+        "run": "043-q0-package-source",
+        "network": "not-applicable",
+        "target": "not-applicable",
+        "customer": "not-applicable",
+        "offering": "local-headscale",
+        "site": "not-applicable",
+        "region": "not-applicable",
+        "profile": "local-linux-docker",
+        "domain": "not-applicable",
+        "wave": "not-applicable",
+        "offer": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "0392c1c6ce0503ca260655ba2273fd615c934b21",
+        "revision": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d"
+      },
+      "checks": [
+        {
+          "id": "actual-package-source-facts",
+          "observed": {
+            "later_required_inputs": [
+              "Actual immutable image/release/client artifact identities and compatibility before their consumers",
+              "Actual platform/target identities including authorized GUI Mac hardware before qualification",
+              "Current target/operator authority, endpoint/DNS/TLS/relay and protected state/key custody before execution",
+              "Finite approved resource/recovery/service objectives and Q1-Q5 entry before target execution"
+            ],
+            "live_authority_granted": false,
+            "source_custody": {
+              "authentication": "Actual output/provenance review with exact commit/SHA-256 and genuine source/run/job identities",
+              "custodian": "Brett Heap",
+              "live_custody": "not granted",
+              "location": "Private owner Git under existing permissions",
+              "records": "Reviewed/redacted original source/CI output and genuine human provenance",
+              "retention": "project lifetime"
+            },
+            "source_limits": {
+              "cloud_spend_usd": 0,
+              "enrollment": false,
+              "fault_injection": false,
+              "installation": false,
+              "runner_dispatch": false,
+              "target_effects": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "local-platform-support",
+      "scope": {
+        "phase": "source",
+        "candidate": "043-local-source",
+        "environment": "source",
+        "run": "043-q0-package-source",
+        "network": "not-applicable",
+        "target": "not-applicable",
+        "customer": "not-applicable",
+        "offering": "local-headscale",
+        "site": "not-applicable",
+        "region": "not-applicable",
+        "profile": "local-linux-docker",
+        "domain": "not-applicable",
+        "wave": "not-applicable",
+        "offer": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "0392c1c6ce0503ca260655ba2273fd615c934b21",
+        "revision": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d"
+      },
+      "checks": [
+        {
+          "id": "actual-package-source-facts",
+          "observed": {
+            "actual_choice_at": "2026-11-14T16:57:52.719Z",
+            "compatibility_qualified": false,
+            "matrix": {
+              "clients": [
+                {
+                  "architecture": "amd64",
+                  "channel": "official MSI",
+                  "os": "Windows 11"
+                },
+                {
+                  "architecture": "Apple Silicon",
+                  "channel": "official Standalone GUI PKG",
+                  "os": "macOS 15"
+                },
+                {
+                  "architecture": "Intel",
+                  "channel": "official Standalone GUI PKG",
+                  "os": "macOS 15"
+                },
+                {
+                  "architecture": "amd64",
+                  "channel": "official Debian package/repository",
+                  "os": "Ubuntu 24.04 LTS"
+                }
+              ],
+              "headscale": "0.29.7",
+              "qualified": false,
+              "server": {
+                "architecture": "amd64",
+                "docker_engine": "29.9.3",
+                "os": "Ubuntu 24.04 LTS"
+              },
+              "tailscale": "1.104.7"
+            },
+            "raw_record_sha256": "fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249"
+          }
+        }
+      ]
+    },
+    {
+      "id": "package-owner-scope",
+      "scope": {
+        "phase": "source",
+        "candidate": "043-local-source",
+        "environment": "source",
+        "run": "043-q0-package-source",
+        "network": "not-applicable",
+        "target": "not-applicable",
+        "customer": "not-applicable",
+        "offering": "local-headscale",
+        "site": "not-applicable",
+        "region": "not-applicable",
+        "profile": "local-linux-docker",
+        "domain": "not-applicable",
+        "wave": "not-applicable",
+        "offer": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "0392c1c6ce0503ca260655ba2273fd615c934b21",
+        "revision": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d"
+      },
+      "checks": [
+        {
+          "id": "actual-package-source-facts",
+          "observed": {
+            "accepted_task_scopes": {
+              "T020": [
+                "deploy/production/instance.py",
+                "packaging/production-images.json",
+                "tests/qualification/test_production_package.py",
+                "evidence/private-connectivity-production/T020.json"
+              ],
+              "T021": [
+                "deploy/production/endpoint.py",
+                "tests/qualification/test_production_endpoint.py",
+                "evidence/private-connectivity-production/T021.json"
+              ],
+              "T022": [
+                "deploy/production/recovery.py",
+                "tests/qualification/test_production_recovery.py",
+                "evidence/private-connectivity-production/T022.json"
+              ],
+              "T023": [
+                "tests/qualification/qualify_production.py",
+                "tests/qualification/test_production_runner.py",
+                ".github/workflows/qualification.yml",
+                "release/private-connectivity-production.json",
+                "docs/runbooks/production-package.md",
+                "evidence/private-connectivity-production/T023.json"
+              ]
+            },
+            "definition_sha256": "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0",
+            "origin_approved": true,
+            "owner": "Brett Heap",
+            "proposal_sha256": "ee986945dfdd475b74a8a95dc0ada5915c03b6d7a5c1281cb7c7158d95b58c10",
+            "ratified": true,
+            "roles": [
+              "Brett Heap (Headscale package source/release owner and source-evidence custodian)"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "original": {
+    "command": "python3 -c 'import json,hashlib,subprocess,re,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\" and permission[\"mode\"]==\"source\"\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"latest_consumed_choice\"][\"at\"]==\"2026-11-14T16:57:52.719Z\"\nassert permission[\"latest_consumed_choice\"][\"raw_record_sha256\"]==\"fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249\"\naccepted=(base/\"review/support-scope-acceptance.md\").read_text()\nfor value in (\"Approve these qualification candidates (Recommended)\",\"v0.29.7\",\"v1.104.7\",\"Ubuntu 24.04\",\"29.9.3\",\"Windows 11\",\"macOS 15\",\"Standalone GUI PKG\",\"Debian\"):\n assert value in accepted, value\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n if line.startswith((\"- [ ] T02\",\"- [x] T02\")):\n  task=line[6:10]\n  if task in (\"T020\",\"T021\",\"T022\",\"T023\"):\n   _,separator,tail=line.partition(\" \u2014 files: \")\n   assert separator\n   files,separator,_=tail.partition(\" \u2014 verify:\")\n   assert separator\n   tasks[task]={\"owner\":\"L\" if \"(Owner=L;\" in line else \"other\",\"files\":re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),files)}\nassert permission[\"definition_sha256\"]==\"66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0\"\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n if re.match(r\"\\| T02[0-3] \\|\",line):\n  cells=line.split(\"|\");declared[cells[1].strip()]=cells[2].strip().split(\"<br>\")\nassert set(declared)==set(permission[\"per_task_source_scope\"])=={\"T020\",\"T021\",\"T022\",\"T023\"}\nfor task,files in declared.items():\n assert tasks[task][\"owner\"]==\"L\" and files==tasks[task][\"files\"]==permission[\"per_task_source_scope\"][task]\nmatrix=permission[\"matrix\"]\nassert matrix=={\"headscale\":\"0.29.7\",\"tailscale\":\"1.104.7\",\"server\":{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"docker_engine\":\"29.9.3\"},\"clients\":[{\"os\":\"Windows 11\",\"architecture\":\"amd64\",\"channel\":\"official MSI\"},{\"os\":\"macOS 15\",\"architecture\":\"Apple Silicon\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"macOS 15\",\"architecture\":\"Intel\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"channel\":\"official Debian package/repository\"}],\"qualified\":False}\nratification=(base/\"review/ratification.md\").read_text()\nfor value in (\"Brett Heap\",\"Project lifetime\",\"Existing owner-repository permissions\",\"review of actual output/provenance\",\"no new export directory\"):\n assert value in ratification, value\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert len(permission[\"later_required_inputs\"])==4\nassert all(permission[\"boundaries\"][k] is False for k in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"package-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":declared,\"definition_sha256\":permission[\"definition_sha256\"]},\n \"local-platform-support\":{\"matrix\":matrix,\"actual_choice_at\":permission[\"latest_consumed_choice\"][\"at\"],\"raw_record_sha256\":permission[\"latest_consumed_choice\"][\"raw_record_sha256\"],\"compatibility_qualified\":False},\n \"consumed-decisions\":{\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False}\n}\nprint(\"L_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+    "repository": "opensoft/openxfactory",
+    "source_revision": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+    "started_at": "2026-11-14T17:14:32.701475+00:00",
+    "ended_at": "2026-11-14T17:14:35.780447+00:00",
+    "exit_code": 0,
+    "stdout": "openspec-cli-pin: @fission-ai/openspec@1.12.0 from pinned artifact (<verified-pinned-cli>); integrity sha512-oFE2Lj7WVSc87nSi\u2026 verified\nopenspec-cli-pin: dependency closure openspec-cli-pin.1.12.0.package-lock.json (80 packages); lockfile_integrity sha512-aw5lIN45tQq2WZll\u2026 verified; installed with `npm ci --ignore-scripts`\n-> <verified-pinned-cli> validate commission-headscale-production --strict --json  (in <source-checkout>)\nTotals: 1 passed, 0 failed (1 items)\nOK openspec-cli-pin: @fission-ai/openspec@1.12.0 verified against its content address and every target validated --strict clean\nL_ACCEPTANCE_FACTS={\"consumed-decisions\": {\"later_required_inputs\": [\"Actual immutable image/release/client artifact identities and compatibility before their consumers\", \"Actual platform/target identities including authorized GUI Mac hardware before qualification\", \"Current target/operator authority, endpoint/DNS/TLS/relay and protected state/key custody before execution\", \"Finite approved resource/recovery/service objectives and Q1-Q5 entry before target execution\"], \"live_authority_granted\": false, \"source_custody\": {\"authentication\": \"Actual output/provenance review with exact commit/SHA-256 and genuine source/run/job identities\", \"custodian\": \"Brett Heap\", \"live_custody\": \"not granted\", \"location\": \"Private owner Git under existing permissions\", \"records\": \"Reviewed/redacted original source/CI output and genuine human provenance\", \"retention\": \"project lifetime\"}, \"source_limits\": {\"cloud_spend_usd\": 0, \"enrollment\": false, \"fault_injection\": false, \"installation\": false, \"runner_dispatch\": false, \"target_effects\": false}}, \"local-platform-support\": {\"actual_choice_at\": \"2026-11-14T16:57:52.719Z\", \"compatibility_qualified\": false, \"matrix\": {\"clients\": [{\"architecture\": \"amd64\", \"channel\": \"official MSI\", \"os\": \"Windows 11\"}, {\"architecture\": \"Apple Silicon\", \"channel\": \"official Standalone GUI PKG\", \"os\": \"macOS 15\"}, {\"architecture\": \"Intel\", \"channel\": \"official Standalone GUI PKG\", \"os\": \"macOS 15\"}, {\"architecture\": \"amd64\", \"channel\": \"official Debian package/repository\", \"os\": \"Ubuntu 24.04 LTS\"}], \"headscale\": \"0.29.7\", \"qualified\": false, \"server\": {\"architecture\": \"amd64\", \"docker_engine\": \"29.9.3\", \"os\": \"Ubuntu 24.04 LTS\"}, \"tailscale\": \"1.104.7\"}, \"raw_record_sha256\": \"fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249\"}, \"package-owner-scope\": {\"accepted_task_scopes\": {\"T020\": [\"deploy/production/instance.py\", \"packaging/production-images.json\", \"tests/qualification/test_production_package.py\", \"evidence/private-connectivity-production/T020.json\"], \"T021\": [\"deploy/production/endpoint.py\", \"tests/qualification/test_production_endpoint.py\", \"evidence/private-connectivity-production/T021.json\"], \"T022\": [\"deploy/production/recovery.py\", \"tests/qualification/test_production_recovery.py\", \"evidence/private-connectivity-production/T022.json\"], \"T023\": [\"tests/qualification/qualify_production.py\", \"tests/qualification/test_production_runner.py\", \".github/workflows/qualification.yml\", \"release/private-connectivity-production.json\", \"docs/runbooks/production-package.md\", \"evidence/private-connectivity-production/T023.json\"]}, \"definition_sha256\": \"66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0\", \"origin_approved\": true, \"owner\": \"Brett Heap\", \"proposal_sha256\": \"ee986945dfdd475b74a8a95dc0ada5915c03b6d7a5c1281cb7c7158d95b58c10\", \"ratified\": true, \"roles\": [\"Brett Heap (Headscale package source/release owner and source-evidence custodian)\"]}}\n",
+    "original_sha256": "a92176d538b1e2ec3e34376ba988875ac0e3f67a684ea4f3e008a11b95f19bbd",
+    "export_sha256": "c85ff77a4fefd80f4075de06c1b0f7961b99fffadf3707f73c1c98f9886f5b7b",
+    "redaction_method": "Replace only exact isolated/coordinator source checkout prefixes and the machine-local pinned CLI executable cache path; retain original raw SHA-256 and every Git command/source/exit/timing identity. The native CLI content address remains in the immutable tested-source contracts/openspec-cli-pin.yaml artifact."
+  },
+  "preparation_history": [
+    {
+      "kind": "inadmissible-first-source-command",
+      "original_output": {
+        "repository": "opensoft/openxfactory",
+        "commit": "6f9d51291eb9cb7cfe024afb36d859e6d82ba24f",
+        "path": "specs/043-private-connectivity-production/evidence/T011.json",
+        "sha256": "c69e1f8135967b4a0256b654b36ec1cc53f850f0bb6dddfe38e36e8e65057411"
+      },
+      "receipt": {
+        "repository": "opensoft/openxfactory",
+        "commit": "e3164cc5ea1572d714bd099e896845ad2727652d",
+        "path": "specs/043-private-connectivity-production/evidence/T011.json",
+        "sha256": "3d5f980b082d2e5df0dec64b12f9752567d8492a480b76562fd0e6f408a3bc63"
+      },
+      "control": {
+        "repository": "opensoft/openxfactory",
+        "commit": "3128eeac8ef05efc40095633be8de5762bfd2d17",
+        "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+        "sha256": "4d4f5599fc3d61f3f9ce2db93cb4e1ea8aacae86717786cb885418ba2c840c36"
+      },
+      "disposition": "The original source check exited zero but its command imported the verifier to read the task freeze. Preflight correctly refused that command as self-verification. It supplies no admitted dependency. Preserve all original objects, replace the command with direct frozen-task text inspection and repeat at unchanged source; do not weaken the reader."
+    },
+    {
+      "kind": "reader-preparation-refusal",
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "revision": "64661e8b874e937d9f54d55a23a5e6f958e8411b"
+      },
+      "command": "python3 -c 'import importlib.util,json\nfrom pathlib import Path\np=Path.cwd()\ns=importlib.util.spec_from_file_location(\"v\",p/\"specs/043-private-connectivity-production/verify-evidence.py\")\nv=importlib.util.module_from_spec(s);s.loader.exec_module(v)\nr={\"repository\":\"opensoft/openxfactory\",\"commit\":\"3128eeac8ef05efc40095633be8de5762bfd2d17\",\"path\":\"specs/043-private-connectivity-production/evidence/commissioning.json\",\"sha256\":\"4d4f5599fc3d61f3f9ce2db93cb4e1ea8aacae86717786cb885418ba2c840c36\"}\nx=v.Verifier(v.load_contract(p),v.GitStore({v.COORDINATOR:str(p)}),r,prepare=True)\nx.binding(\"T011\")\n'",
+      "started_at": "2026-11-14T17:14:04.029118+00:00",
+      "ended_at": "2026-11-14T17:14:04.128398+00:00",
+      "exit_code": 1,
+      "stdout": "Traceback (most recent call last):\n  File \"<string>\", line 8, in <module>\n  File \"<source-checkout>/specs/043-private-connectivity-production/verify-evidence.py\", line 510, in binding\n    require(\"verify-evidence.py\" not in binding[\"command\"], \"self-verification is not an owner execution output\")\n  File \"<source-checkout>/specs/043-private-connectivity-production/verify-evidence.py\", line 59, in require\n    raise EvidenceError(message)\nv.EvidenceError: self-verification is not an owner execution output\n",
+      "original_sha256": "93d313d0fe707a0b2c0fe9f4fb74615b5ba40827c6a02432546e9ea130c684f2",
+      "export_sha256": "647217dd3d853a97039d7b54238049ce95e10610c4489a2251faf0924ef1b3e5",
+      "redaction_method": "Replace exact machine-local source-checkout prefixes only; preserve all command/source/exit/timing identities and original digest.",
+      "disposition": "Actual repeated preflight refusal of the old candidate; no source, permission or reader was changed to bypass it."
+    },
+    {
+      "kind": "direct-parser-development-refusal",
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "revision": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d"
+      },
+      "command": "python3 -c 'import json,hashlib,subprocess,re,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\" and permission[\"mode\"]==\"source\"\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"latest_consumed_choice\"][\"at\"]==\"2026-11-14T16:57:52.719Z\"\nassert permission[\"latest_consumed_choice\"][\"raw_record_sha256\"]==\"fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249\"\naccepted=(base/\"review/support-scope-acceptance.md\").read_text()\nfor value in (\"Approve these qualification candidates (Recommended)\",\"v0.29.7\",\"v1.104.7\",\"Ubuntu 24.04\",\"29.9.3\",\"Windows 11\",\"macOS 15\",\"Standalone GUI PKG\",\"Debian\"):\n assert value in accepted, value\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n match=re.match(r\"- \\\\[[ x]\\\\] (T02[0-3]) .*? \u2014 files: (.*?) \u2014 verify:\",line)\n if match:\n  tasks[match[1]]={\"owner\":\"L\" if \"(Owner=L;\" in line else \"other\",\"files\":re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),match[2])}\nassert permission[\"definition_sha256\"]==\"66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0\"\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n if re.match(r\"\\| T02[0-3] \\|\",line):\n  cells=line.split(\"|\");declared[cells[1].strip()]=cells[2].strip().split(\"<br>\")\nassert set(declared)==set(permission[\"per_task_source_scope\"])=={\"T020\",\"T021\",\"T022\",\"T023\"}\nfor task,files in declared.items():\n assert tasks[task][\"owner\"]==\"L\" and files==tasks[task][\"files\"]==permission[\"per_task_source_scope\"][task]\nmatrix=permission[\"matrix\"]\nassert matrix=={\"headscale\":\"0.29.7\",\"tailscale\":\"1.104.7\",\"server\":{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"docker_engine\":\"29.9.3\"},\"clients\":[{\"os\":\"Windows 11\",\"architecture\":\"amd64\",\"channel\":\"official MSI\"},{\"os\":\"macOS 15\",\"architecture\":\"Apple Silicon\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"macOS 15\",\"architecture\":\"Intel\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"channel\":\"official Debian package/repository\"}],\"qualified\":False}\nratification=(base/\"review/ratification.md\").read_text()\nfor value in (\"Brett Heap\",\"Project lifetime\",\"Existing owner-repository permissions\",\"review of actual output/provenance\",\"no new export directory\"):\n assert value in ratification, value\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert len(permission[\"later_required_inputs\"])==4\nassert all(permission[\"boundaries\"][k] is False for k in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"package-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":declared,\"definition_sha256\":permission[\"definition_sha256\"]},\n \"local-platform-support\":{\"matrix\":matrix,\"actual_choice_at\":permission[\"latest_consumed_choice\"][\"at\"],\"raw_record_sha256\":permission[\"latest_consumed_choice\"][\"raw_record_sha256\"],\"compatibility_qualified\":False},\n \"consumed-decisions\":{\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False}\n}\nprint(\"L_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+      "started_at": "2026-11-14T17:14:08.026582+00:00",
+      "ended_at": "2026-11-14T17:14:08.089659+00:00",
+      "exit_code": 1,
+      "stdout": "<string>:18: FutureWarning: Possible nested set at position 5\nTraceback (most recent call last):\n  File \"<string>\", line 28, in <module>\nKeyError: 'T020'\n",
+      "original_sha256": "59080e5e8a396c7267748b902ac6db2dc6ee6f8c89d7a580915c95253c36716d",
+      "export_sha256": "59080e5e8a396c7267748b902ac6db2dc6ee6f8c89d7a580915c95253c36716d",
+      "redaction_method": "Replace exact machine-local source-checkout prefixes only; preserve all command/source/exit/timing identities and original digest.",
+      "disposition": "The first direct-text check overescaped its task-row expression and failed. Correct the private command parser and repeat at unchanged source; this exit-one attempt supplies no passed dependency."
+    },
+    {
+      "kind": "uncommissioned-source-window-wrapper-refusal",
+      "prior_output": {
+        "repository": "opensoft/openxfactory",
+        "commit": "252a996b7ae6e68f5e427ab7704a411a040c1406",
+        "path": "specs/043-private-connectivity-production/evidence/T011.json",
+        "sha256": "a3f7128e85b364af7da2fa25650429c7682d0dc4ef7363463160cd7708cfd044"
+      },
+      "prior_receipt": {
+        "repository": "opensoft/openxfactory",
+        "commit": "205aba377df8ad881858a2bca91535e04ff06edb",
+        "path": "specs/043-private-connectivity-production/evidence/T011.json",
+        "sha256": "b8dd35aa23ecb0837068afa45fe67f771b38d824597b48196a47cc0aeea29c8a"
+      },
+      "reader_diagnostic": "uncommissioned observation window",
+      "disposition": "Preflight rejected the export wrapper's empty coverage object. No source observation window was commissioned or measured. Use explicit null for absent coverage in a new unreviewed wrapper, retain the original source command/output/times/digests unchanged and preserve both prior immutable objects. No accepted observation or reader was changed."
+    }
+  ],
+  "acceptance": "Unreviewed corrected actual package source output, independently rerun at unchanged source using direct frozen task text inspection. Prior inadmissible candidate and failed development checks remain inspectable. No T011 admission or target qualification is asserted.",
+  "pin_inventory": [
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "0392c1c6ce0503ca260655ba2273fd615c934b21"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "205aba377df8ad881858a2bca91535e04ff06edb"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "252a996b7ae6e68f5e427ab7704a411a040c1406"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "3128eeac8ef05efc40095633be8de5762bfd2d17"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "64661e8b874e937d9f54d55a23a5e6f958e8411b"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "6f9d51291eb9cb7cfe024afb36d859e6d82ba24f"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "73ea5d8e646f754088733099ef1680ac6d8605d9"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "cc657b44c5ea25a4f92ecc5d27af25d1b546ad6f"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "e3164cc5ea1572d714bd099e896845ad2727652d"
+    }
+  ],
+  "schema": "043-task-evidence-v1",
+  "owner": "C",
+  "evidence_class": "Q0-L",
+  "attempt": "package-source-acceptance-candidate-3",
+  "verdict": "pass",
+  "authority": {
+    "repository": "opensoft/openxfactory",
+    "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+    "path": "openspec/changes/commission-headscale-production/review/source-owner-permission.json",
+    "sha256": "5ad2a5dc6dfab6e2feb34832e0296a23d84ac34e1b03eca4986b8231cc5ed543"
+  },
+  "artifacts": [
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/.openspec.yaml",
+      "sha256": "9815f0b18eda737a5f85f9f41a991c04546762ae335a51de2325a64fbd634193"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/design.md",
+      "sha256": "fecbe66851c1a25e0c8dbcf154f009637d37c37bfbe26d44a48e2c36f1755f35"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/proposal.md",
+      "sha256": "ee986945dfdd475b74a8a95dc0ada5915c03b6d7a5c1281cb7c7158d95b58c10"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/review/ratification.md",
+      "sha256": "98d0f3837390721137b2e6ab9883256b35f9bb26a442b51de4fa84dca4e9aa23"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/review/source-owner-permission.json",
+      "sha256": "5ad2a5dc6dfab6e2feb34832e0296a23d84ac34e1b03eca4986b8231cc5ed543"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/review/support-scope-acceptance.md",
+      "sha256": "b150086f2f0d38e9cba7cd3333244bf7590743ca5bcfc78e5d8bfc5dae039fe7"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/specs/headscale-production-package/spec.md",
+      "sha256": "a7b1bb2d3813681e055d424602dc60d370a1a4564ebe3f73a4f744cb1c9a4ea1"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/tasks.md",
+      "sha256": "69795ecb49f23541ddd22b728d2020ea648272e062477ec6295b2601abf72cb8"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "README.md",
+      "sha256": "b0946b91921c5c83d2925991b9745ab5b1284f4a508af7517194373362009f93"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "tests/sequenced_after/corpus-ledger.yaml",
+      "sha256": "83e6e01d53da44074be063eef10f062329294ba4ad5950954b02c8b56121becf"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "contracts/openspec-cli-pin.yaml",
+      "sha256": "1bab358ce6d5275fcad6fd1af3a4320aebe42d25c158aa0364d680fd4d8fa482"
+    }
+  ],
+  "incidents": [],
+  "history": [],
+  "dependencies": {
+    "T010": {
+      "repository": "opensoft/openxfactory",
+      "commit": "73ea5d8e646f754088733099ef1680ac6d8605d9",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "sha256": "32e7ad066ea67086408ae9241fcfcd3adf909db044c4efdca32481a2dde0ce18"
+    }
+  },
+  "output": {
+    "repository": "opensoft/openxfactory",
+    "commit": "cc657b44c5ea25a4f92ecc5d27af25d1b546ad6f",
+    "path": "specs/043-private-connectivity-production/evidence/T011.json",
+    "sha256": "a428d398719a019ea792b7ceb714abd9cdaaa09db8ff33f507fc44cfe4c62570"
+  },
+  "admission_state": "Pending actual source output/control authentication and default verification. Source-only coverage is uncommissioned/null; prior refused export wrappers and observations remain immutable."
+}
