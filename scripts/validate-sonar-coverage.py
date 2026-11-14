@@ -220,6 +220,22 @@ def validate_gate(status, definition, *, main):
 
 
 
+
+def write_gate_receipt(root, result):
+    """Create a fixed receipt through a directory descriptor, never following links."""
+    directory = report_directory(root, ".coverage-reports")
+    require(directory.is_dir(), "verified coverage artifact missing")
+    directory_fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        output_fd = os.open("gate.json", os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                            0o600, dir_fd=directory_fd)
+        with os.fdopen(output_fd, "w", encoding="utf-8") as stream:
+            json.dump(result, stream, indent=2)
+            stream.write("\n")
+    finally:
+        os.close(directory_fd)
+
+
 def verify_server_gate(root):
     """Verify the completed scanner task belongs to this exact source/project."""
     task_file = root / ".scannerwork/report-task.txt"
@@ -279,9 +295,7 @@ def verify_server_gate(root):
                 values["new_coverage"] >= 80, "main lacks real qualifying new coverage")
         result["measures"] = measures
         result["baseline_analysis"] = reference[0]
-    directory = report_directory(root, ".coverage-reports")
-    require(directory.is_dir(), "verified coverage artifact missing")
-    (directory / "gate.json").write_text(json.dumps(result, indent=2) + "\n")
+    write_gate_receipt(root, result)
     return result
 
 

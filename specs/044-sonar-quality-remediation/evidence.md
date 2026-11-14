@@ -116,3 +116,29 @@ at 213/216 lines. The final expanded focused set passes 121 tests and 52
 subtests. The full local doc-health suite passes 2,163 tests after adding
 the new action pin's exact/overlong-hash examples; the hash boundary itself
 is unchanged.
+
+## First complete coverage-aware CI analysis
+
+Run 43636271412 passed the required full suite: 10,549 tests and 805
+subtests, six expected skips and 338 PostgreSQL deselections, in 1,925 seconds.
+The original 30-second realization CLI witness passed on the fresh runner.
+A separate local probe also times out without instrumentation, so the local
+failure is not attributed solely to coverage overhead. Its artifacts remain.
+The unchanged census and both named freshness/vector verdicts passed.
+The verified artifact enumerates all 309 production Python files at the exact
+GitHub merge candidate revision. Source-only transfer validation passed.
+
+Sonar imported that report and evaluated all six PR conditions. New-code
+coverage was 87.2%, duplication 0.0%, reliability/maintainability A and
+hotspots reviewed 100%. Security blocked the gate on three newly introduced
+pipeline findings: two installs permitting source distributions, and the
+HTTP-derived JSON receipt sink. These were not waived or suppressed.
+
+The install commands now require hash-pinned wheels, including the existing
+runtime install in the edited workflow. A binary-only download of both locks
+succeeds for all 18 packages on the declared Python 3.12 Linux runtime; no
+dependency version or hash was changed. The gate receipt now uses a fixed
+basename opened exclusively through a no-follow directory descriptor, with
+JSON content streamed separately and mode 0600. Four new witnesses prove
+arbitrary JSON fields cannot choose a path, and existing files, directories
+or symlinks cannot be overwritten. Fresh CI/Sonar qualification is pending.

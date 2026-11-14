@@ -302,3 +302,33 @@ def test_nested_measurement_preserves_real_parent_execution(tmp_path):
             data.read()
             seen.update(data.measured_files())
     assert SCRIPT.resolve() in {(ROOT / name).resolve() for name in seen}, seen
+
+
+@pytest.mark.parametrize("existing", ["regular", "symlink", "directory"])
+def test_gate_receipt_never_overwrites_existing_evidence(tool, repository, tmp_path, existing):
+    directory = repository / ".coverage-reports"
+    directory.mkdir()
+    outside = tmp_path / "original.json"
+    outside.write_text("original evidence")
+    target = directory / "gate.json"
+    if existing == "regular":
+        target.write_text("existing receipt")
+    elif existing == "symlink":
+        target.symlink_to(outside)
+    else:
+        target.mkdir()
+    with pytest.raises(OSError):
+        tool.write_gate_receipt(repository, {"untrusted": "../../original.json"})
+    assert outside.read_text() == "original evidence"
+    if existing == "regular":
+        assert target.read_text() == "existing receipt"
+
+
+def test_gate_json_content_cannot_select_an_output_path(tool, repository, tmp_path):
+    directory = repository / ".coverage-reports"
+    directory.mkdir()
+    content = {"untrusted": "../../outside.json", "path": str(tmp_path / "outside.json")}
+    tool.write_gate_receipt(repository, content)
+    assert json.loads((directory / "gate.json").read_text()) == content
+    assert (directory / "gate.json").stat().st_mode & 0o777 == 0o600
+    assert not (tmp_path / "outside.json").exists()
