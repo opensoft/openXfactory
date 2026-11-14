@@ -330,11 +330,115 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "73ea5d8e646f754088733099ef1680ac6d8605d9"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "cc657b44c5ea25a4f92ecc5d27af25d1b546ad6f"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d"
     },
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "e3164cc5ea1572d714bd099e896845ad2727652d"
     }
-  ]
+  ],
+  "schema": "043-task-evidence-v1",
+  "owner": "C",
+  "evidence_class": "Q0-L",
+  "attempt": "package-source-acceptance-candidate-3",
+  "verdict": "pass",
+  "authority": {
+    "repository": "opensoft/openxfactory",
+    "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+    "path": "openspec/changes/commission-headscale-production/review/source-owner-permission.json",
+    "sha256": "5ad2a5dc6dfab6e2feb34832e0296a23d84ac34e1b03eca4986b8231cc5ed543"
+  },
+  "artifacts": [
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/.openspec.yaml",
+      "sha256": "9815f0b18eda737a5f85f9f41a991c04546762ae335a51de2325a64fbd634193"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/design.md",
+      "sha256": "fecbe66851c1a25e0c8dbcf154f009637d37c37bfbe26d44a48e2c36f1755f35"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/proposal.md",
+      "sha256": "ee986945dfdd475b74a8a95dc0ada5915c03b6d7a5c1281cb7c7158d95b58c10"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/review/ratification.md",
+      "sha256": "98d0f3837390721137b2e6ab9883256b35f9bb26a442b51de4fa84dca4e9aa23"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/review/source-owner-permission.json",
+      "sha256": "5ad2a5dc6dfab6e2feb34832e0296a23d84ac34e1b03eca4986b8231cc5ed543"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/review/support-scope-acceptance.md",
+      "sha256": "b150086f2f0d38e9cba7cd3333244bf7590743ca5bcfc78e5d8bfc5dae039fe7"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/specs/headscale-production-package/spec.md",
+      "sha256": "a7b1bb2d3813681e055d424602dc60d370a1a4564ebe3f73a4f744cb1c9a4ea1"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "openspec/changes/commission-headscale-production/tasks.md",
+      "sha256": "69795ecb49f23541ddd22b728d2020ea648272e062477ec6295b2601abf72cb8"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "README.md",
+      "sha256": "b0946b91921c5c83d2925991b9745ab5b1284f4a508af7517194373362009f93"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "tests/sequenced_after/corpus-ledger.yaml",
+      "sha256": "83e6e01d53da44074be063eef10f062329294ba4ad5950954b02c8b56121becf"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+      "path": "contracts/openspec-cli-pin.yaml",
+      "sha256": "1bab358ce6d5275fcad6fd1af3a4320aebe42d25c158aa0364d680fd4d8fa482"
+    }
+  ],
+  "incidents": [],
+  "history": [],
+  "dependencies": {
+    "T010": {
+      "repository": "opensoft/openxfactory",
+      "commit": "73ea5d8e646f754088733099ef1680ac6d8605d9",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "sha256": "32e7ad066ea67086408ae9241fcfcd3adf909db044c4efdca32481a2dde0ce18"
+    }
+  },
+  "output": {
+    "repository": "opensoft/openxfactory",
+    "commit": "cc657b44c5ea25a4f92ecc5d27af25d1b546ad6f",
+    "path": "specs/043-private-connectivity-production/evidence/T011.json",
+    "sha256": "a428d398719a019ea792b7ceb714abd9cdaaa09db8ff33f507fc44cfe4c62570"
+  },
+  "admission_state": "Pending actual source output/control authentication and default verification. Source-only coverage is uncommissioned/null; prior refused export wrappers and observations remain immutable."
 }
