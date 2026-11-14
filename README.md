@@ -11922,3 +11922,12 @@ Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
 ## Conditional lane attribution realization
 
 [Governed change](openspec/changes/honor-conditional-lane-attribution/proposal.md) and [feature](specs/041-conditional-lane-check/spec.md) restore the in-force conditional lane rule.
+
+
+## Sonar quality gate recovery
+
+The [authorized recovery proposal](openspec/changes/repair-sonar-quality-gate-definition/proposal.md),
+[implementation plan](specs/043-sonar-quality-gate-recovery/plan.md),
+[tasks](specs/043-sonar-quality-gate-recovery/tasks.md), and
+[evidence](specs/043-sonar-quality-gate-recovery/evidence.md) record the
+historical-reference repair and its computation/preservation boundaries.
