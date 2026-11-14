@@ -142,3 +142,29 @@ basename opened exclusively through a no-follow directory descriptor, with
 JSON content streamed separately and mode 0600. Four new witnesses prove
 arbitrary JSON fields cannot choose a path, and existing files, directories
 or symlinks cannot be overwritten. Fresh CI/Sonar qualification is pending.
+
+## Preserve the original timing checks alongside measurement
+
+Run 43640005774 passed 10,552 tests and 805 subtests but the same real-repo
+realization witness exceeded 30 seconds, so coverage publication and Sonar
+correctly did not run. No failed test result was promoted.
+
+A task-only diagnostic interpreter captured the live CLI waiting in
+release.verify_tag's published-main ls-remote call. The mode-field witness
+now uses real Git against a temporary bare transport exposing the actual
+checkout's published-main commit and annotated bundle tag object. Candidate
+and tagged inventories, annotation and ancestry are still checked against
+the canonical real repository; no Git result is fabricated and no active
+remote configuration is changed. The independent live release-tag gate
+remains unchanged. Assertions additionally require the intended domain
+dependency error, no release-tag error, and both published-ref queries.
+
+On the declared bench the normal cases pass within their unchanged 30-second
+limits (21.07 and 26.34 seconds). Under complete branch/subprocess tracing,
+the same cases take 22.43 and 35.20 seconds. The workflow therefore enforces
+both original uninstrumented checks in a required preflight, then repeats
+them with a bounded 90-second measurement budget in the complete covered
+suite. Every original functional and timing check still runs; the measured
+repeat is additional. A wiring witness refuses removal of the preflight
+or its ordering before coverage startup. Source scope, runtime version,
+dependency pins and all Sonar conditions are unchanged.

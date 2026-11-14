@@ -35,6 +35,8 @@ python3 -m venv .venv
 .venv/bin/pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary=:all:
 export PATH="$PWD/.venv/bin:$PATH"
 python3 -m pytest tests/sonar_quality/test_coverage_evidence.py::test_subprocess_startup_records_real_child_execution -q
+unset COVERAGE_PROCESS_START COVERAGE_PROCESS_CONFIG
+python3 -m pytest tests/hermes_runtime_contracts/test_validator_cli.py::test_release_mode_field_is_preserved_on_the_real_repository -q
 python3 scripts/validate-sonar-coverage.py prepare
 export COVERAGE_ROOT="$(pwd -P)"
 export COVERAGE_FILE="$COVERAGE_ROOT/.coverage-reports/.coverage"

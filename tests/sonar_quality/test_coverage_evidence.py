@@ -332,3 +332,23 @@ def test_gate_json_content_cannot_select_an_output_path(tool, repository, tmp_pa
     assert json.loads((directory / "gate.json").read_text()) == content
     assert (directory / "gate.json").stat().st_mode & 0o777 == 0o600
     assert not (tmp_path / "outside.json").exists()
+
+
+def test_original_bounded_mode_checks_run_before_measurement():
+    """A measured budget cannot replace the original uninstrumented checks."""
+    import yaml
+
+    job = yaml.safe_load((ROOT / ".github/workflows/pytest-suite.yml").read_text())["jobs"]["pytest-suite"]
+    steps = job["steps"]
+    bounded = next(i for i, step in enumerate(steps)
+                   if step.get("name") == "Preserve original bounded release-mode checks")
+    prepare = next(i for i, step in enumerate(steps)
+                   if step.get("name") == "Prepare a fresh exact-source measurement")
+    measured = next(i for i, step in enumerate(steps)
+                    if step.get("run") ==
+                    'python3 -m pytest tests/ -q -m "not postgres" --junitxml=pytest-report.xml')
+    assert bounded < prepare < measured
+    assert "unset COVERAGE_PROCESS_START COVERAGE_PROCESS_CONFIG" in steps[bounded]["run"]
+    assert ("python3 -m pytest tests/hermes_runtime_contracts/test_validator_cli.py::"
+            "test_release_mode_field_is_preserved_on_the_real_repository -q") in steps[bounded]["run"]
+    assert "COVERAGE_PROCESS_START" in steps[measured]["env"]

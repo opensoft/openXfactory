@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import shlex
 import subprocess
 import sys
 from types import ModuleType
@@ -128,7 +129,7 @@ def repository_snapshot(tmp_path: Path) -> Path:
     return snapshot
 
 
-def _run_cli(*args: str) -> subprocess.CompletedProcess[str]:
+def _run_cli(*args: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
     assert ENTRYPOINT.is_file(), f"planned validator CLI is missing: {ENTRYPOINT}"
     return subprocess.run(
         [sys.executable, ENTRYPOINT, *args],
@@ -136,7 +137,7 @@ def _run_cli(*args: str) -> subprocess.CompletedProcess[str]:
         capture_output=True,
         text=True,
         check=False,
-        timeout=30,
+        timeout=timeout,
     )
 
 
@@ -222,6 +223,52 @@ def test_human_output_is_deterministic_and_contains_a_stable_code(
     assert "Traceback" not in first.stdout + first.stderr
 
 
+@pytest.fixture
+def local_published_release(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """Keep real objects and release checks, without live GitHub transport timing."""
+    real_git = shutil.which("git")
+    assert real_git is not None
+
+    def read(*args: str) -> str:
+        return subprocess.check_output(
+            [real_git, "-C", str(REPOSITORY_ROOT), *args], text=True).strip()
+
+    manifest = yaml.safe_load((REPOSITORY_ROOT / "contracts/manifest.yaml").read_text())
+    tag = manifest["contract_bundle_version"]
+    main_oid = read("rev-parse", "refs/remotes/origin/main")
+    tag_oid = read("rev-parse", f"refs/tags/{tag}")
+    assert read("cat-file", "-t", tag_oid) == "tag", "published tag must remain annotated"
+    objects = Path(read("rev-parse", "--git-path", "objects"))
+    if not objects.is_absolute():
+        objects = REPOSITORY_ROOT / objects
+    remote = tmp_path / "published-release.git"
+    subprocess.run([real_git, "init", "--bare", "--quiet", str(remote)], check=True)
+    (remote / "objects/info/alternates").write_text(str(objects.resolve()) + "\n")
+    for ref, oid in (("refs/heads/main", main_oid), (f"refs/tags/{tag}", tag_oid)):
+        subprocess.run([real_git, "-C", str(remote), "update-ref", ref, oid], check=True)
+    subprocess.run([real_git, "-C", str(remote), "symbolic-ref", "HEAD", "refs/heads/main"],
+                   check=True)
+    origin = read("config", "--get", "remote.origin.url")
+    rewrite = f"url.{remote.as_uri()}.insteadOf={origin}"
+    resolved = subprocess.check_output(
+        [real_git, "-c", rewrite, "-C", str(REPOSITORY_ROOT),
+         "ls-remote", "--get-url", "origin"], text=True).strip()
+    assert resolved == remote.as_uri()
+    log = tmp_path / "published-transport.log"
+    shim_dir = tmp_path / "local-transport"
+    shim_dir.mkdir()
+    shim = shim_dir / "git"
+    shim.write_text(
+        "#!/bin/sh\n"
+        "for arg do\n"
+        "  case \"$arg\" in ls-remote|fetch) printf 'published transport\\n' >> " +
+        shlex.quote(str(log)) + ";; esac\n"
+        "done\nexec " + shlex.quote(real_git) + " -c " + shlex.quote(rewrite) + ' "$@"\n')
+    shim.chmod(0o755)
+    monkeypatch.setenv("PATH", str(shim_dir) + os.pathsep + os.environ.get("PATH", ""))
+    return log
+
+
 @pytest.mark.parametrize(
     ("mode_option", "expected_mode"),
     [("--require-candidate", "candidate"), ("--require-realization", "realization")],
@@ -231,7 +278,15 @@ def test_candidate_and_realization_modes_are_explicit_in_json_results(
 ) -> None:
     result = _run_cli(mode_option, "--repo", str(empty_git_repo), "--json")
     assert result.returncode == 2
-    assert _json_result(result)["mode"] == expected_mode
+    payload = _json_result(result)
+    assert payload["mode"] == expected_mode
+    codes = {finding["code"] for finding in payload["findings"]}
+    assert "HGR-REGRESSION-DEPENDENCY" in codes
+    assert not any(code.startswith("HGR-RELEASE-TAG-") for code in codes)
+    if expected_mode == "realization":
+        # Both published tag and main refs were queried through real Git.
+        # The local mirror holds the actual annotated object and main OID.
+        assert local_published_release.read_text().count("published transport") >= 2
 
 
 def test_candidate_and_realization_modes_are_mutually_exclusive(
@@ -297,11 +352,18 @@ def test_candidate_mode_on_the_real_repository_requires_domain_mirrors(
     [("--require-candidate", "candidate"), ("--require-realization", "realization")],
 )
 def test_release_mode_field_is_preserved_on_the_real_repository(
-    tmp_path: Path, mode_option: str, expected_mode: str
+    tmp_path: Path, mode_option: str, expected_mode: str, local_published_release: Path
 ) -> None:
     # An empty mirror root makes domain-regression resolution a dependency
     # error (exit 2); the mode field is still reported.
-    result = _run_cli(mode_option, "--domain-repo-root", str(tmp_path), "--json")
+    # The workflow separately runs BOTH cases uninstrumented at the original
+    # 30-second limit before measurement. The complete measured suite repeats
+    # the same assertions; tracing two complete release inventories needs its
+    # own bounded budget, without removing the original timing check.
+    measured = bool(os.environ.get("COVERAGE_PROCESS_START") or
+                    os.environ.get("COVERAGE_PROCESS_CONFIG"))
+    result = _run_cli(mode_option, "--domain-repo-root", str(tmp_path), "--json",
+                      timeout=90 if measured else 30)
 
     assert result.returncode == 2
     assert _json_result(result)["mode"] == expected_mode

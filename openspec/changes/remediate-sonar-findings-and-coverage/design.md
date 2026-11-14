@@ -64,3 +64,20 @@ advance its historical reference merely to obtain green.
 
 No product choice is unresolved. The baseline coverage run determines which
 additional behavioral tests the measured gaps require.
+
+## Original deadline and measurement cost
+
+The real-repository mode-field witnesses retain their normal 30-second
+subprocess limit in a required uninstrumented preflight, before coverage
+measurement starts. The fully instrumented suite repeats those same cases
+and assertions with a separate bounded 90-second measurement budget; tracing
+two complete release inventories otherwise exceeds the normal limit on some
+runners. No original functional or timing check disappears.
+
+Their published-ref transport is a local bare Git repository exposing the
+actual annotated bundle tag object and checkout's published-main object.
+The implementation still validates the canonical real repository, object
+ancestry, release inventories and domain-dependency error through real Git.
+A command-scoped URL rewrite in a test-only executable redirects transport;
+no active repository configuration is modified and no Git results are faked.
+The independent live release-tag workflow remains unchanged.
