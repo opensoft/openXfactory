@@ -1740,6 +1740,202 @@
         "path": "specs/043-private-connectivity-production/evidence/T010.json",
         "sha256": "32e7ad066ea67086408ae9241fcfcd3adf909db044c4efdca32481a2dde0ce18"
       }
+    },
+    "T016": {
+      "task": "T016",
+      "instance": null,
+      "owner": "C",
+      "scope": {
+        "profile": "neutral-private-connectivity-contract",
+        "network": "not-applicable",
+        "domain": "not-applicable",
+        "offer": "not-applicable",
+        "phase": "source",
+        "offering": "neutral-contract",
+        "target": "not-applicable",
+        "wave": "not-applicable",
+        "candidate": "043-neutral-source",
+        "run": "043-q0-neutral-source",
+        "customer": "not-applicable",
+        "environment": "source",
+        "site": "not-applicable",
+        "region": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "81388ed7bdca445601bfef44880669330b1d659d",
+        "revision": "094eb96f61469b87d9ca8217f77bff5f54069536"
+      },
+      "files": [
+        "README.md",
+        "openspec/changes/publish-private-connectivity-production-contract/.openspec.yaml",
+        "openspec/changes/publish-private-connectivity-production-contract/design.md",
+        "openspec/changes/publish-private-connectivity-production-contract/proposal.md",
+        "openspec/changes/publish-private-connectivity-production-contract/review/ratification.md",
+        "openspec/changes/publish-private-connectivity-production-contract/review/source-owner-permission.json",
+        "openspec/changes/publish-private-connectivity-production-contract/specs/private-connectivity-contract-publication/spec.md",
+        "openspec/changes/publish-private-connectivity-production-contract/tasks.md",
+        "specs/043-private-connectivity-production/evidence/T016.json",
+        "tests/sequenced_after/corpus-ledger.yaml"
+      ],
+      "command": "python3 -c 'import json,re,subprocess,hashlib,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/publish-private-connectivity-production-contract\")\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"mode\"]==\"source\" and permission[\"scope\"][\"phase\"]==\"source\"\nassert all(permission[\"boundaries\"][name] is False for name in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsurfaces=[]\nfor row in (base/\"design.md\").read_text().splitlines():\n if row.startswith(\"| \"):\n  path=row.split(\"|\")[1].strip()\n  if path.startswith((\"contracts/\",\"scripts/\",\"tests/\",\"specs/\")):surfaces.append(path)\nassert permission[\"accepted_publication_surfaces\"]==surfaces and len(surfaces)==11\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nraw=Path(\"contracts/manifest.yaml\").read_bytes()\nprior=subprocess.check_output([\"git\",\"show\",\"HEAD^:contracts/manifest.yaml\"])\nassert raw==prior\nversion=yaml.safe_load(raw)[\"contract_bundle_version\"]\nchanged=subprocess.check_output([\"git\",\"diff\",\"--name-only\",\"HEAD^\",\"HEAD\",\"--\",\"contracts/\"]).decode().splitlines()\nassert changed==[] and not Path(\"contracts/private-connectivity/binding.schema.json\").exists()\nassert re.search(r\"^target_release:\\s*deferred-allocation\",(base/\"proposal.md\").read_text(),re.M)\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"publish-private-connectivity-production-contract\",\"--strict\"],check=True)\nfacts={\n \"neutral-owner-acceptance\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"actual_decision_at\":permission[\"actual_owner_input\"][\"at\"],\"raw_record_sha256\":permission[\"actual_owner_input\"][\"raw_record_sha256\"],\"origin_approved\":True,\"ratified\":True},\n \"publication-reader-scope\":{\"accepted_surfaces\":surfaces,\"proposal_sha256\":permission[\"proposal_sha256\"],\"source_only\":True,\"release_policy\":permission[\"custody_process\"][\"release_policy\"]},\n \"late-version-allocation\":{\"existing_bundle_version_unchanged\":version,\"contract_tree_diff\":changed,\"supported_schema_not_yet_published\":True,\"target_release\":\"deferred-allocation\",\"version_or_inventory_allocated_by_this_check\":False,\"tag_operation_requested_by_this_check\":False}\n}\nprint(\"N_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+      "roles": [
+        "Brett Heap (neutral publication and release owner)"
+      ],
+      "decisions": [],
+      "incidents": [],
+      "cases": {
+        "neutral-owner-acceptance": [
+          {
+            "id": "actual-neutral-source-facts",
+            "kind": "equal",
+            "expected": {
+              "actual_decision_at": "2026-11-14T13:36:48.174Z",
+              "origin_approved": true,
+              "owner": "Brett Heap",
+              "ratified": true,
+              "raw_record_sha256": "1d2e014c77ecd911b3a090d3d8aed14b657917d9c96d5c39db6ffccb4c2ec78d",
+              "roles": [
+                "Brett Heap (neutral publication and release owner)"
+              ]
+            }
+          }
+        ],
+        "publication-reader-scope": [
+          {
+            "id": "actual-neutral-source-facts",
+            "kind": "equal",
+            "expected": {
+              "accepted_surfaces": [
+                "contracts/private-connectivity/binding.schema.json",
+                "contracts/private-connectivity/README.md",
+                "contracts/private-connectivity/conformance.json",
+                "scripts/validate-private-connectivity.py",
+                "tests/private_connectivity/test_binding.py",
+                "tests/private_connectivity/test_published_contract.py",
+                "contracts/manifest.yaml",
+                "contracts/CHANGELOG.md",
+                "contracts/releases/",
+                "specs/043-private-connectivity-production/evidence/T018.json",
+                "specs/043-private-connectivity-production/evidence/T019.json"
+              ],
+              "proposal_sha256": "ddca9eb960677c53e37005b6cc79b5b9c63a25eda5692f842845acf7b0720d27",
+              "release_policy": "docs/contract-versioning-policy.md",
+              "source_only": true
+            }
+          }
+        ],
+        "late-version-allocation": [
+          {
+            "id": "actual-neutral-source-facts",
+            "kind": "equal",
+            "expected": {
+              "contract_tree_diff": [],
+              "existing_bundle_version_unchanged": "contract-v4.1",
+              "supported_schema_not_yet_published": true,
+              "tag_operation_requested_by_this_check": false,
+              "target_release": "deferred-allocation",
+              "version_or_inventory_allocated_by_this_check": false
+            }
+          }
+        ]
+      },
+      "dependencies": {
+        "T010": "T010",
+        "T004": "T004"
+      },
+      "history": [],
+      "remediation": null,
+      "metrics": {},
+      "observation": null,
+      "ci": {},
+      "artifacts": [
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "README.md",
+          "sha256": "b0946b91921c5c83d2925991b9745ab5b1284f4a508af7517194373362009f93"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "contracts/manifest.yaml",
+          "sha256": "7ad5e870e3e11d69d45e3b3aeb1cb2dfa3b5bd5d432237e4f9f6ab3f8503128e"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "contracts/openspec-cli-pin.yaml",
+          "sha256": "1bab358ce6d5275fcad6fd1af3a4320aebe42d25c158aa0364d680fd4d8fa482"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "docs/contract-versioning-policy.md",
+          "sha256": "3ac92fc7dcd2c909be646e122d5bee2ab5969be7aab0882835255e545ffd89fe"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "openspec/changes/publish-private-connectivity-production-contract/.openspec.yaml",
+          "sha256": "ee0841d877aa8b15f29a281408d755df02f2205d3f6a74afd12919ef69231e7c"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "openspec/changes/publish-private-connectivity-production-contract/design.md",
+          "sha256": "8deecf09430c1389a0d68c324b678a45f0568cf683642cfd69e4907f8bb50ab0"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "openspec/changes/publish-private-connectivity-production-contract/proposal.md",
+          "sha256": "ddca9eb960677c53e37005b6cc79b5b9c63a25eda5692f842845acf7b0720d27"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "openspec/changes/publish-private-connectivity-production-contract/review/ratification.md",
+          "sha256": "634d36c24408d97ced0fdb71e1d4cf4b679fd9ea1a1c51a165cca710cd0507cc"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "openspec/changes/publish-private-connectivity-production-contract/review/source-owner-permission.json",
+          "sha256": "dd28325e35715f403249319991a336f315dd38be16eaa5366c8300a842b4af36"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "openspec/changes/publish-private-connectivity-production-contract/specs/private-connectivity-contract-publication/spec.md",
+          "sha256": "7fabab792e22460114ef0b912dac14e79103b069062fbf5a12006acee1ade20a"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "openspec/changes/publish-private-connectivity-production-contract/tasks.md",
+          "sha256": "03b26a7a778ccb15a7a12ffa7afbbeff3b99d8379fec66b7d28efdb22fce8ed0"
+        },
+        {
+          "repository": "opensoft/openxfactory",
+          "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+          "path": "tests/sequenced_after/corpus-ledger.yaml",
+          "sha256": "83e6e01d53da44074be063eef10f062329294ba4ad5950954b02c8b56121becf"
+        }
+      ],
+      "authority": {
+        "repository": "opensoft/openxfactory",
+        "commit": "094eb96f61469b87d9ca8217f77bff5f54069536",
+        "path": "openspec/changes/publish-private-connectivity-production-contract/review/source-owner-permission.json",
+        "sha256": "dd28325e35715f403249319991a336f315dd38be16eaa5366c8300a842b4af36"
+      },
+      "class": "Q0-N",
+      "record": {
+        "repository": "opensoft/openxfactory",
+        "commit": "aee21292c9d10c22cc8258b3b0bd07438fb6847f",
+        "path": "specs/043-private-connectivity-production/evidence/T016.json",
+        "sha256": "c58d2cfde19e853703101e54cdeec3c8274a6502ea58f52bc82509fb4d952ffa"
+      }
     }
   },
   "instances": {},
@@ -5483,9 +5679,9 @@
   "authorizes_production": false,
   "review": {
     "repository": "opensoft/openxfactory",
-    "commit": "73a8be34dcabc0b2d9b3329ca07be0708027b7b3",
+    "commit": "6f929ae1980fc3bd5d4d895a615991e6a1241efe",
     "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-    "sha256": "0b88171c8ab9c1b5b31d9cdd1f4907b50ad1420f855cbfd90cd8caaf08ac5566"
+    "sha256": "e47c734d5831c4751412d113f1c3bf4e07fbf326a14a8a6ad849b72b89d55fd2"
   },
   "qualification_history": [
     {
@@ -5522,12 +5718,16 @@
   "prior_containers": [
     {
       "repository": "opensoft/openxfactory",
-      "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+      "commit": "de9637eb7215f2f11b98bd7a874420c8692d03aa",
       "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-      "sha256": "c9872f5ba45baf95e2c39cdf3d3bc76a6814762d30fe7386f799a4e58adb98cb"
+      "sha256": "8955e02e6849c6518a83167eff82886048e76ef033b3fcbfce442b6f3025644c"
     }
   ],
   "pin_inventory": [
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "094eb96f61469b87d9ca8217f77bff5f54069536"
+    },
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "12d6d10cc81640be1839434b5eb826ddc531d1e6"
@@ -5546,11 +5746,15 @@
     },
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "73a8be34dcabc0b2d9b3329ca07be0708027b7b3"
+      "openxfactory_commit": "6f929ae1980fc3bd5d4d895a615991e6a1241efe"
     },
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "73ea5d8e646f754088733099ef1680ac6d8605d9"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "81388ed7bdca445601bfef44880669330b1d659d"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -5559,6 +5763,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "ae7e13b40887d9d13cf8d9f4dbdd0dea2396405d"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "aee21292c9d10c22cc8258b3b0bd07438fb6847f"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -5582,6 +5790,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "de9637eb7215f2f11b98bd7a874420c8692d03aa"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "e2953ac579c65ef2a5bd680fbc7aead12587e415"
     }
   ],
@@ -5597,5 +5809,11 @@
       ],
       "disposition": "The original T001-T005 instruction supplied coordinator source-owner preparation authority before E custody was accepted. Label those original roles as coordinator source owner only; later E custodian acceptance is not retroactive authority. Original user text, timestamps, source observations and earlier containers remain unchanged in Git. This metadata correction supplies no new permission."
     }
-  ]
+  ],
+  "source_extension": {
+    "task": "T016",
+    "purpose": "Neutral owner/source acceptance; actual admission determined by the review reference.",
+    "prior_E_acceptance_preserved": true,
+    "source_only": true
+  }
 }
