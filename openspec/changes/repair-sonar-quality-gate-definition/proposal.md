@@ -1,8 +1,8 @@
 ---
 Status: draft
 Proposed: 2026-11-14
-code_surface: none — Sonar service configuration and maintenance evidence only
-target_release: implemented — verified service configuration; no code, contract bundle or runtime release
+code_surface: openxFactory — bounded Sonar receipt pin-class declaration and doc-health regressions; service configuration and evidence
+target_release: implemented — verified service configuration and bounded receipt pin-class declaration; no contract bundle or runtime release
 ---
 
 ## Why
@@ -43,7 +43,13 @@ None.
 
 ## Impact
 
-Only the existing Sonar project's missing definition and dated maintenance
-evidence. No runtime, contract, provider pin, credential, billing, visibility,
+Only the existing Sonar project's missing definition, dated maintenance
+evidence and the exact receipt's ordinary pin-class declaration. No runtime, contract, provider pin, credential, billing, visibility,
 profile, rule, threshold, source/test classification or issue-status change.
 Hermes' separate capacity investigation remains in its owning repository.
+
+The receipt introduces two source revision anchors. Declare its exact path and
+revision key as one standing, repo-local, must-resolve member using the existing
+class semantics. Remeasure the frozen census and retain all old members,
+reachability rules and field recognition. No non-member or historical/rolling
+exemption is introduced.

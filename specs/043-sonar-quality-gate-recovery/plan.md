@@ -9,4 +9,6 @@ Owning decision: [repair-sonar-quality-gate-definition](../../openspec/changes/r
 3. Trigger/observe fresh main processing; compare conditions and history.
 4. Publish a truthful computed-gate and preservation receipt.
 
-No repository executable, workflow, manifest, contract or pin is modified.
+The exact receipt receives an ordinary must-resolve pin-class declaration and
+regressions; no classification algorithm, workflow, contract, pin value or
+runtime is modified.

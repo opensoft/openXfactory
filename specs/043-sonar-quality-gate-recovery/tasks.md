@@ -10,3 +10,5 @@ Status: draft
 Implementation, service readback and preservation evidence are complete.
 Current-head CI and Codex review remain mandatory publication guards on PR
 #1315; no failed check may be bypassed to land this record.
+
+- [x] T005 [O] Declare the two new receipt anchors under the existing strict pin class, measure the census and prove exact-path/reachability refusal; files: scripts/doc_health/pin_class.py, tests/doc-health/test_sentinel_vocabulary.py; verify: red/green receipt regressions, measured census and complete doc-health suite.

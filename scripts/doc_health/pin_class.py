@@ -461,6 +461,18 @@ PIN_CLASS: tuple[PinMember, ...] = (
              "its repository; the feature inventory verifier resolves the "
              "object against that explicit owner's checkout.",
     ),
+    # Feature 043 records the selected baseline and observed main source.
+    # These measured receipt anchors retain ordinary local reachability.
+    PinMember(
+        id="sonar-recovery-analysis-revision",
+        paths=("specs/043-sonar-quality-gate-recovery/acceptance.json",),
+        key="revision", key_form="field",
+        generator="feature 043 authenticated Sonar analysis readback",
+        reproduction=MEASURED, locality=REPO_LOCAL, presence=CURRENT,
+        reachability=MUST_RESOLVE, population=STANDING,
+        note="The selected historical reference and observed main analysis "
+             "source are fixed repo-local anchors; both require reachability.",
+    ),
     # ---- the cross-reference index and its rendered twin -------------------
     PinMember(
         id="cross-reference-index",

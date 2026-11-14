@@ -59,7 +59,7 @@ historical feature-034 at-r1 evidence script; the other six are in existing
 validator, attestation, census, carve and dashboard tools. The
 [acceptance/triage receipt](acceptance.json) retains all eleven issue keys,
 locations and unresolved statuses. Those source findings were not introduced
-by this service-only change and have not been waived, suppressed or marked
+by this gate-recovery change and have not been waived, suppressed or marked
 fixed. Historical evidence was not rewritten to make a quality gate green.
 
 T003's computation/measurement readback is complete. The restoration exposes
@@ -91,3 +91,28 @@ documentation head must still pass the repository's full mandatory CI and its
 own Codex review before publication. Earlier failed CI is retained and does
 not substitute for that qualification. The computed main gate remains red for
 the recorded existing findings, with coverage unmeasured.
+
+
+## Strict receipt pin declaration
+
+The next CI run correctly rejected two new structured revision anchors in
+acceptance.json because they had no pin-class member. Both anchors remain
+unchanged. The exact receipt path and revision key now have one ordinary
+standing, repo-local, must-resolve member; the classification algorithm,
+reachability rules and existing exemption populations are unchanged.
+
+Three end-to-end regressions first produced two failures and one pass before
+the declaration, then all three passed. They prove both reachable anchors
+pass, an unrelated-branch anchor remains orphaned, and another feature's
+receipt remains uncovered. A before/after census measured 701 sites / 31
+members becoming 703 sites / 32 members. The two new sites both resolve as
+ancestors of origin/main. All existing result records compare identical;
+uncovered drops from two to zero and the existing lost-member count stays one.
+The frozen census assertion records this measured addition while retaining
+all refusal assertions. The earlier failed CI run remains available.
+
+The complete doc-health suite and relevant corpus, code-surface, pinned-reader
+and target-release suites pass together: 2,902 tests and 75 subtests, no skips,
+in 541.43 seconds. The seven warnings are existing Python tarfile deprecation
+warnings. Strict content-addressed OpenSpec 1.12.0 and the canonical ledger diff
+also pass. Full current-head CI and fresh Codex review remain landing guards.
