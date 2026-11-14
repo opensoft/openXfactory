@@ -8,7 +8,7 @@ This packet records governance and acceptance only. The sole executable list rem
 ## 1. Publication and owner scope
 
 - [x] 1.1 Publish this draft in PR #1310 and the README index, regenerate its corpus-ledger row with the sanctioned command and verify strict OpenSpec/sequencing validation.
-- [x] 1.2 Record actual neutral/release-owner acceptance of the exact surfaces, commands, compatibility and publication responsibilities in [ratification](review/ratification.md). T016 remains incomplete until T010 and its actual evidence verification pass; consent is recorded early and independently of T006 E acceptance.
+- [x] 1.2 Record actual neutral/release-owner acceptance of the exact surfaces, commands, compatibility and publication responsibilities in [ratification](review/ratification.md). T010 and T016 are complete after actual source authentication and passing default verification against the distinct accepted control. Consent was recorded early and independently of T006 E acceptance; T018 realization and T019 readback remain pending.
 
 ## 2. Realization and release acceptance
 
