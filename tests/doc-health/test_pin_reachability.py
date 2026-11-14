@@ -1847,10 +1847,11 @@ def test_a_whole_object_name_is_unaffected_in_every_serialization(tmp_path):
             assert m.group(m.lastindex) == pin, f"{name} / {label}"
 
     prose = {m.id: m for m in pc.PIN_CLASS if m.pattern}
-    assert set(prose) == {"cross-reference-rendered", "gate-action-record"}, (
+    assert set(prose) == {"cross-reference-rendered", "gate-action-record", "sonar-scanner-action"}, (
         "a prose member was added or renamed; give it a line here and confirm "
         "its pattern carries the boundary")
     prose_lines = {
+        "sonar-scanner-action": f"uses: SonarSource/sonarqube-scan-action@{pin}",
         "cross-reference-rendered": f"- Source revision: `{pin}`",
         "gate-action-record":
             f"  recipe: checked none · pinned none · at source_revision {pin}",
@@ -1899,9 +1900,11 @@ def test_the_boundary_is_carried_by_every_site_building_expression():
         if not member.pattern:
             continue
         # the line each prose member's own pattern is written to read
-        marker = ("- Source revision: `{v}`"
-                  if member.id == "cross-reference-rendered"
-                  else "  recipe: … at source_revision {v}")
+        marker = {
+            "cross-reference-rendered": "- Source revision: `{v}`",
+            "gate-action-record": "  recipe: … at source_revision {v}",
+            "sonar-scanner-action": "uses: SonarSource/sonarqube-scan-action@{v}",
+        }[member.id]
         builders[f"PinMember({member.id}).line_re()"] = (
             member.line_re(), marker)
 

@@ -186,6 +186,10 @@ def test_subprocess_startup_records_real_child_execution(tool, repository):
     directory = tool.prepare(repository, ".coverage-reports")
     env = dict(os.environ, COVERAGE_PROCESS_START=str(repository / ".coveragerc"),
                COVERAGE_ROOT=str(repository), COVERAGE_FILE=str(directory / ".coverage"))
+    # A nested measurement must not inherit the outer run's serialized config.
+    # Its real child records to this synthetic repository, while the outer
+    # tracer continues to measure the production report/refusal code.
+    env.pop("COVERAGE_PROCESS_CONFIG", None)
     subprocess.run([sys.executable, str(repository / "scripts/covered.py")],
                    cwd=repository, env=env, check=True)
     (repository / "pytest-report.xml").write_text(
@@ -214,3 +218,87 @@ def test_matching_forged_reports_cannot_remove_executable_source(tool, repositor
     (directory / "receipt.json").write_text(json.dumps(receipt))
     with pytest.raises(tool.Refusal, match="executable source omitted"):
         tool.check_report(repository, directory)
+
+
+@pytest.mark.parametrize("failure", [None, "wrong-revision", "moved-baseline", "empty-denominator",
+                                   "uncomputed-gate", "wrong-task-project"])
+def test_server_gate_binds_main_revision_reference_and_real_measurement(
+        tool, repository, monkeypatch, failure):
+    """Exercise the real gate reader against recorded API response shapes."""
+    import io
+    from urllib.parse import urlsplit, parse_qs
+
+    (repository / ".coverage-reports").mkdir()
+    scanner = repository / ".scannerwork"
+    scanner.mkdir()
+    (scanner / "report-task.txt").write_text(
+        "serverUrl=https://sonarcloud.io\nprojectKey=opensoft_openxFactory\nceTaskId=synthetic-task\n")
+    monkeypatch.setenv("SONAR_TOKEN", "synthetic-never-transmitted")
+    monkeypatch.setenv("GITHUB_REF", "refs/heads/main")
+    status, definition = valid_gate()
+    revision = git(repository, "rev-parse", "HEAD").strip()
+    reference = {"key": "d20bb52c-64fd-4090-986a-fd993f44ff86",
+                 "date": "2026-09-09T19:37:08-04:00",
+                 "manualNewCodePeriodBaseline": failure != "moved-baseline"}
+
+    def response(request, timeout):
+        parts = urlsplit(request.full_url)
+        assert parts.scheme == "https" and parts.netloc == "sonarcloud.io"
+        query = parse_qs(parts.query)
+        if parts.path == "/api/ce/task":
+            result = {"task": {"status": "SUCCESS", "analysisId": "analysis-044",
+                              "componentKey": ("other" if failure == "wrong-task-project"
+                                               else "opensoft_openxFactory")}}
+        elif parts.path == "/api/qualitygates/project_status":
+            assert query["analysisId"] == ["analysis-044"]
+            result = {"projectStatus": dict(status, status="NONE")
+                      if failure == "uncomputed-gate" else status}
+        elif parts.path == "/api/qualitygates/show":
+            result = definition
+        elif parts.path == "/api/qualitygates/get_by_project":
+            result = {"qualityGate": {"id": "9"}}
+        elif parts.path == "/api/project_analyses/search":
+            result = {"analyses": [reference] if "from" in query else [
+                {"key": "analysis-044", "revision": "0" * 40
+                 if failure == "wrong-revision" else revision}]}
+        elif parts.path == "/api/measures/component":
+            result = {"component": {"measures": [
+                {"metric": "new_lines_to_cover", "periods": [
+                    {"index": 1, "value": "0" if failure == "empty-denominator" else "123"}]},
+                {"metric": "new_coverage", "periods": [{"index": 1, "value": "82.5"}]},
+            ]}}
+        else:
+            pytest.fail(f"unexpected endpoint: {parts.path}")
+        return io.StringIO(json.dumps(result))
+
+    monkeypatch.setattr(tool.urllib.request, "urlopen", response)
+    if failure:
+        with pytest.raises(tool.Refusal):
+            tool.verify_server_gate(repository)
+    else:
+        result = tool.verify_server_gate(repository)
+        assert result["revision"] == revision
+        assert result["analysis_id"] == "analysis-044"
+        saved = (repository / ".coverage-reports/gate.json").read_text()
+        assert "synthetic-never-transmitted" not in saved
+        assert json.loads(saved)["baseline_analysis"] == reference
+
+
+def test_nested_measurement_preserves_real_parent_execution(tmp_path):
+    """The required pytest invocation must save its own real production hits."""
+    data_file = tmp_path / "parent.coverage"
+    env = dict(os.environ, COVERAGE_PROCESS_START=str(ROOT / ".coveragerc"),
+               COVERAGE_ROOT=str(ROOT), COVERAGE_FILE=str(data_file))
+    env.pop("COVERAGE_PROCESS_CONFIG", None)
+    child = subprocess.run(
+        [sys.executable, "-m", "pytest",
+         "tests/sonar_quality/test_coverage_evidence.py::test_real_execution_keeps_zero_hit_namespace_files",
+         "-q"], cwd=ROOT, env=env, capture_output=True, text=True, timeout=60)
+    assert child.returncode == 0, child.stdout + child.stderr
+    seen = set()
+    for path in [data_file, *tmp_path.glob("parent.coverage.*")]:
+        if path.is_file():
+            data = coverage.CoverageData(basename=str(path))
+            data.read()
+            seen.update(data.measured_files())
+    assert SCRIPT.resolve() in {(ROOT / name).resolve() for name in seen}, seen

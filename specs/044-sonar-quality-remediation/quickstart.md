@@ -34,10 +34,11 @@ python3 -m venv .venv
 .venv/bin/pip install --require-hashes -r requirements/hermes-runtime-contracts.lock
 .venv/bin/pip install --require-hashes -r requirements/sonar-analysis.lock
 export PATH="$PWD/.venv/bin:$PATH"
+python3 -m pytest tests/sonar_quality/test_coverage_evidence.py::test_subprocess_startup_records_real_child_execution -q
 python3 scripts/validate-sonar-coverage.py prepare
-export COVERAGE_ROOT="$PWD"
-export COVERAGE_FILE="$PWD/.coverage-reports/.coverage"
-export COVERAGE_PROCESS_START="$PWD/.coveragerc"
+export COVERAGE_ROOT="$(pwd -P)"
+export COVERAGE_FILE="$COVERAGE_ROOT/.coverage-reports/.coverage"
+export COVERAGE_PROCESS_START="$COVERAGE_ROOT/.coveragerc"
 python3 -m pytest tests/ -q -m "not postgres" --junitxml=pytest-report.xml
 unset COVERAGE_PROCESS_START
 python3 scripts/validate-sonar-coverage.py report
@@ -62,3 +63,9 @@ python3 scripts/validate-sonar-coverage.py gate
 It consumes the scanner task receipt and an environment-held analysis
 credential, requires the same project/gate/reference identity, and writes a
 secret-free evaluated receipt. It does not alter server settings or issue state.
+
+The root suite now collects feature 040's original evidence refusal classes
+through tests/private_connectivity/test_evidence_witnesses.py. Their original
+files and independent invocation paths stay intact. This closes the measured
+collection gap without duplicating or rewriting the witnesses. Runtime coverage
+paths use the physical checkout root so symlink aliases cannot hide execution.

@@ -597,6 +597,9 @@ jobs:
       - name: Install isolated hash-pinned analysis tooling
         run: pip install --require-hashes -r requirements/sonar-analysis.lock
 
+      - name: Verify real child coverage before the full suite
+        run: python3 -m pytest tests/sonar_quality/test_coverage_evidence.py::test_subprocess_startup_records_real_child_execution -q
+
       - name: Prepare a fresh exact-source measurement
         run: python3 scripts/validate-sonar-coverage.py prepare
 
