@@ -1147,7 +1147,10 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # checked by the feature inventory verifier and required doc-health test.
     # Feature 043 adds exactly two measured receipt anchors under one
     # exact-path standing member, preserving their MUST_RESOLVE obligation.
-    assert (standing_sites, standing_members) == (703, 32)
+    # Feature 044 adds the immutable official scanner action as one ordinary
+    # cross-repository member. Measured with verify(allow_remote=False) over
+    # the staged candidate commit: (704, 33), no uncovered/vanished/arrived.
+    assert (standing_sites, standing_members) == (704, 33)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]

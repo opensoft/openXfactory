@@ -2,7 +2,7 @@
 Status: draft
 Proposed: 2026-11-14
 code_surface: openxFactory — source hardening, behavioral regressions and measured CI analysis
-target_release: deferred-allocation — no contract bundle or runtime activation is planned
+target_release: implemented — maintained tooling and analysis CI only; no contract bundle or runtime activation
 ---
 
 ## Why

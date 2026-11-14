@@ -49,3 +49,18 @@ add-chain-attestation disposition (Brett Heap, 2026-09-05, promoted marker
 semantics), and zero undispositioned failures. That historical disposition
 was not added or changed by this work; the complete corpus is not claimed
 exception-free.
+
+## Coverage pipeline qualification
+
+The coverage inventory and artifact refusal set passes 17 tests, including a
+real independent child interpreter started by the installed coverage startup
+hook. It retains an untouched namespace module at zero hits and both branch
+outcomes. A coordinated XML/JSON edit that removes a real executable source
+line is refused even after its hashes are recomputed. No synthetic hits are
+added. The source/workflow/provider contract set passes 525 tests and 75
+subtests. The original required pytest command and all skip/floor/named
+freshness/vector guards remain byte-present.
+
+The source-only draft PR analysis at source commit 32d0fc47d2 reports zero
+active bugs or vulnerabilities. The exact-head Codex review is complete with
+no findings. This is source-slice evidence, not main or coverage acceptance.

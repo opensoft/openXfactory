@@ -22,3 +22,43 @@ Run in the declared development bench from this isolated feature checkout.
    passing conditions, including coverage at least 80 and the same period.
 8. Compare operating checkout/worktree/session fingerprints and retain all
    historical verdicts, source preimages, analysis identities and billing.
+
+## Measured local execution
+
+The working tree must match the selected commit. Use a fresh output directory;
+keep previous report directories as external evidence before another attempt.
+The runtime lock remains independent from the analysis-only lock.
+
+~~~sh
+python3 -m venv .venv
+.venv/bin/pip install --require-hashes -r requirements/hermes-runtime-contracts.lock
+.venv/bin/pip install --require-hashes -r requirements/sonar-analysis.lock
+export PATH="$PWD/.venv/bin:$PATH"
+python3 scripts/validate-sonar-coverage.py prepare
+export COVERAGE_ROOT="$PWD"
+export COVERAGE_FILE="$PWD/.coverage-reports/.coverage"
+export COVERAGE_PROCESS_START="$PWD/.coveragerc"
+python3 -m pytest tests/ -q -m "not postgres" --junitxml=pytest-report.xml
+unset COVERAGE_PROCESS_START
+python3 scripts/validate-sonar-coverage.py report
+python3 scripts/validate-sonar-coverage.py check
+~~~
+
+Initialize the same three public providers and pinned decision core that the
+required workflow initializes; set PINNED_CORE_CHECKOUT to that runtime-resolved
+checkout. The CI census, exact skip budget and two named verdicts remain the
+acceptance authority. Generating a report alone does not satisfy them.
+
+The CI scanner receives only the verified XML, JSON, JUnit and receipt from
+the successful test job. Its clean source-only checkout has no provider
+submodules. All root-owned production languages remain analyzed. The only
+test classification additions are the real avatar-broker tests/support and
+feature 040's two test modules; maintained evidence tools remain source.
+
+For main, the final CI gate command is
+~~~sh
+python3 scripts/validate-sonar-coverage.py gate
+~~~
+It consumes the scanner task receipt and an environment-held analysis
+credential, requires the same project/gate/reference identity, and writes a
+secret-free evaluated receipt. It does not alter server settings or issue state.

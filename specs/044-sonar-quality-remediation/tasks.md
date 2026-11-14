@@ -12,7 +12,7 @@ Status: draft
 
 ## Phase 3: Measured quality acceptance (US2)
 
-- [ ] T004 [US2] [O] Add isolated analysis lock, whole-source measurement, artifact checks and credential-separated CI scanning — files: `requirements/sonar-analysis.in`, `requirements/sonar-analysis.lock`, `.coveragerc`, `sonar-project.properties`, `.gitignore`, `.github/workflows/pytest-suite.yml`, `scripts/validate-sonar-coverage.py`, `tests/sonar_quality/`, `scripts/doc_health/pin_class.py`, `tests/doc-health/test_sentinel_vocabulary.py` — verify: `python3 -m pytest tests/sonar_quality tests/clearing/test_clearing_gate_wiring.py tests/council_convening/test_gate_wiring.py tests/review_lane_pin -q`
+- [x] T004 [US2] [O] Add isolated analysis lock, whole-source measurement, artifact checks and credential-separated CI scanning — files: `requirements/sonar-analysis.in`, `requirements/sonar-analysis.lock`, `.coveragerc`, `sonar-project.properties`, `.gitignore`, `.github/workflows/pytest-suite.yml`, `scripts/validate-sonar-coverage.py`, `tests/sonar_quality/`, `scripts/doc_health/pin_class.py`, `tests/doc-health/test_sentinel_vocabulary.py` — verify: `python3 -m pytest tests/sonar_quality tests/clearing/test_clearing_gate_wiring.py tests/council_convening/test_gate_wiring.py tests/review_lane_pin -q`
 - [ ] T005 [US2] [O] Measure full-suite gaps and add meaningful behavioral coverage without omissions or new skips — files: `tests/`, `specs/044-sonar-quality-remediation/evidence.md` — verify: `python3 -m pytest tests/ -q -m "not postgres" --junitxml=pytest-report.xml`
 - [ ] T006 [US2] [O] Validate complete resolvable coverage inventory and genuine subprocess data at the candidate source — files: `scripts/validate-sonar-coverage.py`, `tests/sonar_quality/`, `specs/044-sonar-quality-remediation/evidence.md` — verify: `python3 -m pytest tests/sonar_quality -q`
 
@@ -20,8 +20,8 @@ Status: draft
 
 - [x] T007 [US3] [O] Qualify source/preimage evidence and unchanged provider/runtime contracts — files: `specs/034-opendox-standalone-operation/evidence/at-r1/sonar-remediation-provenance.md`, `tests/sonar_quality/`, `specs/044-sonar-quality-remediation/evidence.md` — verify: `python3 -m pytest tests/sonar_quality -q`
 - [ ] T008 [US3] [O] Publish canonical ledger row using actual PR ID; qualify exact-head CI and Codex review — files: `tests/sequenced_after/corpus-ledger.yaml`, `specs/044-sonar-quality-remediation/`, `README.md` — verify: `python3 scripts/validate-sequenced-after.py --ledger-diff`
-- [ ] T009 [US3] [O] Cut over prepared CI analysis, land under existing rules and verify all six conditions on actual main — files: `specs/044-sonar-quality-remediation/evidence.md` — verify: `python3 -m pytest tests/sonar_quality -q`
-- [ ] T010 [US3] [O] Record final preservation, billing/configuration identity and main acceptance readback — files: `specs/044-sonar-quality-remediation/`, `README.md` — verify: `python3 scripts/validate-openspec-cli-pin.py --change remediate-sonar-findings-and-coverage --strict`
+- [ ] T009 [US3] [O] Cut over prepared CI analysis, land under existing rules and verify all six conditions on actual main — files: `specs/044-sonar-quality-remediation/evidence.md` — verify: `python3 scripts/validate-sonar-coverage.py gate`
+- [ ] T010 [US3] [O] Record final preservation, billing/configuration identity and main acceptance readback — files: `specs/044-sonar-quality-remediation/`, `README.md` — verify: `python3 scripts/validate-sonar-coverage.py gate` plus exact-main history/configuration and preservation readback
 
 
 ## Dependencies and execution

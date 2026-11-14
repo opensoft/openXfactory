@@ -1,0 +1,2 @@
+# Analysis-only; does not alter the runtime contract lock or release bundle.
+coverage==7.16.2
