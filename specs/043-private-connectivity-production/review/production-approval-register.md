@@ -4,7 +4,7 @@ Status: draft
 Kind: review-packet
 Prepared: 2026-11-14
 
-This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T010 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required for T011–T015. All three PRs remain draft.
+This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T011 and T016 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required for T011–T015. All three PRs remain draft.
 
 ## Prepared source decisions
 
@@ -108,3 +108,7 @@ Brett authenticated the exact corrected T011 source packet at 2026-11-14T17:25:2
 The same actual input accepted the exact internal installer runtime/channel/names in the reviewed distribution packet. This is a consumed T012 source/qualification choice, not actual output authentication, artifact publication, installation or customer delivery. T012's actual acceptance evidence remains due.
 
 Current task completion is T001–T011 and T016. T012–T015 and T017–T068, full Q0 and Q1–Q5 remain pending. All three current PRs remain draft. The accepted package source scope may now progress in dependency order without a target execution or release grant.
+
+## Installer acceptance preparation
+
+T012's actual source check passed at 81a84b5e00e1873737a1e2b0d3b381b9253ffaa6 after checking the consumed internal runtime/channel choice, exact frozen source scope and actual exclusions in the ratified proposal. The distinct original output and later receipt preserve the first failed assertion and successful unchanged-source rerun. Its new control is prepared for actual authentication and default verification; T012 remains unchecked. Prior E/N/L accepted anchors remain usable and T020 may progress under its already satisfied source dependencies.

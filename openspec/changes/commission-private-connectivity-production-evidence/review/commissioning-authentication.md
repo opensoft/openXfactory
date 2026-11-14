@@ -1,75 +1,35 @@
-# Source commissioning authentication: package acceptance candidate
+# Source commissioning authentication: installer acceptance candidate
 
-Status: record
+Status: draft
 Created: 2026-11-14
 
-## Existing accepted source controls
+## Existing accepted E, neutral and package controls
 
-T001–T010 remain complete under the [authenticated E control de9637eb7](https://github.com/opensoft/openXfactory/blob/de9637eb7215f2f11b98bd7a874420c8692d03aa/specs/043-private-connectivity-production/evidence/commissioning.json). Brett also authenticated the exact neutral source packet at 2026-11-14T16:57:52.719Z; its [actual review fec9f7a5e](https://github.com/opensoft/openXfactory/blob/fec9f7a5ec6ca81f9cdafb7ff099a90564e6df7f/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) is bound by [accepted N control efafaf9b6](https://github.com/opensoft/openXfactory/blob/efafaf9b6edb02166d2ee3bc445741f681f7b59a/specs/043-private-connectivity-production/evidence/commissioning.json). Default T016 and T010 commands passed against that distinct control before T016 was checked. The neutral reviewed content remained unchanged, with no version, tag or pin change.
+T001–T010 remain complete under the [accepted E control](https://github.com/opensoft/openXfactory/blob/de9637eb7215f2f11b98bd7a874420c8692d03aa/specs/043-private-connectivity-production/evidence/commissioning.json). T016 completed after actual neutral authentication and default verification against [efafaf9b6](https://github.com/opensoft/openXfactory/blob/efafaf9b6edb02166d2ee3bc445741f681f7b59a/specs/043-private-connectivity-production/evidence/commissioning.json). Brett then authenticated the exact corrected T011 package packet at 2026-11-14T17:25:29.544Z. Its [actual review 88b7fecb4](https://github.com/opensoft/openXfactory/blob/88b7fecb41753e466c2555c8bdd6ed45902a8c2e/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) is bound in [accepted control 76517519c](https://github.com/opensoft/openXfactory/blob/76517519c4adf3372ff779bab40b6ab1a432ec0a/specs/043-private-connectivity-production/evidence/commissioning.json), with the reviewed package content unchanged. Default T011/T010/T016 commands pass before T011 is checked.
 
-This new draft context preserves those accepted controls and observations. Their source-container objects remain unchanged and restricted to T001–T010. Actual neutral evidence uses ordinary immutable Git references, as does the new package candidate.
+This new pending context preserves those accepted controls, original observations and prior refused preparations. E contained objects remain unchanged and restricted to T001–T010. All later owner acceptance records use separate ordinary immutable Git references. The new candidate does not revoke earlier accepted controls.
 
-## New T011 package source evidence
+## New T012 installer source evidence
 
-Brett's package source/release-owner and source-only custody consent is already ratified. At 2026-11-14T16:57:52.719Z, he also approved the exact local qualification candidates. Those consumed choices are recorded in the package packet. They authorize source preparation without claiming compatible execution or target authority.
+Brett's installer source/release-owner and source-only custody consent is ratified. He accepted the local matrix at 2026-11-14T16:57:52.719Z and the exact internal installer runtime/channel/names at 2026-11-14T17:25:29.544Z. These are consumed source/qualification choices, not artifact publication or authentication of unseen output.
 
-The actual read-only acceptance check ran at cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d from 2026-11-14T17:14:32.701475+00:00 through 2026-11-14T17:14:35.780447+00:00, exit 0. It checked the ratified owner/origin and proposal identity, the four exact frozen package-task scopes against the accepted design, the actual chosen server/client matrix, source-only Git custody and zero-target-effect source limits. Pinned strict OpenSpec passed. It explicitly retained unqualified compatibility and later artifact/target/custody/numerical/gate prerequisites.
+The actual read-only acceptance check ran at 81a84b5e00e1873737a1e2b0d3b381b9253ffaa6 from 2026-11-14T17:37:01.822220+00:00 through 2026-11-14T17:37:08.656302+00:00, exit 0. It checks ratified owner/origin/proposal identity, all five exact installer-task scopes against the frozen task text, accepted server/client/runtime/channel choices, private source-only custody, and the explicit intake/Store exclusions in the ratified proposal. Pinned strict OpenSpec passes. Source-only coverage is explicitly null; no observation window, artifact publication, target or compatible runtime is claimed.
 
-The three frozen T011 cases have distinct actual observations: package-owner-scope, local-platform-support and consumed-decisions. The [source permission](https://github.com/opensoft/openXfactory/blob/cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d/openspec/changes/commission-headscale-production/review/source-owner-permission.json), [original output](https://github.com/opensoft/openXfactory/blob/cc657b44c5ea25a4f92ecc5d27af25d1b546ad6f/specs/043-private-connectivity-production/evidence/T011.json) and [separate new receipt](https://github.com/opensoft/openXfactory/blob/2438f54b65e43837a33e3c0f3aff7dbbd4ba0cb4/specs/043-private-connectivity-production/evidence/T011.json) remain independently inspectable. The receipt preserves every original observation field. No accepted or reviewed original observation was overwritten.
+The three frozen cases have actual observations: installer-owner-scope, setup-distribution-scope and no-workstation-intake. The [source permission](https://github.com/opensoft/openXfactory/blob/81a84b5e00e1873737a1e2b0d3b381b9253ffaa6/openspec/changes/commission-connectivity-installer-production/review/source-owner-permission.json), [original command output](https://github.com/opensoft/openXfactory/blob/9360df307f8be33d55c910c545c0c6965da6f375/specs/043-private-connectivity-production/evidence/T012.json) and [separate receipt](https://github.com/opensoft/openXfactory/blob/fca002e0b12b4b1b6dd29643fbbe1c5fe53cba6e/specs/043-private-connectivity-production/evidence/T012.json) are distinct immutable identities. The receipt preserves every original observation field.
 
-The exact extended manifest and content digest are supplied in the immutable review target below. Actual review of this new source output/provenance is separate from the already accepted role and candidate choice. Pending authentication cannot complete T011, unlock T020 or supply full Q0.
+The initial check incorrectly looked for the explicit exclusions in design.md rather than their ratified proposal. Its actual exit-one output/command/source/timing/digests remain in preparation history. The corrected command passed at unchanged source; no source scope, behavior or reader guard changed. That failed preparation supplies no admitted dependency.
+
+Actual authentication of these new installer observations/provenance is required separately from the already accepted role and channel choices. Pending authentication cannot complete T012 or satisfy its implementation consumers.
 
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "accepted",
+  "decision": "pending",
   "custodian": "Brett Heap",
-  "reviewed_manifest": {
-    "repository": "opensoft/openxfactory",
-    "commit": "1ce855daae8d8f88d8e2fe663a87714f17836799",
-    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "sha256": "23193a243d9caab371cfcffb4cfe5409f1f0ec817ea5cd2bec7c7af2496f1b18"
-  },
-  "content_sha256": "18f3642fafcd12ca5bd9d4a74cdce97377ffdcd3f2d35004a4f64c2c1f0b30c6",
-  "reviewed_at": "2026-11-14T17:25:29.544Z"
+  "reviewed_manifest": null,
+  "content_sha256": null,
+  "reviewed_at": null
 }
 ```
 
-All three PRs remain draft. T012 still needs its own installer-runtime/distribution choice and actual source evidence. Hosted/domain/Ops operating inputs, full Q0 and Q1–Q5 remain pending. This candidate grants no installation, runner dispatch, paid resource, enrollment, production version/cut/tag, consumer-pin advancement or commercial admission.
-
-
-## Preserved preparation refusals
-
-The first command imported the evidence verifier to read the task freeze. Although its source assertions exited zero, preflight correctly refused the command as self-verification. The original output, receipt and unaccepted control remain preserved at their immutable identities; none is admitted. A direct-text replacement initially overescaped its row parser and exited one. The corrected direct-text command then passed at the same source revision. The receipt retains both actual failed preparation outputs with commands, source/timing/exit identities and original/export digests, and references the earlier inadmissible candidate.
-
-The reader's self-verification guard is unchanged. The corrected owner command inspects the frozen task text directly and never invokes or imports that reader. Its actual package source/artifacts/choices are unchanged. Preparation checks must pass before the corrected immutable control is presented for actual authentication.
-
-Preflight also refused the first corrected export wrapper's empty coverage object: a source-only check has no commissioned observation window. A new unreviewed wrapper uses explicit null, with the actual command/stdout/times/digests unchanged and the prior output/receipt retained by immutable reference. This metadata repair does not manufacture a window or alter the reader's refusal. No accepted evidence was edited.
-
-## Exact package review target
-
-| Item | Immutable review identity |
-| --- | --- |
-| Corrected extended control | [commissioning manifest at 1ce855daa](https://github.com/opensoft/openXfactory/blob/1ce855daae8d8f88d8e2fe663a87714f17836799/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Manifest file SHA-256 | `23193a243d9caab371cfcffb4cfe5409f1f0ec817ea5cd2bec7c7af2496f1b18` |
-| Authenticated content SHA-256 | `18f3642fafcd12ca5bd9d4a74cdce97377ffdcd3f2d35004a4f64c2c1f0b30c6` |
-| Prior accepted neutral control | [efafaf9b6](https://github.com/opensoft/openXfactory/blob/efafaf9b6edb02166d2ee3bc445741f681f7b59a/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Unchanged package source | [cd13fe4bc](https://github.com/opensoft/openXfactory/tree/cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d/openspec/changes/commission-headscale-production) |
-| Corrected original output | [cc657b44c](https://github.com/opensoft/openXfactory/blob/cc657b44c5ea25a4f92ecc5d27af25d1b546ad6f/specs/043-private-connectivity-production/evidence/T011.json) |
-| Separate receipt | [2438f54b6](https://github.com/opensoft/openXfactory/blob/2438f54b65e43837a33e3c0f3aff7dbbd4ba0cb4/specs/043-private-connectivity-production/evidence/T011.json) |
-
-The exact committed-data census is 1118 standing sites across 35 members with no uncovered site. Binding, source/cases, original authority/provenance, artifact and dependency-order preparation checks pass for the corrected candidate. Default admission correctly refuses pending authentication. The prior accepted T010/T016 commands still pass independently, with their source objects unchanged.
-
-Authenticate this new actual source-only packet and original provenance under the accepted custody policy. Acceptance permits binding a later review/control pair and completing T011 only after default verification. It does not accept unseen package implementations, builds, releases, compatibility, runtime evidence or any Q1–Q5 result. Full Q0 still depends on the other owner acceptances.
-
-## Actual package custodian input
-
-Brett answered the exact corrected source-packet question:
-
-> Authenticate the corrected T011 source packet (Recommended)
-
-The question linked review packet 712452cb8c759fa547a9aead7c7d2b284885b13d, manifest 1ce855daae8d8f88d8e2fe663a87714f17836799 and content SHA-256 18f3642fafcd12ca5bd9d4a74cdce97377ffdcd3f2d35004a4f64c2c1f0b30c6. It explicitly preserved refused preparations, the unchanged-source rerun, separate role/matrix approvals, default verification and all full-Q0/Q1–Q5/draft-PR limits.
-
-The actual user record is timestamped 2026-11-14T17:25:29.544Z in session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 26306, individual raw-record SHA-256 ea17c6c998809e8fc1b580d6dc0917d7891febfd1ca66a08f83d7a1c9a95de4d (UTF-8 JSON record without line terminator). This records the supplied decision, not a generated signature. The same message accepted the separate internal installer qualification channel; it does not authenticate unseen installer outputs.
-
-Bind this immutable accepted review in a later control, preserve the reviewed content, and pass default verification before T011 is checked. No later source implementation, release, runtime result or production gate is accepted by this source-packet decision.
+Full Q0 and Q1–Q5 remain pending. T013–T015 still consume their own provider/domain/integration/authority/custody decisions. Source readiness does not accept actual releases, real clients or unseen staging/canary/commercial results. All three current PRs remain draft. No artifact publication, installation, enrollment, runner dispatch, paid resource, version/tag/pin operation or commercial admission is granted.
