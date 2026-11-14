@@ -1,0 +1,8 @@
+schema: spec-driven
+created: 2026-11-14
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-14-add-protected-runtime-hosting-issuance
+  reason: Prepare the factory-governed hosting and issuance source proposal and feature 017 plan using the recommended T013 design basis after source acceptance of adapter 66.
+  approved_by: 'Brett Heap: Go ahead and prepare the factory-governed hosting/issuance source proposal and Speckit plan using those T013 selections. Keep setup/dispatch unauthorized, feedback deferred, and do not replay either blocked write. Preparation only; no proposal ratification, source implementation or operational authorization is inferred.'
+  approved_on: '2026-11-14'
