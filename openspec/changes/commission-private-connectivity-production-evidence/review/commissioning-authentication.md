@@ -1,68 +1,43 @@
-# Source commissioning authentication: installer acceptance candidate
+# Source commissioning authentication: CI proof refinement
 
-Status: record
+Status: draft
 Created: 2026-11-14
 
-## Existing accepted E, neutral and package controls
+## Existing authenticated controls
 
-T001–T010 remain complete under the [accepted E control](https://github.com/opensoft/openXfactory/blob/de9637eb7215f2f11b98bd7a874420c8692d03aa/specs/043-private-connectivity-production/evidence/commissioning.json). T016 completed after actual neutral authentication and default verification against [efafaf9b6](https://github.com/opensoft/openXfactory/blob/efafaf9b6edb02166d2ee3bc445741f681f7b59a/specs/043-private-connectivity-production/evidence/commissioning.json). Brett then authenticated the exact corrected T011 package packet at 2026-11-14T17:25:29.544Z. Its [actual review 88b7fecb4](https://github.com/opensoft/openXfactory/blob/88b7fecb41753e466c2555c8bdd6ed45902a8c2e/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) is bound in [accepted control 76517519c](https://github.com/opensoft/openXfactory/blob/76517519c4adf3372ff779bab40b6ab1a432ec0a/specs/043-private-connectivity-production/evidence/commissioning.json), with the reviewed package content unchanged. Default T011/T010/T016 commands pass before T011 is checked.
+The accepted E, neutral, package and installer source observations remain immutable. T012 completed after Brett's actual authentication at 2026-11-14T22:31:50.896Z and successful default T012/T010/T011/T016 commands against [accepted control 35e98a276](https://github.com/opensoft/openXfactory/blob/35e98a276fbd51c7cdfe89203a3eecbff1266f4f/specs/043-private-connectivity-production/evidence/commissioning.json). Its actual review is [9af6e00e7](https://github.com/opensoft/openXfactory/blob/9af6e00e76e25fd1ace915645f419d5787fe735f/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md); installer core b34071e4b290a4e5f58e5bb7bce9b2dee0a16cd18b40d51563c0d9f480c28beb is unchanged.
 
-This new pending context preserves those accepted controls, original observations and prior refused preparations. E contained objects remain unchanged and restricted to T001–T010. All later owner acceptance records use separate ordinary immutable Git references. The new candidate does not revoke earlier accepted controls.
+Earlier accepted E/N/L anchors remain in their exact Git history with matching immutable readers and frozen inputs. The new bounded compatibility bridge fixes the accepted historical control and reader content identities, verifies their original authentication, and preserves current authentication/revocation checks when a new control consumes historical dependencies. This pending context authenticates no new output and does not revoke those prior observations.
 
-## New T012 installer source evidence
+## Accepted additional source scope
 
-Brett's installer source/release-owner and source-only custody consent is ratified. He accepted the local matrix at 2026-11-14T16:57:52.719Z and the exact internal installer runtime/channel/names at 2026-11-14T17:25:29.544Z. These are consumed source/qualification choices, not artifact publication or authentication of unseen output.
+Brett separately ratified the exact additional source-CI/custody/file/refreeze scope at the same actual input. The [scope ratification](../../extend-private-connectivity-source-ci/review/ratification.md) retains the original user timestamp, individual raw-record digest and accepted design revision. Scope consent does not authenticate subsequent outputs.
 
-The actual read-only acceptance check ran at 81a84b5e00e1873737a1e2b0d3b381b9253ffaa6 from 2026-11-14T17:37:01.822220+00:00 through 2026-11-14T17:37:08.656302+00:00, exit 0. It checks ratified owner/origin/proposal identity, all five exact installer-task scopes against the frozen task text, accepted server/client/runtime/channel choices, private source-only custody, and the explicit intake/Store exclusions in the ratified proposal. Pinned strict OpenSpec passes. Source-only coverage is explicitly null; no observation window, artifact publication, target or compatible runtime is claimed.
+The new complete definition is e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298. All 68 task IDs, owners, classes, dependencies, cases and commands remain unchanged. Only the accepted T009/T010 file refinements and one frozen custody clarification changed.
 
-The three frozen cases have actual observations: installer-owner-scope, setup-distribution-scope and no-workstation-intake. The [source permission](https://github.com/opensoft/openXfactory/blob/81a84b5e00e1873737a1e2b0d3b381b9253ffaa6/openspec/changes/commission-connectivity-installer-production/review/source-owner-permission.json), [original command output](https://github.com/opensoft/openXfactory/blob/9360df307f8be33d55c910c545c0c6965da6f375/specs/043-private-connectivity-production/evidence/T012.json) and [separate receipt](https://github.com/opensoft/openXfactory/blob/fca002e0b12b4b1b6dd29643fbbe1c5fe53cba6e/specs/043-private-connectivity-production/evidence/T012.json) are distinct immutable identities. The receipt preserves every original observation field.
+## New source CI candidate
 
-The initial check incorrectly looked for the explicit exclusions in design.md rather than their ratified proposal. Its actual exit-one output/command/source/timing/digests remain in preparation history. The corrected command passed at unchanged source; no source scope, behavior or reader guard changed. That failed preparation supplies no admitted dependency.
+The corrected source is [746e9316c](https://github.com/opensoft/openXfactory/commit/746e9316cfe7dbed7fac3ecc0104fb5bfdec15a7), with a T010 source baseline of a845c30eff6cf0385e3d21ab4640b9e62554e1e3. Both existing workflow artifacts are retained at that tested revision. Local source collection is 298 evidence, 40 inventory and 42 proof-root tests, all passing with no skips. The two repaired shared regressions also pass.
 
-Actual authentication of these new installer observations/provenance is required separately from the already accepted role and channel choices. Pending authentication cannot complete T012 or satisfy its implementation consumers.
+The initial Python 3.14 run at 3a53fc7f53c3cfe86ee895edec8887c2614cd283 failed because a test read the rewritten remote URL rather than the stored SSH configuration. The exact failed GitHub run, source and original step output are retained during export. A controlled local URL rewrite reproduced the failure; the corrected assertion checks the stored origin without changing it. Python 3.14 qualification now runs the explicit PR revision and checks all 42 JUnit cases.
+
+At this first pending review context, Python 3.14/doc-health and consumer CI pass and Codex has cleared the corrected head. The full pytest source step is still pending. No successful source-CI receipt is manufactured from that pending run. Its actual original output, both run/job identities, unchanged source and closed required cases must be captured before an exact new review anchor is presented.
+
+## Custody and admission boundary
+
+Private token creation/fetch is not needed or exercised while no foreign records exist. The qualified producer must be available from an authenticated trusted-base control before either existing CI lane can mint a token for private preparation. Candidate scripts never execute before those credentials; proof roots contain commits only, credentials are revoked before tests, and temporary stores are removed. A synthetic source test is not live GitHub credential/fetch qualification or full source/task admission.
+
+The new packet requires actual custodian authentication after its original outputs exist, followed by default T010 verification. The previous accepted control remains separately usable. T020 remains unchecked; subsequent private admission still requires the trusted producer, actual owner Git stores and its own accepted evidence/dependency timing.
 
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "accepted",
+  "decision": "pending",
   "custodian": "Brett Heap",
-  "reviewed_manifest": {
-    "repository": "opensoft/openxfactory",
-    "commit": "9672e1b8219ca30f5add1349a968ebeedd742fd4",
-    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "sha256": "29c4d2197ce6a03a4f02c3c387e7c1746a6cdffc599547b38930159fbf950ff8"
-  },
-  "content_sha256": "b34071e4b290a4e5f58e5bb7bce9b2dee0a16cd18b40d51563c0d9f480c28beb",
-  "reviewed_at": "2026-11-14T22:31:50.896Z"
+  "reviewed_manifest": null,
+  "content_sha256": null,
+  "reviewed_at": null
 }
 ```
 
-Full Q0 and Q1–Q5 remain pending. T013–T015 still consume their own provider/domain/integration/authority/custody decisions. Source readiness does not accept actual releases, real clients or unseen staging/canary/commercial results. All three current PRs remain draft. No artifact publication, installation, enrollment, runner dispatch, paid resource, version/tag/pin operation or commercial admission is granted.
-
-## Exact installer review target
-
-| Item | Immutable review identity |
-| --- | --- |
-| Extended control | [commissioning manifest at 9672e1b82](https://github.com/opensoft/openXfactory/blob/9672e1b8219ca30f5add1349a968ebeedd742fd4/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Manifest file SHA-256 | `29c4d2197ce6a03a4f02c3c387e7c1746a6cdffc599547b38930159fbf950ff8` |
-| Authenticated content SHA-256 | `b34071e4b290a4e5f58e5bb7bce9b2dee0a16cd18b40d51563c0d9f480c28beb` |
-| Prior accepted package control | [76517519c](https://github.com/opensoft/openXfactory/blob/76517519c4adf3372ff779bab40b6ab1a432ec0a/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Installer source | [81a84b5e0](https://github.com/opensoft/openXfactory/tree/81a84b5e00e1873737a1e2b0d3b381b9253ffaa6/openspec/changes/commission-connectivity-installer-production) |
-| Original command output | [9360df307](https://github.com/opensoft/openXfactory/blob/9360df307f8be33d55c910c545c0c6965da6f375/specs/043-private-connectivity-production/evidence/T012.json) |
-| Separate receipt | [fca002e0b](https://github.com/opensoft/openXfactory/blob/fca002e0b12b4b1b6dd29643fbbe1c5fe53cba6e/specs/043-private-connectivity-production/evidence/T012.json) |
-
-The committed census is 1167 standing sites across 35 members, with no uncovered site. Binding/source/cases/original-authority/provenance/artifact/dependency-order preparation checks pass. The extended control's inventory is independent of admission. Default T012 remains blocked on actual authentication; the accepted T010/T011/T016 anchors pass independently.
-
-Authenticate this new source-only packet and original provenance. Acceptance permits a later immutable accepted review/control pair and T012 completion only after default verification. It accepts no unseen installer build, release, actual platform compatibility or hosted integration and grants no target, spend or Q1–Q5 authority.
-
-## Actual installer custodian input
-
-Brett answered the exact actual-output question:
-
-> Authenticate the T012 source-only packet (Recommended)
-
-The question linked review packet 22f60937adee1c3563b8113f28a6c0de4cb11630, manifest 9672e1b8219ca30f5add1349a968ebeedd742fd4 and core SHA-256 b34071e4b290a4e5f58e5bb7bce9b2dee0a16cd18b40d51563c0d9f480c28beb. It expressly preserved the failed assertion and successful unchanged-source rerun, separate role/channel choices, default verification and draft/Q0–Q5 limits. The preceding preparation text records the state before this actual decision.
-
-The actual user input is timestamped 2026-11-14T22:31:50.896Z in session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 27728, individual raw-record SHA-256 53067789de3433143f38c5f4c7ea86e85f70f45bc7ab719f499e5204b30e6a47 (UTF-8 JSON record without line terminator). This records supplied human provenance, not a generated signature. The same input ratifies a distinct additional source-CI scope; that scope decision authenticates no unseen new outputs.
-
-Bind this immutable accepted review in a later control with the reviewed core unchanged, then pass default verification before checking T012. All four current PRs remain draft. No installer publication, installation, release, live result or production gate is accepted by this source-packet decision.
+Full Q0 and Q1–Q5 remain pending. All four PRs remain draft. No merge, version/tag, release publication, target operation, deployment, enrollment, paid resource or commercial gate is granted. Actual provider/domain/integration, live custody, staging and canary decisions retain their own gates.
