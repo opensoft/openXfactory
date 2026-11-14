@@ -57,8 +57,9 @@ def test_read_only_coordinator_discovery_preserves_an_existing_ssh_origin(tmp_pa
     root = repo(tmp_path / "coordinator")
     commit(root, record())
     git(root, "remote", "set-url", "origin", "git@github.com:Opensoft/openXfactory.git")
+    git(root, "config", "url.https://example.invalid/github/.insteadOf", "git@github.com:")
     assert s.discover(root) == {FOREIGN: ["a" * 40]}
-    assert git(root, "remote", "get-url", "origin") == "git@github.com:Opensoft/openXfactory.git"
+    assert git(root, "config", "--get", "remote.origin.url") == "git@github.com:Opensoft/openXfactory.git"
 
 
 @pytest.mark.parametrize("mutation", ["unknown", "short", "duplicate", "wrong-field", "missing", "extra-key"])
@@ -288,3 +289,7 @@ def test_both_ci_lanes_revoke_before_tests_and_cleanup_afterwards(workflow):
         assert "MERGE_MASTER" not in json.dumps(step)
     assert steps[named["pc043_revoke"]]["if"] == "always()"
     assert steps[named["pc043_cleanup"]]["if"] == "always()"
+    if workflow == "doc-health-py314.yml":
+        qualification = next(step for step in steps if step.get("name") == "Exercise source proof under Python 3.14 (043)")
+        assert "PC043_EXPECTED_REVISION" in qualification["env"]
+        assert "worktree add --detach" in qualification["run"] and "--junitxml=" in qualification["run"]
