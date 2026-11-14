@@ -1,6 +1,7 @@
 # Design: Private component source proof in coordinator CI
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-14 by Brett Heap, through [extend-private-connectivity-source-ci](proposal.md).
 
 ## Context
 
@@ -82,6 +83,6 @@ Run the affected 287 verifier/40 inventory tests and shared pin/reachability/sen
 
 ## Migration Plan
 
-Keep this proposal draft until Brett accepts its exact E/file/custody/refreeze scope. Then refine only the listed frozen fields, retain the previous definition, implement and qualify the producer and regressions, and collect actual reviewed source CI before private data admission. Introduce an actual private binding only after the proof precondition is usable; promote/census its real foreign member deliberately. Obtain authentication of the new actual packet and use default verification before checking any dependent task.
+Brett accepted the exact E/file/custody/refreeze scope in review/ratification.md. Refine only the listed frozen fields, retain the previous definition, implement and qualify the producer and regressions, and collect actual reviewed source CI before private data admission. Introduce an actual private binding only after the proof precondition is usable; promote/census its real foreign member deliberately. Obtain authentication of the new actual packet and use default verification before checking any dependent task.
 
 On failure retain all original observations and prior accepted anchors, stop affected admission and supersede only through reviewed source corrections. Do not disable checks, broaden token access, replace accepted evidence, enter a live gate, merge or publish a release as a recovery shortcut. All four current PRs remain draft.

@@ -6,6 +6,8 @@ origin:
   reason: Prepare the bounded CI proof and custody scope needed before the first private component source record can be admitted.
   proposed_by: Codex while continuing Brett Heap's authorized feature 043 work
   proposed_on: '2026-11-14'
+  approved_by: Brett Heap in session; see review/ratification.md
+  approved_on: '2026-11-14'
 related:
   - openXfactory:change:commission-private-connectivity-production-evidence
   - openXfactory:change:amend-private-connectivity-evidence-bootstrap
