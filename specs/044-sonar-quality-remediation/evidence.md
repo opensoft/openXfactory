@@ -168,3 +168,27 @@ suite. Every original functional and timing check still runs; the measured
 repeat is additional. A wiring witness refuses removal of the preflight
 or its ordering before coverage startup. Source scope, runtime version,
 dependency pins and all Sonar conditions are unchanged.
+
+## Complete CLI preflight and assertion repair
+
+The 419c31a review caught two stronger assertions accidentally placed in the
+empty-repository mode test rather than its real-repository counterpart.
+The two empty-repository parameters reproduced that failure in 0.58 seconds;
+the assertions are now scoped to the intended real-repository function.
+The known-bad CI attempt was cancelled, preserving its record.
+
+The complete local uninstrumented CLI module reported 26 passes and one
+original 30-second timing failure on the shared bench. A covered diagnostic
+also showed the strict candidate case exceeding 30 seconds. Those results
+remain failed diagnostics, not qualification. The required CI preflight now
+runs the ENTIRE CLI module without coverage, retaining every original
+30-second check. The fully covered root suite repeats all cases with a
+bounded 90-second measurement budget in that module's helper.
+
+All 27 CLI contracts pass under branch/subprocess measurement (428.79
+seconds), including the correctly scoped domain-dependency, no-tag-error
+and published-ref assertions. The workflow wiring requires the unmeasured
+whole-module preflight before report preparation; no case is filtered out.
+The normal preflight must also pass on the fresh CI runner before measured
+acceptance can proceed. No normal deadline, production validator, release
+inventory, live release-tag gate, source scope or Sonar condition is waived.

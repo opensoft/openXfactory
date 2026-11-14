@@ -129,7 +129,11 @@ def repository_snapshot(tmp_path: Path) -> Path:
     return snapshot
 
 
-def _run_cli(*args: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
+def _run_cli(*args: str) -> subprocess.CompletedProcess[str]:
+    # The required workflow first runs this entire module without measurement
+    # at its original 30-second limit, then repeats it in the covered suite.
+    measured = bool(os.environ.get("COVERAGE_PROCESS_START") or
+                    os.environ.get("COVERAGE_PROCESS_CONFIG"))
     assert ENTRYPOINT.is_file(), f"planned validator CLI is missing: {ENTRYPOINT}"
     return subprocess.run(
         [sys.executable, ENTRYPOINT, *args],
@@ -137,7 +141,7 @@ def _run_cli(*args: str, timeout: int = 30) -> subprocess.CompletedProcess[str]:
         capture_output=True,
         text=True,
         check=False,
-        timeout=timeout,
+        timeout=90 if measured else 30,
     )
 
 
@@ -280,13 +284,6 @@ def test_candidate_and_realization_modes_are_explicit_in_json_results(
     assert result.returncode == 2
     payload = _json_result(result)
     assert payload["mode"] == expected_mode
-    codes = {finding["code"] for finding in payload["findings"]}
-    assert "HGR-REGRESSION-DEPENDENCY" in codes
-    assert not any(code.startswith("HGR-RELEASE-TAG-") for code in codes)
-    if expected_mode == "realization":
-        # Both published tag and main refs were queried through real Git.
-        # The local mirror holds the actual annotated object and main OID.
-        assert local_published_release.read_text().count("published transport") >= 2
 
 
 def test_candidate_and_realization_modes_are_mutually_exclusive(
@@ -356,17 +353,18 @@ def test_release_mode_field_is_preserved_on_the_real_repository(
 ) -> None:
     # An empty mirror root makes domain-regression resolution a dependency
     # error (exit 2); the mode field is still reported.
-    # The workflow separately runs BOTH cases uninstrumented at the original
-    # 30-second limit before measurement. The complete measured suite repeats
-    # the same assertions; tracing two complete release inventories needs its
-    # own bounded budget, without removing the original timing check.
-    measured = bool(os.environ.get("COVERAGE_PROCESS_START") or
-                    os.environ.get("COVERAGE_PROCESS_CONFIG"))
-    result = _run_cli(mode_option, "--domain-repo-root", str(tmp_path), "--json",
-                      timeout=90 if measured else 30)
+    result = _run_cli(mode_option, "--domain-repo-root", str(tmp_path), "--json")
 
     assert result.returncode == 2
-    assert _json_result(result)["mode"] == expected_mode
+    payload = _json_result(result)
+    assert payload["mode"] == expected_mode
+    codes = {finding["code"] for finding in payload["findings"]}
+    assert "HGR-REGRESSION-DEPENDENCY" in codes
+    assert not any(code.startswith("HGR-RELEASE-TAG-") for code in codes)
+    if expected_mode == "realization":
+        # Both published tag and main refs were queried through real Git.
+        # The local mirror holds the actual annotated object and main OID.
+        assert local_published_release.read_text().count("published transport") >= 2
 
 
 def test_handoff_receipt_without_a_consumer_repository_is_a_dependency_error(

@@ -341,7 +341,7 @@ def test_original_bounded_mode_checks_run_before_measurement():
     job = yaml.safe_load((ROOT / ".github/workflows/pytest-suite.yml").read_text())["jobs"]["pytest-suite"]
     steps = job["steps"]
     bounded = next(i for i, step in enumerate(steps)
-                   if step.get("name") == "Preserve original bounded release-mode checks")
+                   if step.get("name") == "Preserve original bounded CLI checks")
     prepare = next(i for i, step in enumerate(steps)
                    if step.get("name") == "Prepare a fresh exact-source measurement")
     measured = next(i for i, step in enumerate(steps)
@@ -349,6 +349,5 @@ def test_original_bounded_mode_checks_run_before_measurement():
                     'python3 -m pytest tests/ -q -m "not postgres" --junitxml=pytest-report.xml')
     assert bounded < prepare < measured
     assert "unset COVERAGE_PROCESS_START COVERAGE_PROCESS_CONFIG" in steps[bounded]["run"]
-    assert ("python3 -m pytest tests/hermes_runtime_contracts/test_validator_cli.py::"
-            "test_release_mode_field_is_preserved_on_the_real_repository -q") in steps[bounded]["run"]
+    assert ("python3 -m pytest tests/hermes_runtime_contracts/test_validator_cli.py -q") in steps[bounded]["run"]
     assert "COVERAGE_PROCESS_START" in steps[measured]["env"]

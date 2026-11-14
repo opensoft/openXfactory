@@ -600,10 +600,10 @@ jobs:
       - name: Verify real child coverage before the full suite
         run: python3 -m pytest tests/sonar_quality/test_coverage_evidence.py::test_subprocess_startup_records_real_child_execution -q
 
-      - name: Preserve original bounded release-mode checks
+      - name: Preserve original bounded CLI checks
         run: |
           unset COVERAGE_PROCESS_START COVERAGE_PROCESS_CONFIG
-          python3 -m pytest tests/hermes_runtime_contracts/test_validator_cli.py::test_release_mode_field_is_preserved_on_the_real_repository -q
+          python3 -m pytest tests/hermes_runtime_contracts/test_validator_cli.py -q
 
       - name: Prepare a fresh exact-source measurement
         run: python3 scripts/validate-sonar-coverage.py prepare
