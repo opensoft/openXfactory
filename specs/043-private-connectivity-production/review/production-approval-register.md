@@ -10,8 +10,8 @@ This is a review index for the remaining owner and operating decisions. It does 
 
 | Owner | Reviewable scope | State |
 | --- | --- | --- |
-| E | [Accepted evidence commissioning](../../../openspec/changes/commission-private-connectivity-production-evidence/design.md) | Accepted at T006; T007–T009 source complete; actual bootstrap authentication and T010 pending |
-| E amendment | [Exact source-only bootstrap records and T010 refinement](../../../openspec/changes/amend-private-connectivity-evidence-bootstrap/design.md) | Ratified 2026-11-14; exact T010 records/file refinement accepted and reconciled; actual export authentication and T010 remain pending |
+| E | [Accepted evidence commissioning](../../../openspec/changes/commission-private-connectivity-production-evidence/design.md) | Accepted at T006; T007-T010 complete after actual source authentication and successful required CI |
+| E amendment | [Exact source-only bootstrap records and T010 refinement](../../../openspec/changes/amend-private-connectivity-evidence-bootstrap/design.md) | Ratified 2026-11-14; exact refinement realized; actual source/CI packet authenticated and T010 verified |
 | Neutral publication | [Exact neutral publication and release scope](../../../openspec/changes/publish-private-connectivity-production-contract/design.md) | Brett accepted as neutral publication/release owner; exact scope ratified 2026-11-14; T016 and actual cut remain pending, with no version allocated |
 | L | [Supported Headscale package](../../../openspec/changes/commission-headscale-production/design.md) | Brett Heap accepted as source/package/release owner and source-evidence custodian; exact scope ratified 2026-11-14; T011 remains pending |
 | I | [Local and managed installer](../../../openspec/changes/commission-connectivity-installer-production/design.md) | Brett Heap accepted as installer source/release owner and source-evidence custodian; exact scope ratified 2026-11-14; T012 remains pending |
@@ -55,7 +55,7 @@ The [storage budget for review](staging-storage-budget.md) proposes a USD 10 sto
 
 ## Decisions supplied on 2026-11-14
 
-Brett selected: "Prepare a minimal dedicated-storage budget for review (Recommended)"; "Investigate GitHub macOS runners within included capacity, with paid overages prohibited (Recommended)"; and "Approve all five roles and ratify the matching source scopes (Recommended)". That answer accepted the five coordinating component packets, matching native Ops/domain packets, exact listed source refinements and private source-only custody. At that point the E bootstrap amendment and neutral publication scope remained pending, and the original 16-input freeze was unchanged. The later decision below accepts those remaining scopes and their reconciled freeze. T010 remains incomplete.
+Brett selected: "Prepare a minimal dedicated-storage budget for review (Recommended)"; "Investigate GitHub macOS runners within included capacity, with paid overages prohibited (Recommended)"; and "Approve all five roles and ratify the matching source scopes (Recommended)". That answer accepted the five coordinating component packets, matching native Ops/domain packets, exact listed source refinements and private source-only custody. At that point the E bootstrap amendment and neutral publication scope remained pending, and the original 16-input freeze was unchanged. The later decision below accepts those remaining scopes and their reconciled freeze. T010 was incomplete at that earlier decision.
 
 ## Financial and Mac guard decisions supplied later on 2026-11-14
 
@@ -63,7 +63,7 @@ Brett reviewed the exact packets at the immutable source linked within each and 
 
 ## E bootstrap and neutral publication decisions
 
-Brett explicitly ratified both remaining proposals, accepted the neutral publication/release-owner role for the exact scope, and directed continuation in dependency order with all three PRs draft and Q0-Q5 honored. Their ratification records preserve the reviewed source and actual supplied instruction. The accepted exact task-file refinements are reconciled into the new review freeze. Actual bootstrap/source/CI authentication remains a separate required review; neither T010 nor T016 is complete from consent alone.
+Brett explicitly ratified both remaining proposals, accepted the neutral publication/release-owner role for the exact scope, and directed continuation in dependency order with all three PRs draft and Q0-Q5 honored. Their ratification records preserve the reviewed source and actual supplied instruction. The accepted exact task-file refinements are reconciled into the new review freeze. Actual bootstrap/source/CI authentication remained a separate required review; neither T010 nor T016 completed from consent alone. The later actual authentication below completes T010 after verification.
 
 ## Source bridge preparation after ratification
 
@@ -81,7 +81,8 @@ The affected source suites pass 287 verifier and 40 inventory tests; the shared
 pin/sentinel suite passes 175 tests. Required GitHub CI for the final source is
 tracked independently and cannot be inferred from these local runs.
 
-The actual [custodian authentication](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md)
-is still pending. The commissioning container remains source-only and the
-verifier refuses evidence admission until that concrete review is recorded.
-T010, T011-T068, full Q0 and Q1-Q5 remain incomplete; all three PRs remain draft.
+Brett supplied actual [custodian authentication](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) at 2026-11-14T15:55:48.576Z for the exact reviewed manifest/core. The accepted review is bound at [authenticated anchor de9637eb7](https://github.com/opensoft/openXfactory/blob/de9637eb7215f2f11b98bd7a874420c8692d03aa/specs/043-private-connectivity-production/evidence/commissioning.json), with the reviewed core SHA-256 unchanged at 0645f3e7f31b9b4c708c94b8ff2298fe530b0d18928355201d9f54cab60b770f. The default T010 verification command passes against that independent anchor, and T010 is complete.
+
+Required source CI passed at c4e70f66d, with actual run 43608762372/job 132489023068 and explicit 287/40 zero-skip source collection. The separate receipt, reviewed manifest, actual review and authenticated control are different immutable identities. Source data inventory and reachability remain independently checked.
+
+T011-T068, full Q0 and Q1-Q5 remain incomplete. T011-T015 still need their actual consumed support/provider/integration/authority/custody/limit choices; their accepted source roles do not fill those choices. T016's neutral role and scope consent are accepted, with its actual acceptance evidence still to prepare after T010. All three PRs remain draft.

@@ -12,6 +12,6 @@ This packet records governance and acceptance only. The single executable implem
 
 ## 2. Scoped realization and authentication
 
-- [ ] 2.1 Accept realization only through the refined feature 043 evidence tasks. Verify the reviewed new freeze, original bootstrap/source outputs, contained-reference and first-record regressions, exact inventory, measured census and actual required feature CI collection.
-- [ ] 2.2 Obtain and record the custodian's review of the actual immutable source/command/output and human-decision evidence before T010 passes. Verify the independently selected manifest anchor and preserve missing/failed history; do not infer authentication from this proposal's ratification.
+- [x] 2.1 Accept realization only through the refined feature 043 evidence tasks. Verify the reviewed new freeze, original bootstrap/source outputs, contained-reference and first-record regressions, exact inventory, measured census and actual required feature CI collection.
+- [x] 2.2 Obtain and record the custodian's review of the actual immutable source/command/output and human-decision evidence before T010 passes. Verify the independently selected manifest anchor and preserve missing/failed history; do not infer authentication from this proposal's ratification.
 - [ ] 2.3 Verify merged, green scoped realization before promotion/archive. Preserve the separate owner, release, execution, Q0 and Q1–Q5 decisions, and keep PR #1310 draft until its lifecycle is separately authorized.
