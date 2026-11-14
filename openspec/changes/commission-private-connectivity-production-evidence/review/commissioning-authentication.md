@@ -1,6 +1,6 @@
 # Source commissioning authentication: package acceptance candidate
 
-Status: draft
+Status: record
 Created: 2026-11-14
 
 ## Existing accepted source controls
@@ -22,11 +22,16 @@ The exact extended manifest and content digest are supplied in the immutable rev
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "pending",
+  "decision": "accepted",
   "custodian": "Brett Heap",
-  "reviewed_manifest": null,
-  "content_sha256": null,
-  "reviewed_at": null
+  "reviewed_manifest": {
+    "repository": "opensoft/openxfactory",
+    "commit": "1ce855daae8d8f88d8e2fe663a87714f17836799",
+    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+    "sha256": "23193a243d9caab371cfcffb4cfe5409f1f0ec817ea5cd2bec7c7af2496f1b18"
+  },
+  "content_sha256": "18f3642fafcd12ca5bd9d4a74cdce97377ffdcd3f2d35004a4f64c2c1f0b30c6",
+  "reviewed_at": "2026-11-14T17:25:29.544Z"
 }
 ```
 
@@ -56,3 +61,15 @@ Preflight also refused the first corrected export wrapper's empty coverage objec
 The exact committed-data census is 1118 standing sites across 35 members with no uncovered site. Binding, source/cases, original authority/provenance, artifact and dependency-order preparation checks pass for the corrected candidate. Default admission correctly refuses pending authentication. The prior accepted T010/T016 commands still pass independently, with their source objects unchanged.
 
 Authenticate this new actual source-only packet and original provenance under the accepted custody policy. Acceptance permits binding a later review/control pair and completing T011 only after default verification. It does not accept unseen package implementations, builds, releases, compatibility, runtime evidence or any Q1–Q5 result. Full Q0 still depends on the other owner acceptances.
+
+## Actual package custodian input
+
+Brett answered the exact corrected source-packet question:
+
+> Authenticate the corrected T011 source packet (Recommended)
+
+The question linked review packet 712452cb8c759fa547a9aead7c7d2b284885b13d, manifest 1ce855daae8d8f88d8e2fe663a87714f17836799 and content SHA-256 18f3642fafcd12ca5bd9d4a74cdce97377ffdcd3f2d35004a4f64c2c1f0b30c6. It explicitly preserved refused preparations, the unchanged-source rerun, separate role/matrix approvals, default verification and all full-Q0/Q1–Q5/draft-PR limits.
+
+The actual user record is timestamped 2026-11-14T17:25:29.544Z in session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 26306, individual raw-record SHA-256 ea17c6c998809e8fc1b580d6dc0917d7891febfd1ca66a08f83d7a1c9a95de4d (UTF-8 JSON record without line terminator). This records the supplied decision, not a generated signature. The same message accepted the separate internal installer qualification channel; it does not authenticate unseen installer outputs.
+
+Bind this immutable accepted review in a later control, preserve the reviewed content, and pass default verification before T011 is checked. No later source implementation, release, runtime result or production gate is accepted by this source-packet decision.
