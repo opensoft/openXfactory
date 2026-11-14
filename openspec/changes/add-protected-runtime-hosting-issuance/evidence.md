@@ -18,18 +18,33 @@ adapter portable feature pointer; proposed T012N-V and T001/T013/T014/T015 remai
 unchecked. Only Markdown and the new OpenSpec metadata change; no executable,
 workflow, pin, contract bundle or dependency-lock change is made.
 
-Publication gates remain explicit:
+## Publication verification and correction
 
-- Full factory OpenSpec validation returns 128 passes and one failure, in the
-  pre-existing add-chain-attestation packet: its MODIFIED requirement omits the
-  canonical scenario “a tranche-two link does not exist yet”. Both involved files
-  are byte-identical to factory base HEAD. This proposal neither edits nor
-  dispositions that unrelated packet. Full-corpus success is not claimed.
-- The generated corpus ledger is stale only for this new packet and its derived
-  totals. Before publication, use the actual new proposal PR number with
-  `python3 scripts/validate-sequenced-after.py . --seed-ledger --moved-by '#<PR>'`,
-  then review the generated diff and rerun the gate. No unrelated or invented
-  PR number is stamped during local preparation. The ledger is not edited by hand.
+The initial local preparation used raw CLI diagnostics and incorrectly called the
+chain-attestation finding a publication blocker. The governed corpus verdict is
+`python3 scripts/validate-openspec-cli-pin.py --all`, in its default pinned-artifact
+form, as required by `require-adjudicated-validation-entrypoint`. That command
+passes with zero undispositioned failures. It reports raw totals 128 passed / one
+failed (129 items), then applies the existing ratified chain-attestation exception
+from `contracts/openspec-cli-pin.yaml`, citing its reason and Brett Heap's
+2026-09-05 “take exit 2” authority. This is a passing adjudicated gate with one
+accepted exception, not a clean raw corpus. The disposition, frozen packet,
+canonical requirements, validator and pin remain unchanged. No new exception or
+restoration of the deliberately reconditioned scenario is needed.
+
+The user subsequently commissioned publication-gate resolution, both candidate
+PRs, hosted CI and local Codex review, followed by presentation of v2 for
+ratification. This authorizes source publication/review only; it does not ratify
+v2, commission its implementation or grant any operational stage.
+
+The generated ledger row is initially pending the actual draft proposal PR number.
+After that number exists, use
+`python3 scripts/validate-sequenced-after.py . --seed-ledger --moved-by '#<PR>'`,
+review the generated diff and rerun the gate. No invented PR is stamped and the
+ledger is not edited by hand.
+
+Unchanged checkout limitations, not new publication refusals:
+
 - Two existing factory README links point to absent files in this checkout:
   contracts/private-connectivity/README.md and
   docs/ideation-dashboard-session-runbook.md. Those link spellings predate this
@@ -40,8 +55,8 @@ runtime/cleanup staging. The API budget finding was corrected: correlation keeps
 its four-read/two-job-page limit; added protection/source/hold groups have explicit
 three/four/two limits under the same parent deadline, with aggregate thirteen and
 a complete positive acceptance control. This is planning review, not implementation
-qualification or a hosted Codex review. No new runtime tests or hosted CI run is
-claimed for documentation preparation.
+qualification or a hosted Codex review. No new runtime tests or hosted CI run was
+claimed for the initial documentation preparation; publication results follow later.
 
 The private security research artifact write was rejected with only “blocked by
 policy”; it was not retried or recreated. Research findings returned in chat
