@@ -300,11 +300,133 @@
   "pin_inventory": [
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "73ea5d8e646f754088733099ef1680ac6d8605d9"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6"
     },
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "8464f4b57e125e8391e4dad029bf1161cc8d5838"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "9360df307f8be33d55c910c545c0c6965da6f375"
     }
-  ]
+  ],
+  "schema": "043-task-evidence-v1",
+  "owner": "C",
+  "evidence_class": "Q0-I",
+  "attempt": "installer-source-acceptance-candidate-1",
+  "verdict": "pass",
+  "authority": {
+    "repository": "opensoft/openxfactory",
+    "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+    "path": "openspec/changes/commission-connectivity-installer-production/review/source-owner-permission.json",
+    "sha256": "576a1bbf8e4cc215ede090d92ebc36f8ef36d627a7f6a71b406e41572178e9f9"
+  },
+  "artifacts": [
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/.openspec.yaml",
+      "sha256": "54d375e3cef3bff8af4408435339a82e2ef2f8ec739475fbd5a602b6c943866f"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/design.md",
+      "sha256": "8c6b4a6fa711a1180530357dd911d438ca689864ac3eb4728fd1c2e142ab5c3e"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/proposal.md",
+      "sha256": "64fb64c9f9be7da1571fe0dc4e456133042ccd8150f40b1be29218266b4bf34c"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/review/distribution-candidates.md",
+      "sha256": "de6169aab589568e311268b9bfbcdd745bad7107ed289bc8e3c39da5ce78911e"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/review/distribution-scope-acceptance.md",
+      "sha256": "ee7e839de9c10a29a7a42b7fd2cb4d08f3e21f23f5f0760b10fbc418f16c0026"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/review/ratification.md",
+      "sha256": "b249f6f05326f7ae90b3c39bfca859aaa6b1b8055db4c8122a4b7d3ee878251d"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/review/source-owner-permission.json",
+      "sha256": "576a1bbf8e4cc215ede090d92ebc36f8ef36d627a7f6a71b406e41572178e9f9"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/review/support-scope-acceptance.md",
+      "sha256": "11976d8350582af225637315ba8c8b3f56c2a942d6b7468f6d4cf92290dabfb8"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/specs/connectivity-installer-production/spec.md",
+      "sha256": "f401314335d80bb68ff429808b5d2df2219b9797361b6fecfe5c4c7877298930"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "openspec/changes/commission-connectivity-installer-production/tasks.md",
+      "sha256": "5e05aa1994547070ba2858470caa9ddcfd9dfb10139d7744008eaa0a8dc2bc0a"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "README.md",
+      "sha256": "b0946b91921c5c83d2925991b9745ab5b1284f4a508af7517194373362009f93"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "tests/sequenced_after/corpus-ledger.yaml",
+      "sha256": "83e6e01d53da44074be063eef10f062329294ba4ad5950954b02c8b56121becf"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "contracts/openspec-cli-pin.yaml",
+      "sha256": "1bab358ce6d5275fcad6fd1af3a4320aebe42d25c158aa0364d680fd4d8fa482"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "81a84b5e00e1873737a1e2b0d3b381b9253ffaa6",
+      "path": "specs/043-private-connectivity-production/tasks.md",
+      "sha256": "351ebf737c97c0e953504211bb593fd2fdeb5b81ef0aab83e7f15526b5717d78"
+    }
+  ],
+  "incidents": [],
+  "history": [],
+  "dependencies": {
+    "T010": {
+      "repository": "opensoft/openxfactory",
+      "commit": "73ea5d8e646f754088733099ef1680ac6d8605d9",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "sha256": "32e7ad066ea67086408ae9241fcfcd3adf909db044c4efdca32481a2dde0ce18"
+    }
+  },
+  "output": {
+    "repository": "opensoft/openxfactory",
+    "commit": "9360df307f8be33d55c910c545c0c6965da6f375",
+    "path": "specs/043-private-connectivity-production/evidence/T012.json",
+    "sha256": "1e09c503319224da9e208d42a0f8007dbe11f38122b961cc47f65d25509db249"
+  },
+  "admission_state": "Pending actual installer output/control authentication and default verification. The original source output remains separate and unchanged; source-only coverage is explicitly null."
 }
