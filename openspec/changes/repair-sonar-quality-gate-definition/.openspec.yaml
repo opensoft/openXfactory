@@ -1,0 +1,8 @@
+schema: spec-driven
+created: 2026-11-14
+origin:
+  kind: ad_hoc
+  id: openxFactory:adhoc:2026-11-14-sonar-quality-gate-recovery
+  reason: Restore the existing Sonar gate's missing new-code definition without weakening its checks.
+  approved_by: Brett Heap, direct instruction in the current chat to fix the missing quality gate while preserving checks, billing and active sessions.
+  approved_on: 2026-11-14
