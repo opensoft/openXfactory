@@ -1,6 +1,6 @@
 # Source commissioning authentication: installer acceptance candidate
 
-Status: draft
+Status: record
 Created: 2026-11-14
 
 ## Existing accepted E, neutral and package controls
@@ -24,11 +24,16 @@ Actual authentication of these new installer observations/provenance is required
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "pending",
+  "decision": "accepted",
   "custodian": "Brett Heap",
-  "reviewed_manifest": null,
-  "content_sha256": null,
-  "reviewed_at": null
+  "reviewed_manifest": {
+    "repository": "opensoft/openxfactory",
+    "commit": "9672e1b8219ca30f5add1349a968ebeedd742fd4",
+    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+    "sha256": "29c4d2197ce6a03a4f02c3c387e7c1746a6cdffc599547b38930159fbf950ff8"
+  },
+  "content_sha256": "b34071e4b290a4e5f58e5bb7bce9b2dee0a16cd18b40d51563c0d9f480c28beb",
+  "reviewed_at": "2026-11-14T22:31:50.896Z"
 }
 ```
 
@@ -49,3 +54,15 @@ Full Q0 and Q1–Q5 remain pending. T013–T015 still consume their own provider
 The committed census is 1167 standing sites across 35 members, with no uncovered site. Binding/source/cases/original-authority/provenance/artifact/dependency-order preparation checks pass. The extended control's inventory is independent of admission. Default T012 remains blocked on actual authentication; the accepted T010/T011/T016 anchors pass independently.
 
 Authenticate this new source-only packet and original provenance. Acceptance permits a later immutable accepted review/control pair and T012 completion only after default verification. It accepts no unseen installer build, release, actual platform compatibility or hosted integration and grants no target, spend or Q1–Q5 authority.
+
+## Actual installer custodian input
+
+Brett answered the exact actual-output question:
+
+> Authenticate the T012 source-only packet (Recommended)
+
+The question linked review packet 22f60937adee1c3563b8113f28a6c0de4cb11630, manifest 9672e1b8219ca30f5add1349a968ebeedd742fd4 and core SHA-256 b34071e4b290a4e5f58e5bb7bce9b2dee0a16cd18b40d51563c0d9f480c28beb. It expressly preserved the failed assertion and successful unchanged-source rerun, separate role/channel choices, default verification and draft/Q0–Q5 limits. The preceding preparation text records the state before this actual decision.
+
+The actual user input is timestamped 2026-11-14T22:31:50.896Z in session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 27728, individual raw-record SHA-256 53067789de3433143f38c5f4c7ea86e85f70f45bc7ab719f499e5204b30e6a47 (UTF-8 JSON record without line terminator). This records supplied human provenance, not a generated signature. The same input ratifies a distinct additional source-CI scope; that scope decision authenticates no unseen new outputs.
+
+Bind this immutable accepted review in a later control with the reviewed core unchanged, then pass default verification before checking T012. All four current PRs remain draft. No installer publication, installation, release, live result or production gate is accepted by this source-packet decision.
