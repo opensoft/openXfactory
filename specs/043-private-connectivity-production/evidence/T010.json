@@ -1,0 +1,87 @@
+{
+  "schema": "043-task-evidence-v1",
+  "task": "T010",
+  "instance": null,
+  "owner": "C",
+  "evidence_class": "CI-E",
+  "scope": {
+    "profile": "not-applicable",
+    "candidate": "043-source-only",
+    "offering": "source-evidence",
+    "run": "043-e-bootstrap",
+    "network": "not-applicable",
+    "region": "not-applicable",
+    "wave": "not-applicable",
+    "site": "not-applicable",
+    "phase": "source",
+    "domain": "not-applicable",
+    "target": "not-applicable",
+    "offer": "not-applicable",
+    "environment": "source",
+    "customer": "not-applicable"
+  },
+  "attempt": "source-ci-43608762372-1",
+  "verdict": "pass",
+  "source": {
+    "repository": "opensoft/openxfactory",
+    "base": "12d6d10cc81640be1839434b5eb826ddc531d1e6",
+    "revision": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+  },
+  "command": "set -euo pipefail\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 287,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
+  "authority": {
+    "object": "T010-authority"
+  },
+  "artifacts": [
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+      "path": ".github/workflows/pytest-suite.yml",
+      "sha256": "aa3d72d3ec070f2bd3dfb97dca48d76cf7719f04273dd8197358de6156773a47"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+      "sha256": "c9872f5ba45baf95e2c39cdf3d3bc76a6814762d30fe7386f799a4e58adb98cb"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+      "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
+      "sha256": "3fd5c30e9eb969fa5ba61c15473878f1df7e94febb8875fedd848082119fba9a"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+      "path": "scripts/doc_health/pin_class.py",
+      "sha256": "3e2f2fc5c0d6dede1d95c057197efcb635e6676954b9f426cdfc2e11d74656ae"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443",
+      "path": "tests/doc-health/test_sentinel_vocabulary.py",
+      "sha256": "0fc007f04fd6e69d76b396632a112789370481d5f1e0610d0fd7741fc26ea22d"
+    }
+  ],
+  "incidents": [],
+  "history": [],
+  "dependencies": {
+    "T009": {
+      "object": "T009-import"
+    }
+  },
+  "output": {
+    "object": "T010-output"
+  },
+  "acceptance": "Actual source CI execution passed. Custodian authentication and T010 gate acceptance remain independent and pending; all rollout gates retain their decisions.",
+  "pin_inventory": [
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "12d6d10cc81640be1839434b5eb826ddc531d1e6"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "c4e70f66d0d0ca8ca50668a318ce1360fe53b443"
+    }
+  ]
+}
