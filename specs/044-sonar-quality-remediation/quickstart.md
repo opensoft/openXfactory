@@ -31,8 +31,8 @@ The runtime lock remains independent from the analysis-only lock.
 
 ~~~sh
 python3 -m venv .venv
-.venv/bin/pip install --require-hashes -r requirements/hermes-runtime-contracts.lock --only-binary=:all:
-.venv/bin/pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary=:all:
+.venv/bin/pip install --require-hashes -r requirements/hermes-runtime-contracts.lock --only-binary :all:
+.venv/bin/pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary :all:
 export PATH="$PWD/.venv/bin:$PATH"
 python3 -m pytest tests/sonar_quality/test_coverage_evidence.py::test_subprocess_startup_records_real_child_execution -q
 unset COVERAGE_PROCESS_START COVERAGE_PROCESS_CONFIG

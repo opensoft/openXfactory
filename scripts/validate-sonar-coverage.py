@@ -17,6 +17,10 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 
 ROOTS = ("scripts", "xfactory", "experiments", "specs", "openspec")
+REPORT_DIRECTORY = ".coverage-reports"
+COVERAGE_JSON = "coverage.json"
+COVERAGE_XML = "coverage.xml"
+JUNIT_REPORT = "pytest-report.xml"
 CONFIGS = (".coveragerc", "sonar-project.properties",
            "requirements/sonar-analysis.lock")
 LIMITS = {
@@ -83,8 +87,8 @@ def snapshot(root):
 def report_directory(root, name):
     root = root.resolve()
     target = (root / name).resolve()
-    require(target == root / ".coverage-reports", "report directory must be .coverage-reports")
-    require(not (root / ".coverage-reports").is_symlink(), "symlink report directory")
+    require(target == root / REPORT_DIRECTORY, "report directory must be .coverage-reports")
+    require(not (root / REPORT_DIRECTORY).is_symlink(), "symlink report directory")
     return target
 
 
@@ -133,7 +137,7 @@ def generate_report(root, directory):
 
     directory = report_directory(root, directory)
     state = unchanged(root, directory)
-    totals = junit_counts(root / "pytest-report.xml")
+    totals = junit_counts(root / JUNIT_REPORT)
     cov = coverage.Coverage(data_file=str(directory / ".coverage"),
                             config_file=False, branch=True)
     cov.set_option("run:relative_files", True)
@@ -144,12 +148,12 @@ def generate_report(root, directory):
     # Public morfs enumerates zero-hit files once, including namespace packages.
     # No CoverageData hit fabrication and no source/coverage omit list.
     morfs = list(state["sources"])
-    cov.xml_report(morfs=morfs, outfile=str(directory / "coverage.xml"))
-    cov.json_report(morfs=morfs, outfile=str(directory / "coverage.json"))
-    shutil.copyfile(root / "pytest-report.xml", directory / "pytest-report.xml")
+    cov.xml_report(morfs=morfs, outfile=str(directory / COVERAGE_XML))
+    cov.json_report(morfs=morfs, outfile=str(directory / COVERAGE_JSON))
+    shutil.copyfile(root / JUNIT_REPORT, directory / JUNIT_REPORT)
     receipt = dict(state, test_counts=totals, coverage_version=coverage.__version__)
     receipt["artifacts"] = {name: digest(directory / name)
-                            for name in ("coverage.xml", "coverage.json", "pytest-report.xml")}
+                            for name in (COVERAGE_XML, COVERAGE_JSON, JUNIT_REPORT)}
     (directory / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
     return check_report(root, directory)
 
@@ -162,17 +166,17 @@ def check_report(root, directory):
     state = snapshot(root)
     require(all(receipt.get(key) == value for key, value in state.items()),
             "receipt does not match checked-out revision/source/config")
-    expected = {"coverage.xml", "coverage.json", "pytest-report.xml"}
+    expected = {COVERAGE_XML, COVERAGE_JSON, JUNIT_REPORT}
     require(set(receipt.get("artifacts", {})) == expected, "incomplete artifacts")
     require(all(digest(directory / name) == value
                 for name, value in receipt["artifacts"].items()), "artifact hash mismatch")
-    require(junit_counts(directory / "pytest-report.xml") == receipt["test_counts"],
+    require(junit_counts(directory / JUNIT_REPORT) == receipt["test_counts"],
             "JUnit count mismatch")
-    report = read_xml(directory / "coverage.xml")
+    report = read_xml(directory / COVERAGE_XML)
     names = [entry.get("filename") for entry in report.findall(".//class")]
     require(len(names) == len(set(names)) and set(names) == set(state["sources"]),
             "coverage XML must contain every owned production Python file exactly once")
-    detail = read_json(directory / "coverage.json")
+    detail = read_json(directory / COVERAGE_JSON)
     require(detail.get("meta", {}).get("branch_coverage") is True, "branch coverage missing")
     require(set(detail.get("files", {})) == set(names), "JSON/XML inventories differ")
     analyzer = coverage.Coverage(config_file=False, branch=True)
@@ -223,7 +227,7 @@ def validate_gate(status, definition, *, main):
 
 def write_gate_receipt(root, result):
     """Create a fixed receipt through a directory descriptor, never following links."""
-    directory = report_directory(root, ".coverage-reports")
+    directory = report_directory(root, REPORT_DIRECTORY)
     require(directory.is_dir(), "verified coverage artifact missing")
     directory_fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
     try:
@@ -240,8 +244,8 @@ def verify_server_gate(root):
     """Verify the completed scanner task belongs to this exact source/project."""
     task_file = root / ".scannerwork/report-task.txt"
     require(task_file.is_file(), "scanner task receipt missing")
-    task = dict(line.split("=", 1) for line in task_file.read_text().splitlines()
-                if "=" in line)
+    task = {line.split("=", 1)[0]: line.split("=", 1)[1]
+            for line in task_file.read_text().splitlines() if "=" in line}
     require(task.get("serverUrl") == "https://sonarcloud.io" and
             task.get("projectKey") == "opensoft_openxFactory",
             "scanner server/project changed")
@@ -307,16 +311,16 @@ def main():
     os.chdir(root)
     try:
         if args.command == "prepare":
-            result = {"directory": str(prepare(root, ".coverage-reports"))}
+            result = {"directory": str(prepare(root, REPORT_DIRECTORY))}
         elif args.command == "report":
-            result = generate_report(root, root / ".coverage-reports")
+            result = generate_report(root, root / REPORT_DIRECTORY)
         elif args.command == "gate":
             result = verify_server_gate(root)
         else:
-            result = check_report(root, root / ".coverage-reports")
+            result = check_report(root, root / REPORT_DIRECTORY)
         print(json.dumps(result, indent=2))
         return 0
-    except (Refusal, OSError, ValueError, KeyError) as exc:
+    except (OSError, ValueError, KeyError) as exc:
         print(f"coverage evidence refused: {exc}")
         return 1
 

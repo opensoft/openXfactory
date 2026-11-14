@@ -593,9 +593,9 @@ jobs:
       - name: Install the pinned OpenSpec CLI for tests/proposal-support
         run: python3 scripts/install-pinned-openspec-cli.py --cache-dir "${RUNNER_TEMP}/openspec-cli-pin"
 
-      - run: 'pip install --require-hashes -r requirements/hermes-runtime-contracts.lock --only-binary=:all:'
+      - run: 'pip install --require-hashes -r requirements/hermes-runtime-contracts.lock --only-binary :all:'
       - name: Install isolated hash-pinned analysis tooling
-        run: 'pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary=:all:'
+        run: 'pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary :all:'
 
       - name: Verify real child coverage before the full suite
         run: python3 -m pytest tests/sonar_quality/test_coverage_evidence.py::test_subprocess_startup_records_real_child_execution -q
@@ -1014,7 +1014,7 @@ jobs:
           name: sonar-coverage
           path: openxFactory/.coverage-reports
       - name: Install hash-pinned coverage reader
-        run: 'pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary=:all:'
+        run: 'pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary :all:'
       - name: Verify artifact against the scanner checkout
         run: python3 scripts/validate-sonar-coverage.py check
       - name: Analyze and wait for the existing quality gate

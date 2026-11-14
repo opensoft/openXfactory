@@ -192,3 +192,18 @@ whole-module preflight before report preparation; no case is filtered out.
 The normal preflight must also pass on the fresh CI runner before measured
 acceptance can proceed. No normal deadline, production validator, release
 inventory, live release-tag gate, source scope or Sonar condition is waived.
+
+## Coverage helper maintainability review
+
+A connected Python analyzer preview identified six new maintainability
+findings in the coverage helper: four repeated report basenames, a generator
+passed to dict, and a redundant exception subclass. Shared constants, a direct
+dictionary comprehension and the superclass handler remove those findings
+without changing report paths, parsing semantics or refusal behavior. A second
+preview reports zero issues. This preview is a local check, not the server gate.
+
+The focused coverage/boundary/private-connectivity suite passes 126 tests and
+52 subtests. Workflow actionlint and the pinned strict OpenSpec change
+validation pass. Binary-only installs now use the documented space-separated
+option syntax; dependency versions, hashes, normal CLI checks, source scope,
+coverage inventory and all server conditions remain unchanged.
