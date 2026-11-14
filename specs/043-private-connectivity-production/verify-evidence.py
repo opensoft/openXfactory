@@ -697,6 +697,12 @@ class Verifier:
                 for field in ("offer", "offering", "candidate", "profile", "phase"):
                     require(offer["scope"][field] == binding["scope"][field], "wrong corresponding offer admission")
                 self.verify(binding["offer_admission"])
+                offer_record = self.read(offer["record"], offer)
+                _, _, offer_end, _ = self.evidence_authority(offer, offer_record)
+                admitted_at = (timestamp(self.read(offer["admission"], offer)["reviewed_at"])
+                               if offer.get("admission") else offer_end)
+                require(offer_end <= start and admitted_at <= start,
+                        "offer admission must precede wave execution")
         for prior in record["history"]:
             failed = self.read(prior, binding)
             require(failed["verdict"] in ("fail", "blocked") and failed["task"] == task

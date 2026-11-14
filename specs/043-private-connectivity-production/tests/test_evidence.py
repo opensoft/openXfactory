@@ -630,7 +630,50 @@ def test_wave_requires_corresponding_previously_admitted_offer(world):
     with pytest.raises((v.EvidenceError, KeyError)): world.check(key)
     offer = world.child("T063", "offer")
     world.trust["bindings"][key]["offer_admission"] = offer
+    move_live_observation(world, key, "2030-01-01T00:02:00Z", "2030-01-01T00:03:00Z")
     world.check(key)
+
+
+def move_live_observation(world, key, start, end):
+    output, binding = world.outputs[key], world.trust["bindings"][key]
+    output.update(started_at=start, ended_at=end, events={"probe": start},
+                  coverage=dict(window=[start, end], intervals=[[start, end]]))
+    binding["observation"]["window"] = [start, end]
+    world.publish(key)
+
+
+@pytest.mark.parametrize("offer_start,offer_end", [
+    ("2030-01-01T00:02:00Z", "2030-01-01T00:03:00Z"),
+    ("2030-01-01T00:00:30Z", "2030-01-01T00:01:30Z"),
+])
+def test_wave_rejects_later_or_overlapping_offer_execution(world, offer_start, offer_end):
+    wave = world.child("T063", "wave", {"wave": "wave-1"})
+    offer = world.child("T063", "offer")
+    world.trust["bindings"][wave]["offer_admission"] = offer
+    move_live_observation(world, offer, offer_start, offer_end)
+    with pytest.raises(v.EvidenceError, match="offer admission must precede wave execution"):
+        world.check(wave)
+
+
+def test_wave_rejects_later_human_admission_even_when_offer_execution_finished_earlier(world):
+    wave = world.child("T063", "wave", {"wave": "wave-1"})
+    offer = world.child("T063", "offer")
+    world.trust["bindings"][wave]["offer_admission"] = offer
+    move_live_observation(world, wave, "2030-01-01T00:02:00Z", "2030-01-01T00:03:00Z")
+    admit_run(world, offer)
+    world.publish(offer)
+    with pytest.raises(v.EvidenceError, match="offer admission must precede wave execution"):
+        world.check(wave)
+
+
+def test_wave_accepts_offer_with_actual_admission_before_execution(world):
+    wave = world.child("T063", "wave", {"wave": "wave-1"})
+    offer = world.child("T063", "offer")
+    world.trust["bindings"][wave]["offer_admission"] = offer
+    move_live_observation(world, wave, "2030-01-01T00:04:00Z", "2030-01-01T00:05:00Z")
+    admit_run(world, offer)
+    world.publish(offer)
+    world.check(wave)
 
 
 def test_source_only_custody_and_source_authority_do_not_admit_live_observations(world):
