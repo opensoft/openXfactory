@@ -556,6 +556,8 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [extend-private-connectivity-source-ci](openspec/changes/extend-private-connectivity-source-ci/proposal.md) — draft 2026-11-14 in [PR #1310](https://github.com/opensoft/openXfactory/pull/1310); proposes bounded private commit proof in both existing CI lanes. [Exact E/file/custody/refreeze scope](openspec/changes/extend-private-connectivity-source-ci/design.md) awaits affected-owner acceptance; no private source publication or live gate grant.
+
 - [commission-connectivity-operations-production](openspec/changes/commission-connectivity-operations-production/proposal.md) — ratified 2026-11-14 by Brett Heap in draft [PR #1310](https://github.com/opensoft/openXfactory/pull/1310); [accepted source scope and custody](openspec/changes/commission-connectivity-operations-production/review/ratification.md). Implementation awaits dependencies, consumed choices and reviewed freeze; Q0-Q5 remain pending.
 
 - [commission-hosted-domain-production](openspec/changes/commission-hosted-domain-production/proposal.md) — ratified 2026-11-14 by Brett Heap in draft [PR #1310](https://github.com/opensoft/openXfactory/pull/1310); [accepted source scope and custody](openspec/changes/commission-hosted-domain-production/review/ratification.md). Implementation awaits dependencies, consumed choices and reviewed freeze; Q0-Q5 remain pending.
