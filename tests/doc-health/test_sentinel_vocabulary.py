@@ -1158,7 +1158,9 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # its separate original output/receipt and preserved accepted N control.
     # Corrected T011 rerun retains rejected control/preflight/parser/wrapper
     # history: 15 additional sites, with all class obligations intact.
-    assert (standing_sites, standing_members) == (1118, 35)
+    # The T012 installer source candidate adds 49 measured sites,
+    # retaining its separate original output/receipt and accepted L control.
+    assert (standing_sites, standing_members) == (1167, 35)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
