@@ -4,7 +4,7 @@ Status: draft
 Kind: review-packet
 Prepared: 2026-11-14
 
-This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); current acceptance remains T001–T009 and partial Q0-E. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their task dependencies, consumed operating choices and freeze reconciliation remain required before implementation. PR #1310 remains draft.
+This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T010 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required for T011–T015. All three PRs remain draft.
 
 ## Prepared source decisions
 
@@ -85,4 +85,6 @@ Brett supplied actual [custodian authentication](../../../openspec/changes/commi
 
 Required source CI passed at c4e70f66d, with actual run 43608762372/job 132489023068 and explicit 287/40 zero-skip source collection. The separate receipt, reviewed manifest, actual review and authenticated control are different immutable identities. Source data inventory and reachability remain independently checked.
 
-T011-T068, full Q0 and Q1-Q5 remain incomplete. T011-T015 still need their actual consumed support/provider/integration/authority/custody/limit choices; their accepted source roles do not fill those choices. T016's neutral role and scope consent are accepted, with its actual acceptance evidence still to prepare after T010. All three PRs remain draft.
+T011-T068, full Q0 and Q1-Q5 remain incomplete. T011-T015 still need their actual consumed support/provider/integration/authority/custody/limit choices; their accepted source roles do not fill those choices. T016's neutral role and scope consent are accepted. Its distinct [actual source-evidence review packet](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md#exact-neutral-review-target) is now prepared, with a new extended control and the original observations preserved at separate immutable identities. Actual authentication and default verification remain due before T016 is checked. The prior authenticated E anchor and completed T010 remain intact.
+
+The [local support candidates](local-support-candidates.md) propose exact first server/client versions, platforms and channels for T011–T012. This is a pending owner choice for source preparation; upstream availability does not establish compatibility or qualification. GUI-capable Mac targets, actual package identities and execution authority remain required before their consuming qualification gates. The accepted zero-paid Mac guard grants no runner dispatch or enrollment. All three PRs remain draft.

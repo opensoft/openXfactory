@@ -46,6 +46,30 @@ accept unseen runtime results. Default admission of this new candidate remains
 blocked until the actual decision is recorded and its authenticated core passes
 verification.
 
+## Exact neutral review target
+
+| Item | Immutable review identity |
+| --- | --- |
+| Extended control | [commissioning manifest at 86dcb67f6](https://github.com/opensoft/openXfactory/blob/86dcb67f660cfc066789cf2333676a7bfcebf9c7/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Manifest file SHA-256 | `98dee92a6bda24ae1ac387ba9df05d55309ffde02d29065ebf38292dca9227b0` |
+| Authenticated content SHA-256 | `2f168946e83e9f272ff440754630e1fbfd44b3b0b295b72ca7a30d226ecb2b93` |
+| Existing neutral source permission | [094eb96f6](https://github.com/opensoft/openXfactory/blob/094eb96f61469b87d9ca8217f77bff5f54069536/openspec/changes/publish-private-connectivity-production-contract/review/source-owner-permission.json) |
+| Original neutral command output | [56ba140d2](https://github.com/opensoft/openXfactory/blob/56ba140d205e6d3794fbdb05c5882eb7933acc59/specs/043-private-connectivity-production/evidence/T016.json) |
+| Separate neutral receipt candidate | [aee21292c](https://github.com/opensoft/openXfactory/blob/aee21292c9d10c22cc8258b3b0bd07438fb6847f/specs/043-private-connectivity-production/evidence/T016.json) |
+
+The successful read-only source check ran from 16:31:13.579198 to
+16:31:16.312891 UTC on 2026-11-14 at the permission revision above. All three
+frozen T016 cases have actual source observations: accepted neutral owner,
+exact publication/reader scope, and deferred version allocation. The original
+failed assertion and corrected same-source execution are both preserved.
+No contract file, bundle version, tag or consumer pin changed.
+
+Authenticate the original neutral observations/provenance and this exact
+extended control as source-only custodian evidence. Acceptance permits a new
+accepted review/control pair and T016 completion only after default verification.
+It preserves the independently accepted E control above and its unchanged
+contained source objects. It does not accept later product or runtime evidence.
+
 ```json
 {
   "schema": "043-source-authentication-v1",
