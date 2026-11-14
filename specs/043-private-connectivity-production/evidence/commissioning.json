@@ -1975,7 +1975,7 @@
         "tests/sequenced_after/corpus-ledger.yaml",
         "specs/043-private-connectivity-production/evidence/T011.json"
       ],
-      "command": "python3 -c 'import json,hashlib,subprocess,re,yaml,runpy\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\" and permission[\"mode\"]==\"source\"\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"latest_consumed_choice\"][\"at\"]==\"2026-11-14T16:57:52.719Z\"\nassert permission[\"latest_consumed_choice\"][\"raw_record_sha256\"]==\"fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249\"\naccepted=(base/\"review/support-scope-acceptance.md\").read_text()\nfor value in (\"Approve these qualification candidates (Recommended)\",\"v0.29.7\",\"v1.104.7\",\"Ubuntu 24.04\",\"29.9.3\",\"Windows 11\",\"macOS 15\",\"Standalone GUI PKG\",\"Debian\"):\n assert value in accepted, value\nv=runpy.run_path(\"specs/043-private-connectivity-production/verify-evidence.py\")\ntasks=v[\"load_contract\"](Path.cwd())\nassert permission[\"definition_sha256\"]==v[\"DEFINITION\"]\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n if re.match(r\"\\| T02[0-3] \\|\",line):\n  cells=line.split(\"|\");declared[cells[1].strip()]=cells[2].strip().split(\"<br>\")\nassert set(declared)==set(permission[\"per_task_source_scope\"])=={\"T020\",\"T021\",\"T022\",\"T023\"}\nfor task,files in declared.items():\n assert tasks[task][\"owner\"]==\"L\" and files==tasks[task][\"files\"]==permission[\"per_task_source_scope\"][task]\nmatrix=permission[\"matrix\"]\nassert matrix=={\"headscale\":\"0.29.7\",\"tailscale\":\"1.104.7\",\"server\":{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"docker_engine\":\"29.9.3\"},\"clients\":[{\"os\":\"Windows 11\",\"architecture\":\"amd64\",\"channel\":\"official MSI\"},{\"os\":\"macOS 15\",\"architecture\":\"Apple Silicon\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"macOS 15\",\"architecture\":\"Intel\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"channel\":\"official Debian package/repository\"}],\"qualified\":False}\nratification=(base/\"review/ratification.md\").read_text()\nfor value in (\"Brett Heap\",\"Project lifetime\",\"Existing owner-repository permissions\",\"review of actual output/provenance\",\"no new export directory\"):\n assert value in ratification, value\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert len(permission[\"later_required_inputs\"])==4\nassert all(permission[\"boundaries\"][k] is False for k in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"package-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":declared,\"definition_sha256\":permission[\"definition_sha256\"]},\n \"local-platform-support\":{\"matrix\":matrix,\"actual_choice_at\":permission[\"latest_consumed_choice\"][\"at\"],\"raw_record_sha256\":permission[\"latest_consumed_choice\"][\"raw_record_sha256\"],\"compatibility_qualified\":False},\n \"consumed-decisions\":{\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False}\n}\nprint(\"L_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+      "command": "python3 -c 'import json,hashlib,subprocess,re,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"decision\"]==\"accepted\" and permission[\"owner\"]==\"Brett Heap\" and permission[\"mode\"]==\"source\"\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"latest_consumed_choice\"][\"at\"]==\"2026-11-14T16:57:52.719Z\"\nassert permission[\"latest_consumed_choice\"][\"raw_record_sha256\"]==\"fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249\"\naccepted=(base/\"review/support-scope-acceptance.md\").read_text()\nfor value in (\"Approve these qualification candidates (Recommended)\",\"v0.29.7\",\"v1.104.7\",\"Ubuntu 24.04\",\"29.9.3\",\"Windows 11\",\"macOS 15\",\"Standalone GUI PKG\",\"Debian\"):\n assert value in accepted, value\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n if line.startswith((\"- [ ] T02\",\"- [x] T02\")):\n  task=line[6:10]\n  if task in (\"T020\",\"T021\",\"T022\",\"T023\"):\n   _,separator,tail=line.partition(\" \u2014 files: \")\n   assert separator\n   files,separator,_=tail.partition(\" \u2014 verify:\")\n   assert separator\n   tasks[task]={\"owner\":\"L\" if \"(Owner=L;\" in line else \"other\",\"files\":re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),files)}\nassert permission[\"definition_sha256\"]==\"66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0\"\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n if re.match(r\"\\| T02[0-3] \\|\",line):\n  cells=line.split(\"|\");declared[cells[1].strip()]=cells[2].strip().split(\"<br>\")\nassert set(declared)==set(permission[\"per_task_source_scope\"])=={\"T020\",\"T021\",\"T022\",\"T023\"}\nfor task,files in declared.items():\n assert tasks[task][\"owner\"]==\"L\" and files==tasks[task][\"files\"]==permission[\"per_task_source_scope\"][task]\nmatrix=permission[\"matrix\"]\nassert matrix=={\"headscale\":\"0.29.7\",\"tailscale\":\"1.104.7\",\"server\":{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"docker_engine\":\"29.9.3\"},\"clients\":[{\"os\":\"Windows 11\",\"architecture\":\"amd64\",\"channel\":\"official MSI\"},{\"os\":\"macOS 15\",\"architecture\":\"Apple Silicon\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"macOS 15\",\"architecture\":\"Intel\",\"channel\":\"official Standalone GUI PKG\"},{\"os\":\"Ubuntu 24.04 LTS\",\"architecture\":\"amd64\",\"channel\":\"official Debian package/repository\"}],\"qualified\":False}\nratification=(base/\"review/ratification.md\").read_text()\nfor value in (\"Brett Heap\",\"Project lifetime\",\"Existing owner-repository permissions\",\"review of actual output/provenance\",\"no new export directory\"):\n assert value in ratification, value\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert len(permission[\"later_required_inputs\"])==4\nassert all(permission[\"boundaries\"][k] is False for k in (\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\"))\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"package-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":declared,\"definition_sha256\":permission[\"definition_sha256\"]},\n \"local-platform-support\":{\"matrix\":matrix,\"actual_choice_at\":permission[\"latest_consumed_choice\"][\"at\"],\"raw_record_sha256\":permission[\"latest_consumed_choice\"][\"raw_record_sha256\"],\"compatibility_qualified\":False},\n \"consumed-decisions\":{\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False}\n}\nprint(\"L_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
       "roles": [
         "Brett Heap (Headscale package source/release owner and source-evidence custodian)"
       ],
@@ -2183,9 +2183,9 @@
       },
       "record": {
         "repository": "opensoft/openxfactory",
-        "commit": "e3164cc5ea1572d714bd099e896845ad2727652d",
+        "commit": "2438f54b65e43837a33e3c0f3aff7dbbd4ba0cb4",
         "path": "specs/043-private-connectivity-production/evidence/T011.json",
-        "sha256": "3d5f980b082d2e5df0dec64b12f9752567d8492a480b76562fd0e6f408a3bc63"
+        "sha256": "2171034243d0089cc0b87667531044cff24f39e522acb12ca6f9268ce0e1e6e8"
       },
       "class": "Q0-L"
     }
@@ -5931,9 +5931,9 @@
   "authorizes_production": false,
   "review": {
     "repository": "opensoft/openxfactory",
-    "commit": "5c01fc4adb3ed45d65303da121bdb609bc2d3a38",
+    "commit": "07ab22b0fe1775ac0786677e417edaf10ec4db56",
     "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-    "sha256": "80ea4862abb248babfb5b6afe29e8197162990ab8996354605a4e24cf75f9461"
+    "sha256": "0c6e9d6f6a9b3577477b0bf917ed070a9e758a8d5b357b6500535ef554d045d8"
   },
   "qualification_history": [
     {
@@ -5988,6 +5988,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "07ab22b0fe1775ac0786677e417edaf10ec4db56"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "094eb96f61469b87d9ca8217f77bff5f54069536"
     },
     {
@@ -6000,15 +6004,19 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "2438f54b65e43837a33e3c0f3aff7dbbd4ba0cb4"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "2eb17c55bfad04c9e7aad8f2966dab2041ddb00f"
     },
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "4e41b953c4982a69b86b764edeeb70f306a65b86"
+      "openxfactory_commit": "3128eeac8ef05efc40095633be8de5762bfd2d17"
     },
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "5c01fc4adb3ed45d65303da121bdb609bc2d3a38"
+      "openxfactory_commit": "4e41b953c4982a69b86b764edeeb70f306a65b86"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -6064,10 +6072,6 @@
     },
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "e3164cc5ea1572d714bd099e896845ad2727652d"
-    },
-    {
-      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "efafaf9b6edb02166d2ee3bc445741f681f7b59a"
     }
   ],
@@ -6092,5 +6096,13 @@
     "additional_tasks": [
       "T011"
     ]
-  }
+  },
+  "rejected_preparation_controls": [
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3128eeac8ef05efc40095633be8de5762bfd2d17",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+      "sha256": "4d4f5599fc3d61f3f9ce2db93cb4e1ea8aacae86717786cb885418ba2c840c36"
+    }
+  ]
 }
