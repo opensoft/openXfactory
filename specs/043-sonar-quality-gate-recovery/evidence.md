@@ -25,3 +25,12 @@ No issue, rule, threshold, source scope, visibility or billing change occurred.
 A direct GitHub check rerequest returned HTTP 404. It is not successful
 analysis evidence. The normal repository publication path will trigger fresh
 analysis; no assertion is made about the cause of that generic API response.
+
+
+## Governance qualification
+
+Strict content-addressed OpenSpec 1.12.0 validation passed for this change.
+The focused governed corpus/floor/reader suites passed 641 tests and 75 subtests
+with the actual pinned ce923636 review core supplied; no skips. The canonical
+seeder added exactly one corpus-ledger row for this change under real PR #1315
+and preserved every existing row and provenance field.
