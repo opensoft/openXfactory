@@ -11931,3 +11931,7 @@ The [authorized recovery proposal](openspec/changes/repair-sonar-quality-gate-de
 [tasks](specs/043-sonar-quality-gate-recovery/tasks.md), and
 [evidence](specs/043-sonar-quality-gate-recovery/evidence.md) record the
 historical-reference repair and its computation/preservation boundaries.
+
+The [computed-gate and finding receipt](specs/043-sonar-quality-gate-recovery/acceptance.json)
+records the restored assessment, unresolved findings and missing coverage
+measurement without treating them as passing acceptance.

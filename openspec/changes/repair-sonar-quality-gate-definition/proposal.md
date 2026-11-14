@@ -2,7 +2,7 @@
 Status: draft
 Proposed: 2026-11-14
 code_surface: none — Sonar service configuration and maintenance evidence only
-target_release: deferred — no code, contract bundle or runtime release
+target_release: implemented — verified service configuration; no code, contract bundle or runtime release
 ---
 
 ## Why

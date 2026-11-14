@@ -34,3 +34,60 @@ The focused governed corpus/floor/reader suites passed 641 tests and 75 subtests
 with the actual pinned ce923636 review core supplied; no skips. The canonical
 seeder added exactly one corpus-ledger row for this change under real PR #1315
 and preserved every existing row and provenance field.
+
+
+## Fresh main computation and unresolved findings
+
+Fresh main analysis cf95559d-ec71-4dff-9e6f-54f18227d283 processed source
+3432baf6d929112be283d3daa1a4330a4130ab64 after the definition repair.
+The gate is now computed ERROR rather than NONE. Its manual period is exactly
+2026-09-09T19:37:08-04:00, the retained reference chosen above. Reliability and
+security ratings on new code are D (4) against A (1). Maintainability A,
+duplication 0.5% against 3%, and reviewed hotspots 100% against 100% pass.
+The existing gate's six-condition definition and profiles remain unchanged.
+
+The automatic analysis supplies no overall/new coverage metric. Accordingly
+the configured 80% coverage condition is absent from the computed result;
+ignoredConditions=false does not prove coverage was measured. No coverage
+acceptance is claimed. Providing real CI-measured coverage requires its own
+governed analysis-workflow repair, retaining the existing test commands and
+production scope.
+
+The supported sinceLeakPeriod=true issue query returns exactly three bugs and
+eight vulnerabilities, matching the gate metrics. Five findings are in the
+historical feature-034 at-r1 evidence script; the other six are in existing
+validator, attestation, census, carve and dashboard tools. The
+[acceptance/triage receipt](acceptance.json) retains all eleven issue keys,
+locations and unresolved statuses. Those source findings were not introduced
+by this service-only change and have not been waived, suppressed or marked
+fixed. Historical evidence was not rewritten to make a quality gate green.
+
+T003's computation/measurement readback is complete. The restoration exposes
+the existing debt; it does not claim that the complete project is accepted.
+
+
+## Full-suite metadata correction
+
+The first complete PR run at fbbb5fc1 reported 10,439 passed, one failed,
+six expected skips, 338 existing PostgreSQL deselections and 751 subtests.
+The only failure was the new proposal's unsupported target_release token
+deferred. The house vocabulary permits implemented, a named estate release
+or deferred-allocation. The service operation and fresh main computation are
+now verified, so the proposal uses implemented with an explicit service-only
+gloss. No validator, vocabulary, check, threshold or source behavior changed.
+The failed run is retained; a fresh complete run is required at the final head.
+
+
+## Corrected candidate verification
+
+The corrected target_release/corpus/floor/reader suites pass 739 tests and
+75 subtests without skips. Strict content-addressed OpenSpec 1.12.0 validation
+and the canonical ledger-diff check pass. All seven operating checkout heads,
+statuses and staged/unstaged hashes, original registered worktree paths and
+cloud session/pane identities match the fresh maintenance baseline.
+
+The implementation and service-recovery receipts are complete; the final
+documentation head must still pass the repository's full mandatory CI and its
+own Codex review before publication. Earlier failed CI is retained and does
+not substitute for that qualification. The computed main gate remains red for
+the recorded existing findings, with coverage unmeasured.
