@@ -6,6 +6,7 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+from types import SimpleNamespace
 
 import pytest
 
@@ -19,6 +20,66 @@ TASKS = v.load_contract(ROOT)
 NOW = datetime(2030, 1, 2, tzinfo=timezone.utc)
 START = "2030-01-01T00:00:00Z"
 END = "2030-01-01T00:01:00Z"
+
+
+@pytest.fixture(scope="module")
+def accepted_historical_control():
+    path = v.COMMISSIONING_PATH
+    commits = subprocess.check_output(["git", "log", "--format=%H", "HEAD", "--", path], cwd=ROOT, text=True).splitlines()
+    for commit in commits:
+        data = subprocess.check_output(["git", "show", commit + ":" + path], cwd=ROOT)
+        if v.digest(data) == v.LEGACY_CONTROL_SHA256:
+            code = subprocess.check_output(["git", "show", commit + ":" + v.FEATURE_PATH + "/verify-evidence.py"], cwd=ROOT)
+            if v.digest(code) == v.LEGACY_READER_SHA256:
+                return dict(repository=v.COORDINATOR, commit=commit, path=path, sha256=v.LEGACY_CONTROL_SHA256)
+    pytest.fail("the accepted historical packet and immutable reader must remain in Git")
+
+
+def test_actual_historical_control_uses_matching_frozen_reader(accepted_historical_control):
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    prior = v.make_verifier(TASKS, store, accepted_historical_control)
+    assert prior.definition == v.LEGACY_DEFINITION
+    for task in ("T010", "T011", "T012", "T016"):
+        prior.verify(task)
+
+
+@pytest.mark.parametrize("mutation", ["control", "definition", "reader", "frozen-input"])
+def test_historical_bridge_rejects_unaccepted_content(accepted_historical_control, monkeypatch, mutation):
+    ref = dict(accepted_historical_control)
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    if mutation == "control": ref["sha256"] = "a" * 64
+    if mutation == "definition": monkeypatch.setattr(v, "LEGACY_DEFINITION", "a" * 64)
+    if mutation == "reader": monkeypatch.setattr(v, "LEGACY_READER_SHA256", "a" * 64)
+    if mutation == "frozen-input":
+        original = store.git
+        def changed(root, *args):
+            data = original(root, *args)
+            return data + b"\nchanged input" if args[0] == "show" and args[1].endswith("/spec.md") else data
+        monkeypatch.setattr(store, "git", changed)
+    with pytest.raises(v.EvidenceError): v.historical_verifier(store, ref)
+
+
+@pytest.mark.parametrize("mutation", [None, "binding", "revoked", "pending"])
+def test_historical_dependency_retains_current_authentication_and_authority(monkeypatch, mutation):
+    world = World(); world.add("T012")
+    binding = world.trust["bindings"]["T012"]
+    original = deepcopy(binding)
+    world.trust["historical_controls"] = {"T012": dict(repository=v.COORDINATOR, commit="a" * 40,
+                                                      path=v.COMMISSIONING_PATH, sha256=v.LEGACY_CONTROL_SHA256)}
+    calls = []
+    if mutation == "binding": original["command"] += " changed"
+    if mutation == "revoked": world.trust["revoked_authorities"].append(json.loads(world.store.blob(binding["authority"]))["id"])
+    monkeypatch.setattr(v, "historical_verifier", lambda *a: SimpleNamespace(binding=lambda key: original,
+                                                                            verify=lambda *a: calls.append(True)))
+    verifier = world.verifier()
+    if mutation == "pending": verifier.authenticated = False
+    if mutation:
+        with pytest.raises(v.EvidenceError): verifier.verify("T012")
+        assert calls == []
+    else:
+        verifier.verify("T012"); assert calls == [True]
+        verifier.trust["revoked_authorities"].append(json.loads(world.store.blob(binding["authority"]))["id"])
+        with pytest.raises(v.EvidenceError): verifier.verify("T012")
 
 
 class MemoryObjects:
@@ -95,7 +156,7 @@ class World:
         if definition["class"].startswith("CI-"):
             binding["ci"] = {"tests/synthetic.py": 3}
         if task == "T010":
-            binding["ci"] = {v.FEATURE_PATH + "/tests/" + name: 3 for name in ("test_evidence.py", "test_evidence_pins.py")}
+            binding["ci"] = {v.FEATURE_PATH + "/tests/" + name: 3 for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py")}
         if task == "T051":
             binding["decisions"] = [f"C-{i:02}" for i in range(3, 9)]
         if scope["phase"] in ("staging", "production"):
@@ -1289,3 +1350,13 @@ def test_source_decision_scope_override_cannot_satisfy_a_live_gate(world, kind):
     ref = world.decision(kind, source_scope)
     with pytest.raises(v.EvidenceError, match="phase"):
         world.verifier().decision(ref, binding, kind)
+
+
+@pytest.mark.parametrize("mutation", ["missing-proof-suite", "extra-suite"])
+def test_current_t010_requires_exactly_the_commissioned_three_suites(mutation):
+    world = World(); world.add("T010")
+    binding = world.trust["bindings"]["T010"]
+    if mutation == "missing-proof-suite": binding["ci"].pop(v.FEATURE_PATH + "/tests/test_source_roots.py")
+    else: binding["ci"]["uncommissioned.py"] = 1
+    with pytest.raises(v.EvidenceError, match="feature suites"):
+        world.verifier().ci(world.outputs["T010"], binding)

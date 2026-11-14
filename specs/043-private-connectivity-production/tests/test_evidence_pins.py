@@ -107,7 +107,7 @@ def commissioned(tmp_path):
     location = root / path; location.parent.mkdir(parents=True); location.write_text(json.dumps(record))
     binding = dict(task="T010", instance=None, owner="C", files=[path], authority={"synthetic": "reviewed"})
     calls = []
-    verifier = SimpleNamespace(tasks=v.load_contract(ROOT), trust=dict(repositories={"C": LOCAL}, pin_owners=[]),
+    verifier = SimpleNamespace(tasks=v.load_contract(ROOT), definition=v.DEFINITION, trust=dict(repositories={"C": LOCAL}, pin_owners=[]),
                                store=v.GitStore({LOCAL: root}), binding=lambda key: binding,
                                trust_reference=dict(repository=LOCAL, commit=revision, path="source",
                                                     sha256=v.digest((root / "source").read_bytes())),

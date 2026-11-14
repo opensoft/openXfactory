@@ -192,7 +192,7 @@ def process(verifier, task, instance=None, *, write=False, commissioning=False):
     value = module.decode(raw)
     if commissioning:
         require(value["schema"] == "043-reviewed-trust-v1" and value["feature"] == module.FEATURE
-                and value["definition"] == module.DEFINITION and "source_container" in value,
+                and value["definition"] == verifier.definition and "source_container" in value,
                 "wrong source commissioning object")
     else:
         require(value["task"] == task, "record task mismatch")
@@ -246,7 +246,7 @@ def main(argv=None):
         roots[LOCAL] = str(root)
         store = module.GitStore(roots)
         ref = dict(repository=LOCAL, commit=revision, path=path, sha256=os.environ.get("PC_EVIDENCE_TRUST_SHA256", ""))
-        verifier = module.Verifier(tasks, store, ref, prepare=arguments.commissioning)
+        verifier = module.make_verifier(tasks, store, ref, prepare=arguments.commissioning)
         result = process(verifier, arguments.task, arguments.instance, write=arguments.write,
                          commissioning=arguments.commissioning)
         print(("GENERATED draft inventory: " if arguments.write else "CHECKED inventory (read-only): ") + result)

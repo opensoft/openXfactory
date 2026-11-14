@@ -2677,9 +2677,8 @@ def test_production_commissioning_original_nested_refs_keep_coverage_and_localit
 def test_real_production_connectivity_records_have_exact_reachable_inventories():
     """Check actual committed data, independently of evidence/gate admission.
 
-    The commissioned source bootstrap uses coordinator Git only. Foreign data
-    must wait for an explicitly commissioned CI checkout/custody scope; absence
-    of that proof must never turn into a foreign-owner pass.
+    Foreign commit-presence proof uses explicitly commissioned ephemeral roots;
+    absence never becomes a foreign-owner pass or full source/gate admission.
     """
     import json
     import runpy
@@ -2687,9 +2686,13 @@ def test_real_production_connectivity_records_have_exact_reachable_inventories()
     feature = REPO_ROOT / "specs/043-private-connectivity-production"
     reader = SimpleNamespace(**runpy.run_path(str(feature / "verify-evidence.py")))
     inventory = SimpleNamespace(**runpy.run_path(str(feature / "register-evidence-pins.py")))
+    proof = SimpleNamespace(**runpy.run_path(str(feature / "prepare-source-roots.py")))
+    import os
+    required = proof.discover(REPO_ROOT)
+    roots = proof.validate_roots(REPO_ROOT, required, os.environ.get("PC_SOURCE_PROOF_ROOTS", "{}"))
     context = SimpleNamespace(
-        trust={"repositories": {"C": reader.COORDINATOR}},
-        store=reader.GitStore({reader.COORDINATOR: str(REPO_ROOT)}),
+        trust={"repositories": {**reader.FIXED_REPOSITORIES, "O": "opensoft/opsxfactory", "D": "codexfactory/codexfactory"}},
+        store=reader.GitStore({reader.COORDINATOR: str(REPO_ROOT), **roots}),
     )
     members = [m for m in pc.PIN_CLASS if m.id.startswith("private-connectivity-production-")]
     paths = [path for path in pc.committed_paths(REPO_ROOT, "HEAD")

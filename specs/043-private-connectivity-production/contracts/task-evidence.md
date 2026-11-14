@@ -34,6 +34,12 @@ Contained data is limited to E bootstrap/source/CI material; it cannot satisfy p
 
 T010 owns the complete accepted six-file first-record transition in tasks.md. Add only the exact commissioning JSON to existing closed production pin paths. Empty members remain FUTURE until actual committed sites exist; promote and measure only their actual population, preserving local/foreign reachability, all unknown-path refusals and 040 behavior. Accepted observations remain immutable; a corrected commissioning control is a new reviewed revision preserving prior history.
 
+### Accepted private source CI proof
+
+The ratified extend-private-connectivity-source-ci scope adds exactly the feature's prepare-source-roots.py and tests/test_source_roots.py to T009 and the existing doc-health-py314 workflow to T010. Both existing CI jobs prepare independent fixed-owner commit-metadata roots before inventory checks; no private source tree is published. PC_SOURCE_PROOF_ROOTS is an explicit CI metadata map, distinct from PC_EVIDENCE_ROOTS for full source/task admission. Missing credentials, reviewed producer provenance, owner identity or required commits fail closed. Credentialed code comes only from an authenticated producer selected by the trusted base, never an unreviewed PR script; credentials are revoked before tests and temporary proof is removed afterwards.
+
+Temporary commit presence cannot authenticate outputs or establish source conformance, a release or Q0–Q5 acceptance. Full actual owner Git stores, immutable source/artifact/dependency verification and separate custodian authentication remain mandatory. Historical accepted packets retain their matching frozen definitions, immutable readers and anchors; the new definition does not rewrite or retroactively authenticate their observations. The bounded compatibility bridge accepts only the fixed previously authenticated control/reader content identities and verifies current authority as well as historical evidence. Caller-selected definitions/readers remain refused.
+
 ## Owner, file and command binding
 
 C-01 freezes the actual canonical repository/worktree/revision, exact per-task file allowlist, approved owner command and required-case definitions before runtime work. The task's candidate file envelope is an additional upper bound, not a permission grant. Validate the strict intersection and fail if a diff, selected domain layout or needed file falls outside it; replan before expanding scope.
@@ -151,9 +157,9 @@ Task/registry changes after approval require reviewed scope/contract updates and
 
 ## T005 review freeze
 
-The initial definitions and later T006 acceptance-state freeze remain historical decisions. Original accepted identity: 547e398b615d08186719674774f379038740292e2472488010151a5f03bbba6d. On 2026-11-14 Brett ratified the exact bootstrap amendment, all five component source scopes/native packets and neutral publication scope. This refreshed freeze reconciles only their accepted file refinements and source-consent/custody handoff. All 68 identities, owners, classes, required cases, dependencies and verification commands are preserved. T001-T009 are complete; T010 onward and full Q0 remain incomplete.
+The initial definitions and later T006 acceptance-state freeze remain historical decisions. Original accepted identity: 547e398b615d08186719674774f379038740292e2472488010151a5f03bbba6d. On 2026-11-14 Brett ratified the exact bootstrap amendment, all five component source scopes/native packets and neutral publication scope. The prior source-scope definition 66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0 remains historical. Brett subsequently ratified extend-private-connectivity-source-ci at 2026-11-14T22:31:50.896Z. This refreshed freeze adds only its T009/T010 files and source-CI custody clarification. All 68 identities, owners, classes, required cases, dependencies and verification commands are preserved. T001–T012 and T016 are complete under their historical authenticated anchors; the additional source-CI refinement is now accepted. Full Q0 remains incomplete.
 
-Review packet SHA-256: 66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0
+Review packet SHA-256: e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298
 
 The digest covers canonical UTF-8 JSON keys inputs, registry and tasks, sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal newline. Tasks are all 68 literal task lines with only checkboxes normalized to unchecked; registry is all 68 literal rows. Inputs contains each SHA-256 below. This file's input is only its complete body before this freeze heading. Footer status and task completion checkboxes do not alter the definition.
 
@@ -174,6 +180,6 @@ The digest covers canonical UTF-8 JSON keys inputs, registry and tasks, sorted k
 | contracts/owner-handoff.md | d8fec9881a390420c41d6bc1dfef8fb44ab35457054611ae3751a8a98ca9fd78 |
 | contracts/product-interfaces.md | 5643be4adba7bb0ac5413a1ddb74bab863af981c945d92c4fde14d97fd0d94e7 |
 | contracts/qualification-evidence.md | 8d7d4ab79a6bb456a2dabef0d6ec4d5ba40da296e5ba19ceab2c7e907df31e92 |
-| contracts/task-evidence.md | c749c9e78e1f9bfa329cf108bdb7bd1c9bc882f0b910065078f992d381d323fc |
+| contracts/task-evidence.md | c7734b52520b6ad6ccad75cd32f4e49b395877fb926dffc03c3e85e34c854247 |
 
 Further task/owner/class/case/dependency/file/command or frozen-input changes still require affected owner review and a new freeze before use. Source consent supplies no actual output authentication, target authority or rollout acceptance. The exact generated neutral inventory filename remains allocated and closed at the actual authorized cut; no version is reserved here. Actual bootstrap/CI exports and their independent custodian authentication remain required before T010 passes. All three PRs stay draft and Q1-Q5 remain unentered.

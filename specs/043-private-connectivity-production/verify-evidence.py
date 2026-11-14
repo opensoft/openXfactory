@@ -29,7 +29,10 @@ from datetime import datetime, timezone
 
 FEATURE = "043-private-connectivity-production"
 FEATURE_PATH = "specs/" + FEATURE
-DEFINITION = "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0"
+DEFINITION = "e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298"
+LEGACY_DEFINITION = "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0"
+LEGACY_CONTROL_SHA256 = "0dc18a4053e07fd484534dcd4b572a5f8c6b72718b6901ac1323298d4ec7243e"
+LEGACY_READER_SHA256 = "0ce860921467e94e942274905c45c99295a830a3f14b8a0b66ddb944103f697f"
 COORDINATOR = "opensoft/openxfactory"
 FIXED_REPOSITORIES = {"C": COORDINATOR, "L": "opensoft/headscale-install", "I": "opensoft/xfactory-installer",
                       "H": "opensoft/openxsoft-hosted-services"}
@@ -202,16 +205,23 @@ class GitStore:
 def load_contract(root):
     """Bind all 68 rows, command/file envelopes and 16 inputs to the T006 freeze."""
     feature = root / FEATURE_PATH
-    contract = (feature / "contracts/task-evidence.md").read_text(encoding="utf-8")
-    task_text = (feature / "tasks.md").read_text(encoding="utf-8")
+    def read(path):
+        relative(path)
+        target = feature / path
+        require(target.resolve().is_relative_to(feature.resolve()) and not target.is_symlink(), "unsafe contract input")
+        return target.read_bytes()
+    return _load_contract(read, DEFINITION)
+
+
+def _load_contract(read, definition):
+    contract = read("contracts/task-evidence.md").decode("utf-8")
+    task_text = read("tasks.md").decode("utf-8")
     body, marker, footer = contract.partition("\n## T005 review freeze")
     require(marker, "missing reviewed definition freeze")
     inputs = {}
     for path, expected in re.findall(r"^\| ([^|]+?) \| ([0-9a-f]{64}) \|$", footer, re.M):
         relative(path)
-        target = feature / path
-        require(target.resolve().is_relative_to(feature.resolve()) and not target.is_symlink(), "unsafe contract input")
-        data = body.encode() if path == "contracts/task-evidence.md" else target.read_bytes()
+        data = body.encode() if path == "contracts/task-evidence.md" else read(path)
         inputs[path] = digest(data)
         require(inputs[path] == expected, "changed frozen contract input: " + path)
     rows = re.findall(r"^\| T\d{3} \|.*$", body, re.M)
@@ -219,7 +229,7 @@ def load_contract(root):
     frozen = {"inputs": inputs, "registry": rows,
               "tasks": [re.sub(r"^- \[[ xX]\]", "- [ ]", line) for line in lines]}
     require(len(inputs) == 16 and len(rows) == len(lines) == 68, "incomplete frozen registry")
-    require(digest(json.dumps(frozen, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()) == DEFINITION,
+    require(digest(json.dumps(frozen, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()) == definition,
             "unreviewed task/case/file/command definitions")
     tasks = {}
     for row, line in zip(rows, lines):
@@ -232,9 +242,40 @@ def load_contract(root):
     return tasks
 
 
+def historical_verifier(store, ref, now=None, *, prepare=False):
+    """One fixed actually authenticated packet and its exact immutable reader.
+
+    The operator still selects the independent control anchor. This function
+    accepts neither a caller-selected definition nor executable source identity.
+    """
+    reference(ref)
+    require(ref["repository"].lower() == COORDINATOR and ref["path"] == COMMISSIONING_PATH
+            and ref["sha256"] == LEGACY_CONTROL_SHA256, "unaccepted historical control")
+    value = decode(store.blob(ref))
+    require(value["definition"] == LEGACY_DEFINITION, "unaccepted historical definition")
+    reader_ref = dict(repository=COORDINATOR, commit=ref["commit"], path=FEATURE_PATH + "/verify-evidence.py",
+                      sha256=LEGACY_READER_SHA256)
+    code = store.blob(reader_ref)
+    namespace = {"__name__": "_pc043_fixed_historical_reader", "__file__": __file__}
+    exec(compile(code, "<authenticated historical 043 reader>", "exec"), namespace)
+    root = store.root(COORDINATOR)
+    tasks = _load_contract(lambda path: store.git(root, "show", ref["commit"] + ":" + FEATURE_PATH + "/" + relative(path)),
+                           LEGACY_DEFINITION)
+    verifier = namespace["Verifier"](tasks, store, ref, now, prepare=prepare)
+    verifier.definition = LEGACY_DEFINITION
+    return verifier
+
+
+def make_verifier(tasks, store, ref, now=None, *, prepare=False):
+    if ref.get("sha256") == LEGACY_CONTROL_SHA256:
+        return historical_verifier(store, ref, now, prepare=prepare)
+    return Verifier(tasks, store, ref, now, prepare=prepare)
+
+
 class Verifier:
     def __init__(self, tasks, store, trust_reference, now=None, *, prepare=False):
         self.tasks, self.store = tasks, store
+        self.definition = DEFINITION
         self.now = now or datetime.now(timezone.utc)
         require(trust_reference["repository"].lower() == COORDINATOR, "trust must belong to coordinator")
         self.trust_reference = reference(trust_reference)
@@ -259,6 +300,11 @@ class Verifier:
         else:
             require(store.blob(reference(t["review"])).strip(), "missing independent custody review")
         self.active, self.cache = set(), set()
+        legacy = t.get("historical_controls", {})
+        require(isinstance(legacy, dict) and set(legacy) <= {f"T{i:03}" for i in range(1, 13)} | {"T016"},
+                "unaccepted historical task")
+        for key, ref in legacy.items():
+            require(ref.get("sha256") == LEGACY_CONTROL_SHA256, "unaccepted historical control")
 
     def source_container(self, container):
         require(isinstance(container, dict) and set(container) == {"schema", "objects"}
@@ -599,7 +645,7 @@ class Verifier:
         if self.tasks[binding["task"]]["class"].startswith("CI-"):
             require(required, "required exact-head CI collection missing")
         if binding["task"] == "T010":
-            require({FEATURE_PATH + "/tests/test_evidence.py", FEATURE_PATH + "/tests/test_evidence_pins.py"} <= set(required), "feature suites not explicitly collected")
+            require({FEATURE_PATH + "/tests/" + name for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py")} == set(required), "feature suites not explicitly collected")
         actual = output["ci"]
         require(set(actual) == set(required), "missing/unknown CI suites")
         for suite, count in required.items():
@@ -627,6 +673,12 @@ class Verifier:
         record = decode(data)
         # Current admission and original execution validity are checked even on cache hits.
         output, start, end, historical = self.evidence_authority(binding, record)
+        if key in self.trust.get("historical_controls", {}):
+            prior = historical_verifier(self.store, self.trust["historical_controls"][key], self.now)
+            require(binding == prior.binding(key), "historical binding changed")
+            prior.verify(key, data)
+            self.cache.add(key)
+            return
         if key in self.cache:
             return
         self.active.add(key)
@@ -760,7 +812,7 @@ def main(argv=None):
         store = GitStore(roots)
         trust_ref = {"repository": COORDINATOR, "commit": revision, "path": path,
                      "sha256": os.environ.get("PC_EVIDENCE_TRUST_SHA256", "")}
-        verifier = Verifier(tasks, store, trust_ref)
+        verifier = make_verifier(tasks, store, trust_ref)
         owner = tasks[arguments.task]["owner"]
         owner_root = store.root(verifier.trust["repositories"][owner])
         record_path = arguments.record.absolute()
