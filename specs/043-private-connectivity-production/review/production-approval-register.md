@@ -55,12 +55,33 @@ The [storage budget for review](staging-storage-budget.md) proposes a USD 10 sto
 
 ## Decisions supplied on 2026-11-14
 
-Brett selected: "Prepare a minimal dedicated-storage budget for review (Recommended)"; "Investigate GitHub macOS runners within included capacity, with paid overages prohibited (Recommended)"; and "Approve all five roles and ratify the matching source scopes (Recommended)". The final answer accepts the five coordinating component packets, matching native Ops/domain packets, exact listed source refinements and private source-only custody. It does not accept the separate E bootstrap amendment or neutral publication scope, which remain pending. The 16-input task freeze is unchanged and T010 remains incomplete; approved refinements are reconciled before use.
+Brett selected: "Prepare a minimal dedicated-storage budget for review (Recommended)"; "Investigate GitHub macOS runners within included capacity, with paid overages prohibited (Recommended)"; and "Approve all five roles and ratify the matching source scopes (Recommended)". That answer accepted the five coordinating component packets, matching native Ops/domain packets, exact listed source refinements and private source-only custody. At that point the E bootstrap amendment and neutral publication scope remained pending, and the original 16-input freeze was unchanged. The later decision below accepts those remaining scopes and their reconciled freeze. T010 remains incomplete.
 
 ## Financial and Mac guard decisions supplied later on 2026-11-14
 
-Brett reviewed the exact packets at the immutable source linked within each and answered: "Approve the USD 10 financial envelope (Recommended)" and "Approve the one-time zero-paid Mac guard (Recommended)". The first accepts only the bounded QA storage financial envelope. The second authorized a one-time direct billing-owner exception outside the Ops workflow's billing prohibition; the existing authenticated active owner session created the exact repository actions_macos budget and verified amount 0/prevent_further_usage true. Other budgets were preserved. No ongoing factory billing authority, target credential, runner dispatch, enrollment, Azure provisioning, Q1 or production permission follows. The source-only bootstrap amendment and neutral publication scope remain unanswered and unratified.
+Brett reviewed the exact packets at the immutable source linked within each and answered: "Approve the USD 10 financial envelope (Recommended)" and "Approve the one-time zero-paid Mac guard (Recommended)". The first accepts only the bounded QA storage financial envelope. The second authorized a one-time direct billing-owner exception outside the Ops workflow's billing prohibition; the existing authenticated active owner session created the exact repository actions_macos budget and verified amount 0/prevent_further_usage true. Other budgets were preserved. No ongoing factory billing authority, target credential, runner dispatch, enrollment, Azure provisioning, Q1 or production permission follows. The source-only bootstrap amendment and neutral publication scope were still unratified at that earlier financial decision; their later acceptance is recorded below.
 
 ## E bootstrap and neutral publication decisions
 
 Brett explicitly ratified both remaining proposals, accepted the neutral publication/release-owner role for the exact scope, and directed continuation in dependency order with all three PRs draft and Q0-Q5 honored. Their ratification records preserve the reviewed source and actual supplied instruction. The accepted exact task-file refinements are reconciled into the new review freeze. Actual bootstrap/source/CI authentication remains a separate required review; neither T010 nor T016 is complete from consent alone.
+
+## Source bridge preparation after ratification
+
+The accepted contained-object reader, original-output provenance checks and exact
+commissioning-path inventory are implemented. Source commands are repeated at
+their committed revisions; the original imports and failed development or
+prerequisite observations remain inspectable. Real source pins are retained
+under their computed published refs, without changing the observations. The
+required shared suite also checks inventories in the actual committed data.
+
+The exact-head GitHub Codex review identified an offer/wave ordering defect.
+Its source repair requires offer completion and any separate actual admission
+before wave execution, with red regressions and a passing admission control.
+The affected source suites pass 287 verifier and 40 inventory tests; the shared
+pin/sentinel suite passes 175 tests. Required GitHub CI for the final source is
+tracked independently and cannot be inferred from these local runs.
+
+The actual [custodian authentication](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md)
+is still pending. The commissioning container remains source-only and the
+verifier refuses evidence admission until that concrete review is recorded.
+T010, T011-T068, full Q0 and Q1-Q5 remain incomplete; all three PRs remain draft.
