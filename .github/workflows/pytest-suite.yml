@@ -598,6 +598,17 @@ jobs:
               need(set(ref) == {"repository", "commit", "path", "sha256"} and
                    ref["repository"].lower() == local and ref["path"] == path and
                    re.fullmatch("[0-9a-f]{40}", ref["commit"]) and re.fullmatch("[0-9a-f]{64}", ref["sha256"]))
+              # Trusted-base blobs can outlive their original branch after a squash.
+              # Fetch only this validated coordinator retention ref, without credentials.
+              try:
+                  git("cat-file", "-e", ref["commit"] + "^{commit}")
+              except SystemExit:
+                  retained = "refs/retention/pins/" + ref["commit"]
+                  git("-c", "credential.helper=", "-c", "http.extraheader=",
+                      "-c", "http.https://github.com/.extraheader=", "-c", "protocol.allow=never",
+                      "-c", "protocol.https.allow=always", "fetch", "--no-tags",
+                      "--no-recurse-submodules", "--no-write-fetch-head",
+                      "https://github.com/opensoft/openxfactory.git", retained + ":" + retained)
               row = git("ls-tree", ref["commit"], "--", path).split()
               need(row and row[0] in (b"100644", b"100755"))
               data = git("show", ref["commit"] + ":" + path)
@@ -722,6 +733,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Restore coordinator evidence history (043)
+        id: pc043_history
+        run: |
+          python3 specs/043-private-connectivity-production/prepare-source-roots.py history \
+            --directory "$RUNNER_TEMP/pc043-source-proof"
 
       # Node 22 is here for TWO reasons and both are load-bearing. 41 test files
       # gate DOM and JS probes on `shutil.which("node")` (see the header), and
@@ -1166,7 +1183,7 @@ jobs:
           expected = {
               "specs.043-private-connectivity-production.tests.test_evidence": 475,
               "specs.043-private-connectivity-production.tests.test_evidence_pins": 40,
-              "specs.043-private-connectivity-production.tests.test_source_roots": 56,
+              "specs.043-private-connectivity-production.tests.test_source_roots": 69,
           }
           report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "private-connectivity-043-source.xml").getroot()
           cases = list(report.iter("testcase"))
