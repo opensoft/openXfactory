@@ -13,7 +13,7 @@ The sole executable implementation list remains [feature 043 tasks](../../../spe
 ## 2. Qualification and authentication
 
 - [x] 2.1 Qualify the bounded repair through T010; verify the reproduced pre-repair disagreement, agreement after repair, all actual production sources still measured, affected regressions, exact-head measured CI/Python 3.14 and fresh Codex review, with unchanged gate identities/thresholds/skips/named verdicts.
-- [ ] 2.2 Present the new actual source/CI packet separately for custodian authentication; verify original refused/superseded observations remain preserved and default T010 verification passes only after that actual review. Keep all four PRs draft and full Q0/Q1–Q5 pending.
+- [x] 2.2 Present the new actual source/CI packet separately for custodian authentication; verify original refused/superseded observations remain preserved and default T010 verification passes only after that actual review. Keep all four PRs draft and full Q0/Q1–Q5 pending.
 
 ## Recorded scope and definition handoff
 
@@ -36,3 +36,9 @@ Source 94caf6717e passed the complete measured root/Sonar workflow (run 43682139
 The four isolated old-workflow failures now pass. Candidate code remains excluded before private token minting; token revocation precedes candidate public-history execution and tests. An independent main-only clone fetched the missing original historical objects anonymously from the actual coordinator retention namespace, without alternates, and verified T010/T011/T012/T016. The two empty-repository cold-start timeouts remain recorded as failed diagnostics, with no pass claimed for them.
 
 The replacement actual source-CI review manifest is 95abc40b8e, core c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54. The c49a6a5e and d37b1834 targets remain withdrawn and immutable. Read-only preparation checks pass; default admission still refuses pending actual custodian authentication. Task 2.2 remains open, all four PRs stay draft, and Q0-Q5 remain pending.
+
+## Actual authentication and default completion
+
+Brett authenticated reviewed manifest 95abc40b8e at 2026-11-15T11:47:39.004Z. The accepted review 24c3292df is bound by control 698bf8367, with reviewed core c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54 unchanged. His actual native user record is identified in the authentication document; it is separate from the earlier role/scope/definition acceptance. Default T010 and read-only receipt/control inventory commands pass against that independently selected control. Historical T011/T012/T016 also verify, with all prior failed/superseded observations and anchors preserved.
+
+Expanded T010 and this governance handoff are complete at source scope only. Full Q0/Q1-Q5, protected target custody, trusted-base private admission, merge, release/version/tag publication, deployment, enrollment, paid resources and commercial gates remain separate. All four PRs stay draft; archive waits for the actual governed landing.
