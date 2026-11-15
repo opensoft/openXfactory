@@ -203,7 +203,11 @@ def test_real_filtered_commit_store_contains_no_source_or_credentials(tmp_path):
     def transport(directory, args, token=None):
         calls.append((args, token))
         if args[:1] == ["fetch"]:
-            args = ["-c", "protocol.file.allow=always", *("file://" + str(source) if a == "origin" else a for a in args)]
+            # Validate the production operation, then substitute only this synthetic transport.
+            checked = s.proof_git_arguments(args)
+            return subprocess.check_output(["git", "-C", str(directory), "-c", "protocol.file.allow=always",
+                                            "fetch", "--no-tags", "--depth=1", "--filter=tree:0",
+                                            source.as_uri(), *checked[5:]], env=s.git_environment())
         return s.run_git(directory, args, token)
 
     git(source, "config", "uploadpack.allowFilter", "true")
@@ -271,6 +275,43 @@ def test_git_environment_removes_ambient_credentials_and_disables_lazy_reads(mon
     env = s.git_environment()
     assert "GH_TOKEN" not in env and "GIT_CONFIG_VALUE_0" not in env
     assert env["GIT_NO_LAZY_FETCH"] == "1" and env["GIT_TERMINAL_PROMPT"] == "0"
+
+
+def test_git_wrapper_refuses_option_injection_in_real_repository(tmp_path):
+    root = repo(tmp_path / "coordinator with spaces")
+    assert s.origin(root) == LOCAL
+    with pytest.raises(ValueError):
+        s.run_git(root, ["-c", "alias.proofescape=!printf unsafe", "proofescape"])
+
+
+@pytest.mark.parametrize("arguments", [
+    ["config", "--global", "credential.helper", "unsafe"],
+    ["remote", "add", "origin", "https://example.invalid/private.git"],
+    ["fetch", "--no-tags", "--depth=1", "--filter=tree:0", "origin", "--upload-pack=unsafe"],
+    ["fetch", "--no-tags", "--depth=1", "--filter=tree:0", "origin"],
+    ["fetch", "--no-tags", "--depth=1", "--filter=tree:0", "origin", *(["a" * 40] * 257)],
+    ["rev-parse", "--verify", "--help^{commit}"],
+    ["rev-parse", "--verify", "HEAD~1^{commit}"],
+    ["show", "--help"],
+    ["show", "a" * 40 + ":.github/workflows/pytest-suite.yml"],
+    ["show", "a" * 40 + ":" + s.FEATURE + "/evidence/instances/T057/../T010.json"],
+    ["ls-tree", "a" * 40, "--", ":(glob)**"],
+    ["cat-file", "--batch"],
+])
+def test_git_wrapper_denies_unregistered_operations_before_execution(tmp_path, monkeypatch, arguments):
+    def unexpected(*args, **kwargs):
+        pytest.fail("unregistered Git operation reached subprocess")
+    monkeypatch.setattr(s.subprocess, "run", unexpected)
+    with pytest.raises(ValueError):
+        s.run_git(tmp_path, arguments)
+
+
+def test_git_wrapper_never_attaches_fetch_credentials_to_local_reads(tmp_path, monkeypatch):
+    def unexpected(*args, **kwargs):
+        pytest.fail("local read received fetch credentials")
+    monkeypatch.setattr(s.subprocess, "run", unexpected)
+    with pytest.raises(ValueError, match="fetch-only"):
+        s.run_git(tmp_path, ["config", "--get", "remote.origin.url"], "synthetic-token")
 
 
 @pytest.mark.parametrize("workflow", ["pytest-suite.yml", "doc-health-py314.yml"])

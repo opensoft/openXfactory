@@ -24,6 +24,9 @@ from urllib import request
 
 LOCAL = "opensoft/openxfactory"
 FEATURE = "specs/043-private-connectivity-production"
+EVIDENCE_DIRECTORY = FEATURE + "/evidence"
+GITHUB = "https://github.com/"
+FETCH_PREFIX = ("fetch", "--no-tags", "--depth=1", "--filter=tree:0", "origin")
 COMMISSIONING = FEATURE + "/evidence/commissioning.json"
 SELF = FEATURE + "/prepare-source-roots.py"
 AUTHENTICATION = "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md"
@@ -75,11 +78,61 @@ def git_environment(token=None):
     return env
 
 
+def proof_git_arguments(arguments):
+    """Reconstruct only the finite proof operations, never arbitrary CLI options."""
+    require(isinstance(arguments, (list, tuple)) and all(isinstance(a, str) for a in arguments),
+            "invalid Git proof operation")
+    fixed = (("config", "--get", "remote.origin.url"), ("rev-parse", "--is-bare-repository"),
+             ("cat-file", "--batch-all-objects", "--batch-check=%(objectname) %(objecttype)"),
+             ("init", "--bare", "-q"))
+    for operation in fixed:
+        if tuple(arguments) == operation:
+            return list(operation)
+    match arguments:
+        case ["rev-parse", "--verify", revision]:
+            require(re.fullmatch(r"(?:HEAD|[0-9a-f]{40})\^\{commit\}", revision), "invalid proof revision")
+            return ["rev-parse", "--verify", "--end-of-options", revision]
+        case ["ls-tree", "-r", "--name-only", revision, "--", path]:
+            require(PIN.fullmatch(revision) and path == EVIDENCE_DIRECTORY, "invalid proof listing")
+            return ["ls-tree", "-r", "--name-only", revision, "--", EVIDENCE_DIRECTORY]
+        case ["ls-tree", revision, "--", path]:
+            require(PIN.fullmatch(revision) and proof_blob_path(path), "invalid proof tree path")
+            return ["ls-tree", revision, "--", path]
+        case ["show", blob] | ["cat-file", "-s", blob]:
+            revision, separator, path = blob.partition(":")
+            require(PIN.fullmatch(revision) and separator and proof_blob_path(path), "invalid proof blob")
+            blob = revision + ":" + path
+            return (["show", "--no-ext-diff", "--no-textconv", blob] if arguments[0] == "show" else
+                    ["cat-file", "-s", blob])
+        case ["remote", "add", "origin", url]:
+            for owner in REPOSITORIES:
+                allowed = GITHUB + owner + ".git"
+                if url == allowed:
+                    return ["remote", "add", "origin", allowed]
+        case ["fetch", *rest]:
+            pins = rest[4:]
+            require(tuple(arguments[:5]) == FETCH_PREFIX and 1 <= len(pins) <= 256 and
+                    all(PIN.fullmatch(pin) for pin in pins), "invalid proof fetch pins")
+            return [*FETCH_PREFIX, *pins]
+    raise ValueError("unregistered Git proof operation")
+
+
+def proof_blob_path(path):
+    return path in {SELF, AUTHENTICATION} or registered(path)
+
+
 def run_git(root, arguments, token=None):
+    directory = str(Path(root).resolve(strict=True))
+    require(Path(directory).is_dir(), "Git proof root must be a directory")
+    # An absolute operand cannot become another Git option, even for a dash-led input.
+    if not re.fullmatch(r"/[^\x00\r\n]*", directory):
+        raise ValueError("absolute Git proof root required")
+    operation = proof_git_arguments(arguments)
+    require(not token or operation[0] == "fetch", "proof credentials are fetch-only")
     try:
         process = subprocess.run(["git", "--no-optional-locks", "--no-replace-objects", "-c", "core.hooksPath=/dev/null",
                                   "-c", "credential.helper=", "-c", "protocol.allow=never", "-c", "protocol.https.allow=always",
-                                  "-C", str(root), *arguments], env=git_environment(token), capture_output=True,
+                                  "-C", directory, *operation], env=git_environment(token), capture_output=True,
                                  timeout=90, check=False)
     except subprocess.TimeoutExpired as exc:
         raise ValueError("bounded Git proof operation timed out") from exc
@@ -90,7 +143,7 @@ def run_git(root, arguments, token=None):
 
 def origin(root):
     value = run_git(root, ["config", "--get", "remote.origin.url"]).decode().strip().removesuffix(".git").rstrip("/")
-    for prefix in ("https://github.com/", "git@github.com:", "ssh://git@github.com/"):
+    for prefix in (GITHUB, "git@github.com:", "ssh://git@github.com/"):
         if value.startswith(prefix):
             name = value[len(prefix):]
             require(re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name), "invalid canonical proof owner")
@@ -113,7 +166,7 @@ def registered(path):
 def discover(root, revision="HEAD"):
     require(origin(root) == LOCAL, "coordinator origin mismatch")
     revision = run_git(root, ["rev-parse", "--verify", revision + "^{commit}"]).decode().strip()
-    paths = run_git(root, ["ls-tree", "-r", "--name-only", revision, "--", FEATURE + "/evidence"]).decode().splitlines()
+    paths = run_git(root, ["ls-tree", "-r", "--name-only", revision, "--", EVIDENCE_DIRECTORY]).decode().splitlines()
     result = {}
     for path in paths:
         if not registered(path):
@@ -248,8 +301,8 @@ def prepare(root, needed, directory, tokens, *, identities, api=installation_rep
             path = directory / owner.replace("/", "--")
             path.mkdir(mode=0o700)
             runner(path, ["init", "--bare", "-q"])
-            runner(path, ["remote", "add", "origin", "https://github.com/" + owner + ".git"])
-            runner(path, ["fetch", "--no-tags", "--depth=1", "--filter=tree:0", "origin", *pins], tokens[owner.split("/")[0]])
+            runner(path, ["remote", "add", "origin", GITHUB + owner + ".git"])
+            runner(path, [*FETCH_PREFIX, *pins], tokens[owner.split("/")[0]])
             check_population(path, pins)
             mapping[owner] = str(path.resolve())
         return validate_roots(root, needed, json.dumps(mapping))
