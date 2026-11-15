@@ -347,3 +347,18 @@ def test_default_private_browser_state_is_authorized_independently_from_cwd(auth
     monkeypatch.setattr(auth, "DEFAULT_PROFILE_DIR", str(default))
     assert auth.prepare_browser_profile(str(default)) == default
     assert default.stat().st_mode & 0o777 == 0o700
+
+
+@pytest.mark.parametrize("leaf", ["cookies.json", "metadata.json"])
+@pytest.mark.parametrize("mode", [0o400, 0o660])
+def test_read_only_or_shared_write_credential_targets_preserve_native_state(auth, tmp_path, leaf, mode):
+    pdir = tmp_path / "profiles/safe"
+    pdir.mkdir(parents=True)
+    (pdir / "cookies.json").write_text('["original"]')
+    (pdir / "metadata.json").write_text('{"unknown": 42}')
+    (pdir / leaf).chmod(mode)
+    before = {p.name: p.read_bytes() for p in pdir.iterdir()}
+    with pytest.raises((ValueError, OSError)):
+        save(auth, tmp_path)
+    assert {p.name: p.read_bytes() for p in pdir.iterdir()} == before
+    assert (pdir / leaf).stat().st_mode & 0o777 == mode

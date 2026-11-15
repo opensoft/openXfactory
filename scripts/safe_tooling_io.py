@@ -95,10 +95,12 @@ def exclusive_writer(directory_fd):
         fcntl.flock(directory_fd, fcntl.LOCK_UN)
 
 
-def _owned_regular(info):
+def _owned_regular(info, *, writable=False):
     if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
-            or info.st_nlink != 1):
-        raise UnsafePath("private file must be regular, owned and single-link")
+            or info.st_nlink != 1 or info.st_mode & 0o022):
+        raise UnsafePath("private file must be regular, owned, unshared-write and single-link")
+    if writable and not info.st_mode & stat.S_IWUSR:
+        raise UnsafePath("read-only credential state cannot be replaced")
 
 
 def target_signature(directory_fd, name):
@@ -107,7 +109,7 @@ def target_signature(directory_fd, name):
         info = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
     except FileNotFoundError:
         return None
-    _owned_regular(info)
+    _owned_regular(info, writable=True)
     return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns
 
 

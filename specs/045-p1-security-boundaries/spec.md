@@ -28,12 +28,14 @@ profiles, skips, census, freshness assertions and billing remain intact.
 
 ## Requirements
 - FR-001: Bound profile names; reject traversal, absolute and option-shaped names.
-- FR-002: No-follow descriptor I/O, regular owned single-link credential files,
-  private creation mode, atomic per-file replacement, staged pair and writer lock.
+- FR-002: Credential operations cannot follow substituted filesystem objects
+  or affect outside data; files are private from creation, read-only/shared-write
+  targets refuse, and concurrent writers cannot silently overwrite each other.
 - FR-003: Retain merge and wrong-account-before-write semantics.
 - FR-004: Validate authorized browser path before startup; preserve occupied state.
-- FR-005: Fixed hash-verified wheel-only privileged Python dependencies and locked
-  script-free functional worker CLI; no fallback/check removal.
+- FR-005: Privileged dependency bytes and versions are fixed and verified;
+  installation runs no package lifecycle/build code, and the existing worker
+  command remains functional without removing any fallback or check.
 - FR-006: Repair remaining P1 roots, policy inputs, outputs and executable operands.
 - FR-007: Coordinate legitimate release cuts and vendored/provider consumers.
 - FR-008: Establish fixture provenance privately; retain unresolved uncertainty.
@@ -42,15 +44,18 @@ profiles, skips, census, freshness assertions and billing remain intact.
 - FR-010: Exact original 40-key tracking and actual-main acceptance per phase.
 
 ## Success Criteria
-All scoped P1 keys have verified source fixes or explicitly evidenced contextual/
-external dependencies; no false completion or automatic closure on unchanged
-source. Every landed phase passes unchanged checks and existing quality gate.
-Unsafe counterexamples refuse, legitimate behavior remains and preservation
-fingerprints/session records survive.
+- SC-001: All 40 original P1 records have source/behavioral evidence and a verified
+  outcome. An unresolved dependency remains incomplete and cannot count as fixed.
+- SC-002: Every landed phase passes every existing gate condition and required
+  check at the actual published main revision.
+- SC-003: Every unsafe acceptance case refuses before outside/native-state
+  damage; every corresponding legitimate case retains its intended result.
+- SC-004: Original historical records and all unrelated active state remain
+  intact; no skip addition, check relaxation or billing change is introduced.
 
 ## Key Entities
-Trusted invocation/state root; validated profile; held directory descriptor;
-staged native profile pair; fixed dependency closure; P1 key/repair evidence;
+Authorized location; profile identity and native state; verified dependency set;
+P1 key/repair evidence;
 exact source/analysis identity; retained history and active session identities.
 
 ## Assumptions and Scope

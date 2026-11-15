@@ -12,7 +12,9 @@ It preserves completed feature 044 and original issue/history identities.
 - [Implementation plan](plan.md)
 - [Sole implementation task list](tasks.md)
 - [Research and dependency decisions](research.md)
+- [Clarifications and applied answers](clarify-questions.md)
 - [Consistency analysis](analysis.md)
+- [Current specification quality checklist](checklists/requirements.md)
 - [Original 40 P1 keys](p1-keys.json)
 - [Phase 1 local evidence](phase1-local-evidence.md)
 

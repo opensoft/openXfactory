@@ -14,7 +14,7 @@ paid model run, gate/profile/baseline mutation or historical record rewrite.
 ## Decisions
 1. Credential names are bounded single components. The store is explicit
    operator/test configuration, independent of profile data. Hold no-follow
-   directory descriptors, check ownership/types/links, lock cooperating writers,
+   directory descriptors, check ownership/types/links, respect read-only and unshared-write intent, lock cooperating writers,
    merge account metadata before changes, and stage both private 0600 files
    before atomic replacement. Retain wrong-account refusal and all unknown keys.
    Raw Path.resolve plus write_text was rejected because it follows links and

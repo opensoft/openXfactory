@@ -53,3 +53,11 @@ investigation. No matching GitHub secret-scanning alert established provenance
 for that literal. No credential liveness check or rotation was attempted.
 That P1 key remains unresolved; the value is absent from these records.
 The first phase does not claim completion of all 40 P1 records.
+
+A subsequent preservation review added four counterexamples for read-only and
+shared-write native targets. They failed against the initial phase-1 candidate;
+the repair now respects those existing file intents before any replacement.
+This correction does not change real profile modes or state during deployment.
+
+Final read-only-intent follow-up verification: 623 tests passed with 105
+subtests, with the same two pre-existing tranche-B skips.
