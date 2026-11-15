@@ -8,9 +8,9 @@ Brett is the accepted Headscale package source/release owner and source-evidence
 
 | Item | Immutable review identity |
 | --- | --- |
-| Proposed reviewed manifest | Pending the following immutable control commit; this preparation is not an authentication target. |
-| Manifest file SHA-256 | Not yet bound |
-| Canonical content SHA-256 for authentication | Not yet bound |
+| Proposed reviewed manifest | [991ebfc0e5](https://github.com/opensoft/openxfactory/blob/991ebfc0e53962990ee587f41307aec809f887a7/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Manifest file SHA-256 | 3bc1ea32f9004c381e1b0eaca08cda57f2ccd703be5266bfa65397a3da89aeb4 |
+| Canonical content SHA-256 for authentication | f9d89883516aa147f3b0054b7132f1f53b66bd948c2c5834b2d9a4cea3dd3332 |
 | Complete frozen definition | c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431 |
 | Actual tested package source | [9e94411f89](https://github.com/opensoft/Headscale-Install/commit/9e94411f893836550b481085f0ef628f4b14b99b) |
 | Actual source baseline | 11bd61fe665cf40f2bbf02980c512475329b3151 |
