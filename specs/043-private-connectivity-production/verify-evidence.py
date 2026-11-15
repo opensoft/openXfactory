@@ -735,6 +735,13 @@ class Verifier:
         # Every child still depends on the complete program Q2; no partial union.
         if task in INSTANCE_TASKS:
             self.verify("T056")
+            q2 = self.binding("T056")
+            q2_record = self.read(q2["record"], q2)
+            _, _, q2_end, _ = self.evidence_authority(q2, q2_record)
+            q2_accepted_at = (timestamp(self.read(q2["admission"], q2)["reviewed_at"])
+                              if q2.get("admission") else q2_end)
+            require(q2_end <= start and q2_accepted_at <= start,
+                    "Q2 acceptance must precede production execution")
             if binding["scope"]["offering"] in ("local-managed", "hosted-domain"):
                 eligibility = binding["eligibility"]
                 eligible = self.binding(eligibility)

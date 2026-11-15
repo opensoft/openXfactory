@@ -206,6 +206,9 @@ class World:
                           coverage=dict(window=[START, END], intervals=[[START, END]]))
         self.records[key], self.outputs[key] = record, output
         self.publish(key)
+        if task == "T056":
+            # Synthetic Q2 finishes before the default production execution window.
+            move_live_observation(self, key, "2029-12-31T23:59:00Z", START)
         return key
 
     def ref(self, key):
@@ -701,6 +704,49 @@ def move_live_observation(world, key, start, end):
                   coverage=dict(window=[start, end], intervals=[[start, end]]))
     binding["observation"]["window"] = [start, end]
     world.publish(key)
+
+
+@pytest.mark.parametrize("task", sorted(v.INSTANCE_TASKS))
+@pytest.mark.parametrize("start,end", [
+    ("2029-12-31T23:57:00Z", "2029-12-31T23:58:00Z"),
+    ("2029-12-31T23:59:30Z", "2030-01-01T00:00:30Z"),
+])
+def test_each_production_child_rejects_incomplete_q2_at_execution(world, task, start, end):
+    key = world.child(task)
+    # Its predecessors retain valid times, so each selected child must enforce Q2 itself.
+    move_live_observation(world, key, start, end)
+    with pytest.raises(v.EvidenceError, match="Q2 acceptance must precede production execution"):
+        world.check(key)
+
+
+def refresh_dependency_records(world):
+    """Republish synthetic immutable dependencies in their construction order."""
+    for key, record in world.records.items():
+        binding = world.trust["bindings"][key]
+        record["dependencies"] = {dep: world.ref(selected) for dep, selected in binding["dependencies"].items()}
+        world.publish(key)
+
+
+@pytest.mark.parametrize("task", sorted(v.INSTANCE_TASKS))
+def test_each_production_child_rejects_late_q2_admission(world, task):
+    key = world.child(task)
+    admit_run(world, "T056", reviewed_at="2030-01-01T00:00:30Z", valid_from=START)
+    for predecessor in world.records:
+        if predecessor != key and world.trust["bindings"][predecessor]["task"] in v.INSTANCE_TASKS:
+            move_live_observation(world, predecessor, "2030-01-01T00:02:00Z", "2030-01-01T00:03:00Z")
+    refresh_dependency_records(world)
+    with pytest.raises(v.EvidenceError, match="Q2 acceptance must precede production execution"):
+        world.check(key)
+
+
+@pytest.mark.parametrize("task", sorted(v.INSTANCE_TASKS))
+@pytest.mark.parametrize("admitted", [False, True])
+def test_each_production_child_accepts_q2_at_execution_boundary(world, task, admitted):
+    key = world.child(task)
+    if admitted:
+        admit_run(world, "T056", reviewed_at=START, valid_from="2029-12-31T23:59:00Z")
+        refresh_dependency_records(world)
+    world.check(key)
 
 
 @pytest.mark.parametrize("offer_start,offer_end", [

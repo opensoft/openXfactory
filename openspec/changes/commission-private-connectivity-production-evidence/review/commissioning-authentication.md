@@ -43,7 +43,9 @@ The new packet requires actual custodian authentication after its original outpu
 Full Q0 and Q1–Q5 remain pending. All four PRs remain draft. No merge, version/tag, release publication, target operation, deployment, enrollment, paid resource or commercial gate is granted. Actual provider/domain/integration, live custody, staging and canary decisions retain their own gates.
 
 
-## Exact source-CI review target
+## Withdrawn source-CI review target
+
+The c49a6a5e packet below was withdrawn before authentication. Codex review of packet head 507b1b4fb6d076b7b36b7379286021eec6b9568d found that the reader could admit a production child that ran before Q2 completed or its separately recorded admission was reviewed. The original observations remain preserved; they do not qualify the corrected reader. Corrected source, exact-head CI and a new actual authentication target are required before the expanded T010 control is accepted. No earlier approval transfers to that new target.
 
 | Item | Immutable review identity |
 | --- | --- |

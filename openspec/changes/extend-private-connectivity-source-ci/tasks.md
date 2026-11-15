@@ -12,10 +12,12 @@ The sole executable implementation list remains [feature 043 tasks](../../../spe
 
 ## 2. Source and CI evidence handoff
 
-- [x] 2.1 Hand the accepted scope to existing T009/T010 in the sole task list; verify actual source regressions, both exact-head CI entry points, preserved check obligations and any measured population/census change before private data admission.
+- [ ] 2.1 Hand the accepted scope to existing T009/T010 in the sole task list; verify actual source regressions, both exact-head CI entry points, preserved check obligations and any measured population/census change before private data admission.
 - [ ] 2.2 Present the new actual source/CI control and original provenance to the custodian; verify its distinct authentication and full default task command before completing a dependent task. Keep all four PRs draft and full Q0/Q1–Q5 pending.
 
 ## Recorded definition refinement
+
+The c49a6a5e source-CI authentication target is withdrawn pending repair of the Q2 chronology issue identified by Codex at packet head 507b1b4fb6d076b7b36b7379286021eec6b9568d. Its actual outputs remain preserved. Corrected reader regressions, fresh exact-head CI and distinct authentication are required before the expanded T010 handoff completes. The 746e9316c observations below describe the superseded source only.
 
 The accepted refinement changes only T009/T010's files fields and the source-CI clarification in contracts/task-evidence.md. All other task fields and all 68 registry rows are unchanged. Fifteen of the 16 frozen inputs retain their previous bytes. The complete refreshed definition is e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298; its reader passes the complete freeze check. The prior definition 66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0 and actual accepted observations remain in immutable Git history. The compatibility bridge fixes the historical control/reader content identities and preserves current authentication and revocation checks.
 
