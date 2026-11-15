@@ -31,3 +31,13 @@ nine of nine requirements, zero errors and warnings. The final focused run
 covering fixture boundaries, privileged dependencies, OpenSpec and citation
 adapters passed 289 tests; actionlint passed the changed approval workflow.
 The prior 311-test run additionally included the wider execution module.
+
+The first cut CI exposed a test-harness assumption that the declared bundle
+was already tagged. The local transport fixture now mirrors the real tag
+presence, without inventing publication. Candidate mode must still reach the
+missing-domain dependency; realization mode must additionally report exactly
+HGR-RELEASE-TAG-MISSING while this release is owed. When the real annotated
+tag exists, the original no-tag-findings and tag/main transport checks remain.
+The production validator, prepublication gate, tag policy and 30-second CLI
+limits are unchanged. The PostgreSQL 78-member identity remains exactly
+sha256:532945ef596214b429b2e2fc1112e313276587fbb06311180b2c69147d52b33b.

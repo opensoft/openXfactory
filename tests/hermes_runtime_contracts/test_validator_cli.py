@@ -228,8 +228,10 @@ def test_human_output_is_deterministic_and_contains_a_stable_code(
 
 
 @pytest.fixture
-def local_published_release(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """Keep real objects and release checks, without live GitHub transport timing."""
+def local_published_release(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> tuple[Path, bool]:
+    """Mirror real publication state, including an owed tag during a release cut."""
     real_git = shutil.which("git")
     assert real_git is not None
 
@@ -240,15 +242,23 @@ def local_published_release(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
     manifest = yaml.safe_load((REPOSITORY_ROOT / "contracts/manifest.yaml").read_text())
     tag = manifest["contract_bundle_version"]
     main_oid = read("rev-parse", "refs/remotes/origin/main")
-    tag_oid = read("rev-parse", f"refs/tags/{tag}")
-    assert read("cat-file", "-t", tag_oid) == "tag", "published tag must remain annotated"
+    tag_result = subprocess.run(
+        [real_git, "-C", str(REPOSITORY_ROOT), "rev-parse", "--verify", "--quiet",
+         f"refs/tags/{tag}"], capture_output=True, text=True, check=False)
+    assert tag_result.returncode in (0, 1), tag_result.stderr
+    tag_oid = tag_result.stdout.strip() if tag_result.returncode == 0 else None
+    if tag_oid is not None:
+        assert read("cat-file", "-t", tag_oid) == "tag", "published tag must remain annotated"
     objects = Path(read("rev-parse", "--git-path", "objects"))
     if not objects.is_absolute():
         objects = REPOSITORY_ROOT / objects
     remote = tmp_path / "published-release.git"
     subprocess.run([real_git, "init", "--bare", "--quiet", str(remote)], check=True)
     (remote / "objects/info/alternates").write_text(str(objects.resolve()) + "\n")
-    for ref, oid in (("refs/heads/main", main_oid), (f"refs/tags/{tag}", tag_oid)):
+    refs = [("refs/heads/main", main_oid)]
+    if tag_oid is not None:
+        refs.append((f"refs/tags/{tag}", tag_oid))
+    for ref, oid in refs:
         subprocess.run([real_git, "-C", str(remote), "update-ref", ref, oid], check=True)
     subprocess.run([real_git, "-C", str(remote), "symbolic-ref", "HEAD", "refs/heads/main"],
                    check=True)
@@ -270,7 +280,7 @@ def local_published_release(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
         "done\nexec " + shlex.quote(real_git) + " -c " + shlex.quote(rewrite) + ' "$@"\n')
     shim.chmod(0o755)
     monkeypatch.setenv("PATH", str(shim_dir) + os.pathsep + os.environ.get("PATH", ""))
-    return log
+    return log, tag_oid is not None
 
 
 @pytest.mark.parametrize(
@@ -349,7 +359,8 @@ def test_candidate_mode_on_the_real_repository_requires_domain_mirrors(
     [("--require-candidate", "candidate"), ("--require-realization", "realization")],
 )
 def test_release_mode_field_is_preserved_on_the_real_repository(
-    tmp_path: Path, mode_option: str, expected_mode: str, local_published_release: Path
+    tmp_path: Path, mode_option: str, expected_mode: str,
+    local_published_release: tuple[Path, bool],
 ) -> None:
     # An empty mirror root makes domain-regression resolution a dependency
     # error (exit 2); the mode field is still reported.
@@ -360,11 +371,18 @@ def test_release_mode_field_is_preserved_on_the_real_repository(
     assert payload["mode"] == expected_mode
     codes = {finding["code"] for finding in payload["findings"]}
     assert "HGR-REGRESSION-DEPENDENCY" in codes
-    assert not any(code.startswith("HGR-RELEASE-TAG-") for code in codes)
-    if expected_mode == "realization":
-        # Both published tag and main refs were queried through real Git.
-        # The local mirror holds the actual annotated object and main OID.
-        assert local_published_release.read_text().count("published transport") >= 2
+    log, tag_published = local_published_release
+    tag_codes = {code for code in codes if code.startswith("HGR-RELEASE-TAG-")}
+    if expected_mode == "realization" and not tag_published:
+        # A cut must pass its PR before publishing. Do not fabricate a tag:
+        # realization must still refuse the genuinely missing publication.
+        assert tag_codes == {"HGR-RELEASE-TAG-MISSING"}
+        assert log.read_text().count("published transport") >= 1
+    else:
+        assert not tag_codes
+        if expected_mode == "realization":
+            # Both actual annotated tag and main refs are queried by real Git.
+            assert log.read_text().count("published transport") >= 2
 
 
 def test_handoff_receipt_without_a_consumer_repository_is_a_dependency_error(
