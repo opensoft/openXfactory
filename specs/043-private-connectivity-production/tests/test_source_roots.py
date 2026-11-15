@@ -416,3 +416,94 @@ def test_both_ci_lanes_revoke_before_tests_and_cleanup_afterwards(workflow):
         qualification = next(step for step in steps if step.get("name") == "Exercise source proof under Python 3.14 (043)")
         assert "PC043_EXPECTED_REVISION" in qualification["env"]
         assert "worktree add --detach" in qualification["run"] and "--junitxml=" in qualification["run"]
+
+
+def source_selection_fixture(path, scenario):
+    """Real Git ancestry; the synthetic merge tree is used only for selection."""
+    root = repo(path)
+    feature = Path("specs/043-private-connectivity-production")
+    modules = [feature / "tests" / name for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py")]
+
+    def snapshot():
+        git(root, "add", "-A")
+        git(root, "commit", "-qm", "Synthetic source selection")
+        return git(root, "rev-parse", "HEAD")
+
+    def add_feature(paths=modules):
+        for name in paths:
+            (root / name).parent.mkdir(parents=True, exist_ok=True)
+            (root / name).write_text("def test_synthetic_source():\n    assert True\n")
+
+    (root / "README.md").write_text("Before feature 043\n")
+    before = snapshot()
+    add_feature()
+    base = snapshot()
+    git(root, "checkout", "-q", "--detach", base if scenario == "deleted-feature" else before)
+    (root / "notes.txt").write_text("Unrelated PR change\n")
+    if scenario == "feature-head":
+        add_feature()
+    elif scenario == "partial-head":
+        add_feature(modules[:1])
+    elif scenario == "path-is-file":
+        (root / feature).parent.mkdir(parents=True, exist_ok=True)
+        (root / feature).write_text("A blob cannot replace the feature tree\n")
+    elif scenario == "created-then-removed":
+        add_feature()
+        snapshot()
+        shutil.rmtree(root / feature)
+    elif scenario == "deleted-feature":
+        shutil.rmtree(root / feature)
+    head = snapshot()
+    git(root, "checkout", "-q", "--detach", base)
+    if scenario == "missing-merge-suite":
+        (root / modules[-1]).unlink()
+        git(root, "add", "-A")
+    tree = git(root, "write-tree")
+    checkout = git(root, "commit-tree", tree, "-p", base, "-p", head, "-m", "Synthetic merge")
+    git(root, "checkout", "-q", "--detach", checkout)
+    if scenario == "main-push":
+        head = checkout = base
+        git(root, "checkout", "-q", "--detach", checkout)
+    env = dict(os.environ, PC043_EXPECTED_REVISION=head, PC043_BASE_REVISION=base, PC043_CHECKOUT_REVISION=checkout)
+    if scenario == "head-not-merged":
+        env["PC043_EXPECTED_REVISION"] = git(root, "commit-tree", tree, "-p", base, "-m", "Unmerged sibling")
+    for case, variable in (("unavailable-head", "PC043_EXPECTED_REVISION"), ("unavailable-base", "PC043_BASE_REVISION"),
+                           ("unavailable-checkout", "PC043_CHECKOUT_REVISION")):
+        if scenario == case:
+            env[variable] = "a" * 40
+    if scenario == "wrong-checkout":
+        env["PC043_CHECKOUT_REVISION"] = base
+    if scenario == "malformed-head":
+        env["PC043_EXPECTED_REVISION"] = "--help"
+    return root, env, head, checkout
+
+
+@pytest.mark.parametrize("workflow", ["pytest-suite.yml", "doc-health-py314.yml"])
+@pytest.mark.parametrize("scenario", ["feature-head", "older-unrelated", "main-push", "deleted-feature", "partial-head",
+                                      "created-then-removed", "unavailable-head", "unavailable-base", "unavailable-checkout",
+                                      "wrong-checkout", "head-not-merged", "missing-merge-suite", "path-is-file", "malformed-head"])
+def test_ci_source_selection_preserves_exact_heads_and_handles_unrelated_older_heads(tmp_path, workflow, scenario):
+    import yaml
+    root, env, head, checkout = source_selection_fixture(tmp_path / "coordinator", scenario)
+    definition = yaml.safe_load((ROOT / ".github/workflows" / workflow).read_text())
+    steps = definition["jobs"][workflow.removesuffix(".yml")]["steps"]
+    step = next(value for value in steps if value.get("name") in {
+        "Run private-connectivity production source suites (043)", "Exercise source proof under Python 3.14 (043)"})
+    # Execute the actual read-only revision selection, before worktree creation or test code.
+    prefix = step["run"].split('original_tree="$(pwd)"', 1)[0]
+    script = prefix + '\nprintf "%s|%s\\n" "$PC043_EXPECTED_REVISION" "${PC043_SOURCE_MODE:-unclassified}"\n'
+    state = git(root, "show-ref"), git(root, "status", "--porcelain")
+    result = subprocess.run(["bash", "-c", script], cwd=root, env=env, text=True, capture_output=True, timeout=20)
+    assert git(root, "rev-parse", "HEAD") == checkout
+    assert (git(root, "show-ref"), git(root, "status", "--porcelain")) == state
+    if scenario in {"feature-head", "older-unrelated", "main-push"}:
+        expected = checkout if scenario == "older-unrelated" else head
+        mode = "merge-checkout" if scenario == "older-unrelated" else "pr-head"
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert result.stdout.splitlines()[-1] == expected + "|" + mode
+        for variable in ("PC043_BASE_REVISION", "PC043_CHECKOUT_REVISION"):
+            assert variable in step["env"]
+        if scenario == "older-unrelated":
+            assert "does not qualify the PR head" in result.stdout
+    else:
+        assert result.returncode != 0, "Invalid/missing feature source was silently accepted: " + result.stdout

@@ -275,8 +275,38 @@ jobs:
         shell: bash
         env:
           PC043_EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          PC043_BASE_REVISION: ${{ github.event.pull_request.base.sha || github.sha }}
+          PC043_CHECKOUT_REVISION: ${{ github.sha }}
         run: |
           set -euo pipefail
+          requested_head="$PC043_EXPECTED_REVISION"
+          feature_path="specs/043-private-connectivity-production"
+          for revision in "$requested_head" "$PC043_BASE_REVISION" "$PC043_CHECKOUT_REVISION"; do
+            [[ "$revision" =~ ^[0-9a-f]{40}$ ]]
+            git cat-file -e "$revision^{commit}"
+          done
+          [ "$(git rev-parse HEAD)" = "$PC043_CHECKOUT_REVISION" ]
+          git merge-base --is-ancestor "$requested_head" "$PC043_CHECKOUT_REVISION"
+          export PC043_SOURCE_MODE=pr-head
+          if git cat-file -e "$requested_head:$feature_path" 2>/dev/null; then
+            [ "$(git cat-file -t "$requested_head:$feature_path")" = tree ]
+          else
+            git merge-base --is-ancestor "$PC043_BASE_REVISION" "$PC043_CHECKOUT_REVISION"
+            ancestor="$(git merge-base "$requested_head" "$PC043_BASE_REVISION")"
+            touched="$(git log --full-history -1 --format=%H "$ancestor..$requested_head" -- "$feature_path")"
+            if git cat-file -e "$ancestor:$feature_path" 2>/dev/null || [ -n "$touched" ]; then
+              echo "::error::A head that changed or removed feature 043 requires its own complete source suites."
+              exit 1
+            fi
+            export PC043_EXPECTED_REVISION="$PC043_CHECKOUT_REVISION"
+            export PC043_SOURCE_MODE=merge-checkout
+            echo "::notice::Unrelated head predates feature 043; testing the merge checkout does not qualify the PR head."
+          fi
+          for module in test_evidence.py test_evidence_pins.py test_source_roots.py; do
+            [ "$(git cat-file -t "$PC043_EXPECTED_REVISION:$feature_path/tests/$module")" = blob ]
+          done
+          printf '043 source selection: mode=%s revision=%s requested_head=%s\n' \
+            "$PC043_SOURCE_MODE" "$PC043_EXPECTED_REVISION" "$requested_head"
           original_tree="$(pwd)"
           source_tree="$RUNNER_TEMP/pc043-py314-source"
           git -c core.hooksPath=/dev/null worktree add --detach "$source_tree" "$PC043_EXPECTED_REVISION"
@@ -291,7 +321,7 @@ jobs:
           import xml.etree.ElementTree as ET
           report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "pc043-py314.xml").getroot()
           cases = list(report.iter("testcase"))
-          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 69}
+          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 97}
           if dict(Counter(case.get("classname") for case in cases)) != expected:
               raise SystemExit("Python 3.14 proof suite collection mismatch")
           identities = {(case.get("classname"), case.get("name")) for case in cases}
@@ -301,7 +331,7 @@ jobs:
               raise SystemExit("Python 3.14 proof suite must run and pass without skips")
           if any(child.tag in ("skipped", "failure", "error") for case in cases for child in case):
               raise SystemExit("Python 3.14 proof case did not pass")
-          print("043 Python 3.14 proof: collected=69 passed=69 skipped=0 failures=0 errors=0 revision=" + os.environ["PC043_EXPECTED_REVISION"])
+          print("043 Python 3.14 proof: collected=97 passed=97 skipped=0 failures=0 errors=0 revision=" + os.environ["PC043_EXPECTED_REVISION"])
           PY
           [ -z "$(git status --porcelain)" ]
           cd "$original_tree"

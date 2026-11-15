@@ -1150,18 +1150,49 @@ jobs:
 
 
       # T010's source suites are outside tests/. Keep the existing root gate
-      # and its pins intact, then run all three suites at the actual PR head.
-      # The sibling worktree keeps the merge checkout and its HEAD unchanged.
+      # and its pins intact. Feature heads run all three suites at their exact revision;
+      # unrelated pre-043 heads run the merge checkout without head qualification.
+      # The sibling worktree keeps the original checkout and its HEAD unchanged.
       # Explicit source cases include the closed Git grammar and native working-directory controls.
       - name: Run private-connectivity production source suites (043)
         shell: bash
         env:
           PC043_EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          PC043_BASE_REVISION: ${{ github.event.pull_request.base.sha || github.sha }}
+          PC043_CHECKOUT_REVISION: ${{ github.sha }}
           COVERAGE_PROCESS_START: ${{ github.workspace }}/openxFactory/.coveragerc
           COVERAGE_ROOT: ${{ github.workspace }}/private-connectivity-043-source
           COVERAGE_FILE: ${{ github.workspace }}/openxFactory/.coverage-reports/.coverage
         run: |
           set -euo pipefail
+          requested_head="$PC043_EXPECTED_REVISION"
+          feature_path="specs/043-private-connectivity-production"
+          for revision in "$requested_head" "$PC043_BASE_REVISION" "$PC043_CHECKOUT_REVISION"; do
+            [[ "$revision" =~ ^[0-9a-f]{40}$ ]]
+            git cat-file -e "$revision^{commit}"
+          done
+          [ "$(git rev-parse HEAD)" = "$PC043_CHECKOUT_REVISION" ]
+          git merge-base --is-ancestor "$requested_head" "$PC043_CHECKOUT_REVISION"
+          export PC043_SOURCE_MODE=pr-head
+          if git cat-file -e "$requested_head:$feature_path" 2>/dev/null; then
+            [ "$(git cat-file -t "$requested_head:$feature_path")" = tree ]
+          else
+            git merge-base --is-ancestor "$PC043_BASE_REVISION" "$PC043_CHECKOUT_REVISION"
+            ancestor="$(git merge-base "$requested_head" "$PC043_BASE_REVISION")"
+            touched="$(git log --full-history -1 --format=%H "$ancestor..$requested_head" -- "$feature_path")"
+            if git cat-file -e "$ancestor:$feature_path" 2>/dev/null || [ -n "$touched" ]; then
+              echo "::error::A head that changed or removed feature 043 requires its own complete source suites."
+              exit 1
+            fi
+            export PC043_EXPECTED_REVISION="$PC043_CHECKOUT_REVISION"
+            export PC043_SOURCE_MODE=merge-checkout
+            echo "::notice::Unrelated head predates feature 043; testing the merge checkout does not qualify the PR head."
+          fi
+          for module in test_evidence.py test_evidence_pins.py test_source_roots.py; do
+            [ "$(git cat-file -t "$PC043_EXPECTED_REVISION:$feature_path/tests/$module")" = blob ]
+          done
+          printf '043 source selection: mode=%s revision=%s requested_head=%s\n' \
+            "$PC043_SOURCE_MODE" "$PC043_EXPECTED_REVISION" "$requested_head"
           original_tree="$(pwd)"
           feature_tree="$GITHUB_WORKSPACE/private-connectivity-043-source"
           git -c core.hooksPath=/dev/null worktree add --detach "$feature_tree" "$PC043_EXPECTED_REVISION"
@@ -1183,7 +1214,7 @@ jobs:
           expected = {
               "specs.043-private-connectivity-production.tests.test_evidence": 487,
               "specs.043-private-connectivity-production.tests.test_evidence_pins": 40,
-              "specs.043-private-connectivity-production.tests.test_source_roots": 69,
+              "specs.043-private-connectivity-production.tests.test_source_roots": 97,
           }
           report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "private-connectivity-043-source.xml").getroot()
           cases = list(report.iter("testcase"))
