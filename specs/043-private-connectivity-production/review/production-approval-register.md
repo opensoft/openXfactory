@@ -4,7 +4,7 @@ Status: draft
 Kind: review-packet
 Prepared: 2026-11-14
 
-This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T012 and T016 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required at their consumers. The three coordinating/owner-packet PRs and new Headscale source PR remain draft.
+This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T012 and T016 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required at their consumers. Coordinator #1310 is authorized for source-only review and landing; Ops #628, codeXfactory #583 and Headscale-Install #2 remain draft.
 
 ## Current source handoff
 
