@@ -104,3 +104,29 @@ line coverage is 84 percent for nlm_auth and 97 percent for safe_tooling_io
 exhaustive source/child coverage or the eventual main Sonar gate.
 The corrected workflow passes actionlint and both installer/launcher pass
 shellcheck. No checks or exclusions were removed.
+
+## Caller compatibility during rollout
+Inspection of the actual aggregation main found its reusable workflow tracks
+main while its provider gitlink still selects 894885fe6afbe92c77c0c15ab7dbde899e8690f1.
+That provider predates these lock/CLI files. The reusable jobs now read all
+installer support at immutable published commit
+2cd4050a220a9c46e1d6cdd8eff59fe41817d174, leaving caller-selected provider source
+and pins unchanged. The regular merge preserves this commit in main history.
+
+A disposable real old-provider worktree proved the exact materialization while
+the files remained absent from that checkout: all eight support artifacts
+matched this candidate, hash-locked Python dependencies installed from offline
+wheels, and the actual CLI reported 2.1.325. Its provider HEAD and working files
+stayed unchanged. The smoke workflow performs the same materialization and
+byte comparison. Nine named dependency tests pass; actionlint passes on that
+new workflow. This corrects a real rollout dependency before main cutover.
+
+Brett Heap confirmed on 2026-11-15 that the existing Claude CLI API-key CI use is
+already approved under Opensoft's Anthropic commercial agreement. The official
+package and notice stay unchanged. The GitHub license discussion was resolved
+with that authority recorded in the PR, without a scanner ignore or severity
+override. A requested fresh Sourcery review then reported SKIPPED because its
+250,000-diff-character seven-day budget was exhausted (available again in
+6 days 22 hours at readback). That skip is not a passed fresh review; no billing
+change or check dismissal was performed. Codex's exact 2cd4050a22 review found
+no major issues. The rollout correction requires its own fresh review and CI.

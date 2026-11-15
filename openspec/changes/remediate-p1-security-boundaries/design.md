@@ -63,3 +63,14 @@ no profile migration, session restart or billing migration is involved.
 Credential-like negative-fixture provenance is not established. Inspect its
 repository creation evidence privately; escalate only on credible live exposure.
 No value is copied into feature artifacts or tested against a provider.
+
+## Immutable installer support during caller rollout
+Existing callers may track the reusable workflow at main while holding an older
+provider gitlink. Installer support is therefore read from the reviewed,
+published immutable support commit, without checking out a new provider or
+changing caller-selected source pins. Both privileged jobs use that support
+root. The standalone smoke job performs the identical materialization, compares
+all eight support artifacts against the candidate tree and exercises the locks
+and CLI from those exact bytes. Artifact upgrades must move the support commit
+and byte comparison together; an older support pin cannot silently accept
+different candidate artifacts.
