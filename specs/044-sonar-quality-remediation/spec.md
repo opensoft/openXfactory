@@ -58,11 +58,14 @@ a missing coverage condition and flapping automatic issue closures.
 
 ## Requirements
 
-- FR-001: Fix the ten active findings through source behavior and regressions.
+- FR-001: Fix reported new-period reliability/security findings through source
+  behavior and regressions, including a reopened attestation output finding.
 - FR-002: Keep the original eleven-finding snapshot and driver preimage;
   do not claim an automatic closure on unchanged source as remediation.
 - FR-003: Confine ordinary file operands to the trusted invocation directory;
   retain explicit private-state ownership, mode, descriptor and URL identity.
+  Repository-governed attestation records retain their repository-root boundary
+  and refuse existing evidence or substituted output directories.
 - FR-004: Measure every tracked owned production Python file across scripts,
   xfactory, experiments, specs and openspec, including zero-hit modules.
 - FR-005: Classify genuine test modules explicitly; retain all production

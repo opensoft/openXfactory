@@ -1,0 +1,8 @@
+schema: spec-driven
+created: 2026-11-15
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-15-fix-hosted-protection-read-budget
+  reason: Resolve the T012Q fresh-protection budget conflict without omitting checks or resetting nested authority counters.
+  approved_by: 'Brett Heap: Go ahead and fix the protection-read budget conflict through the governed factory/adapter process, then open T012Q’s PR and run CI and local Codex review. Keep setup/dispatch unauthorized, feedback deferred, and do not replay either blocked write. Candidate implementation/publication only; no ratification or operational authority inferred.'
+  approved_on: '2026-11-15'

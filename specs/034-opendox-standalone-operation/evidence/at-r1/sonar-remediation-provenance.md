@@ -20,7 +20,7 @@ Original runner SHA-256: 8ba962fd7586ad476a6a464b0be4c102b415d078469ce4ed53ded2c
 
 Maintained driver SHA-256: 0d6b4744154c327696d16bec7dd8ab33e8106b32229d746c9fc2b1469849b608
 
-Maintained runner SHA-256: 8420fd30feee73c86bf27594180d41d35e4dcddb1ca8a010e98d90f1d0fc6383
+Maintained runner SHA-256: 911cd0b6ceac43485ef856661f4311666636291e4277860c2c4e50a1a4554a7a
 
 Preflight helper SHA-256: f2deae220e66a171df7ac8494e3a77e3dafb2b3c3a7a2e17be39ca3182052b69
 
@@ -38,3 +38,13 @@ The maintained helper rejects in both modes. This establishes a real
 behavioral repair; it does not manufacture a fresh browser PASS or revise a
 previous oracle verdict. Verification and actual-main Sonar/coverage results
 belong in [feature 044 evidence](../../../044-sonar-quality-remediation/evidence.md).
+
+## Follow-up conditional cleanup
+
+The first qualified maintenance runner in PR #1316 had SHA-256: 8420fd30feee73c86bf27594180d41d35e4dcddb1ca8a010e98d90f1d0fc6383
+
+The current runner changes only the three new output-refusal predicates to
+Bash double-bracket conditionals. The refusal order and output protection
+remain the same. The original source hashes and every dated execution
+artifact above remain unchanged; the earlier maintenance source is retained
+in the merged PR history.

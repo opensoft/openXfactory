@@ -74,6 +74,8 @@ OpsxFactory
 
 Core domain-neutral docs:
 
+- [Protected runtime hosting/issuance source proposal (draft)](openspec/changes/add-protected-runtime-hosting-issuance/proposal.md): [design](openspec/changes/add-protected-runtime-hosting-issuance/design.md), [finalization requirements](openspec/changes/add-protected-runtime-hosting-issuance/specs/hosted-runtime-finalization/spec.md), [hosting requirements](openspec/changes/add-protected-runtime-hosting-issuance/specs/protected-runtime-hosting-issuance/spec.md) and [feature017 handoff](openspec/changes/add-protected-runtime-hosting-issuance/tasks.md). Source preparation only; no operational authority.
+
 - [Private connectivity binding candidate](contracts/private-connectivity/README.md)
 - [Private connectivity: Speckit feature 040](specs/040-private-connectivity/spec.md). [Implementation plan](specs/040-private-connectivity/plan.md) · [Pilot rollout](specs/040-private-connectivity/quickstart.md)
 - [Private connectivity production qualification: Speckit feature 043](specs/043-private-connectivity-production/spec.md).
@@ -11972,3 +11974,4 @@ records the restored assessment, unresolved findings and missing coverage
 measurement without treating them as passing acceptance.
 
 - [Sonar quality remediation and measured main acceptance](specs/044-sonar-quality-remediation/README.md)
+- [Older Sonar reliability/security backlog](specs/044-sonar-quality-remediation/legacy-sonar-backlog.md)

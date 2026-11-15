@@ -6,14 +6,18 @@ reference: three bugs, seven active vulnerabilities and no measured coverage.
 The earlier eleven-finding snapshot remains immutable dated evidence; one
 vulnerability is currently automatically closed on unchanged source.
 
-A branch/subprocess-aware full-suite baseline is running over the frozen
-previous maintenance tree, whose source tree equals the published main used
-for this feature. Its results are pending. Seven operating checkout and cloud
+A branch/subprocess-aware full-suite baseline ran over the frozen previous
+maintenance tree, whose source tree equals the published main used for this
+feature. The completed diagnostic retains 10,442 passes, 751 subtests, six
+expected skips, 338 PostgreSQL deselections and one original CLI timeout;
+it is not passing acceptance. Seven operating checkout and cloud
 session/pane fingerprints were freshly captured before worktree creation.
 No baseline, profile, rule, issue status, permission or billing was changed.
 
-This record will be updated with measured tests, coverage, exact PR/main
-analysis, provenance and preservation. No green acceptance is claimed yet.
+The chronological record below retains successful and failed attempts.
+Published main 5d04859eb42e6b8684fa2825d20a8ed21652b93b now passes
+all six original conditions under the retained manual reference. The final
+section records its actual source-bound suite, analysis and preservation.
 
 
 ## Source boundary qualification
@@ -207,3 +211,146 @@ The focused coverage/boundary/private-connectivity suite passes 126 tests and
 validation pass. Binary-only installs now use the documented space-separated
 option syntax; dependency versions, hashes, normal CLI checks, source scope,
 coverage inventory and all server conditions remain unchanged.
+
+## First actual-main coverage scan and retained failure
+
+PR #1316 qualified at source c1d90e5ed1c98633af8a6cfd4bb6b7001a4743da:
+10,554 tests and 805 subtests passed, with six expected skips and 338 existing
+PostgreSQL deselections. Its verified report contains all 309 production
+Python files. All six PR gate conditions passed, with 87.6 percent new-code
+coverage, zero duplication, A reliability/security/maintainability and
+100 percent hotspot review. Exact-head Codex review completed with no findings.
+
+The PR merged as d4fdef49e96d6178c9da58327d5b956833c7b5df with the same
+qualified source tree. Main run 43658407197 passed the complete suite and all
+four other configured push workflows. Its full Sonar analysis
+9a06995a-534a-4aa5-a3e7-3aaeeef2bbeb measured 88.1403 percent new coverage over
+15,120 new lines to cover, 0.1843 percent duplication, A reliability and
+maintainability, and 100 percent hotspot review. Security C correctly failed
+the unchanged gate on two new-period vulnerabilities. No gate receipt was
+published from that failure.
+
+The positive revision guard had not closed the existing carve-validator
+argument-injection flow. The attestation output finding also reopened on
+unchanged source. These two findings are repaired below; a green PR alone
+is not treated as main acceptance. Full-main logs, reports and source-bound
+receipt were retained separately from qualified PR evidence.
+
+The complete scanner restores visibility of older baseline debt: 110 open
+reliability/security findings (six bugs and 104 vulnerabilities) outside the
+retained period, in addition to those two blockers. Their identities and
+statuses remain open. No baseline change or waiver hides them. Brett explicitly selected the [separate older backlog](legacy-sonar-backlog.md),
+consistent with the existing design. Its 110 issue identities are retained
+without source snippets; new-period gate remediation continues.
+
+All required checks and 17 CI/Sonar checks passed before merge. The optional
+Sourcery review triggered on readiness skipped because its existing weekly
+250,000-character review quota was exhausted; it is not a required gate.
+Its exact-head Codex alternative completed without findings. The quota notice
+is retained; billing was not changed.
+
+## Full-main security repairs
+
+Git now receives the guarded revision expression as batch stdin data, not a
+command argument, and requires exactly one canonical commit OID before tree
+reads. The existing operand guard, sanitized environment, no-replace-objects
+and all inventory/ancestry checks remain. Seven real-Git witnesses cover HEAD,
+branch, annotated tag, abbreviated and full OIDs, revision expressions and
+Unicode ref names. These replace five command-layout mocks with functional
+security checks. Malformed, non-commit and multiple-result refusals remain.
+
+Attestation output validates both default and explicit destinations before
+registry or verifier work. Existing records and symlinks refuse; descriptor
+walking beneath the repository and exclusive no-follow creation prevent
+directory substitutions. The record text is streamed separately from path
+creation. Signature/integrity checks and the skip-audit no-write rule are
+unchanged; no live registry attestation was performed for this repair.
+
+An exact old-source AST probe at the merged revision demonstrates the old
+default writer following a synthetic docs symlink and overwriting an outside
+synthetic record. The new checker refuses and preserves its original marker.
+Eleven new output witnesses cover default escape, existing evidence,
+content/path separation, and substitutions before and during descriptor open.
+The real-Git/output set first fails all 18 new witnesses, then passes after
+implementation. The complete relevant source suite passes 895 tests and
+352 subtests. A connected Python preview reports no attester issues and no
+findings in the edited Git functions; ten pre-existing maintainability
+findings elsewhere in the carve module remain outside those edits.
+
+Four non-blocking PR maintenance findings are also removed: three new Bash
+output-refusal predicates use double brackets, and the test URL assertion is
+split without changing its conditions. Bash syntax and 126 focused tests plus
+52 subtests passed before the additional security work. Maintained-runner
+provenance records its new hash and preserves the earlier qualified hash;
+original source hashes and every dated verdict/log/image remain unchanged.
+
+
+The final follow-up source suites pass 895 tests and 352 subtests; the complete
+local doc-health suite passes 2,163 tests. The pinned strict change validator,
+canonical 253-row ledger and attestation CLI help check pass. Publication and
+fresh exact-head CI/Codex plus actual-main gate verification are still pending.
+
+## Verified published-main acceptance
+
+Observed: 2026-11-14T23:41:25.885937-04:00
+
+Verified source: 5d04859eb42e6b8684fa2825d20a8ed21652b93b
+
+Sonar analysis: 94982bc0-f624-44c6-8e8c-3d06049cf90c
+
+[Complete main workflow](https://github.com/opensoft/openXfactory/actions/runs/43669723808)
+passed 10,570 tests and 807 subtests in 2,543.47 seconds, with the same six
+expected skips and 338 PostgreSQL deselections. JUnit reports 11,383 selected,
+11,377 passed and zero failures/errors. All 27 original normal CLI deadline
+checks passed before measurement; both named freshness/vector replay guards
+passed. The report and transferred receipt verify all 309 production Python
+files, including zero-hit modules, at the exact published revision and tree.
+
+| Original gate condition | Actual | Unchanged passing limit | Result |
+| --- | --- | --- | --- |
+| Reliability | A (1) | A (at most 1) | OK |
+| Security | A (1) | A (at most 1) | OK |
+| Maintainability | A (1) | A (at most 1) | OK |
+| New-code coverage | 88.6% | At least 80% | OK |
+| New duplication | 0.2% | At most 3% | OK |
+| New hotspots reviewed | 100.0% | 100% | OK |
+
+All six conditions are present and evaluated, with ignoredConditions false.
+The existing Sonar way gate remains ID 9. The same public project identity,
+quality profiles and rules remain; only profile last-used timestamps advance.
+The manual reference is still analysis d20bb52c-64fd-4090-986a-fd993f44ff86,
+source 8480378acd806b112ebd0462e18a86a9026ab155, dated
+2026-09-09T19:37:08-04:00. The new-code denominator is positive. No source,
+coverage or issue-ignore exclusion setting is configured on the server.
+
+The server reports all eleven original/reopened findings CLOSED/FIXED and
+zero new bugs or vulnerabilities. No issue-status override or waiver was
+issued. The user-selected older backlog remains 110 open findings: six bugs
+and 104 vulnerabilities, recorded separately with their identities.
+
+All five configured push workflows passed at this source, and a separate
+review-lane-repin run also passed. PR #1318 had sixteen successful CI/Sonar
+checks, zero open PR findings of any type, a completed exact-head Codex review
+with no findings, and no unresolved review thread. The optional Sourcery
+quota notice is retained; no required check was bypassed. The standing
+brettheap self-approval override bypassed only the missing human approval
+after those checks and an empty canonical landing register were read back.
+
+Before/after fingerprints match all seven operating checkouts: head, status,
+working diff and staged diff. Every pre-existing worktree remains; independent
+foreign worktree progress is preserved. All nine cloud session/pane identities
+and the five Python session names remain. The native desktop checkout retains
+its prior head and existing diagnostic files. No bench, session, shared
+checkout or Windows/WSL runtime configuration was restarted or reset.
+
+Original dated browser verdicts, logs and screenshots remain byte-identical,
+and original plus intermediate maintained source hashes remain in provenance.
+Failed baselines and the failed first main scan remain separately retained
+beside successful source-bound reports, with private evidence manifests.
+No live browser replay, registry attestation, contract ratification or runtime
+activation is asserted by this tooling qualification. Billing, permissions,
+provider pins, historical period and required checks were preserved.
+
+This closeout changes only existing feature documentation. Its normal PR
+checks and the resulting published-main run are verified before final task
+completion, with the accepted implementation source above retained explicitly.

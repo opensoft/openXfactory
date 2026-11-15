@@ -243,7 +243,8 @@ def test_server_gate_binds_main_revision_reference_and_real_measurement(
 
     def response(request, timeout):
         parts = urlsplit(request.full_url)
-        assert parts.scheme == "https" and parts.netloc == "sonarcloud.io"
+        assert parts.scheme == "https"
+        assert parts.netloc == "sonarcloud.io"
         query = parse_qs(parts.query)
         if parts.path == "/api/ce/task":
             result = {"task": {"status": "SUCCESS", "analysisId": "analysis-044",
