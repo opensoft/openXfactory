@@ -9,11 +9,11 @@ The sole executable implementation list remains [feature 043 tasks](../../../spe
 ## 1. Owner acceptance and preserved predecessor
 
 - [x] 1.1 Obtain Brett Heap's actual neutral/E owner acceptance of design.md's exact two additional T018 files and directly affected historical-evidence/refreeze scope; verify approved origin metadata, ratified provenance and an actual owner decision before implementation.
-- [ ] 1.2 Preserve T020's current actual review target until its source/CI qualification, real authentication and full default command pass; verify the actual accepted control/review identities and unchanged core before any definition-changing handoff.
+- [x] 1.2 Preserve T020's current actual review target until its source/CI qualification, real authentication and full default command pass; verify the actual accepted control/review identities and unchanged core before any definition-changing handoff.
 
 ## 2. Exact refinement handoff
 
-- [ ] 2.1 Hand the accepted two-file T018 refinement and fixed historical-control/reader identities to the existing T007/T010/T018 owners; verify the sole 68-task registry, all sixteen input bodies and every other task field remain unchanged.
+- [x] 2.1 Hand the accepted two-file T018 refinement and fixed historical-control/reader identities to the existing T007/T010/T018 owners; verify the sole 68-task registry, all sixteen input bodies and every other task field remain unchanged.
 - [ ] 2.2 Review the existing tasks' actual source regressions, complete freeze, collected two-lane CI and distinct new output authentication/default verification before the refined control is consumed; verify preserved older-tag membership and all current authority/refusal controls.
 
 ## 3. Authorized publication handoff
