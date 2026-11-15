@@ -124,15 +124,12 @@ def proof_blob_path(path):
 def run_git(root, arguments, token=None):
     directory = str(Path(root).resolve(strict=True))
     require(Path(directory).is_dir(), "Git proof root must be a directory")
-    # An absolute operand cannot become another Git option, even for a dash-led input.
-    if not re.fullmatch(r"/[^\x00\r\n]*", directory):
-        raise ValueError("absolute Git proof root required")
     operation = proof_git_arguments(arguments)
     require(not token or operation[0] == "fetch", "proof credentials are fetch-only")
     try:
         process = subprocess.run(["git", "--no-optional-locks", "--no-replace-objects", "-c", "core.hooksPath=/dev/null",
                                   "-c", "credential.helper=", "-c", "protocol.allow=never", "-c", "protocol.https.allow=always",
-                                  "-C", directory, *operation], env=git_environment(token), capture_output=True,
+                                  *operation], cwd=directory, env=git_environment(token), capture_output=True,
                                  timeout=90, check=False)
     except subprocess.TimeoutExpired as exc:
         raise ValueError("bounded Git proof operation timed out") from exc
