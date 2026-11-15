@@ -1165,7 +1165,7 @@ jobs:
           expected = {
               "specs.043-private-connectivity-production.tests.test_evidence": 468,
               "specs.043-private-connectivity-production.tests.test_evidence_pins": 40,
-              "specs.043-private-connectivity-production.tests.test_source_roots": 42,
+              "specs.043-private-connectivity-production.tests.test_source_roots": 56,
           }
           report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "private-connectivity-043-source.xml").getroot()
           cases = list(report.iter("testcase"))

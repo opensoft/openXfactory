@@ -274,7 +274,7 @@ jobs:
           import xml.etree.ElementTree as ET
           report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "pc043-py314.xml").getroot()
           cases = list(report.iter("testcase"))
-          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 42}
+          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 56}
           if dict(Counter(case.get("classname") for case in cases)) != expected:
               raise SystemExit("Python 3.14 proof suite collection mismatch")
           identities = {(case.get("classname"), case.get("name")) for case in cases}
@@ -284,7 +284,7 @@ jobs:
               raise SystemExit("Python 3.14 proof suite must run and pass without skips")
           if any(child.tag in ("skipped", "failure", "error") for case in cases for child in case):
               raise SystemExit("Python 3.14 proof case did not pass")
-          print("043 Python 3.14 proof: collected=42 passed=42 skipped=0 failures=0 errors=0 revision=" + os.environ["PC043_EXPECTED_REVISION"])
+          print("043 Python 3.14 proof: collected=56 passed=56 skipped=0 failures=0 errors=0 revision=" + os.environ["PC043_EXPECTED_REVISION"])
           PY
           [ -z "$(git status --porcelain)" ]
           cd "$original_tree"
