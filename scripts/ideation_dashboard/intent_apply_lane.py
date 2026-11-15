@@ -745,6 +745,9 @@ def main(argv=None) -> int:
     # module's own `__main__` guard). Idempotent, so a caller that
     # already registered is not punished.
 
+    from opendox_host import register_openxfactory
+    register_openxfactory()
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", required=True)
     parser.add_argument("--allowlist", required=True,
@@ -771,8 +774,6 @@ def main(argv=None) -> int:
         args.project_register = str(operator_input_operand(
             args.project_register if args.project_register is not None else configured_register,
             setting="XFACTORY_PROJECT_REGISTER_PATH", default=default_register))
-    from opendox_host import register_openxfactory
-    register_openxfactory()
 
     if args.intent_json:
         intent = json.loads(args.intent_json)

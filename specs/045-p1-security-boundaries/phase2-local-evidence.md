@@ -92,3 +92,10 @@ All three counterexamples failed against the initial phase-2 source. The fixed
 focused run passes 138 tests; its lone standalone Ledger shape skip is separately
 proven by the 12-case actual-layout run recorded above. The three new cases are
 additional tests; no prior case or predicate is replaced.
+
+## Hosted process-entry correction
+The complete hosted suite exposed an unchanged domain-profile process-entry
+assertion: help must still register the engineering domain before argparse
+exits. Registration is restored to the beginning of main; operator policy
+bindings still run before any intent is read or applied. The unchanged process
+entry suite and all boundary counterexamples passed together (85 tests).
