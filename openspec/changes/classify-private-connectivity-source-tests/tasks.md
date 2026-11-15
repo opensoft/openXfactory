@@ -12,11 +12,17 @@ The sole executable implementation list remains [feature 043 tasks](../../../spe
 
 ## 2. Qualification and authentication
 
-- [ ] 2.1 Qualify the bounded repair through T010; verify the reproduced pre-repair disagreement, agreement after repair, all actual production sources still measured, affected regressions, exact-head measured CI/Python 3.14 and fresh Codex review, with unchanged gate identities/thresholds/skips/named verdicts.
+- [x] 2.1 Qualify the bounded repair through T010; verify the reproduced pre-repair disagreement, agreement after repair, all actual production sources still measured, affected regressions, exact-head measured CI/Python 3.14 and fresh Codex review, with unchanged gate identities/thresholds/skips/named verdicts.
 - [ ] 2.2 Present the new actual source/CI packet separately for custodian authentication; verify original refused/superseded observations remain preserved and default T010 verification passes only after that actual review. Keep all four PRs draft and full Q0/Q1–Q5 pending.
 
 ## Recorded scope and definition handoff
 
 The actual owner decision is recorded in review/ratification.md. T010 adds exactly scripts/validate-sonar-coverage.py, sonar-project.properties and tests/sonar_quality/test_coverage_evidence.py. Its remaining fields and every other task field are unchanged. The complete refreshed definition is c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431. All 16 frozen input body hashes and all 68 registry rows match the preceding definition; the matching historical-reader regression verifies the accepted T010/T011/T012/T016 evidence unchanged.
 
-The isolated pre-repair regression fails for both inventory and scanner. Both controls pass after the bounded repair. Actual root collection increases from 10,601 to 10,603 selected (10,939 to 10,941 total), with 338 deselected unchanged. Existing root floors and exact skip/named-verdict obligations need no edit. Source qualification and actual new output authentication remain pending; these measurements grant no rollout gate.
+The isolated pre-repair regression fails for both inventory and scanner. Both controls pass after the bounded repair. Actual root collection increases from 10,601 to 10,603 selected (10,939 to 10,941 total), with 338 deselected unchanged. Existing root floors and exact skip/named-verdict obligations need no edit. Source qualification is complete and actual new output authentication remains pending; these measurements grant no rollout gate.
+
+## Actual source qualification
+
+The corrected source 328b83a7e4 passed root run 43674587047 (including measured Sonar) and Python 3.14/doc-health run 43674587176. The explicit feature suites passed 571 cases: 475 verifier, 40 inventory and 56 proof cases, without failures/errors/skips. Local affected validation passed 710 cases. Sonar passed all conditions, with security/reliability/maintainability A and 90.8% new-code coverage. Codex cleared the exact source. Root floors, skip pins and named verdicts remain unchanged.
+
+The [actual source-CI review packet](../commission-private-connectivity-production-evidence/review/commissioning-authentication.md) proposes manifest d9dc8dc309 and content SHA-256 d37b183495bbe604580c7a737621296cfcb71ac08e0a79bdcbf38a8bf8451d26. Its original output, receipt and current control remain separately immutable; prior failed/superseded observations remain retained. Read-only preparation checks pass, while default T010 admission correctly refuses pending actual custodian authentication. Task 2.2 remains open; no Q0-Q5 authority is granted.
