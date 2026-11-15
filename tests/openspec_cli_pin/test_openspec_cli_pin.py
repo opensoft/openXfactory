@@ -290,7 +290,7 @@ def a_disposition(**overrides) -> dict:
     return {key: value for key, value in entry.items() if value is not None}
 
 
-def _fake_registry(mod, monkeypatch):
+def _fake_registry(mod, monkeypatch, tmp_path):
     """Install a fictional registry at the SUBPROCESS boundary.
 
     A FUNCTION taking the module rather than a fixture closed over one, because
@@ -306,6 +306,10 @@ def _fake_registry(mod, monkeypatch):
     RECORDED so a test can assert not merely that a run passed but WHAT it ran —
     which is how `--path-mode` is proved never to be reached by the default.
     """
+    executable = tmp_path / "npm"
+    executable.write_text("#!/bin/sh\\nexit 0\\n", encoding="utf-8")
+    executable.chmod(0o700)
+    monkeypatch.setenv("XFACTORY_NPM_BINARY", str(executable))
     calls: list[list[str]] = []
     served = {"payload": PAYLOAD, "reports": VERSION, "installs": VERSION,
               "verdict": 0, "report": report(),
@@ -365,19 +369,25 @@ def _fake_registry(mod, monkeypatch):
     monkeypatch.setattr(mod, "_run", fake_run)
     monkeypatch.setattr(mod.subprocess, "run", fake_stream)
     monkeypatch.setattr(mod.shutil, "which",
-                        lambda name: f"/usr/bin/{name}" if name == "npm" else None)
+                        lambda name: str(executable) if name == "npm" else None)
     return calls, served
 
 
 @pytest.fixture
-def fake_npm(mod, monkeypatch):
-    return _fake_registry(mod, monkeypatch)
+def fake_npm(mod, monkeypatch, tmp_path):
+    monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(tmp_path / "pin.yaml"))
+    monkeypatch.setenv("XFACTORY_OPENSPEC_ARTIFACT_ROOT", str(tmp_path))
+    monkeypatch.setenv("OPENSPEC_CLI_PIN_CACHE", str(tmp_path / "cache"))
+    return _fake_registry(mod, monkeypatch, tmp_path)
 
 
 @pytest.fixture
-def installer_npm(installer, monkeypatch):
+def installer_npm(installer, monkeypatch, tmp_path):
     """The same fictional registry, served to the module the INSTALLER loaded."""
-    return _fake_registry(installer.verifier, monkeypatch)
+    monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(tmp_path / "pin.yaml"))
+    monkeypatch.setenv("XFACTORY_OPENSPEC_ARTIFACT_ROOT", str(tmp_path))
+    monkeypatch.setenv("OPENSPEC_CLI_PIN_CACHE", str(tmp_path / "cache"))
+    return _fake_registry(installer.verifier, monkeypatch, tmp_path)
 
 
 # ------------------------------------------------------- reading the pin ----
@@ -596,8 +606,9 @@ def test_the_default_mode_never_consults_path(mod, tmp_path, fake_npm,
 
     def watching_which(name):
         seen.append(name)
-        return f"/usr/bin/{name}"
+        return str(tmp_path / "npm") if name == "npm" else "/wrong-version/openspec"
 
+    monkeypatch.delenv("XFACTORY_NPM_BINARY", raising=False)
     monkeypatch.setattr(mod.shutil, "which", watching_which)
     (tmp_path / "openspec").mkdir()
     assert mod.main(["--all", "--no-cache", "--repo", str(tmp_path),
@@ -3043,3 +3054,162 @@ def test_block_valued_repository_scope_does_not_crash_cli(
     assert "Traceback" not in printed.err
     assert "DISPOSITIONED FINDINGS" not in printed.out
     assert calls
+
+
+def test_invalid_cache_generation_is_retained_while_a_fresh_one_is_verified(
+        mod, tmp_path, fake_npm):
+    calls, _served = fake_npm
+    (tmp_path / "openspec").mkdir()
+    cache = tmp_path / "cache"
+    args = ["--all", "--repo", str(tmp_path), "--cache-dir", str(cache),
+            "--pin", str(write_pin(tmp_path))]
+    assert mod.main(args) == 0
+    original = next(path for path in cache.iterdir() if path.is_dir())
+    (original / ".pin-verified").write_text("old-generation-evidence", encoding="utf-8")
+    before = {str(p.relative_to(original)): p.read_bytes()
+              for p in original.rglob("*") if p.is_file()}
+    assert mod.main(args) == 0
+    assert {str(p.relative_to(original)): p.read_bytes()
+            for p in original.rglob("*") if p.is_file()} == before
+    generations = [p for p in cache.iterdir() if p.is_dir()]
+    assert len(generations) == 2
+    assert any(p.name.startswith(original.name + ".install-") for p in generations)
+    assert mod.main(args) == 0
+    assert len([c for c in calls if c[1:2] == ["ci"]]) == 2
+    assert len([p for p in cache.iterdir() if p.is_dir()]) == 2
+
+
+def test_linked_cache_generation_refuses_without_touching_outside(
+        mod, tmp_path, fake_npm):
+    calls, _served = fake_npm
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "sentinel").write_text("retain", encoding="utf-8")
+    pin_path = write_pin(tmp_path)
+    pin = mod.read_pin(pin_path)
+    lockfile, integrity, packages = mod.pinned_lockfile(pin, pin_path)
+    artifact_integrity, artifact_shasum = mod.pinned_integrity(pin)
+    lock_bytes = mod.verify_lockfile(lockfile, integrity, packages, PACKAGE, artifact_integrity)
+    name = mod.cache_key(PACKAGE, VERSION, artifact_shasum, lock_bytes)
+    (cache / name).symlink_to(outside, target_is_directory=True)
+    (tmp_path / "openspec").mkdir()
+    assert mod.main(["--all", "--repo", str(tmp_path), "--cache-dir", str(cache),
+                     "--pin", str(pin_path)]) == 2
+    assert [p.name for p in outside.iterdir()] == ["sentinel"]
+    assert (outside / "sentinel").read_text() == "retain"
+    assert not [c for c in calls if c[1:2] in (["ci"], ["--version"])]
+
+
+def test_fetch_parent_substitution_never_redirects_npm_writes(
+        mod, tmp_path, fake_npm, monkeypatch):
+    selected, parked, outside = (tmp_path / name for name in ("selected", "parked", "outside"))
+    selected.mkdir()
+    outside.mkdir()
+    (outside / "sentinel").write_text("retain", encoding="utf-8")
+    original_run = mod._run
+    def substitute(argv, **kwargs):
+        if argv[1:2] == ["pack"]:
+            selected.rename(parked)
+            selected.symlink_to(outside, target_is_directory=True)
+        return original_run(argv, **kwargs)
+    monkeypatch.setattr(mod, "_run", substitute)
+    with pytest.raises(mod.PinRefusal):
+        mod.fetch_artifact(PACKAGE, VERSION, selected / "fetch")
+    assert [p.name for p in outside.iterdir()] == ["sentinel"]
+    assert (outside / "sentinel").read_text() == "retain"
+    assert list((parked / "fetch").glob("*.tgz")), "the held original received the synthetic artifact"
+
+
+def test_cached_binary_cannot_escape_its_verified_generation(mod, tmp_path, fake_npm):
+    calls, _served = fake_npm
+    (tmp_path / "openspec").mkdir()
+    args = ["--all", "--repo", str(tmp_path), "--cache-dir", str(tmp_path / "cache"),
+            "--pin", str(write_pin(tmp_path))]
+    assert mod.main(args) == 0
+    generation = next(path for path in (tmp_path / "cache").iterdir() if path.is_dir())
+    binary = generation / "node_modules/.bin/openspec"
+    binary.unlink()
+    outside = tmp_path / "outside-executable"
+    outside.write_text("must never execute", encoding="utf-8")
+    binary.symlink_to(outside)
+    before = len([c for c in calls if c[1:2] == ["--version"]])
+    assert mod.main(args) == 2
+    assert outside.read_text() == "must never execute"
+    assert len([c for c in calls if c[1:2] == ["--version"]]) == before
+
+
+@pytest.mark.parametrize("setting", ["XFACTORY_OPENSPEC_PIN_PATH",
+                                     "XFACTORY_OPENSPEC_ARTIFACT_ROOT",
+                                     "XFACTORY_NPM_BINARY"])
+def test_empty_operator_authority_refuses_without_registry_work(
+        mod, tmp_path, fake_npm, monkeypatch, setting):
+    calls, _served = fake_npm
+    pin = write_pin(tmp_path)
+    artifact = tmp_path / "synthetic.tgz"
+    artifact.write_bytes(PAYLOAD)
+    monkeypatch.setenv(setting, "")
+    assert mod.main(["--all", "--repo", str(tmp_path), "--pin", str(pin),
+                     "--tarball", str(artifact), "--no-cache"]) == 2
+    assert calls == []
+
+
+@pytest.mark.parametrize("missing", ["manifest", "binary", "node_modules"])
+def test_stamped_incomplete_generation_is_retained_and_bypassed(
+        mod, tmp_path, fake_npm, missing):
+    import shutil
+    calls, _served = fake_npm
+    (tmp_path / "openspec").mkdir()
+    cache = tmp_path / "cache"
+    args = ["--all", "--repo", str(tmp_path), "--cache-dir", str(cache),
+            "--pin", str(write_pin(tmp_path))]
+    assert mod.main(args) == 0
+    original = next(path for path in cache.iterdir() if path.is_dir())
+    if missing == "node_modules":
+        shutil.rmtree(original / "node_modules")
+    else:
+        leaf = (original / "node_modules" / PACKAGE / "package.json"
+                if missing == "manifest" else original / "node_modules/.bin/openspec")
+        leaf.unlink()
+    retained = {str(p.relative_to(original)): p.read_bytes()
+                for p in original.rglob("*") if p.is_file()}
+    assert mod.main(args) == 0
+    assert {str(p.relative_to(original)): p.read_bytes()
+            for p in original.rglob("*") if p.is_file()} == retained
+    assert len([c for c in calls if c[1:2] == ["ci"]]) == 2
+    assert mod.main(args) == 0
+    assert len([c for c in calls if c[1:2] == ["ci"]]) == 2
+
+
+@pytest.mark.parametrize("kind", ["symlink", "hardlink"])
+def test_linked_stamped_manifest_refuses_instead_of_becoming_a_cache_miss(
+        mod, tmp_path, fake_npm, kind):
+    import os
+    calls, _served = fake_npm
+    (tmp_path / "openspec").mkdir()
+    cache = tmp_path / "cache"
+    args = ["--all", "--repo", str(tmp_path), "--cache-dir", str(cache),
+            "--pin", str(write_pin(tmp_path))]
+    assert mod.main(args) == 0
+    generation = next(path for path in cache.iterdir() if path.is_dir())
+    leaf = generation / "node_modules" / PACKAGE / "package.json"
+    outside = tmp_path / "outside-manifest.json"
+    outside.write_bytes(leaf.read_bytes())
+    original = outside.read_bytes()
+    leaf.unlink()
+    if kind == "symlink":
+        leaf.symlink_to(outside)
+    else:
+        os.link(outside, leaf)
+    assert mod.main(args) == 2
+    assert outside.read_bytes() == original
+    assert len([c for c in calls if c[1:2] == ["ci"]]) == 1
+
+
+def test_operator_help_describes_every_fixed_machine_refusal(mod):
+    help_text = mod.build_parser().format_help()
+    for code in mod.REFUSAL_CODES:
+        assert code + ":" in help_text
+        assert mod.REFUSALS[code] in help_text
+    assert "pin-unreadable also exits 2" in help_text

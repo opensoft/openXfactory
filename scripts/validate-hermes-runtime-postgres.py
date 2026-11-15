@@ -51,6 +51,7 @@ from pathlib import Path
 import re
 import secrets
 import shlex
+import shutil
 import subprocess
 import sys
 from typing import Any
@@ -1035,12 +1036,32 @@ def parse_tagged_lines(stdout: str) -> tuple[dict[str, Any], dict[str, Any]]:
     return scope_payloads, dimension_payloads
 
 
+
+def trusted_psql_template(selected: str) -> str:
+    """Bind model CLI input to the independently configured operator template."""
+    configured = os.environ.get("XFACTORY_PSQL_COMMAND")
+    if not configured:
+        raise ToolError("set XFACTORY_PSQL_COMMAND to the operator-approved target template")
+    try:
+        trusted, candidate = shlex.split(configured), shlex.split(selected)
+    except ValueError as error:
+        raise ToolError("psql template quoting is invalid") from error
+    if not trusted or candidate != trusted or DATABASE_PLACEHOLDER in trusted[0]:
+        raise ToolError("--psql-command differs from operator-selected XFACTORY_PSQL_COMMAND")
+    executable = shutil.which(trusted[0])
+    if executable is None:
+        raise ToolError("operator-selected psql wrapper executable is unavailable")
+    trusted[0] = executable
+    return shlex.join(trusted)
+
+
 class PsqlRunner:
     """Run SQL through the injected psql command template, one call per script."""
 
     def __init__(self, template: str, environment: dict[str, str] | None = None):
         arguments = shlex.split(template)
-        if not any(DATABASE_PLACEHOLDER in argument for argument in arguments):
+        if (not arguments or DATABASE_PLACEHOLDER in arguments[0]
+                or not any(DATABASE_PLACEHOLDER in argument for argument in arguments)):
             raise ToolError(
                 "--psql-command must contain the literal placeholder {database}"
             )
@@ -1048,6 +1069,8 @@ class PsqlRunner:
         self._environment = environment
 
     def argv(self, database: str) -> list[str]:
+        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_-]{0,62}", database) is None:
+            raise ToolError("database must be a bounded name, not a child option")
         return [
             argument.replace(DATABASE_PLACEHOLDER, database)
             for argument in self._arguments
@@ -1487,7 +1510,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         report, exit_code = run_validation(
-            options.psql_command, options.database, options.profile
+            trusted_psql_template(options.psql_command), options.database, options.profile
         )
     except ToolError as error:
         report = build_readiness_report(

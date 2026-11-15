@@ -60,7 +60,8 @@ def _validate(
             "--json",
         ],
         cwd=REPOSITORY_ROOT,
-        env=database.cluster.environment,
+        env={**database.cluster.environment,
+             "XFACTORY_PSQL_COMMAND": _psql_template(database.cluster)},
         timeout=900,
     )
     lines = [line for line in result.stdout.splitlines() if line.strip()]

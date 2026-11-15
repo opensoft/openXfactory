@@ -50,12 +50,11 @@ validates in the same process and wrong here: a binary that vanishes when this
 script exits is a binary no later step can run. So the install goes to a named
 directory that persists — `--cache-dir`, defaulting to the verifier's own
 `default_cache_root()` so a developer's installs are shared with it rather than
-duplicated beside it — and only the FETCH workspace is emptied, at the START of
-each run rather than the end. That order matters: `fetch_artifact` requires
-exactly one tarball in its destination and refuses an ambiguous fetch, so a
-tarball left behind by a PREVIOUS pin version would turn the next run after a
-bump into `pin-unresolvable`. Emptying first makes the workspace as clean as a
-temporary directory while keeping the path stable.
+duplicated beside it. Each invocation gets a unique private FETCH workspace
+that is retained as evidence. It never empties a shared .fetch directory.
+Invalid or incomplete cache generations are retained and bypassed in favour of
+a fresh exclusive generation, so concurrent installers do not delete each
+other's files. Only a verified generation can be reused.
 
 THE TARBALL IS RE-VERIFIED ON EVERY RUN regardless of the cache — that is
 `resolve_pinned`'s property, not this file's, and it is the reason a persistent
@@ -87,7 +86,6 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import os
-import shutil
 import sys
 from pathlib import Path
 
@@ -154,7 +152,9 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
     try:
-        pin_path = Path(args.pin) if args.pin else verifier.PIN_PATH
+        verifier.authorize_cli_sources(args)
+        args.npm = verifier.trusted_npm_executable(args.npm)
+        pin_path = Path(args.pin)
         pin = verifier.read_pin(pin_path)
         version = verifier.pinned_version(pin)
         integrity, shasum = verifier.pinned_integrity(pin)
@@ -167,12 +167,8 @@ def main(argv: list[str] | None = None) -> int:
 
         cache_root = (Path(args.cache_dir).expanduser() if args.cache_dir
                       else verifier.default_cache_root())
-        # Emptied at the START of the run and left in place at the end — see the
-        # module docstring. `.fetch` sits beside the install prefixes rather than
-        # above them so that ONE `--cache-dir` names everything this run writes.
-        workspace = cache_root / ".fetch"
-        shutil.rmtree(workspace, ignore_errors=True)
-        workspace.mkdir(parents=True, exist_ok=True)
+        # A unique retained fetch workspace preserves active runs and evidence.
+        workspace = verifier.retained_fetch_workspace(cache_root)
 
         executable = verifier.resolve_pinned(
             package, version, integrity, shasum, binary, workspace, cache_root,
