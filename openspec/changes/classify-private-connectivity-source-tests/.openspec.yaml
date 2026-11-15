@@ -7,7 +7,8 @@ origin:
   reason: Prepare exact affected-owner review for the source-test classification gap introduced by the newly merged measured Sonar gate.
   proposed_by: Codex while continuing Brett Heap's authorized feature 043 work
   proposed_on: '2026-11-15'
-  approved_by: pending affected-owner acceptance
+  approved_by: Brett Heap in session; see review/ratification.md
+  approved_on: '2026-11-14'
 related:
   - openXfactory:change:extend-private-connectivity-source-ci
   - openXfactory:change:remediate-sonar-findings-and-coverage

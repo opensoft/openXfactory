@@ -1,12 +1,13 @@
 # Governance handoff: Exact source-test classification
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-14 by Brett Heap, through [classify-private-connectivity-source-tests](proposal.md).
 
 The sole executable implementation list remains [feature 043 tasks](../../../specs/043-private-connectivity-production/tasks.md). These checkboxes track scope handoff and actual evidence acceptance only.
 
 ## 1. Affected-owner acceptance
 
-- [ ] 1.1 Obtain Brett Heap's actual acceptance of the exact three additional E surfaces, T010 file refinement and definition refresh in design.md; verify a real ratification/decision record and approved origin before editing those surfaces.
+- [x] 1.1 Obtain Brett Heap's actual acceptance of the exact three additional E surfaces, T010 file refinement and definition refresh in design.md; verify a real ratification/decision record and approved origin before editing those surfaces.
 - [ ] 1.2 Hand the bounded classification repair to existing T010 and refresh its complete reviewed definition; verify all other task fields, all 68 registry rows and the 16 frozen inputs remain unchanged, with historical controls still verified by their exact original reader.
 
 ## 2. Qualification and authentication

@@ -1,6 +1,7 @@
 # Design: Exact 043 source-test classification
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-14 by Brett Heap, through [classify-private-connectivity-source-tests](proposal.md).
 
 ## Context
 
