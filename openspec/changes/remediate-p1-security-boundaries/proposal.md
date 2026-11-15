@@ -27,8 +27,12 @@ rather than status waivers or suppressions.
   operand contracts in phased PRs. Maintain valid authorized multi-repository
   use, private-state authority and fail-closed validation.
 - Privately establish negative-credential fixture provenance; never test the
-  value for liveness or rewrite frozen history. Record any unresolved owner or
-  release dependency explicitly; do not invent proof or manufacture closure.
+  value for liveness or rewrite frozen history. Issuance remains unknown.
+  Replace the current literal with an explicit nonissued marker while retaining
+  the same forbidden-property refusal and unchanged credential scanner/schema.
+  Exact catalog/inventory membership proves this example is not a release
+  member; no release cut is needed. Old inventories, tags and the original
+  creation commit remain immutable.
 - Preserve baseline, profiles, all gate conditions, production source coverage,
   existing skip/freshness/census controls, original 110 IDs and historical
   receipts. No credential rotation, session interruption or billing change.

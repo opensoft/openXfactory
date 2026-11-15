@@ -116,3 +116,17 @@ members confirms that reports, changed tooling/tests and the negative fixture
 are outside the release inventory. No contract cut is needed for these changes.
 Source-line citations move with the verifier, retaining identical condition
 quotes and guard equivalence assertions.
+
+## Fixture marker and verified membership
+The historical Entra-shaped literal has unknown issuance provenance. Its
+forbidden client_secret property is independently rejected by the unchanged
+closed schema and credential-name scanner, including with a plain NOT_ISSUED
+marker. Replace only the current fixture value and explanatory comments;
+retain expected_failure and expected_failure_detail exactly. Other packaged
+negative fixtures continue to exercise value-class detection.
+
+Exact current catalog membership and the published contract-v4.1 inventory
+both exclude this negative example. No contract, manifest, changelog, inventory
+or tag needs to change for this marker repair. Original history is retained;
+no liveness test or rotation occurs. The original assumption that every
+contracts/ example was a release member was disproved before any cut was made.
