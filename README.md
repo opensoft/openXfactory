@@ -1,5 +1,7 @@
 # openXfactory
 
+P1 security repairs: [feature 045 requirements, plan, tasks and evidence](specs/045-p1-security-boundaries/README.md), separate from completed feature 044.
+
 Canonical repository name: `openXfactory`. Historical records, frozen contract identifiers, and compatibility selectors retain their original spelling.
 
 `openxFactory` documents the open reference stack and domain-neutral xFactory
@@ -557,6 +559,12 @@ Every DomainxFactory must validate against the canonical contract:
   and [contracts/CHANGELOG.md](contracts/CHANGELOG.md).
 
 ## OpenSpec Records
+
+- [remediate-p1-security-boundaries](openspec/changes/remediate-p1-security-boundaries/proposal.md)
+  — draft implementation packet for Brett Heap's 2026-11-15 direction to fix
+  legacy P1 security boundaries. [Feature 045](specs/045-p1-security-boundaries/spec.md)
+  owns implementation and verification; PR #1321 is the first repair phase.
+  No completed landing, production action or credential rotation is asserted.
 
 - [classify-private-connectivity-source-tests](openspec/changes/classify-private-connectivity-source-tests/proposal.md) — ratified 2026-11-14 by Brett Heap in draft [PR #1310](https://github.com/opensoft/openXfactory/pull/1310); accepts the exact additional E source/test/configuration scope needed to classify the 043 tests consistently in main's measured Sonar gate. [Accepted owner scope](openspec/changes/classify-private-connectivity-source-tests/design.md) and [actual ratification](openspec/changes/classify-private-connectivity-source-tests/review/ratification.md) permit the bounded repair, T010 file refinement and definition refresh. Actual new output authentication remains separate; all four private-connectivity PRs remain draft and no rollout gate advances.
 
