@@ -140,3 +140,13 @@ in turn and requires a nonzero result. All nine named tests and actionlint pass.
 The corrected old-caller receipt supersedes the premature smoke-check receipt;
 the independent eight-file byte equality, offline install and actual CLI
 version results remain valid.
+
+## Post-analysis sink validation
+The first complete PR analysis retained three path-flow findings at the
+descriptor-relative private-child helper. Its leaf now enforces the same
+bounded native profile identifier grammar directly before open/mkdir, in
+addition to descriptor confinement and no-follow flags. Direct helper
+counterexamples cover absolute paths, traversal, separators, controls and
+oversized names. No analyzer exclusion or issue-status override is used.
+FR-002 now states the implemented cooperating-writer and observed-generation
+guarantee precisely; it does not promise an upstream multi-file transaction.

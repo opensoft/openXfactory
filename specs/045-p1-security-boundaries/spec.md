@@ -30,7 +30,9 @@ profiles, skips, census, freshness assertions and billing remain intact.
 - FR-001: Bound profile names; reject traversal, absolute and option-shaped names.
 - FR-002: Credential operations cannot follow substituted filesystem objects
   or affect outside data; files are private from creation, read-only/shared-write
-  targets refuse, and concurrent writers cannot silently overwrite each other.
+  targets refuse. Cooperating harness writers serialize their updates and refuse
+  an observed capture-generation change. Native files are replaced individually;
+  upstream readers and writers do not provide a shared multi-file transaction.
 - FR-003: Retain merge and wrong-account-before-write semantics.
 - FR-004: Validate authorized browser path before startup; preserve occupied state.
 - FR-005: Privileged dependency bytes and versions are fixed and verified;
