@@ -14,9 +14,10 @@ it is not passing acceptance. Seven operating checkout and cloud
 session/pane fingerprints were freshly captured before worktree creation.
 No baseline, profile, rule, issue status, permission or billing was changed.
 
-The chronological record below retains successful and failed attempts. Main
-acceptance is still pending the two full-scan security repairs; no green main
-acceptance is claimed yet.
+The chronological record below retains successful and failed attempts.
+Published main 5d04859eb42e6b8684fa2825d20a8ed21652b93b now passes
+all six original conditions under the retained manual reference. The final
+section records its actual source-bound suite, analysis and preservation.
 
 
 ## Source boundary qualification
@@ -288,3 +289,68 @@ The final follow-up source suites pass 895 tests and 352 subtests; the complete
 local doc-health suite passes 2,163 tests. The pinned strict change validator,
 canonical 253-row ledger and attestation CLI help check pass. Publication and
 fresh exact-head CI/Codex plus actual-main gate verification are still pending.
+
+## Verified published-main acceptance
+
+Observed: 2026-11-14T23:41:25.885937-04:00
+
+Verified source: 5d04859eb42e6b8684fa2825d20a8ed21652b93b
+
+Sonar analysis: 94982bc0-f624-44c6-8e8c-3d06049cf90c
+
+[Complete main workflow](https://github.com/opensoft/openXfactory/actions/runs/43669723808)
+passed 10,570 tests and 807 subtests in 2,543.47 seconds, with the same six
+expected skips and 338 PostgreSQL deselections. JUnit reports 11,383 selected,
+11,377 passed and zero failures/errors. All 27 original normal CLI deadline
+checks passed before measurement; both named freshness/vector replay guards
+passed. The report and transferred receipt verify all 309 production Python
+files, including zero-hit modules, at the exact published revision and tree.
+
+| Original gate condition | Actual | Unchanged passing limit | Result |
+| --- | --- | --- | --- |
+| Reliability | A (1) | A (at most 1) | OK |
+| Security | A (1) | A (at most 1) | OK |
+| Maintainability | A (1) | A (at most 1) | OK |
+| New-code coverage | 88.6% | At least 80% | OK |
+| New duplication | 0.2% | At most 3% | OK |
+| New hotspots reviewed | 100.0% | 100% | OK |
+
+All six conditions are present and evaluated, with ignoredConditions false.
+The existing Sonar way gate remains ID 9. The same public project identity,
+quality profiles and rules remain; only profile last-used timestamps advance.
+The manual reference is still analysis d20bb52c-64fd-4090-986a-fd993f44ff86,
+source 8480378acd806b112ebd0462e18a86a9026ab155, dated
+2026-09-09T19:37:08-04:00. The new-code denominator is positive. No source,
+coverage or issue-ignore exclusion setting is configured on the server.
+
+The server reports all eleven original/reopened findings CLOSED/FIXED and
+zero new bugs or vulnerabilities. No issue-status override or waiver was
+issued. The user-selected older backlog remains 110 open findings: six bugs
+and 104 vulnerabilities, recorded separately with their identities.
+
+All five configured push workflows passed at this source, and a separate
+review-lane-repin run also passed. PR #1318 had sixteen successful CI/Sonar
+checks, zero open PR findings of any type, a completed exact-head Codex review
+with no findings, and no unresolved review thread. The optional Sourcery
+quota notice is retained; no required check was bypassed. The standing
+brettheap self-approval override bypassed only the missing human approval
+after those checks and an empty canonical landing register were read back.
+
+Before/after fingerprints match all seven operating checkouts: head, status,
+working diff and staged diff. Every pre-existing worktree remains; independent
+foreign worktree progress is preserved. All nine cloud session/pane identities
+and the five Python session names remain. The native desktop checkout retains
+its prior head and existing diagnostic files. No bench, session, shared
+checkout or Windows/WSL runtime configuration was restarted or reset.
+
+Original dated browser verdicts, logs and screenshots remain byte-identical,
+and original plus intermediate maintained source hashes remain in provenance.
+Failed baselines and the failed first main scan remain separately retained
+beside successful source-bound reports, with private evidence manifests.
+No live browser replay, registry attestation, contract ratification or runtime
+activation is asserted by this tooling qualification. Billing, permissions,
+provider pins, historical period and required checks were preserved.
+
+This closeout changes only existing feature documentation. Its normal PR
+checks and the resulting published-main run are verified before final task
+completion, with the accepted implementation source above retained explicitly.
