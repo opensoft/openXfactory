@@ -148,7 +148,7 @@ def test_dependency_acceptance_uses_the_actual_aggregation_provider_layout():
     assert any('bash "$INSTALLER_SUPPORT_ROOT/.github/worker-cli/install.sh"' in s for s in scripts)
     assert all("-r .github/" not in s for s in scripts)
 
-def test_reusable_installer_source_is_immutable_and_independent_of_caller_pin():
+def test_reusable_installer_source_is_immutable_and_independent_of_caller_pin(tmp_path):
     reusable = workflow("doc-health-reusable.yml")
     acceptance = workflow("privileged-dependencies.yml")
     materialize = []
@@ -168,3 +168,35 @@ def test_reusable_installer_source_is_immutable_and_independent_of_caller_pin():
                       if s.get("name") == "Verify immutable support bytes match this candidate")
     assert 'cmp -- "openxFactory/$relative" "$INSTALLER_SUPPORT_ROOT/$relative"' in byte_check["run"]
     assert "continue-on-error" not in byte_check
+
+    artifacts = [
+        ".github/requirements/privileged-ci.in",
+        ".github/requirements/privileged-ci.lock",
+        ".github/requirements/review-lane.in",
+        ".github/requirements/review-lane.lock",
+        ".github/worker-cli/package.json",
+        ".github/worker-cli/package-lock.json",
+        ".github/worker-cli/install.sh",
+        ".github/worker-cli/launcher.sh",
+    ]
+    support = tmp_path / "support"
+    for relative in artifacts:
+        for parent in (tmp_path / "openxFactory", support):
+            destination = parent / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text("synthetic bytes for " + relative)
+    def check():
+        return subprocess.run(["bash", "-c", byte_check["run"]], cwd=tmp_path,
+                              env={**os.environ, "INSTALLER_SUPPORT_ROOT": str(support)},
+                              capture_output=True, text=True)
+    good = check()
+    assert good.returncode == 0, good.stderr
+    for relative in artifacts:
+        target = support / relative
+        original = target.read_text()
+        target.write_text("corrupted artifact")
+        try:
+            bad = check()
+            assert bad.returncode != 0, "unverified artifact: " + relative
+        finally:
+            target.write_text(original)
