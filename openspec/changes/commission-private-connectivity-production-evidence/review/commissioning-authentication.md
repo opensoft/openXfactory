@@ -1,57 +1,56 @@
-# Authentication review: Corrected private-connectivity source CI
+# Authentication review: T020 package source after coordinator landing
 
 Status: record
-Created: 2026-11-15
 
-## Exact corrected source-CI review target
+## Exact T020 source-only review target
 
-This records the actual source-only authentication of the original source/CI exports and human provenance in the exact control below. The preparation and review target were published before the custodian decision; source-scope ratification supplied no authentication of these observations.
+Brett is the accepted Headscale package source/release owner and source-evidence custodian. He authenticated the actual new private output and its human/source provenance in this exact control at 2026-11-15T21:23:43.887Z, after the actual coordinator qualification results below were available. This decision is separate from the existing owner, support-candidate and custody approvals.
 
 | Item | Immutable review identity |
 | --- | --- |
-| Reviewed manifest | [95abc40b8](https://github.com/opensoft/openXfactory/blob/95abc40b8ed0eb92c811da439604975615b3c06d/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Manifest file SHA-256 | 72b2cd02d7cbb4cde460c733bd1768600e5ecb8e0eea8efa18b53afe304866f1 |
-| Authenticated content SHA-256 | c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54 |
-| Complete accepted definition SHA-256 | c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431 |
-| Actual tested source | [94caf6717ece69af66dfde121bf4b868a6c3abdf](https://github.com/opensoft/openXfactory/commit/94caf6717ece69af66dfde121bf4b868a6c3abdf) |
-| Actual source baseline | 8a69bb218bef7341a5b09e3ae9f28d9585f3b661 |
-| Original two-lane output | [b29009b17](https://github.com/opensoft/openXfactory/blob/b29009b170329d58e825fa0ff06f9dfc949c7eb1/specs/043-private-connectivity-production/evidence/T010.json) |
-| Distinct T010 receipt | [d577589ff](https://github.com/opensoft/openXfactory/blob/d577589ff0e4796c269b977c2195a1be17a7e2d3/specs/043-private-connectivity-production/evidence/T010.json) |
-| Required source CI | [root run/job](https://github.com/opensoft/openXfactory/actions/runs/43682139006/job/132714903461) |
-| Python 3.14 source CI | [proof run/job](https://github.com/opensoft/openXfactory/actions/runs/43682138887/job/132714844256) |
-| Exact-source Codex clearance | [review receipt](https://github.com/opensoft/openXfactory/pull/1310#issuecomment-6889917636) |
+| Authenticated reviewed manifest | [991ebfc0e5](https://github.com/opensoft/openxfactory/blob/991ebfc0e53962990ee587f41307aec809f887a7/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Manifest file SHA-256 | 3bc1ea32f9004c381e1b0eaca08cda57f2ccd703be5266bfa65397a3da89aeb4 |
+| Canonical content SHA-256 for authentication | f9d89883516aa147f3b0054b7132f1f53b66bd948c2c5834b2d9a4cea3dd3332 |
+| Complete frozen definition | c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431 |
+| Actual tested package source | [9e94411f89](https://github.com/opensoft/Headscale-Install/commit/9e94411f893836550b481085f0ef628f4b14b99b) |
+| Actual source baseline | 11bd61fe665cf40f2bbf02980c512475329b3151 |
+| Actual private original output | [001ca79a7f](https://github.com/opensoft/headscale-install/blob/001ca79a7f523fb8d063e73f83e22c5b4b609fac/evidence/private-connectivity-production/T020.json) |
+| Original output file SHA-256 | f0c2f641111e52ed7a8f385935bfc785c8c2b9060082999bc7999ca062fe7cf6 |
+| Distinct private T020 receipt | [9b4c610663](https://github.com/opensoft/headscale-install/blob/9b4c6106633d5d28b777ef00f1d9bd695588efcf/evidence/private-connectivity-production/T020.json) |
+| Receipt file SHA-256 | ee242a31569d4c10726a0007c99ed19526824988325b45ee8e08d1aa8cef31c7 |
+| Corrected consumed T010 | [d577589ff0](https://github.com/opensoft/openxfactory/blob/d577589ff0e4796c269b977c2195a1be17a7e2d3/specs/043-private-connectivity-production/evidence/T010.json) |
+| Unchanged consumed T011 | [2438f54b65](https://github.com/opensoft/openxfactory/blob/2438f54b65e43837a33e3c0f3aff7dbbd4ba0cb4/specs/043-private-connectivity-production/evidence/T011.json) |
+| Actual owner source CI | [qualification run/job](https://github.com/opensoft/Headscale-Install/actions/runs/43743171210/job/132900583919) |
 
-## Actual qualification and repairs
+## Actual new output and source checks
 
-The root workflow and Python 3.14/doc-health entry point both completed successfully at this exact tested source. The root feature step explicitly collected and passed 584 cases: 475 evidence, 40 inventory and 69 source-proof cases, without a skip, failure or error. Its original step ran from 2026-11-15T06:14:38Z through 2026-11-15T06:16:25Z. The Python 3.14 lane passed its existing doc-health checks and all 69 explicit proof cases at the same source. Required floors, skip pins, named verdicts and measured coverage/gate obligations remain enforced.
+The fresh approved source collector ran from 2026-11-15T17:47:47.816127+00:00 through 2026-11-15T17:47:48.857637+00:00 at the exact unchanged repaired code above, after #1310 merged and all actual post-merge checks passed. Its exit code was 0. It passed make validate, all 45 source tests including 19 package regressions with zero skips, helper CLI help, locked upstream/input/helper metadata and exact-scope checks. All 26 original lab paths and both pilot hashes were unchanged. The closed three-case expectations and exact collector command are in the T020 binding; actual stdout, observed facts, timings and raw/export SHA-256 are preserved in the private original output.
 
-The bounded classification repair recognizes only the exact 043 test tree consistently in the production inventory and scanner. The three production helpers and every other production Python file remain measured. The actual inventory reclassifies exactly three test modules, leaving 312 production files. Local root collection increased by exactly two tests, with 338 deselected unchanged; no floor or skip pin was edited.
+The output was freshly generated, not copied from an old pass. The raw command-output SHA-256 is e10e20fbf9d7ecde635aeaf15f4309b070b2d57c34e62f8a4a10884ba4289197. The private receipt references that distinct output; it does not contain its own commit hash. Full default T010 and T011 verification passed against the accepted main control before this separate source collection. Their exact immutable dependencies are recorded in the private receipt and original dependency-preflight record.
 
-The reader requires accepted predecessors before runtime consumption, complete Q2 before production children, same-scope managed-service eligibility before attachments and corresponding offer admission before waves. Historical dependencies retain their exact old graph, original objects and consumed CI while applying current revocations and closure state throughout traversal, including cache rechecks. Local affected validation passed 723 cases; the historical-state regressions first reproduced 18 incorrect acceptances and retain positive prior-CI controls. Non-instance handoffs require aggregate dependency identities; one T064 child cannot bypass the complete required instance inventory. Four negative controls first reproduced that gap, and 75 relevant positive/frozen-graph cases pass after repair. The isolated classification controls first failed in both tools and now pass. The subsequent Sonar S8705 finding was repaired by reconstructing only closed proof Git operations, validating commit/path/origin operands, using the native process working directory for the repository root, and attaching credentials only to fetch. The historical fixture now resolves the exact declared control through the frozen reader without requiring HEAD ancestry; its parentless-commit regression first failed and all 35 historical cases now pass. Thirteen negative controls first reproduced the wrapper gap; all 69 source-proof cases now pass, including real filtered transport and paths with spaces.
+Owner qualification passed at receipt head 9b4c6106633d5d28b777ef00f1d9bd695588efcf. Only the listed T020 evidence file differs from tested source 9e94411f89 at that head; all nine source/governance artifact hashes were compared and are unchanged. This is source/fixture CI, not intended-platform qualification.
 
-The public-history repair provisions immutable coordinator objects in both CI entry points. The trusted bootstrap fetches only validated public blob refs before authentication/producer selection, without executing candidate code or attaching credentials. After token revocation, candidate-side public history restores only declared coordinator refs before tests, with full history retained. A fresh independent repository starts without those objects or alternates, then reads the historical control and reader after the bounded fetch; candidate traps remain unexecuted. Four isolated old-workflow cases failed and all 69 proof cases now pass.
+## Landing and private-proof prerequisites
 
-Actual anonymous HTTPS verification used an independent main-only clone with the original feature objects absent and no alternates. The bounded retention fetch restored the accepted historical control, and T010/T011/T012/T016 verified through the original frozen reader. Two supplemental empty-repository cold-start fetches exceeded their 90-second bound; those failed diagnostics and the successful CI-shaped main-clone result remain exported separately, with no pass claimed for the cold starts.
+[Coordinator PR #1310](https://github.com/opensoft/openXfactory/pull/1310) landed source-only as 6e2f829b16275827a0b73308623164fa099a7ae9 after all reviewed-head checks and Codex review cleared. The standing author-owned approval override was used because the requested independent approval had not arrived; no independent approval is invented. The actual merge has the reviewed tree and expected two parents.
 
-## Actual scope and human provenance
+Its [actual root/Sonar run](https://github.com/opensoft/openXfactory/actions/runs/43738051687) and [Python 3.14 run](https://github.com/opensoft/openXfactory/actions/runs/43738051656) both passed. All eight actual merge-commit checks, including SonarCloud, succeeded. Trusted-base readback preserved accepted core c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54 and default T010/T011/T012/T016. The authenticated source-CI producer remains the independently accepted 94caf6717ece69af66dfde121bf4b868a6c3abdf.
 
-Brett accepted the exact classification scope, T010 refinement and full definition refresh in the native user record at 2026-11-15T01:34:50.899Z, session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 29616, raw record SHA-256 8461c468bca32a4cf1e70a6c2da18888672797af1f2806cf4f6c659c6cbcf783. The [actual ratification](https://github.com/opensoft/openXfactory/blob/2bd29c6b7db14cad3f877d2cc062881472540a32/openspec/changes/classify-private-connectivity-source-tests/review/ratification.md) records the exact decision, local timezone and UTC provenance. The accepted prior E/private-CI/custody scope and all earlier actual owner decisions remain preserved.
+This is the first actual foreign binding in the coordinator control. Both existing coordinator CI lanes proved the required private commit presence through that trusted-base producer and the existing repository-scoped read-only App, revoked tokens before tests, and removed ephemeral proof. The actual run/job exports below retain those observed successes. Local metadata preparation did not substitute for live transport qualification. Local full-owner checks and locally derived commit-only metadata cannot substitute for that live transport qualification.
 
-All 16 frozen input bodies, all 68 registry rows and every task field except the three accepted T010 file additions retain their preceding values. Existing E compatibility repairs do not expand that registry or grant runtime effects. The exact source delta is within the accepted T010 file list.
+No private source, commit objects/headers or raw output is copied into coordinator Git. The E-only source_container is unchanged. The coordinator retains the typed private references, closed binding expectations and exact owner-resolved inventory; full source/output verification uses the actual private owner Git store separately.
 
-## Preservation and custody
+## Human authority, preservation and custody
 
-The actual original output is separately immutable and copied exactly into the permitted T010 E container, with decoded equality checked. Original command/source/timing/exit identities, full source-step exports, raw/export/full-job log digests and actual run/job identities remain preserved. The first failed Python 3.14 preparation at 3a53fc7f53c3cfe86ee895edec8887c2614cd283 (run 43652162290, one failure and 41 passes) remains in the original export. The withdrawn c49a6a5e control at 02be87d2bdd40abb92f3f232d84f667b661aa10e and all prior actual source observations remain in immutable history and prior_containers. Superseded Q2/Q1/historical-state findings and their reproductions are retained. Run 43666671602 retains its successful root job and 550 source cases together with its failed overall Sonar gate; that failed entry point was not treated as qualification. The corrective source includes fresh complete CI and measured Sonar validation.
+The [accepted source authority](https://github.com/opensoft/openXfactory/blob/cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d/openspec/changes/commission-headscale-production/review/source-owner-permission.json) and [ratified package design](https://github.com/opensoft/openXfactory/blob/6e2f829b16275827a0b73308623164fa099a7ae9/openspec/changes/commission-headscale-production/design.md) name Brett, the exact four T020 files, required source role, approved source scope and until-superseded source-only lifetime. Existing actual role/matrix/private-source-Git custody decisions remain authoritative. No new source or live authority is inferred from the new output.
 
-Accepted historical T001-T012/T016 packets retain their original exact anchors and fixed reader; this new packet does not rewrite them or make their observations claim newer tests. [Accepted T012 control](https://github.com/opensoft/openXfactory/blob/35e98a276fbd51c7cdfe89203a3eecbff1266f4f/specs/043-private-connectivity-production/evidence/commissioning.json) remains independently usable as historical source evidence. The c49a6a5e and d37b1834 pending targets are withdrawn; no approval transfers to this new core. The d37b1834 control and its successful 571-case original source observations remain immutable through prior_containers, alongside the fresh-runner finding and reproduced failures.
+The original 43-test candidate, the three reproduced source-review failures, repaired 45-test output 14d1a06f6555e0da2f20353fa385943cf91b2784 and old receipt 9109eeae4313473e3b46dbf5f17628755e6b4729 remain immutable in private history and preparation provenance. The older repaired receipt consumed T010 73ea5d8e646f754088733099ef1680ac6d8605d9; it is not relabeled as having consumed the later corrected T010. This distinct rerun consumed d577589ff0e4796c269b977c2195a1be17a7e2d3.
 
-GitHub exposed the Python 3.14 job log with UNKNOWN STEP labels. Its export therefore preserves every timestamped line in the API-selected source-step interval through the full ending second, including adjacent boundary lines; it does not invent step labels or omit source output. The actual API step identity/conclusion, printed tested revision and exact 69-case result were checked independently. The original complete job and run archive remain retained with their digests.
+Reviewed/redacted private source outputs remain in the private owner's Git for the project lifetime under existing permissions. The accepted c8 control at 698bf83671be642421fb28987c820fe36b49b0a6 and its actual [accepted review](https://github.com/opensoft/openXfactory/blob/24c3292df534310c7582fef86bb4baa8653b5c3f/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) remain independently usable; its human decision does not authenticate this new core. All earlier source objects, bindings, historical controls and frozen task bodies remain unchanged.
 
-No private binding is introduced. Both private token mints and private preparation steps were skipped because there were no foreign records; token-revocation and cleanup steps completed successfully. Source/synthetic proof is not live GitHub credential/fetch qualification. Private admission still requires an authenticated qualified producer and original public Git proof available on the trusted base, independently verified actual owner stores and its own full evidence/dependencies.
+## Actual custodian authentication
 
-## Actual authentication boundary
-
-The preparation above remained unauthenticated until Brett Heap's actual decision below. This accepted review authenticates only the exact reviewed manifest and content identity. A subsequent immutable control must bind it, and default T010 verification must pass before expanded completion is recorded. Preparation, hashes, CI, Codex review and source consent did not supply this authentication.
+Brett answered `Authenticate this T020 source-only packet (Recommended)` to question `call_b4ada15cf92d4c24989ce1eb79f528bb`, item 0. Original desktop session 01a1c061-ee6e-7e61-9db4-280a724e05c2, user message msg_01a1e118-3a8e-74f1-b440-c7dac73171cd, JSONL record line 36379 records the actual answer at 2026-11-15T21:23:43.887Z. Its raw record SHA-256 is b64f977f4df6f3d03c067f48734121589a61883fbfcce82334a6df10f8be1035 (UTF-8 JSONL record bytes excluding terminal newline). This records a human decision; it is not an agent-generated approval.
 
 ```json
 {
@@ -60,23 +59,178 @@ The preparation above remained unauthenticated until Brett Heap's actual decisio
   "custodian": "Brett Heap",
   "reviewed_manifest": {
     "repository": "opensoft/openxfactory",
-    "commit": "95abc40b8ed0eb92c811da439604975615b3c06d",
+    "commit": "991ebfc0e53962990ee587f41307aec809f887a7",
     "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "sha256": "72b2cd02d7cbb4cde460c733bd1768600e5ecb8e0eea8efa18b53afe304866f1"
+    "sha256": "3bc1ea32f9004c381e1b0eaca08cda57f2ccd703be5266bfa65397a3da89aeb4"
   },
-  "content_sha256": "c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54",
-  "reviewed_at": "2026-11-15T11:47:39.004Z"
+  "content_sha256": "f9d89883516aa147f3b0054b7132f1f53b66bd948c2c5834b2d9a4cea3dd3332",
+  "reviewed_at": "2026-11-15T21:23:43.887Z"
 }
 ```
 
-All four PRs remain draft: coordinator #1310, Ops #628, codeXfactory #583 and Headscale-Install #2. T020 remains unchecked. Full Q0, Q1-Q5, merge, version/tag allocation, publication, target operations, deployment, enrollment, paid resources and commercial admission retain separate gates.
+This accepts exactly the reviewed manifest/core above. Full default verification against a separately committed accepted review/control must still pass before T020 is marked complete. Future changed outputs need their own actual authentication.
 
-## Actual custodian decision
+## Actual pre-authentication qualification observations
 
-Brett Heap authenticated this exact corrected source-only packet at 2026-11-15T11:47:39.004Z. The [preceding immutable review target](https://github.com/opensoft/openXfactory/blob/ba96a8f15ed4b60aef767e6574c515d84ad4f395/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) identifies manifest 95abc40b8e, its complete file digest and the unchanged c8be9c1d content identity.
+The qualification of coordinator head 98a20eeeb6435f4bcd195fe86d2221e27fb3de5b completed before this decision: 1,197 affected local regressions passed; both actual private-proof CI lanes and SonarCloud passed. Codex cleared that exact head in [its review receipt](https://github.com/opensoft/openXfactory/pull/1325#issuecomment-6898841659). The [actual qualification report](https://github.com/opensoft/openXfactory/pull/1325#issuecomment-6901564896) was the report cited in the authentication question. The root workflow's first attempt was cancelled during the explicit account-switch stop, with cleanup successful; attempt 2 is the separate successful result. Cancellation is retained as cancellation.
 
-> I authenticate the corrected source-only packet, manifest 95abc40b8e. Record the authentication, complete expanded T010 after default verification, rerun validation, and keep all four PRs draft. Honor Q0–Q5.
+The following is a projection of the actual GitHub job API exports, preserving run, attempt, job, times and conclusions for the commissioned proof steps, with each original complete public job-log SHA-256. Projection selects named steps and omits unrelated steps. It contains no environment values, token payloads, private commit headers, private source or private raw output. It is retained here for the project lifetime under existing source-repository permissions. The underlying E-only source_container is unchanged.
 
-The actual native user input is recorded in session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 32775, individual raw-record SHA-256 cd595fec9a491173c710bfee7062b51d518e0880e7b82c9027926d4ecf2abd89 (UTF-8 JSON record without its line terminator). This is supplied human provenance, not a generated signature. It authenticates these actual source outputs separately from the earlier role/scope/definition decisions and preserves the failed and withdrawn preparations.
+````text
+[
+  {
+    "workflow": "pytest-suite",
+    "run": 43744065634,
+    "attempt": 2,
+    "job": 132944956753,
+    "url": "https://github.com/opensoft/openXfactory/actions/runs/43744065634/job/132944956753",
+    "conclusion": "success",
+    "full_log_sha256": "7eed427a1382ee3933abd37a462f2815870c9215baabe607f7c5111f231962bd",
+    "head": "98a20eeeb6435f4bcd195fe86d2221e27fb3de5b",
+    "steps": [
+      {
+        "completedAt": "2026-11-15T20:21:33Z",
+        "conclusion": "success",
+        "name": "Plan private-connectivity commit proof (043)",
+        "number": 8,
+        "startedAt": "2026-11-15T20:21:33Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T20:21:33Z",
+        "conclusion": "success",
+        "name": "Require the commissioned App identity (043)",
+        "number": 9,
+        "startedAt": "2026-11-15T20:21:33Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T20:21:35Z",
+        "conclusion": "success",
+        "name": "Mint scoped Opensoft source read token (043)",
+        "number": 10,
+        "startedAt": "2026-11-15T20:21:33Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T20:21:35Z",
+        "conclusion": "skipped",
+        "name": "Mint scoped domain source read token (043)",
+        "number": 11,
+        "startedAt": "2026-11-15T20:21:35Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T20:21:36Z",
+        "conclusion": "success",
+        "name": "Prepare commit-only owner roots with the reviewed producer (043)",
+        "number": 12,
+        "startedAt": "2026-11-15T20:21:35Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T20:21:36Z",
+        "conclusion": "success",
+        "name": "Revoke source tokens before any tests (043)",
+        "number": 13,
+        "startedAt": "2026-11-15T20:21:36Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T21:11:11Z",
+        "conclusion": "success",
+        "name": "Run private-connectivity production source suites (043)",
+        "number": 25,
+        "startedAt": "2026-11-15T21:08:37Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T21:11:11Z",
+        "conclusion": "success",
+        "name": "Remove ephemeral source proof (043)",
+        "number": 26,
+        "startedAt": "2026-11-15T21:11:11Z",
+        "status": "completed"
+      }
+    ]
+  },
+  {
+    "workflow": "doc-health-py314",
+    "run": 43744065782,
+    "attempt": 1,
+    "job": 132903378627,
+    "url": "https://github.com/opensoft/openXfactory/actions/runs/43744065782/job/132903378627",
+    "conclusion": "success",
+    "full_log_sha256": "2dc04c8adfbac9a3bce66ceb5f451691461bb6ad7f83e13215bf601a04451e30",
+    "head": "98a20eeeb6435f4bcd195fe86d2221e27fb3de5b",
+    "steps": [
+      {
+        "completedAt": "2026-11-15T17:58:34Z",
+        "conclusion": "success",
+        "name": "Plan private-connectivity commit proof (043)",
+        "number": 5,
+        "startedAt": "2026-11-15T17:58:34Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T17:58:34Z",
+        "conclusion": "success",
+        "name": "Require the commissioned App identity (043)",
+        "number": 6,
+        "startedAt": "2026-11-15T17:58:34Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T17:58:35Z",
+        "conclusion": "success",
+        "name": "Mint scoped Opensoft source read token (043)",
+        "number": 7,
+        "startedAt": "2026-11-15T17:58:34Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T17:58:35Z",
+        "conclusion": "skipped",
+        "name": "Mint scoped domain source read token (043)",
+        "number": 8,
+        "startedAt": "2026-11-15T17:58:35Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T17:58:36Z",
+        "conclusion": "success",
+        "name": "Prepare commit-only owner roots with the reviewed producer (043)",
+        "number": 9,
+        "startedAt": "2026-11-15T17:58:35Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T17:58:36Z",
+        "conclusion": "success",
+        "name": "Revoke source tokens before any tests (043)",
+        "number": 10,
+        "startedAt": "2026-11-15T17:58:36Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T18:03:52Z",
+        "conclusion": "success",
+        "name": "Exercise source proof under Python 3.14 (043)",
+        "number": 16,
+        "startedAt": "2026-11-15T18:03:42Z",
+        "status": "completed"
+      },
+      {
+        "completedAt": "2026-11-15T18:03:52Z",
+        "conclusion": "success",
+        "name": "Remove ephemeral source proof (043)",
+        "number": 17,
+        "startedAt": "2026-11-15T18:03:52Z",
+        "status": "completed"
+      }
+    ]
+  }
+]
+````
 
-Bind this immutable accepted review into a later control with the reviewed core unchanged, then pass default verification before recording expanded T010 completion. All four PRs stay draft. Full Q0 and Q1–Q5, protected provider/customer custody, release/tag/version allocation, publication, deployment, enrollment, paid resources and commercial admission retain their separate gates.
+Ops #628, codeXfactory #583, Headscale-Install #2 and coordinator #1325 stay draft. Full program Q0, Q1-Q5, supported release/version/tag publication, actual platform/client compatibility, deployment, enrollment, paid resource execution and commercial admission retain their separate gates. No target, image or client was executed by these source checks.

@@ -1,0 +1,18 @@
+schema: spec-driven
+created: 2026-11-15
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-15-register-private-connectivity-release-members
+  reason: Close the observed neutral release membership gap with exact owner-reviewed
+    T018 and evidence-compatibility scope before implementation.
+  proposed_by: Codex while continuing Brett Heap's authorized feature 043 production
+    work
+  proposed_on: '2026-11-15'
+  approved_by: Brett Heap in session; see review/ratification.md
+  approved_on: '2026-11-15'
+related:
+- openXfactory:change:publish-private-connectivity-production-contract
+- openXfactory:change:commission-private-connectivity-production-evidence
+- openXfactory:change:extend-private-connectivity-source-ci
+- openXfactory:pr:1325
+- openXfactory:pr:1327

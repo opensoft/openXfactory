@@ -465,7 +465,8 @@ PIN_CLASS: tuple[PinMember, ...] = (
     # their receipts in the owner's tree. No bootstrap receipts or directory
     # exclusion are introduced. T010's first actual source export populates
     # local references; CURRENT measures presence, independently of the pending
-    # custodian authentication. The empty foreign member remains FUTURE.
+    # custodian authentication. The first actual T020 binding now populates
+    # the foreign member; that presence does not authenticate its output.
     PinMember(
         id="private-connectivity-production-local-evidence",
         paths=_PC043_EVIDENCE_PATHS,
@@ -482,7 +483,7 @@ PIN_CLASS: tuple[PinMember, ...] = (
         paths=_PC043_EVIDENCE_PATHS,
         key="foreign_commit", key_form="field",
         generator="feature 043 register-evidence-pins.py",
-        reproduction=MEASURED, locality=CROSS_REPOSITORY, presence=FUTURE,
+        reproduction=MEASURED, locality=CROSS_REPOSITORY, presence=CURRENT,
         key_expected=False,
         note="Exact 043 foreign-source inventory. Each entry names its canonical "
              "owner; the feature checker requires that owner's verified checkout "
