@@ -29,6 +29,9 @@ CLI always runs with git on.
 
 from __future__ import annotations
 
+from safe_tooling_io import read_artifact_text, operator_input_operand
+
+
 import argparse
 import json
 import re
@@ -153,7 +156,7 @@ def load_allowlist(path: Path) -> dict[str, list[str]]:
     """The committed actor -> verbs map (the inbox's own config shape).
     Missing or malformed resolves EMPTY: nobody may do anything."""
     try:
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        data = json.loads(read_artifact_text(Path(path)))
     except (OSError, ValueError):
         return {}
     actors = data.get("actors") if isinstance(data, dict) else None
@@ -511,7 +514,7 @@ def _project_roster(root: Path, project_register: Path | None = None):
     names: set[str] = set()
     if register is not None and Path(register).is_file():
         try:
-            doc = yaml.safe_load(Path(register).read_text(encoding="utf-8"))
+            doc = yaml.safe_load(read_artifact_text(Path(register)))
         except (OSError, yaml.YAMLError):
             doc = None
         for project in (doc or {}).get("projects") or []:
@@ -522,7 +525,7 @@ def _project_roster(root: Path, project_register: Path | None = None):
         index = Path(register).parent / "health" / "ideation-dashboard" / "index.json"
         if index.is_file():
             try:
-                entries = json.loads(index.read_text(encoding="utf-8")).get("entries")
+                entries = json.loads(read_artifact_text(index)).get("entries")
             except (OSError, ValueError):
                 entries = None
             for entry in entries or []:
@@ -741,8 +744,6 @@ def main(argv=None) -> int:
     # (`python3 -m ideation_dashboard.intent_apply_lane` and this
     # module's own `__main__` guard). Idempotent, so a caller that
     # already registered is not punished.
-    from opendox_host import register_openxfactory
-    register_openxfactory()
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", required=True)
@@ -759,6 +760,16 @@ def main(argv=None) -> int:
                              "the project verbs; discovered upward when omitted)")
     parser.add_argument("--push", action="store_true")
     args = parser.parse_args(argv)
+    args.allowlist = str(operator_input_operand(
+        args.allowlist, setting="XFACTORY_INTENT_ALLOWLIST_PATH",
+        default=Path.cwd() / "allowlist.json"))
+    if args.project_register:
+        from openxdox.kickoff import discover_project_register
+        args.project_register = str(operator_input_operand(
+            args.project_register, setting="XFACTORY_PROJECT_REGISTER_PATH",
+            default=discover_project_register(Path(args.repo_root).resolve())))
+    from opendox_host import register_openxfactory
+    register_openxfactory()
 
     if args.intent_json:
         intent = json.loads(args.intent_json)

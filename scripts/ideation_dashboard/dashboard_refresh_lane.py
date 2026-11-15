@@ -115,6 +115,12 @@ INJECTED (`run_refresh_lane(build=...)`) and in production is only ever the
 
 from __future__ import annotations
 
+from safe_tooling_io import (
+    UnsafePath, bind_cli_paths, ensure_artifact_directory,
+    write_artifact_text, update_artifact_text, validate_artifact_path,
+)
+
+
 import argparse
 import base64
 import contextlib
@@ -4559,12 +4565,13 @@ def append_report_section(report_path, section: str) -> bool:
     that cannot be appended to must never become the reason the lane fails."""
     try:
         path = Path(report_path)
-        existing = path.read_text(encoding="utf-8") if path.is_file() else ""
-        separator = "" if existing.endswith("\n\n") or not existing else \
-            ("\n" if existing.endswith("\n") else "\n\n")
-        path.write_text(existing + separator + section, encoding="utf-8")
+        def append(existing):
+            separator = ("" if existing.endswith("\n\n") or not existing else
+                         "\n" if existing.endswith("\n") else "\n\n")
+            return existing + separator + section
+        update_artifact_text(path, append, create=True)
         return True
-    except OSError:
+    except (OSError, UnsafePath):
         return False
 
 
@@ -4738,6 +4745,9 @@ def run_refresh_lane(
                 "build — the worker child owns the build and the push",
                 decision, pinned_digest=inputs.pinned_digest))
 
+        if pin_out is not None:
+            validate_artifact_path(pin_out, directory=True, writing=True)
+
         result = build(build_plan) if build_plan is not None else build()
         if not result.ok:
             return _emit(RefreshOutcome(
@@ -4772,19 +4782,21 @@ def run_refresh_lane(
 
         if pin_out is not None and inputs.overlay_text is not None:
             pin_dir = Path(pin_out)
-            pin_dir.mkdir(parents=True, exist_ok=True)
+            ensure_artifact_directory(pin_dir)
             rewritten = rewrite_pin(inputs.overlay_text, image, result.digest, prov)
             pin_path = pin_dir / Path(overlay_path).name
-            pin_path.write_text(rewritten, encoding="utf-8")
+            write_artifact_text(pin_path, rewritten, root=pin_dir)
             body_path = pin_dir / "pr-body.md"
-            body_path.write_text(render_pr_body(
+            write_artifact_text(body_path, render_pr_body(
                 prov=prov, digest=result.digest,
                 previous_digest=inputs.pinned_digest, tag=result.tag or "",
                 source_revision=result.source_revision, run_url=run_url,
-                overlay_path=overlay_path), encoding="utf-8")
+                overlay_path=overlay_path), root=pin_dir)
             outcome.pin_path = pin_path
             outcome.pr_body_path = body_path
         return _emit(outcome)
+    except UnsafePath:
+        raise
     except Exception as exc:  # noqa: BLE001 — the lane never fails the nightly
         return _emit(RefreshOutcome(
             RESULT_SKIPPED, f"{type(exc).__name__}: {exc}", None))
@@ -4915,6 +4927,9 @@ def main(argv: list[str] | None = None) -> int | None:
                     help="a pin pull request still open at this run — the "
                          "clearest available signal that the chain is parked")
     args = ap.parse_args(argv)
+    bind_cli_paths(args, paths=("report_in", "pin_out", "decision_out", "digest_in"),
+                   directories=("pin_out",),
+                   outputs=("report_in", "pin_out", "decision_out"))
 
     repo_root = Path(args.repo_root).resolve()
 
@@ -5137,14 +5152,14 @@ def main(argv: list[str] | None = None) -> int | None:
     if args.decision_out:
         decision = outcome.decision
         try:
-            Path(args.decision_out).write_text(json.dumps({
+            write_artifact_text(Path(args.decision_out), json.dumps({
                 "build": bool(decision.build) if decision else False,
                 "outcome": decision.outcome if decision else "undecidable",
                 "reason": decision.reason if decision else (outcome.reason or ""),
                 "result": outcome.result,
                 "corpus_revision": decision.corpus_revision if decision else None,
                 "recipe_revision": decision.recipe_revision if decision else None,
-            }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            }, indent=2, sort_keys=True) + "\n")
         except OSError as exc:
             print(f"  ::warning::could not write the decision file: {exc}")
 

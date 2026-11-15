@@ -68,3 +68,10 @@ An explicit project-register operand must match XFACTORY_PROJECT_REGISTER_PATH
 or the provider's existing discovered register. These trusted launch settings
 must not be exposed as model parameters. Direct trusted library callers retain
 their existing data interfaces; CLI callers cannot redirect policy inputs.
+
+CI-generated plan/body outputs may also use RUNNER_TEMP, independently selected
+by the trusted runner environment. Model operands cannot grant a new scratch
+root. Artifact input reads remain bounded, regular/single-link and no-follow.
+Existing non-secret modes are retained; special-mode/shared-write/read-only
+targets refuse. Descriptor-held compare-and-replace detects changes during
+preparation without claiming exclusion of arbitrary same-UID native writers.

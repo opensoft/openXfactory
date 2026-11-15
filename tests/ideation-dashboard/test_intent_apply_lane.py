@@ -741,8 +741,9 @@ def test_intent_plane_provenance_pair_is_sanctioned():
         "surface": "intent-plane", "console_presence": "ingress-auth"}
 
 
-def test_cli_applies_from_json(tmp_path, capsys):
+def test_cli_applies_from_json(tmp_path, capsys, monkeypatch):
     root, rev, allowlist = _corpus(tmp_path)
+    monkeypatch.setenv("XFACTORY_INTENT_ALLOWLIST_PATH", str(allowlist))
     rc = lane.main([
         "--repo-root", str(root), "--allowlist", str(allowlist),
         "--intent-json", json.dumps(_intent(rev)),

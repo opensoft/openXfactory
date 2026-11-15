@@ -88,7 +88,7 @@ def exclusive_writer(directory_fd):
     try:
         fcntl.flock(directory_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except BlockingIOError as exc:
-        raise UnsafePath("profile already has an active writer") from exc
+        raise UnsafePath("directory already has an active writer") from exc
     try:
         yield
     finally:
@@ -187,11 +187,12 @@ def _artifact_location(path, root=None):
 
 
 def _regular_artifact(info, *, writing=False):
-    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+    if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+            or info.st_mode & 0o7000):
         raise UnsafePath("artifact must be a regular single-link file")
     if writing and (info.st_uid != os.geteuid()
-                    or not info.st_mode & stat.S_IWUSR):
-        raise UnsafePath("artifact is foreign-owned or read-only")
+                    or not info.st_mode & stat.S_IWUSR or info.st_mode & 0o022):
+        raise UnsafePath("artifact is foreign-owned, shared-write or read-only")
 
 
 def _signature(info):
@@ -264,7 +265,8 @@ def validate_artifact_path(path, *, root=None, directory=False,
         os.close(fd)
 
 
-def invocation_operand(value, *, directory=False, writing=False, required=False):
+def invocation_operand(value, *, directory=False, writing=False, required=False,
+                       allow_runner_temp=False):
     """Return a canonical operand under controller-owned invocation authority."""
     root = Path.cwd().resolve()
     selected = _absolute_operand(value)
@@ -280,6 +282,19 @@ def invocation_operand(value, *, directory=False, writing=False, required=False)
             relative = selected.relative_to(ancestor)
             break
     if relative is None:
+        scratch = os.environ.get("RUNNER_TEMP") if allow_runner_temp else None
+        if scratch:
+            trusted = _absolute_operand(scratch).resolve()
+            if trusted == Path(trusted.anchor):
+                raise UnsafePath("CI scratch root cannot be a filesystem root")
+            try:
+                selected.relative_to(trusted)
+            except ValueError:
+                pass
+            else:
+                validate_artifact_path(trusted, directory=True, writing=True, required=True)
+                return validate_artifact_path(selected, root=trusted, directory=directory,
+                                              writing=writing, required=required)
         raise UnsafePath("operand is outside the invocation root")
     canonical = _artifact_location(root / relative, root)
     return validate_artifact_path(canonical, root=root, directory=directory,
@@ -293,7 +308,7 @@ def bind_cli_paths(namespace, *, paths=(), directories=(), outputs=(),
         if value is not None:
             selected = invocation_operand(
                 value, directory=name in directories, writing=name in outputs,
-                required=name in required)
+                required=name in required, allow_runner_temp=name in outputs)
             setattr(namespace, name, str(selected))
 
 
@@ -372,9 +387,9 @@ def update_artifact_text(path, transform, *, root=None, create=False):
                     with os.fdopen(fd, "wb") as stream:
                         stream.write(updated.encode("utf-8"))
                         stream.flush()
-                        os.fsync(stream.fileno())
                         os.fchmod(stream.fileno(),
                                   stat.S_IMODE(before.st_mode) if before else 0o644)
+                        os.fsync(stream.fileno())
                     if _signature(_artifact_stat(descriptor, path.name)) != _signature(before):
                         raise UnsafePath("artifact changed while preparing its update")
                     os.replace(temporary, path.name, src_dir_fd=descriptor,

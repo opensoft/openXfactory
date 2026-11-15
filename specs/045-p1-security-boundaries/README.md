@@ -24,3 +24,5 @@ Phase 1 repairs profile/state boundaries and privileged CI installers. Required
 exact-head review/CI and actual merged-main acceptance are separate pending
 steps. Remaining P1 worker/report/control, executable, vendor and fixture
 provenance work stays explicit in the task list.
+
+[Phase 2 local evidence](phase2-local-evidence.md) records artifact/policy verification.
