@@ -28,15 +28,12 @@ def shifted(value, seconds):
 
 @pytest.fixture(scope="module")
 def accepted_historical_control():
-    path = v.COMMISSIONING_PATH
-    commits = subprocess.check_output(["git", "log", "--format=%H", "HEAD", "--", path], cwd=ROOT, text=True).splitlines()
-    for commit in commits:
-        data = subprocess.check_output(["git", "show", commit + ":" + path], cwd=ROOT)
-        if v.digest(data) == v.LEGACY_CONTROL_SHA256:
-            code = subprocess.check_output(["git", "show", commit + ":" + v.FEATURE_PATH + "/verify-evidence.py"], cwd=ROOT)
-            if v.digest(code) == v.LEGACY_READER_SHA256:
-                return dict(repository=v.COORDINATOR, commit=commit, path=path, sha256=v.LEGACY_CONTROL_SHA256)
-    pytest.fail("the accepted historical packet and immutable reader must remain in Git")
+    manifest = v.decode(subprocess.check_output(["git", "show", "HEAD:" + v.COMMISSIONING_PATH], cwd=ROOT))
+    anchor = manifest["historical_controls"]["T012"]
+    # Retention keeps exact objects available independently of a merge's ancestry.
+    # The bridge checks both fixed digests and the complete matching frozen inputs.
+    v.historical_verifier(v.GitStore({v.COORDINATOR: str(ROOT)}), anchor)
+    return anchor
 
 
 def test_actual_historical_control_uses_matching_frozen_reader(accepted_historical_control):
@@ -45,6 +42,29 @@ def test_actual_historical_control_uses_matching_frozen_reader(accepted_historic
     assert prior.definition == v.LEGACY_DEFINITION
     for task in ("T010", "T011", "T012", "T016"):
         prior.verify(task)
+
+
+def test_historical_fixture_resolves_retained_objects_after_squash(tmp_path, monkeypatch):
+    root = tmp_path / "synthetic-squash"
+    root.mkdir()
+    subprocess.run(["git", "init", "-q", str(root)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", "https://github.com/" + v.COORDINATOR + ".git"], cwd=root, check=True)
+    objects = subprocess.check_output(["git", "rev-parse", "--git-path", "objects"], cwd=ROOT, text=True).strip()
+    (root / ".git/objects/info/alternates").write_text(str((ROOT / objects).resolve()) + "\n")
+    tree = subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], cwd=ROOT, text=True).strip()
+    squash = subprocess.check_output(["git", "-c", "user.name=Synthetic squash", "-c", "user.email=squash@example.invalid",
+                                      "commit-tree", tree, "-m", "Synthetic root, with retained immutable objects"],
+                                     cwd=root, text=True).strip()
+    subprocess.run(["git", "update-ref", "HEAD", squash], cwd=root, check=True)
+    manifest = v.decode(subprocess.check_output(["git", "show", "HEAD:" + v.COMMISSIONING_PATH], cwd=root))
+    anchor = manifest["historical_controls"]["T012"]
+    assert subprocess.run(["git", "merge-base", "--is-ancestor", anchor["commit"], "HEAD"], cwd=root).returncode == 1
+    monkeypatch.setitem(globals(), "ROOT", root)
+    resolved = accepted_historical_control.__wrapped__()
+    assert resolved == anchor
+    reader = v.make_verifier(TASKS, v.GitStore({v.COORDINATOR: str(root)}), resolved)
+    for task in ("T010", "T011", "T012", "T016"):
+        reader.verify(task)
 
 
 @pytest.fixture
