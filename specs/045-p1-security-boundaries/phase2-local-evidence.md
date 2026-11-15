@@ -56,3 +56,14 @@ GitHub discussion resolution alone has not cleared Sourcery's check. The
 Sourcery dashboard currently requires operator sign-in; no ignore rule, security
 severity override, scanner suppression, new terms, account or billing change
 has been applied. This is an external check still awaiting verified readback.
+
+## Skipped-case readback
+Thirteen validator cases could not discover the cross-reference validator from
+a numbered standalone worktree, because their existing discovery walks to an
+aggregation containing openxFactory. A real isolated xFactory clone with this
+published provider revision, its declared provider legs and canonical physical
+mount ran all 153 affected validator cases with no skips. The source is the same
+published revision; no validator stub, fake Git metadata or test relaxation was
+used. The remaining shape guard expected the old LedgerxFactory path; it now
+checks canonical ledgerXfactory first and retains the legacy fallback.
+That guard's current actual-consumer proof follows publication of this update.

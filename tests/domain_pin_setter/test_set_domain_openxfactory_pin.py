@@ -203,7 +203,9 @@ def test_the_fixture_still_matches_the_live_ledgerx_shape():
     file is deliberately NOT asserted: the pin values change on every bump and
     the shape is what this suite is about.
     """
-    for candidate in (REPO_ROOT.parent / "xFactories" / "LedgerxFactory",
+    for candidate in (REPO_ROOT.parent / "xFactories" / "ledgerXfactory",
+                      REPO_ROOT.parent.parent / "xFactories" / "ledgerXfactory",
+                      REPO_ROOT.parent / "xFactories" / "LedgerxFactory",
                       REPO_ROOT.parent.parent / "xFactories" / "LedgerxFactory"):
         live = candidate / "stack.yaml"
         if live.is_file():
