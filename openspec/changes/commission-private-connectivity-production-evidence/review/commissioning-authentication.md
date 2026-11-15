@@ -1,33 +1,52 @@
-# Source commissioning authentication: CI proof refinement
+# Authentication review: Corrected private-connectivity source CI
 
 Status: draft
-Created: 2026-11-14
 
-## Existing authenticated controls
+## Exact corrected source-CI review target
 
-The accepted E, neutral, package and installer source observations remain immutable. T012 completed after Brett's actual authentication at 2026-11-14T22:31:50.896Z and successful default T012/T010/T011/T016 commands against [accepted control 35e98a276](https://github.com/opensoft/openXfactory/blob/35e98a276fbd51c7cdfe89203a3eecbff1266f4f/specs/043-private-connectivity-production/evidence/commissioning.json). Its actual review is [9af6e00e7](https://github.com/opensoft/openXfactory/blob/9af6e00e76e25fd1ace915645f419d5787fe735f/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md); installer core b34071e4b290a4e5f58e5bb7bce9b2dee0a16cd18b40d51563c0d9f480c28beb is unchanged.
+This is a source-only review. Authenticate the actual original source/CI exports and human provenance in the exact control below. Source-scope ratification does not authenticate these new observations.
 
-Earlier accepted E/N/L anchors remain in their exact Git history with matching immutable readers and frozen inputs. The new bounded compatibility bridge fixes the accepted historical control and reader content identities, verifies their original authentication, and preserves current authentication/revocation checks when a new control consumes historical dependencies. This pending context authenticates no new output and does not revoke those prior observations.
+| Item | Immutable review identity |
+| --- | --- |
+| Proposed reviewed manifest | [d9dc8dc30](https://github.com/opensoft/openXfactory/blob/d9dc8dc3090cc79506d720505436d775dd3c70e3/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Manifest file SHA-256 | 47c502ccd61ca51623b58146f82e126cc280f794cd8eb9ccd39264bbbbe52c65 |
+| Content SHA-256 proposed for authentication | d37b183495bbe604580c7a737621296cfcb71ac08e0a79bdcbf38a8bf8451d26 |
+| Complete accepted definition SHA-256 | c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431 |
+| Actual tested source | [328b83a7e4df8bb992d773ee643eb06adb4e6f80](https://github.com/opensoft/openXfactory/commit/328b83a7e4df8bb992d773ee643eb06adb4e6f80) |
+| Actual source baseline | c7a19045dc3a8a9f97271f86eb852467098b4a22 |
+| Original two-lane output | [42eda7f75](https://github.com/opensoft/openXfactory/blob/42eda7f75ff5557f81cf5368552a49813d795fdf/specs/043-private-connectivity-production/evidence/T010.json) |
+| Distinct T010 receipt | [c416ca944](https://github.com/opensoft/openXfactory/blob/c416ca9449d0edbbc13fbdeaa560365b24374550/specs/043-private-connectivity-production/evidence/T010.json) |
+| Required source CI | [root run/job](https://github.com/opensoft/openXfactory/actions/runs/43674587047/job/132691895472) |
+| Python 3.14 source CI | [proof run/job](https://github.com/opensoft/openXfactory/actions/runs/43674587176/job/132691833257) |
+| Exact-source Codex clearance | [review receipt](https://github.com/opensoft/openXfactory/pull/1310#issuecomment-6888884945) |
 
-## Accepted additional source scope
+## Actual qualification and repairs
 
-Brett separately ratified the exact additional source-CI/custody/file/refreeze scope at the same actual input. The [scope ratification](../../extend-private-connectivity-source-ci/review/ratification.md) retains the original user timestamp, individual raw-record digest and accepted design revision. Scope consent does not authenticate subsequent outputs.
+The root workflow and Python 3.14/doc-health entry point both completed successfully at this exact tested source. The root feature step explicitly collected and passed 571 cases: 475 evidence, 40 inventory and 56 source-proof cases, without a skip, failure or error. Its original step ran from 2026-11-15T04:56:53Z through 2026-11-15T04:59:22Z. The Python 3.14 lane passed its existing doc-health checks and all 56 explicit proof cases at the same source. Required floors, skip pins, named verdicts and measured coverage/gate obligations remain enforced.
 
-The new complete definition is e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298. All 68 task IDs, owners, classes, dependencies, cases and commands remain unchanged. Only the accepted T009/T010 file refinements and one frozen custody clarification changed.
+The bounded classification repair recognizes only the exact 043 test tree consistently in the production inventory and scanner. The three production helpers and every other production Python file remain measured. The actual inventory reclassifies exactly three test modules, leaving 312 production files. Local root collection increased by exactly two tests, with 338 deselected unchanged; no floor or skip pin was edited.
 
-## New source CI candidate
+The reader requires accepted predecessors before runtime consumption, complete Q2 before production children, same-scope managed-service eligibility before attachments and corresponding offer admission before waves. Historical dependencies retain their exact old graph, original objects and consumed CI while applying current revocations and closure state throughout traversal, including cache rechecks. Local affected validation passed 710 cases; the historical-state regressions first reproduced 18 incorrect acceptances and retain positive prior-CI controls. Non-instance handoffs require aggregate dependency identities; one T064 child cannot bypass the complete required instance inventory. Four negative controls first reproduced that gap, and 75 relevant positive/frozen-graph cases pass after repair. The isolated classification controls first failed in both tools and now pass. The subsequent Sonar S8705 finding was repaired by reconstructing only closed proof Git operations, validating commit/path/origin operands, using the native process working directory for the repository root, and attaching credentials only to fetch. The historical fixture now resolves the exact declared control through the frozen reader without requiring HEAD ancestry; its parentless-commit regression first failed and all 35 historical cases now pass. Thirteen negative controls first reproduced the wrapper gap; all 56 source-proof cases now pass, including real filtered transport and paths with spaces.
 
-The corrected source is [746e9316c](https://github.com/opensoft/openXfactory/commit/746e9316cfe7dbed7fac3ecc0104fb5bfdec15a7), with a T010 source baseline of a845c30eff6cf0385e3d21ab4640b9e62554e1e3. Both existing workflow artifacts are retained at that tested revision. Local source collection is 298 evidence, 40 inventory and 42 proof-root tests, all passing with no skips. The two repaired shared regressions also pass.
+## Actual scope and human provenance
 
-The initial Python 3.14 run at 3a53fc7f53c3cfe86ee895edec8887c2614cd283 failed because a test read the rewritten remote URL rather than the stored SSH configuration. The exact failed GitHub run, source and original step output are retained during export. A controlled local URL rewrite reproduced the failure; the corrected assertion checks the stored origin without changing it. Python 3.14 qualification now runs the explicit PR revision and checks all 42 JUnit cases.
+Brett accepted the exact classification scope, T010 refinement and full definition refresh in the native user record at 2026-11-15T01:34:50.899Z, session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 29616, raw record SHA-256 8461c468bca32a4cf1e70a6c2da18888672797af1f2806cf4f6c659c6cbcf783. The [actual ratification](https://github.com/opensoft/openXfactory/blob/2bd29c6b7db14cad3f877d2cc062881472540a32/openspec/changes/classify-private-connectivity-source-tests/review/ratification.md) records the exact decision, local timezone and UTC provenance. The accepted prior E/private-CI/custody scope and all earlier actual owner decisions remain preserved.
 
-Both entry points completed successfully at the exact corrected source revision. Root pytest-suite run 43653058553/job 132625600781 explicitly collected and passed 298 evidence, 40 inventory and 42 proof-root cases, with no source-suite skips, failures or errors. Its original source step ran from 2026-11-14T23:54:28Z through 2026-11-14T23:54:41Z. Python 3.14/doc-health run 43653058532/job 132625527820 passed its existing doc-health run and all 42 explicitly pinned proof cases at that same PR head. Required root floors, exact skip obligations and named verdicts passed unchanged. Codex cleared source 746e9316cfe7dbed7fac3ecc0104fb5bfdec15a7.
+All 16 frozen input bodies, all 68 registry rows and every task field except the three accepted T010 file additions retain their preceding values. Existing E compatibility repairs do not expand that registry or grant runtime effects. The exact source delta is within the accepted T010 file list.
 
-## Custody and admission boundary
+## Preservation and custody
 
-Private token creation/fetch is not needed or exercised while no foreign records exist. The qualified producer must be available from an authenticated trusted-base control before either existing CI lane can mint a token for private preparation. Candidate scripts never execute before those credentials; proof roots contain commits only, credentials are revoked before tests, and temporary stores are removed. A synthetic source test is not live GitHub credential/fetch qualification or full source/task admission.
+The actual original output is separately immutable and copied exactly into the permitted T010 E container, with decoded equality checked. Original command/source/timing/exit identities, full source-step exports, raw/export/full-job log digests and actual run/job identities remain preserved. The first failed Python 3.14 preparation at 3a53fc7f53c3cfe86ee895edec8887c2614cd283 (run 43652162290, one failure and 41 passes) remains in the original export. The withdrawn c49a6a5e control at 02be87d2bdd40abb92f3f232d84f667b661aa10e and all prior actual source observations remain in immutable history and prior_containers. Superseded Q2/Q1/historical-state findings and their reproductions are retained. Run 43666671602 retains its successful root job and 550 source cases together with its failed overall Sonar gate; that failed entry point was not treated as qualification. The corrective source includes fresh complete CI and measured Sonar validation.
 
-The new packet requires actual custodian authentication after its original outputs exist, followed by default T010 verification. The previous accepted control remains separately usable. T020 remains unchecked; subsequent private admission still requires the trusted producer, actual owner Git stores and its own accepted evidence/dependency timing.
+Accepted historical T001-T012/T016 packets retain their original exact anchors and fixed reader; this new packet does not rewrite them or make their observations claim newer tests. [Accepted T012 control](https://github.com/opensoft/openXfactory/blob/35e98a276fbd51c7cdfe89203a3eecbff1266f4f/specs/043-private-connectivity-production/evidence/commissioning.json) remains independently usable as historical source evidence. The old pending source-CI target is withdrawn; no approval transfers to this new core.
+
+GitHub exposed the Python 3.14 job log with UNKNOWN STEP labels. Its export therefore preserves every timestamped line in the API-selected source-step interval through the full ending second, including adjacent boundary lines; it does not invent step labels or omit source output. The actual API step identity/conclusion, printed tested revision and exact 56-case result were checked independently. The original complete job and run archive remain retained with their digests.
+
+No private binding is introduced. Both private token mints and private preparation steps were skipped because there were no foreign records; token-revocation and cleanup steps completed successfully. Source/synthetic proof is not live GitHub credential/fetch qualification. Private admission still requires an authenticated qualified producer and original public Git proof available on the trusted base, independently verified actual owner stores and its own full evidence/dependencies.
+
+## Actual authentication boundary
+
+The JSON decision below remains pending. Full default T010 verification must refuse admission until the custodian authenticates this exact actual packet and an accepted immutable review/control pair is recorded and verified. Preparation, hashes, CI, Codex review and source consent do not supply that authentication.
 
 ```json
 {
@@ -40,34 +59,4 @@ The new packet requires actual custodian authentication after its original outpu
 }
 ```
 
-Full Q0 and Q1–Q5 remain pending. All four PRs remain draft. No merge, version/tag, release publication, target operation, deployment, enrollment, paid resource or commercial gate is granted. Actual provider/domain/integration, live custody, staging and canary decisions retain their own gates.
-
-
-## Withdrawn source-CI review target
-
-The c49a6a5e packet below was withdrawn before authentication. Codex review of packet head 507b1b4fb6d076b7b36b7379286021eec6b9568d found that the reader could admit a production child that ran before Q2 completed or its separately recorded admission was reviewed. The original observations remain preserved; they do not qualify the corrected reader. Corrected source, exact-head CI and a new actual authentication target are required before the expanded T010 control is accepted. No earlier approval transfers to that new target.
-
-Follow-up review at 360e2dad3bc10395518133a6af73c4ab8eea8cf8 identified the same missing ordering at Q1. The corrected source now checks completion and any admission review of every accepted predecessor before consuming execution at T050–T064, plus the complete program Q2, same-scope managed-service eligibility and corresponding offer admission. This applies the existing dependency and rollout requirements without changing the frozen task definitions. Synthetic regressions reproduce 28 additional wrongly accepted predecessor cases before repair and retain positive boundary controls. The source-CI packet remains withdrawn until the complete repair has fresh actual qualification and review.
-
-Review of the classification source at 8af209ba0f032442222a2b669fb30c138c231bc4 identified a historical-dependency authority gap. The selected task used current authority, but its old verifier traversed prerequisites with the old revocation/closure state. Eighteen synthetic current-state controls over the actual immutable historical graph reproduced the defect. The repair overlays current revocations and closure state for that traversal while retaining the exact historical definitions, original objects and consumed CI records; the stable current error type also reports historical refusals. Fresh source qualification and review are required before a replacement authentication target is presented. Original observations remain preserved.
-
-| Item | Immutable review identity |
-| --- | --- |
-| New-definition control | [02be87d2b](https://github.com/opensoft/openXfactory/blob/02be87d2bdd40abb92f3f232d84f667b661aa10e/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Manifest file SHA-256 | 8b18f3ef78031e2d7cb2fd4060e141f05fa8daf4275762ff5441c461914c9b43 |
-| Authenticated content SHA-256 | c49a6a5ec2dfab98d76a9dd407afbcc4d0eabb0e7acfc0151083f63b03e1e854 |
-| Definition SHA-256 | e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298 |
-| Tested source | [746e9316c](https://github.com/opensoft/openXfactory/commit/746e9316cfe7dbed7fac3ecc0104fb5bfdec15a7) |
-| Original two-lane output | [17f4bbe5e](https://github.com/opensoft/openXfactory/blob/17f4bbe5ef950d2ee8e9f41c6959c031fc85cb18/specs/043-private-connectivity-production/evidence/T010.json) |
-| Distinct receipt | [731fee366](https://github.com/opensoft/openXfactory/blob/731fee366ee2b47f0e32d6d0cc907bb2f4c78df6/specs/043-private-connectivity-production/evidence/T010.json) |
-| Required source CI | [run 43653058553/job 132625600781](https://github.com/opensoft/openXfactory/actions/runs/43653058553/job/132625600781) |
-| Python 3.14 source CI | [run 43653058532/job 132625527820](https://github.com/opensoft/openXfactory/actions/runs/43653058532/job/132625527820) |
-| Preserved failed preparation | [Python 3.14 run 43652162290](https://github.com/opensoft/openXfactory/actions/runs/43652162290) at source 3a53fc7f53c3cfe86ee895edec8887c2614cd283 |
-
-The actual CI output remains separately immutable and is also copied exactly into the permitted T010 E container so its original references are visible to the closed shared sweep. Their decoded values are checked equal; no original observation or command/output identity is changed. The earlier unreviewed preparation control is retained in prior_containers. The actual failed Python 3.14 source step remains in the original export, including its one failure and 41 passes; it supplies no passing dependency.
-
-Committed data measure 1245 standing sites across 36 members with no uncovered site. The foreign member remains FUTURE: this packet introduces no private evidence binding. Exact computed retention references are published and independently read back without changing earlier refs.
-
-Binding/source/closed cases/CI, actual authority, immutable artifacts and all historical dependencies pass preparation. The default new T010 command correctly refuses pending actual custodian authentication. The prior accepted T012 anchor remains separately usable with its exact fixed historical reader. No source/CI control is treated as a live or commercial acceptance.
-
-Authenticate this actual source-only E packet and its original human/CI provenance. Acceptance permits recording the new immutable accepted review/control pair and default T010 verification only after those checks pass. It does not authenticate a new package run, activate private fetching, put the producer on a trusted base, authorize a merge, or advance full Q0/Q1–Q5. All four PRs stay draft.
+All four PRs remain draft: coordinator #1310, Ops #628, codeXfactory #583 and Headscale-Install #2. T020 remains unchecked. Full Q0, Q1-Q5, merge, version/tag allocation, publication, target operations, deployment, enrollment, paid resources and commercial admission retain separate gates.
