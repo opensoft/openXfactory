@@ -1,0 +1,128 @@
+{
+  "schema": "043-source-owner-permission-v1",
+  "id": "043-package-source-owner-20261114",
+  "decision": "accepted",
+  "owner": "Brett Heap",
+  "roles": [
+    "Brett Heap (Headscale package source/release owner and source-evidence custodian)"
+  ],
+  "mode": "source",
+  "scope": {
+    "phase": "source",
+    "candidate": "043-local-source",
+    "environment": "source",
+    "run": "043-q0-package-source",
+    "network": "not-applicable",
+    "target": "not-applicable",
+    "customer": "not-applicable",
+    "offering": "local-headscale",
+    "site": "not-applicable",
+    "region": "not-applicable",
+    "profile": "local-linux-docker",
+    "domain": "not-applicable",
+    "wave": "not-applicable",
+    "offer": "not-applicable"
+  },
+  "valid_from": "2026-11-14T16:57:52.719Z",
+  "valid_until": "until-superseded",
+  "decisions": {},
+  "proposal": "openspec/changes/commission-headscale-production/proposal.md",
+  "proposal_sha256": "ee986945dfdd475b74a8a95dc0ada5915c03b6d7a5c1281cb7c7158d95b58c10",
+  "definition_sha256": "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0",
+  "existing_role_and_scope": "review/ratification.md",
+  "latest_consumed_choice": {
+    "kind": "C-05 source qualification candidates",
+    "at": "2026-11-14T16:57:52.719Z",
+    "raw_record_sha256": "fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249",
+    "text": "Approve these qualification candidates (Recommended)",
+    "record": "review/support-scope-acceptance.md"
+  },
+  "matrix": {
+    "headscale": "0.29.7",
+    "tailscale": "1.104.7",
+    "server": {
+      "os": "Ubuntu 24.04 LTS",
+      "architecture": "amd64",
+      "docker_engine": "29.9.3"
+    },
+    "clients": [
+      {
+        "os": "Windows 11",
+        "architecture": "amd64",
+        "channel": "official MSI"
+      },
+      {
+        "os": "macOS 15",
+        "architecture": "Apple Silicon",
+        "channel": "official Standalone GUI PKG"
+      },
+      {
+        "os": "macOS 15",
+        "architecture": "Intel",
+        "channel": "official Standalone GUI PKG"
+      },
+      {
+        "os": "Ubuntu 24.04 LTS",
+        "architecture": "amd64",
+        "channel": "official Debian package/repository"
+      }
+    ],
+    "qualified": false
+  },
+  "per_task_source_scope": {
+    "T020": [
+      "deploy/production/instance.py",
+      "packaging/production-images.json",
+      "tests/qualification/test_production_package.py",
+      "evidence/private-connectivity-production/T020.json"
+    ],
+    "T021": [
+      "deploy/production/endpoint.py",
+      "tests/qualification/test_production_endpoint.py",
+      "evidence/private-connectivity-production/T021.json"
+    ],
+    "T022": [
+      "deploy/production/recovery.py",
+      "tests/qualification/test_production_recovery.py",
+      "evidence/private-connectivity-production/T022.json"
+    ],
+    "T023": [
+      "tests/qualification/qualify_production.py",
+      "tests/qualification/test_production_runner.py",
+      ".github/workflows/qualification.yml",
+      "release/private-connectivity-production.json",
+      "docs/runbooks/production-package.md",
+      "evidence/private-connectivity-production/T023.json"
+    ]
+  },
+  "custody_process": {
+    "custodian": "Brett Heap",
+    "records": "Reviewed/redacted original source/CI output and genuine human provenance",
+    "location": "Private owner Git under existing permissions",
+    "retention": "project lifetime",
+    "authentication": "Actual output/provenance review with exact commit/SHA-256 and genuine source/run/job identities",
+    "live_custody": "not granted"
+  },
+  "source_limits": {
+    "target_effects": false,
+    "cloud_spend_usd": 0,
+    "runner_dispatch": false,
+    "installation": false,
+    "enrollment": false,
+    "fault_injection": false
+  },
+  "later_required_inputs": [
+    "Actual immutable image/release/client artifact identities and compatibility before their consumers",
+    "Actual platform/target identities including authorized GUI Mac hardware before qualification",
+    "Current target/operator authority, endpoint/DNS/TLS/relay and protected state/key custody before execution",
+    "Finite approved resource/recovery/service objectives and Q1-Q5 entry before target execution"
+  ],
+  "boundaries": {
+    "source_only": true,
+    "allocates_version": false,
+    "advances_pins": false,
+    "authorizes_tag": false,
+    "authorizes_target_effects": false,
+    "all_three_prs_remain_draft": true
+  }
+}
