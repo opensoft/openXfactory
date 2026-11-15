@@ -36,11 +36,12 @@ jobs:
         env:
           INSTALLER_SUPPORT_ROOT: ${{ steps.installer-support.outputs.root }}
         run: |
+          set -euo pipefail
           for relative in \
             .github/requirements/privileged-ci.in \
-            .github/requirements/privileged-ci.lock" \
+            .github/requirements/privileged-ci.lock \
             .github/requirements/review-lane.in \
-            .github/requirements/review-lane.lock" \
+            .github/requirements/review-lane.lock \
             .github/worker-cli/package.json \
             .github/worker-cli/package-lock.json \
             .github/worker-cli/install.sh \

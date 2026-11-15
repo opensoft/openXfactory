@@ -130,3 +130,13 @@ override. A requested fresh Sourcery review then reported SKIPPED because its
 6 days 22 hours at readback). That skip is not a passed fresh review; no billing
 change or check dismissal was performed. Codex's exact 2cd4050a22 review found
 no major issues. The rollout correction requires its own fresh review and CI.
+
+The initial shell byte-comparison probe exposed a false-success defect in the
+checker itself: a failed comparison could be followed by a successful one.
+The recorded red counterexample is retained, and a corrected fail-fast loop
+now checks each artifact independently. The named dependency test runs the
+actual shell checker with valid bytes, then corrupts each of the eight files
+in turn and requires a nonzero result. All nine named tests and actionlint pass.
+The corrected old-caller receipt supersedes the premature smoke-check receipt;
+the independent eight-file byte equality, offline install and actual CLI
+version results remain valid.
