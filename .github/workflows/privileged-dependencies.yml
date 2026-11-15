@@ -1,0 +1,102 @@
+name: privileged-dependencies
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  privileged-dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          path: openxFactory
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Read immutable privileged installer artifacts
+        id: installer-support
+        run: |
+          set -euo pipefail
+          ref=2cd4050a220a9c46e1d6cdd8eff59fe41817d174
+          # Keep the caller's provider checkout and selected pins intact.
+          if ! git -C openxFactory cat-file -e "$ref^{commit}" 2>/dev/null; then
+            git -C openxFactory fetch --no-tags origin "$ref"
+          fi
+          support="$(mktemp -d "$RUNNER_TEMP/openxfactory-install-support.XXXXXX")"
+          git -C openxFactory archive "$ref" -- .github/requirements .github/worker-cli |
+            tar --extract --directory "$support" --no-same-owner --no-same-permissions
+          printf 'root=%s\n' "$support" >> "$GITHUB_OUTPUT"
+      - name: Verify immutable support bytes match this candidate
+        env:
+          INSTALLER_SUPPORT_ROOT: ${{ steps.installer-support.outputs.root }}
+        run: |
+          set -euo pipefail
+          for relative in \
+            .github/requirements/privileged-ci.in \
+            .github/requirements/privileged-ci.lock \
+            .github/requirements/review-lane.in \
+            .github/requirements/review-lane.lock \
+            .github/worker-cli/package.json \
+            .github/worker-cli/package-lock.json \
+            .github/worker-cli/install.sh \
+            .github/worker-cli/launcher.sh; do
+            cmp -- "openxFactory/$relative" "$INSTALLER_SUPPORT_ROOT/$relative"
+          done
+      - name: Download only verified binary Python artifacts
+        env:
+          INSTALLER_SUPPORT_ROOT: ${{ steps.installer-support.outputs.root }}
+        run: |
+          python3 -m pip download --require-hashes --only-binary :all: \
+            -r "$INSTALLER_SUPPORT_ROOT/.github/requirements/privileged-ci.lock" \
+            -r "$INSTALLER_SUPPORT_ROOT/.github/requirements/review-lane.lock" \
+            --dest "$RUNNER_TEMP/verified-wheels"
+      - name: Accept the dependency set from offline wheel storage
+        env:
+          INSTALLER_SUPPORT_ROOT: ${{ steps.installer-support.outputs.root }}
+        run: |
+          python3 -m venv "$RUNNER_TEMP/verified-ci"
+          "$RUNNER_TEMP/verified-ci/bin/python" -m pip install \
+            --no-index --find-links "$RUNNER_TEMP/verified-wheels" \
+            --require-hashes --only-binary :all: \
+            -r "$INSTALLER_SUPPORT_ROOT/.github/requirements/privileged-ci.lock" \
+            -r "$INSTALLER_SUPPORT_ROOT/.github/requirements/review-lane.lock"
+          "$RUNNER_TEMP/verified-ci/bin/python" -I -c \
+            'import yaml, jsonschema, pytest, cryptography, rfc3339_validator; raise SystemExit(0 if cryptography.__version__ == "50.0.0" else "Unexpected cryptography version")'
+      - name: Accept the script-free worker binary without provider credentials
+        env:
+          INSTALLER_SUPPORT_ROOT: ${{ steps.installer-support.outputs.root }}
+        run: bash "$INSTALLER_SUPPORT_ROOT/.github/worker-cli/install.sh"
+      - name: Run named dependency contract checks
+        run: |
+          cd openxFactory
+          "$RUNNER_TEMP/verified-ci/bin/python" -m pytest \
+            tests/sonar_quality/test_p1_ci_dependencies.py -q \
+            --junitxml="$RUNNER_TEMP/privileged-dependencies.xml"
+          "$RUNNER_TEMP/verified-ci/bin/python" - <<'PY'
+          import xml.etree.ElementTree as ET
+          import os
+          from pathlib import Path
+          report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "privileged-dependencies.xml")
+          expected = {
+              "test_privileged_python_installs_require_hashes_and_wheels",
+              "test_both_doc_health_phases_use_the_same_fixed_compatible_closure",
+              "test_worker_fallback_is_still_enrolled_and_has_no_global_or_unlocked_install",
+              "test_worker_binary_manifest_and_integrity_lock_agree_without_install_hooks",
+              "test_privileged_job_permissions_and_trusted_core_are_preserved",
+              "test_comment_cannot_mask_missing_lifecycle_protection",
+              "test_worker_launcher_enforces_updates_after_real_worker_env_scrub",
+              "test_dependency_acceptance_uses_the_actual_aggregation_provider_layout",
+              "test_reusable_installer_source_is_immutable_and_independent_of_caller_pin",
+          }
+          cases = report.findall(".//testcase")
+          if len(cases) != 9 or {c.get("name") for c in cases} != expected:
+              raise SystemExit("Named dependency acceptance coverage changed")
+          if any(c.find(tag) is not None for c in cases for tag in ("skipped", "failure", "error")):
+              raise SystemExit("Dependency acceptance did not pass every named test")
+          PY

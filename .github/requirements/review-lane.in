@@ -1,0 +1,2 @@
+# Review authority uses only PyYAML. Keep the runtime release lock unchanged.
+pyyaml==6.0.3

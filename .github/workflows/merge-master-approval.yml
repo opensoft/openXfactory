@@ -693,7 +693,7 @@ jobs:
       - name: Ensure PyYAML
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet pyyaml
+          python3 -m pip install --quiet --require-hashes --only-binary :all: -r .github/requirements/review-lane.lock
 
       # ---- 6. Resolve the candidate ----------------------------------------
       - name: Resolve the candidate pull request
