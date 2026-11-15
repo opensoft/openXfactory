@@ -61,3 +61,46 @@ This correction does not change real profile modes or state during deployment.
 
 Final read-only-intent follow-up verification: 623 tests passed with 105
 subtests, with the same two pre-existing tranche-B skips.
+
+## Exact-head review corrections
+The review correction adds read-only store preflight before browser/extractor
+work, rejects group/world access to existing private directories and files
+without changing their modes, and compares capture-start generations under the
+writer lock. A validated persistent browser descriptor remains open through the
+owned browser lifetime; the launch path uses the parent process's procfs anchor.
+Synthetic subprocess substitution and owned/CDP lifecycle tests cover this
+without accessing a real session.
+
+The CI launcher sets DISABLE_UPDATES and DISABLE_AUTOUPDATER at exec time, after
+worker environment scrubbing. The actual pinned native binary through that
+launcher again returned 2.1.325 with network mode none, zero mounts and exit 0.
+A mutation test proves a comment cannot mask removal of --ignore-scripts.
+The new dependency job uses the real openxFactory submodule layout and requires
+all eight named dependency tests, with no skips/failures/errors.
+The generated corpus ledger is regenerated using the canonical tool for #1321;
+the initial full run's four failures all concerned this missing new packet row
+(10,619 tests and 809 subtests otherwise passed; Sonar correctly did not run).
+
+The native profile contract exposes two independent files and upstream readers
+and writers do not implement a multi-file transaction or this harness's lock.
+This repair promises private per-file replacement and cooperating writer
+serialization, not atomic upstream pair reads or exclusion of an arbitrary
+same-UID process. Those two review suggestions require upstream protocol changes
+to provide stronger guarantees and cannot be represented as implemented here.
+No upstream credential schema, active profile or running consumer is migrated.
+
+The native CLI package retains its official LICENSE.md. Its notice identifies
+Anthropic and refers to the vendor legal agreements; the scanner cannot classify
+that notice as an open-source license. No lock/license field was falsified,
+scanner suppressed, billing changed, or account/license terms accepted by this
+repair. This remains the same official CLI used by the existing API-key fallback.
+
+Review-correction verification: 921 tests, 105 subtests passed, with the same two
+existing skips, across NotebookLM, Sonar quality, review-lane pin, code-surface
+and sequencing suites. Four subsequently added browser lifecycle cases also
+pass in the focused run: 94 tests and 11 subtests. Independent measured focused
+line coverage is 84 percent for nlm_auth and 97 percent for safe_tooling_io
+(88 percent combined); this is local evidence, not a substitute for CI's
+exhaustive source/child coverage or the eventual main Sonar gate.
+The corrected workflow passes actionlint and both installer/launcher pass
+shellcheck. No checks or exclusions were removed.
