@@ -749,6 +749,29 @@ def test_individual_child_advances_without_unrelated_aggregate(world):
         world.verifier().aggregate("T057", json.dumps(bad).encode())
 
 
+@pytest.mark.parametrize("task", ["T065", "T066"])
+@pytest.mark.parametrize("inventory", ["complete", "missing-required"])
+def test_handoff_cannot_select_one_child_instead_of_aggregate(world, task, inventory):
+    child = world.child("T064")
+    world.aggregate("T064")
+    if inventory == "missing-required":
+        world.child("T064", "required-second", {"profile": "another-required-profile"})
+        with pytest.raises(v.EvidenceError, match="aggregate child"):
+            world.verifier().verify("T064")
+    key = world.add(task, dependencies={"T064": child})
+    with pytest.raises(v.EvidenceError, match="requires aggregate"):
+        world.check(key)
+
+
+@pytest.mark.parametrize("task", ["T065", "T066"])
+def test_handoff_accepts_complete_multiple_instance_aggregate(world, task):
+    world.child("T064")
+    world.child("T064", "required-second", {"profile": "another-required-profile"})
+    world.aggregate("T064")
+    key = world.add(task)
+    world.check(key)
+
+
 def test_canary_still_requires_complete_program_q2(world):
     key = world.child("T058")
     world.records["T056"]["verdict"] = "blocked"

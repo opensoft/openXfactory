@@ -514,6 +514,8 @@ class Verifier:
         require(set(binding["dependencies"]) == expected_deps, "required frozen dependencies changed")
         for predecessor, selected in binding["dependencies"].items():
             require(selected.split("@")[0] == predecessor, "substituted predecessor")
+            if task not in INSTANCE_TASKS and predecessor in INSTANCE_TASKS:
+                require(selected == predecessor, "non-instance task requires aggregate completion")
             if task in INSTANCE_TASKS and predecessor in INSTANCE_TASKS:
                 require("@" in selected, "child cannot borrow an aggregate")
                 old_scope = self.trust["bindings"][selected]["scope"]
