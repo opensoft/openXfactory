@@ -46,6 +46,12 @@ report-only, `contested`, at-most-`warning` family).
 
 from __future__ import annotations
 
+from safe_tooling_io import (
+    UnsafePath, bind_cli_paths, ensure_artifact_directory,
+    write_artifact_text, update_artifact_text, validate_artifact_path,
+)
+
+
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -156,6 +162,7 @@ def prepare_readiness_bundle(agg_root: Path, out_dir: Path, *, run_id: str,
     to `<out_dir>/manifest.json`)."""
     agg_root = Path(agg_root)
     out_dir = Path(out_dir)
+    validate_artifact_path(out_dir, directory=True, writing=True)
     openx = agg_root / OPENX_CHECKOUT
 
     docs = _readiness_docs(agg_root)
@@ -181,14 +188,14 @@ def prepare_readiness_bundle(agg_root: Path, out_dir: Path, *, run_id: str,
     clusters = clusters[:MAX_CLUSTERS_PER_RUN]
 
     clusters_dir = out_dir / "clusters"
-    clusters_dir.mkdir(parents=True, exist_ok=True)
+    ensure_artifact_directory(clusters_dir, root=out_dir)
     cluster_ids = []
     for cluster in clusters:
         sources = ir._cluster_sources(cluster, by_path)
         text = ir.build_analysis_input(prompt_text, cluster, sources,
                                        capabilities)
-        (clusters_dir / f"{cluster['id']}.txt").write_text(
-            text, encoding="utf-8")
+        write_artifact_text(clusters_dir / f"{cluster['id']}.txt",
+                            text, root=clusters_dir)
         cluster_ids.append(cluster["id"])
 
     manifest = {
@@ -199,12 +206,10 @@ def prepare_readiness_bundle(agg_root: Path, out_dir: Path, *, run_id: str,
         "cluster_count": len(cluster_ids),
         "cluster_ids": cluster_ids,
     }
-    (out_dir / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8")
-    (out_dir / "output.schema.json").write_text(
-        json.dumps(ir.WORKER_OUTPUT_SCHEMA, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8")
+    write_artifact_text(out_dir / "manifest.json",
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", root=out_dir)
+    write_artifact_text(out_dir / "output.schema.json",
+        json.dumps(ir.WORKER_OUTPUT_SCHEMA, indent=2, sort_keys=True) + "\n", root=out_dir)
     return manifest
 
 
@@ -399,6 +404,9 @@ def main(argv: list[str] | None = None) -> int:
                          "with the Ideation Readiness section + ranked-plan "
                          "lines")
     args = ap.parse_args(argv)
+    bind_cli_paths(args, paths=("out_dir", "findings_in", "report_in"),
+                   directories=("out_dir",),
+                   outputs=("out_dir", "report_in"))
     as_of = date.fromisoformat(args.as_of)
     agg_root = Path(args.repo_root)
 
@@ -420,12 +428,12 @@ def main(argv: list[str] | None = None) -> int:
         if args.report_in:
             from . import report as report_mod
             report_path = Path(args.report_in)
-            text = report_path.read_text(encoding="utf-8")
-            report_path.write_text(
-                report_mod.insert_readiness_section(text, meta),
-                encoding="utf-8")
+            update_artifact_text(report_path,
+                lambda text: report_mod.insert_readiness_section(text, meta))
         print(meta.log_line())
         return 0
+    except UnsafePath:
+        raise  # Unsafe filesystem authority is not an optional worker outage.
     except Exception as exc:  # noqa: BLE001 — never fail the nightly
         print(f"ideation-readiness lane: SKIPPED — unhandled "
              f"{type(exc).__name__}: {exc}")

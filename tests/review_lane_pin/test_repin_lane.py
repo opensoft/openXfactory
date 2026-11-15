@@ -40,6 +40,7 @@ import sys
 import tempfile
 import textwrap
 import unittest
+from unittest.mock import patch
 
 import yaml
 
@@ -1685,7 +1686,8 @@ class EveryPinnedSiteMovesOrNothingDoes(TreeFixtureMixin, unittest.TestCase):
             plan_out = tree.root / "plan.json"
             body_out = tree.root / "body.md"
 
-            code = R.main([
+            with patch.dict(os.environ, {"RUNNER_TEMP": str(tree.root)}):
+                code = R.main([
                 "--repo", str(tree.root),
                 "--source-default-branch", "main",
                 "--candidate-commit", NEW_CORE,
@@ -1724,7 +1726,8 @@ class EveryPinnedSiteMovesOrNothingDoes(TreeFixtureMixin, unittest.TestCase):
             plan_out = tree.root / "plan.json"
             before = tree.digests()
 
-            code = R.main([
+            with patch.dict(os.environ, {"RUNNER_TEMP": str(tree.root)}):
+                code = R.main([
                 "--repo", str(tree.root),
                 "--source-default-branch", "main",
                 "--candidate-commit", NEW_CORE,
@@ -2165,7 +2168,8 @@ class TheLaneSweepsAndIsIdempotent(TreeFixtureMixin, unittest.TestCase):
             plan_out, body_out = tree.root / "p.json", tree.root / "b.md"
             before = tree.digests()
 
-            code = R.main([
+            with patch.dict(os.environ, {"RUNNER_TEMP": str(tree.root)}):
+                code = R.main([
                 "--repo", str(tree.root),
                 "--source-default-branch", "main",
                 "--candidate-commit", NEW_CORE,

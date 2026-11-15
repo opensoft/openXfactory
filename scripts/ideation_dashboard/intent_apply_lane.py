@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -43,6 +44,8 @@ import yaml
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:  # plain-script parity with serve.py
     sys.path.insert(0, str(_SCRIPTS_DIR))
+
+from safe_tooling_io import read_artifact_text, operator_input_operand  # noqa: E402
 
 # § 5.2 SHED REACH (RULED (a) / RULED Q7, `#656`): the modules this file reads
 # from `opendox.*` / `openxdox.*` below left openxFactory at the carve and are
@@ -153,7 +156,7 @@ def load_allowlist(path: Path) -> dict[str, list[str]]:
     """The committed actor -> verbs map (the inbox's own config shape).
     Missing or malformed resolves EMPTY: nobody may do anything."""
     try:
-        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        data = json.loads(read_artifact_text(Path(path)))
     except (OSError, ValueError):
         return {}
     actors = data.get("actors") if isinstance(data, dict) else None
@@ -511,7 +514,7 @@ def _project_roster(root: Path, project_register: Path | None = None):
     names: set[str] = set()
     if register is not None and Path(register).is_file():
         try:
-            doc = yaml.safe_load(Path(register).read_text(encoding="utf-8"))
+            doc = yaml.safe_load(read_artifact_text(Path(register)))
         except (OSError, yaml.YAMLError):
             doc = None
         for project in (doc or {}).get("projects") or []:
@@ -522,7 +525,7 @@ def _project_roster(root: Path, project_register: Path | None = None):
         index = Path(register).parent / "health" / "ideation-dashboard" / "index.json"
         if index.is_file():
             try:
-                entries = json.loads(index.read_text(encoding="utf-8")).get("entries")
+                entries = json.loads(read_artifact_text(index)).get("entries")
             except (OSError, ValueError):
                 entries = None
             for entry in entries or []:
@@ -741,6 +744,7 @@ def main(argv=None) -> int:
     # (`python3 -m ideation_dashboard.intent_apply_lane` and this
     # module's own `__main__` guard). Idempotent, so a caller that
     # already registered is not punished.
+
     from opendox_host import register_openxfactory
     register_openxfactory()
 
@@ -759,6 +763,17 @@ def main(argv=None) -> int:
                              "the project verbs; discovered upward when omitted)")
     parser.add_argument("--push", action="store_true")
     args = parser.parse_args(argv)
+    args.allowlist = str(operator_input_operand(
+        args.allowlist, setting="XFACTORY_INTENT_ALLOWLIST_PATH",
+        default=Path.cwd() / "allowlist.json"))
+    configured_register = os.environ.get("XFACTORY_PROJECT_REGISTER_PATH")
+    if args.project_register is not None or configured_register is not None:
+        from openxdox.kickoff import discover_project_register
+        default_register = (None if configured_register is not None else
+                            discover_project_register(Path(args.repo_root).resolve()))
+        args.project_register = str(operator_input_operand(
+            args.project_register if args.project_register is not None else configured_register,
+            setting="XFACTORY_PROJECT_REGISTER_PATH", default=default_register))
 
     if args.intent_json:
         intent = json.loads(args.intent_json)

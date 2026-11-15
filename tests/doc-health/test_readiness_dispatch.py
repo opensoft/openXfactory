@@ -260,7 +260,8 @@ def test_missing_git_head_is_skipped(tmp_path):
 
 # --- CLI smoke ---------------------------------------------------------
 
-def test_main_prepare_then_merge_round_trip(tmp_path, capsys):
+def test_main_prepare_then_merge_round_trip(tmp_path, capsys, monkeypatch):
+    monkeypatch.chdir(tmp_path)
     agg = make_agg_root(tmp_path)
     out_dir = tmp_path / "bundle"
     rc = rd.main(["--repo-root", str(agg), "--phase", "prepare",
@@ -374,7 +375,7 @@ def _openxfactory_root_or_skip(under_test=None):
 
 
 def test_merge_wires_the_real_validator_for_a_genuinely_scored_index(
-        tmp_path):
+        tmp_path, monkeypatch):
     """Not the T007 15-cluster proof (test_ideation_readiness.py owns that)
     -- only proves THIS module's own plumbing reaches the pinned openxFactory
     validator (no `validator=` seam here) and that a genuinely scored,
@@ -386,6 +387,7 @@ def test_merge_wires_the_real_validator_for_a_genuinely_scored_index(
     harden-ideation-readiness-check the validator resolves out of the
     REPOSITORY UNDER TEST first rather than out of whichever checkout sits
     above it on the filesystem."""
+    monkeypatch.chdir(tmp_path)
     real_openx = _openxfactory_root_or_skip()  # noqa: F841 (the gate, not the arg)
 
     agg = make_agg_root(tmp_path)
