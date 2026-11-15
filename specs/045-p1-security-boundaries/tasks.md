@@ -16,3 +16,15 @@ Cross-repository consumer or release implementation adds exact owning files and
 verification here before any dependent edit; no speculative task tick grants
 release authority. Each landing also requires real exact-head review and CI,
 published-main Sonar and unchanged-state readback beyond these local commands.
+
+## T007 declared-copy consumer handoff
+The three existing declared-copy consumers are opensoft/Omnigent-Install,
+opensoft/xFactory-Hermes-Install and opensoft/openXwallet. Each maintenance
+feature owns its exact local list: scripts/validate-openspec-cli-pin.py,
+scripts/install-pinned-openspec-cli.py, contracts/openspec-cli-pin.yaml,
+contracts/openspec-cli-pin.1.12.0.package-lock.json, docs/openspec-cli-pin.md,
+tests/test_openspec_consumer_boundaries.py, README.md and its own governance/
+feature packet. Runtime/core pins and adapted workflows remain unchanged.
+Published provider bytes and the lock address move together; original declared
+consumption records remain historical evidence. Consumer main must follow
+provider main, with fresh owning checks and review.
