@@ -19,7 +19,7 @@ T018 cannot publish a supported neutral package through the current closed relea
 
 ### New Capabilities
 
-- private-connectivity-production-release-support: Closed neutral release membership, historical verification and evidence-safe definition refinement for feature 043.
+- `private-connectivity-production-release-support`: Closed neutral release membership, historical verification and evidence-safe definition refinement for feature 043.
 
 ### Modified Capabilities
 

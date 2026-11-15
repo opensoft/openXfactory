@@ -560,7 +560,7 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
-- [register-private-connectivity-release-members](openspec/changes/register-private-connectivity-release-members/proposal.md) — draft owner review for the exact T018 release-builder/test additions and evidence-safe definition refinement. Preserves the current T020 actual packet until its distinct authentication/default verification; allocates no release version or tag.
+- [register-private-connectivity-release-members](openspec/changes/register-private-connectivity-release-members/proposal.md) — draft [PR #1327](https://github.com/opensoft/openXfactory/pull/1327); owner review for the exact T018 release-builder/test additions and evidence-safe definition refinement. Preserves the current T020 actual packet until its distinct authentication/default verification; allocates no release version or tag.
 - [remediate-p1-security-boundaries](openspec/changes/remediate-p1-security-boundaries/proposal.md)
   — draft implementation packet for Brett Heap's 2026-11-15 direction to fix
   legacy P1 security boundaries. [Feature 045](specs/045-p1-security-boundaries/spec.md)
