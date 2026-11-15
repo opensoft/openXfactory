@@ -1,6 +1,7 @@
 # Private-connectivity production release support
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-15 by Brett Heap, through [register-private-connectivity-release-members](../../proposal.md).
 
 ## Purpose
 

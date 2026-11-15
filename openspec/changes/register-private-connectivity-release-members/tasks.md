@@ -1,13 +1,14 @@
 # Governance handoff: Private-connectivity release support
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-15 by Brett Heap, through [register-private-connectivity-release-members](proposal.md).
 Created: 2026-11-15
 
 The sole executable implementation list remains [feature 043 tasks](../../../specs/043-private-connectivity-production/tasks.md). These checkboxes record owner acceptance and the handoff of its bounded refinement; they create no parallel feature, runtime task registry or deployment authority.
 
 ## 1. Owner acceptance and preserved predecessor
 
-- [ ] 1.1 Obtain Brett Heap's actual neutral/E owner acceptance of design.md's exact two additional T018 files and directly affected historical-evidence/refreeze scope; verify approved origin metadata, ratified provenance and an actual owner decision before implementation.
+- [x] 1.1 Obtain Brett Heap's actual neutral/E owner acceptance of design.md's exact two additional T018 files and directly affected historical-evidence/refreeze scope; verify approved origin metadata, ratified provenance and an actual owner decision before implementation.
 - [ ] 1.2 Preserve T020's current actual review target until its source/CI qualification, real authentication and full default command pass; verify the actual accepted control/review identities and unchanged core before any definition-changing handoff.
 
 ## 2. Exact refinement handoff

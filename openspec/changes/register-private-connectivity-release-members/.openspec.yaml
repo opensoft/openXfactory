@@ -8,6 +8,8 @@ origin:
   proposed_by: Codex while continuing Brett Heap's authorized feature 043 production
     work
   proposed_on: '2026-11-15'
+  approved_by: Brett Heap in session; see review/ratification.md
+  approved_on: '2026-11-15'
 related:
 - openXfactory:change:publish-private-connectivity-production-contract
 - openXfactory:change:commission-private-connectivity-production-evidence
