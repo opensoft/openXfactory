@@ -81,3 +81,14 @@ are separate from PR findings. The PR-specific license discussion is resolved
 with existing-use approval recorded; the requested complete re-review reports a
 seven-day budget skip. No dashboard issue was ignored and no risk/scanner/billing
 setting was changed. This service-budget limitation remains explicit.
+
+## Review corrections
+Exact-head review exposed two real gaps. An omitted project-register option
+ignored the operator's configured register; that selection is now bound whether
+or not the option is supplied, including refusal of invalid empty configuration.
+Direct script startup also imported the shared helper before its scripts-path
+bootstrap; both maintained dashboard/intent entrypoints now bootstrap first.
+All three counterexamples failed against the initial phase-2 source. The fixed
+focused run passes 138 tests; its lone standalone Ledger shape skip is separately
+proven by the 12-case actual-layout run recorded above. The three new cases are
+additional tests; no prior case or predicate is replaced.
