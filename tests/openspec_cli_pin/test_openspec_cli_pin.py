@@ -290,7 +290,7 @@ def a_disposition(**overrides) -> dict:
     return {key: value for key, value in entry.items() if value is not None}
 
 
-def _fake_registry(mod, monkeypatch):
+def _fake_registry(mod, monkeypatch, tmp_path):
     """Install a fictional registry at the SUBPROCESS boundary.
 
     A FUNCTION taking the module rather than a fixture closed over one, because
@@ -306,6 +306,10 @@ def _fake_registry(mod, monkeypatch):
     RECORDED so a test can assert not merely that a run passed but WHAT it ran —
     which is how `--path-mode` is proved never to be reached by the default.
     """
+    executable = tmp_path / "npm"
+    executable.write_text("#!/bin/sh\\nexit 0\\n", encoding="utf-8")
+    executable.chmod(0o700)
+    monkeypatch.setenv("XFACTORY_NPM_BINARY", str(executable))
     calls: list[list[str]] = []
     served = {"payload": PAYLOAD, "reports": VERSION, "installs": VERSION,
               "verdict": 0, "report": report(),
@@ -365,7 +369,7 @@ def _fake_registry(mod, monkeypatch):
     monkeypatch.setattr(mod, "_run", fake_run)
     monkeypatch.setattr(mod.subprocess, "run", fake_stream)
     monkeypatch.setattr(mod.shutil, "which",
-                        lambda name: f"/usr/bin/{name}" if name == "npm" else None)
+                        lambda name: str(executable) if name == "npm" else None)
     return calls, served
 
 
@@ -374,7 +378,7 @@ def fake_npm(mod, monkeypatch, tmp_path):
     monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(tmp_path / "pin.yaml"))
     monkeypatch.setenv("XFACTORY_OPENSPEC_ARTIFACT_ROOT", str(tmp_path))
     monkeypatch.setenv("OPENSPEC_CLI_PIN_CACHE", str(tmp_path / "cache"))
-    return _fake_registry(mod, monkeypatch)
+    return _fake_registry(mod, monkeypatch, tmp_path)
 
 
 @pytest.fixture
@@ -383,7 +387,7 @@ def installer_npm(installer, monkeypatch, tmp_path):
     monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(tmp_path / "pin.yaml"))
     monkeypatch.setenv("XFACTORY_OPENSPEC_ARTIFACT_ROOT", str(tmp_path))
     monkeypatch.setenv("OPENSPEC_CLI_PIN_CACHE", str(tmp_path / "cache"))
-    return _fake_registry(installer.verifier, monkeypatch)
+    return _fake_registry(installer.verifier, monkeypatch, tmp_path)
 
 
 # ------------------------------------------------------- reading the pin ----
@@ -602,8 +606,9 @@ def test_the_default_mode_never_consults_path(mod, tmp_path, fake_npm,
 
     def watching_which(name):
         seen.append(name)
-        return f"/usr/bin/{name}"
+        return str(tmp_path / "npm") if name == "npm" else "/wrong-version/openspec"
 
+    monkeypatch.delenv("XFACTORY_NPM_BINARY", raising=False)
     monkeypatch.setattr(mod.shutil, "which", watching_which)
     (tmp_path / "openspec").mkdir()
     assert mod.main(["--all", "--no-cache", "--repo", str(tmp_path),

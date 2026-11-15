@@ -40,6 +40,9 @@ def npm_install_command(script):
 def test_privileged_python_installs_require_hashes_and_wheels():
     installs = []
     for name in ("doc-health-reusable.yml", "merge-master-approval.yml"):
+        runtimes = [step["with"]["python-version"] for step in steps(workflow(name))
+                    if step.get("uses", "").startswith("actions/setup-python@")]
+        assert runtimes and all(runtime == "3.12" for runtime in runtimes)
         for step in steps(workflow(name)):
             script = step.get("run", "").replace(chr(92) + chr(10), " ")
             for line in script.splitlines():

@@ -9,7 +9,7 @@ Status: draft
 - [x] T006 [US3] [O] Repair policy/pin/plan file boundaries — files: `scripts/ideation_dashboard/intent_apply_lane.py`, `scripts/review_lane_repin.py`, `scripts/set-domain-openxfactory-pin.py`, `tests/sonar_quality/test_p1_writers.py`, `tests/ideation-dashboard/test_intent_apply_lane.py` — verify: `python3 -m pytest tests/sonar_quality/test_p1_writers.py tests/review_lane_pin -q`
 - [ ] T007 [US3] [O] Repair OpenSpec executable/operands and coordinate consumer parity and source-line citations — files: `scripts/validate-openspec-cli-pin.py`, `scripts/install-pinned-openspec-cli.py`, `tests/openspec_cli_pin/`, `scripts/doc_health/pin_shapes.py`, `tests/doc-health/test_pin_shape_adapter.py`, `specs/045-p1-security-boundaries/` — verify: `python3 -m pytest tests/openspec_cli_pin -q`
 - [ ] T008 [US3] [O] Constrain PostgreSQL trusted executable/template boundary and regenerate full source-bound acceptance — files: `scripts/validate-hermes-runtime-postgres.py`, `tests/hermes_runtime_contracts/`, `specs/045-p1-security-boundaries/` — verify: `python3 -m pytest tests/hermes_runtime_contracts -q -m "not postgres"`
-- [ ] T009 [US4] [O] Establish fixture provenance and retain refusal with a nonissued marker — files: `contracts/identity-brokering/examples/negative/idp-credential-committed-in-manifest.yaml`, `tests/sonar_quality/test_p1_fixture_boundary.py`, `specs/045-p1-security-boundaries/` — verify: `python3 scripts/validate-identity-brokering.py --strict`
+- [ ] T009 [US4] [O] Establish fixture provenance, retain refusal with a nonissued marker and realize a proper contract cut — files: `contracts/identity-brokering/examples/negative/idp-credential-committed-in-manifest.yaml`, `tests/sonar_quality/test_p1_fixture_boundary.py`, `specs/045-p1-security-boundaries/`, `contracts/manifest.yaml`, `contracts/CHANGELOG.md`, a newly allocated release inventory — verify: `python3 scripts/validate-identity-brokering.py --strict`
 - [ ] T010 [US4] [O] Reconcile all 40 keys and final actual-main/preservation evidence — files: `README.md`, `specs/045-p1-security-boundaries/` — verify: `python3 -m pytest tests/sonar_quality tests/notebooklm -q`
 
 Cross-repository consumer or release implementation adds exact owning files and
@@ -36,4 +36,11 @@ Before replacement, retain byte-identical historical copies under
 tests/hermes_runtime_contracts/postgres/evidence/history/pre-p1-security-20261115/.
 The fixture index, image lock, suite census and every release inventory stay
 unchanged. Exact membership audit proves these report files are not release
-members; no contract cut is needed for this tooling/acceptance update.
+members. Their refresh does not alter the fixture index; the separate
+conformance-marker change still requires the broad contracts/ release cut.
+
+T003 runtime follow-up binds merge-master-approval.yml to the same qualified
+Python 3.12 runtime as the binary-only lock. The existing nine named installer
+acceptance cases assert that runtime without changing their count.
+T007 synthetic registry fixtures create their own executable npm path and
+independent operator binding; they do not rely on /usr/bin/npm.

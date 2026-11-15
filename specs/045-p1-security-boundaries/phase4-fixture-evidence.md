@@ -14,6 +14,20 @@ property removes this name finding. The unchanged full strict validator passes
 14 positive examples and 41 negative confirmations across all nine requirements.
 
 Exact membership and the published contract-v4.1 inventory exclude this example.
-No manifest, changelog, inventory, historical tag or validator/schema is changed.
-The original commit and all old evidence remain available. Main/Sonar acceptance
-is pending and historical credential issuance remains a separate uncertainty.
+That does not exempt it from AGENTS.md's broader contracts/ rule. The original
+membership-only no-cut interpretation was rejected in review before landing.
+contract-v4.2 now records the nonbreaking marker through the required atomic
+manifest/changelog/fixture/new-inventory candidate. Original tags/inventories,
+the creation commit and all earlier receipts remain available. Validator/schema
+bytes stay unchanged. Main/Sonar/tag acceptance remains pending and historical
+credential issuance is still a separate uncertainty.
+
+Final candidate qualification: the official supported-domain resolver read all
+five frozen inventory entries from exact Git objects under deterministic
+repository mappings, recomputed their stack digests and validated their
+contract pins and conformance: five entries, zero findings. The unchanged
+identity CLI again reported 14 positive examples, 41 negative confirmations,
+nine of nine requirements, zero errors and warnings. The final focused run
+covering fixture boundaries, privileged dependencies, OpenSpec and citation
+adapters passed 289 tests; actionlint passed the changed approval workflow.
+The prior 311-test run additionally included the wider execution module.

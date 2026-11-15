@@ -113,7 +113,8 @@ byte-identically under a dated history subdirectory before replacing the
 current reports with actual runner output. Keep the release-member fixture index
 and its result references unchanged. A membership audit of all 342 recorded
 members confirms that reports, changed tooling/tests and the negative fixture
-are outside the release inventory. No contract cut is needed for these changes.
+are outside the release inventory. This does not exempt the conformance
+example from the broad contracts/ rule; its marker still requires a cut.
 Source-line citations move with the verifier, retaining identical condition
 quotes and guard equivalence assertions.
 
@@ -126,10 +127,11 @@ retain expected_failure and expected_failure_detail exactly. Other packaged
 negative fixtures continue to exercise value-class detection.
 
 Exact current catalog membership and the published contract-v4.1 inventory
-both exclude this negative example. No contract, manifest, changelog, inventory
-or tag needs to change for this marker repair. Original history is retained;
-no liveness test or rotation occurs. The original assumption that every
-contracts/ example was a release member was disproved before any cut was made.
+both exclude this negative example. AGENTS.md nevertheless requires a release
+cut for its changed conformance bytes. The earlier no-cut conclusion based
+only on membership is superseded before landing. Original history is retained;
+no liveness test or rotation occurs. The next minor carries the marker,
+manifest, changelog and generated inventory atomically.
 
 A matching stamp does not make an incomplete cached tree reusable. Missing
 owned install files bypass that retained generation and allow a healthy later
@@ -144,3 +146,20 @@ This removes the parallel comment/tuple catalog, documents machine refusals
 at the entrypoint and keeps every existing code, check and exception rule.
 All consumers re-vendor these provider bytes; no local fork or exclusion is
 introduced and no threshold changes.
+
+## Review correction: broad contract rule controls release
+The 342-member digest membership audit is accurate but does not exempt a
+conformance example from AGENTS.md's broader contracts/ rule. The earlier
+no-cut interpretation is superseded. The marker is realized through the next
+available minor after final integration/claim readback, with atomic manifest,
+changelog, fixture and new inventory changes; all old inventories/tags remain.
+The existing 30-second CLI guard and all domain regression cases still run.
+
+## Allocated realization
+contract-v4.2 is allocated after #1321/#1323 landed, at main
+5b636c767fccf253165b36b6aed4fe04eb8cd27b. Row-4 claim:
+opensoft/openXfactory#630 comment 6901128126. The manifest, changelog,
+fixture declaration and generated contract-v4.2 inventory form one forward
+candidate; old release objects remain immutable. Verify exact candidate,
+supported-domain regression and post-merge promotion before publishing its
+annotated tag, then verify independent tag readback.

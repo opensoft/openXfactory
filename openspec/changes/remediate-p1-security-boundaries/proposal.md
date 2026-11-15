@@ -30,9 +30,9 @@ rather than status waivers or suppressions.
   value for liveness or rewrite frozen history. Issuance remains unknown.
   Replace the current literal with an explicit nonissued marker while retaining
   the same forbidden-property refusal and unchanged credential scanner/schema.
-  Exact catalog/inventory membership proves this example is not a release
-  member; no release cut is needed. Old inventories, tags and the original
-  creation commit remain immutable.
+  Although excluded from the digest membership, this contracts/ conformance
+  example follows the broader AGENTS.md rule and requires a proper new cut.
+  Old inventories, tags and the original creation commit remain immutable.
 - Preserve baseline, profiles, all gate conditions, production source coverage,
   existing skip/freshness/census controls, original 110 IDs and historical
   receipts. No credential rotation, session interruption or billing change.
