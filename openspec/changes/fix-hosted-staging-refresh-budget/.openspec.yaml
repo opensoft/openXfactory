@@ -1,0 +1,8 @@
+schema: spec-driven
+created: 2026-11-15
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-15-fix-hosted-staging-refresh-budget
+  reason: Resolve the T012R local review finding that source and case authority can change during durable cleanup registration, without dropping checks or resetting counters.
+  approved_by: 'Brett Heap: Go ahead and open the T012R PR, run hosted CI and local Codex review, resolve findings, then present it for ratification. Keep setup/dispatch unauthorized, feedback deferred, and do not replay either blocked write. Candidate preparation only; no source ratification or operational grant inferred.'
+  approved_on: '2026-11-15'
