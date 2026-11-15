@@ -1,0 +1,14 @@
+schema: spec-driven
+created: 2026-11-15
+skip_specs: true
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-15-classify-private-connectivity-source-tests
+  reason: Prepare exact affected-owner review for the source-test classification gap introduced by the newly merged measured Sonar gate.
+  proposed_by: Codex while continuing Brett Heap's authorized feature 043 work
+  proposed_on: '2026-11-15'
+  approved_by: pending affected-owner acceptance
+related:
+  - openXfactory:change:extend-private-connectivity-source-ci
+  - openXfactory:change:remediate-sonar-findings-and-coverage
+  - openXfactory:pr:1310
