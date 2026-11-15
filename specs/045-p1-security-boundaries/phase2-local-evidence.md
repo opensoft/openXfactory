@@ -31,3 +31,28 @@ invocation/runner/policy scope; no test, assertion or skip guard is removed.
 
 Validation is in progress. Source implementation is prepared, not a claim of
 published main, Sonar closure or completed feature acceptance.
+
+## Local validation
+The expanded run passed 4,054 tests and 75 subtests across doc-health,
+ideation-dashboard, review-lane pin, domain pin setter, code-surface and the new
+artifact boundaries. It reported 14 skips; their exact existing preconditions
+are being checked separately, not asserted as executed acceptance.
+All 26 new artifact boundary cases passed independently.
+
+A real Chromium 159.0.8154.6 persistent-profile probe also passed on the phase-1
+source using disposable empty browser state. The selected path was moved and
+replaced with an outside symlink before launch. Chromium wrote its Default
+state into the held directory and left the outside sentinel unchanged. The
+descriptor stayed held until browser close. No existing profile, login or
+provider request was used; this browser probe is distinct from the worker CLI's
+network-disabled container acceptance.
+
+## License classification authority
+On 2026-11-15 Brett Heap confirmed that existing Claude CLI API-key CI use is
+already approved under Opensoft's Anthropic commercial agreement. The fixed
+2.1.325 native package and its official LICENSE.md remain unchanged. The PR
+records the manual classification with the official vendor agreement reference.
+GitHub discussion resolution alone has not cleared Sourcery's check. The
+Sourcery dashboard currently requires operator sign-in; no ignore rule, security
+severity override, scanner suppression, new terms, account or billing change
+has been applied. This is an external check still awaiting verified readback.
