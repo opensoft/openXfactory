@@ -157,9 +157,11 @@ Task/registry changes after approval require reviewed scope/contract updates and
 
 ## T005 review freeze
 
+Brett Heap ratified classify-private-connectivity-source-tests at 2026-11-15T01:34:50.899Z. This refinement adds only its three exact shared paths to T010. All 16 frozen input bodies, all 68 registry rows and every other task field retain their previous bytes. The earlier source-CI definition e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298 remains historical; its withdrawn control receives no new authentication. The refreshed definition below permits the accepted source work only. Actual new CI outputs, full Q0 and Q1-Q5 remain separately gated; all four PRs stay draft.
+
 The initial definitions and later T006 acceptance-state freeze remain historical decisions. Original accepted identity: 547e398b615d08186719674774f379038740292e2472488010151a5f03bbba6d. On 2026-11-14 Brett ratified the exact bootstrap amendment, all five component source scopes/native packets and neutral publication scope. The prior source-scope definition 66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0 remains historical. Brett subsequently ratified extend-private-connectivity-source-ci at 2026-11-14T22:31:50.896Z. This refreshed freeze adds only its T009/T010 files and source-CI custody clarification. All 68 identities, owners, classes, required cases, dependencies and verification commands are preserved. T001–T012 and T016 are complete under their historical authenticated anchors; the additional source-CI refinement is now accepted. Full Q0 remains incomplete.
 
-Review packet SHA-256: e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298
+Review packet SHA-256: c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431
 
 The digest covers canonical UTF-8 JSON keys inputs, registry and tasks, sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal newline. Tasks are all 68 literal task lines with only checkboxes normalized to unchecked; registry is all 68 literal rows. Inputs contains each SHA-256 below. This file's input is only its complete body before this freeze heading. Footer status and task completion checkboxes do not alter the definition.
 
@@ -182,4 +184,4 @@ The digest covers canonical UTF-8 JSON keys inputs, registry and tasks, sorted k
 | contracts/qualification-evidence.md | 8d7d4ab79a6bb456a2dabef0d6ec4d5ba40da296e5ba19ceab2c7e907df31e92 |
 | contracts/task-evidence.md | c7734b52520b6ad6ccad75cd32f4e49b395877fb926dffc03c3e85e34c854247 |
 
-Further task/owner/class/case/dependency/file/command or frozen-input changes still require affected owner review and a new freeze before use. Source consent supplies no actual output authentication, target authority or rollout acceptance. The exact generated neutral inventory filename remains allocated and closed at the actual authorized cut; no version is reserved here. Actual bootstrap/CI exports and their independent custodian authentication remain required before T010 passes. All three PRs stay draft and Q1-Q5 remain unentered.
+Further task/owner/class/case/dependency/file/command or frozen-input changes still require affected owner review and a new freeze before use. Source consent supplies no actual output authentication, target authority or rollout acceptance. The exact generated neutral inventory filename remains allocated and closed at the actual authorized cut; no version is reserved here. Actual bootstrap/CI exports and their independent custodian authentication remain required before T010 passes. All four PRs stay draft and Q1-Q5 remain unentered.
