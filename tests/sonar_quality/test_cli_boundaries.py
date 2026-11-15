@@ -101,24 +101,16 @@ def test_git_revision_rejects_unsafe_operands_before_spawn(invocation, monkeypat
 
 
 @pytest.mark.parametrize("output", [b"--show-toplevel\n", b"a" * 40 + b"\n" + b"b" * 40,
-                                     b"not-an-object", b"\xff", b""])
+                                     b"not-an-object", b"\xff", b"",
+                                     b"a" * 40 + b" tree\n",
+                                     b"a" * 40 + b" commit extra\n",
+                                     b"a" * 40 + b" commit\n" + b"b" * 40 + b" commit\n"])
 def test_git_revision_rejects_malformed_resolver_output(invocation, monkeypatch, output):
     module = load_script("validate-carve-manifest.py")
     monkeypatch.setattr(module, "_git",
                         Mock(return_value=subprocess.CompletedProcess([], 0, output, b"")))
     with pytest.raises(module.CarveRefusal):
         module.resolve_revision(invocation, "HEAD")
-
-
-@pytest.mark.parametrize("operand", ["HEAD", "main", "refs/heads/main", "abc1234", "a" * 40])
-def test_git_revision_has_an_operand_boundary(invocation, monkeypatch, operand):
-    module = load_script("validate-carve-manifest.py")
-    oid = "a" * 40
-    git = Mock(return_value=subprocess.CompletedProcess([], 0, (oid + "\n").encode(), b""))
-    monkeypatch.setattr(module, "_git", git)
-    assert module.resolve_revision(invocation, operand) == oid
-    git.assert_called_once_with(invocation, "rev-parse", "--verify", "--quiet",
-                                "--end-of-options", operand + "^{commit}")
 
 
 def test_unknown_carved_module_refuses_before_install_or_import(monkeypatch):
@@ -133,3 +125,144 @@ def test_unknown_carved_module_refuses_before_install_or_import(monkeypatch):
         module.module("scripts/not-declared.py")
     install.assert_not_called()
     importer.assert_not_called()
+
+
+@pytest.fixture
+def attester(invocation, monkeypatch):
+    module = load_script("attest-openspec-cli-pin-lockfile.py")
+    monkeypatch.setattr(module, "ROOT", invocation)
+    (invocation / "docs").mkdir()
+    return module
+
+
+@pytest.mark.parametrize("record", ["../../outside", '{"path":"../escape"}', "synthetic attestation\n"])
+def test_attestation_content_cannot_select_path_or_overwrite(attester, invocation, record):
+    destination = attester.checked_destination(
+        str(invocation / "docs" / "record.md"), invocation / "docs" / "default.md")
+    attester.write_record(destination, record)
+    assert destination.read_text() == record
+    assert destination.stat().st_mode & 0o777 == 0o600
+    with pytest.raises(attester.Refusal):
+        attester.write_record(destination, "replacement")
+    assert destination.read_text() == record
+    assert not (invocation / "escape").exists()
+
+
+def test_attestation_default_obeys_repository_boundary(attester, invocation):
+    outside = invocation.parent / "outside"
+    outside.mkdir()
+    (invocation / "docs").rmdir()
+    (invocation / "docs").symlink_to(outside, target_is_directory=True)
+    with pytest.raises(attester.Refusal, match="--write"):
+        attester.checked_destination("", invocation / "docs" / "default.md")
+    assert list(outside.iterdir()) == []
+
+
+@pytest.mark.parametrize("kind", ["file", "directory", "symlink", "broken-symlink"])
+def test_attestation_existing_destination_is_never_reused(attester, invocation, kind):
+    destination = invocation / "docs" / "record.md"
+    if kind == "file":
+        destination.write_text("dated evidence")
+    elif kind == "directory":
+        destination.mkdir()
+    else:
+        target = invocation / ("original" if kind == "symlink" else "not-created")
+        if kind == "symlink":
+            target.write_text("dated evidence")
+        destination.symlink_to(target)
+    with pytest.raises(attester.Refusal, match="--write"):
+        attester.checked_destination(str(destination), invocation / "docs" / "default.md")
+    if kind == "file":
+        assert destination.read_text() == "dated evidence"
+    elif kind == "symlink":
+        assert target.read_text() == "dated evidence"
+    elif kind == "broken-symlink":
+        assert not target.exists()
+
+
+def test_attestation_parent_swap_after_validation_cannot_escape(attester, invocation):
+    destination = attester.checked_destination(
+        str(invocation / "docs" / "record.md"), invocation / "docs" / "default.md")
+    outside = invocation.parent / "outside"
+    outside.mkdir()
+    (invocation / "docs").rename(invocation / "original-docs")
+    (invocation / "docs").symlink_to(outside, target_is_directory=True)
+    with pytest.raises(attester.Refusal):
+        attester.write_record(destination, "not an outside record")
+    assert list(outside.iterdir()) == []
+    assert list((invocation / "original-docs").iterdir()) == []
+
+
+def test_attestation_parent_swap_during_open_is_refused(attester, invocation, monkeypatch):
+    destination = attester.checked_destination(
+        str(invocation / "docs" / "record.md"), invocation / "docs" / "default.md")
+    outside = invocation.parent / "outside"
+    outside.mkdir()
+    original_open = attester.os.open
+    swapped = False
+
+    def swap_then_open(path, flags, *args, **kwargs):
+        nonlocal swapped
+        if Path(path) == invocation and kwargs.get("dir_fd") is None and not swapped:
+            swapped = True
+            (invocation / "docs").rename(invocation / "original-docs")
+            (invocation / "docs").symlink_to(outside, target_is_directory=True)
+        return original_open(path, flags, *args, **kwargs)
+
+    monkeypatch.setattr(attester.os, "open", swap_then_open)
+    with pytest.raises(attester.Refusal):
+        attester.write_record(destination, "not an outside record")
+    assert swapped
+    assert list(outside.iterdir()) == []
+    assert list((invocation / "original-docs").iterdir()) == []
+
+
+def test_attestation_bad_default_refuses_before_verifier_or_registry(
+        attester, invocation, monkeypatch):
+    outside = invocation.parent / "outside"
+    outside.mkdir()
+    (invocation / "docs").rmdir()
+    (invocation / "docs").symlink_to(outside, target_is_directory=True)
+    verifier = Mock(side_effect=attester.Refusal("verifier must not be loaded"))
+    monkeypatch.setattr(attester, "checked_npm", lambda raw: "/usr/bin/npm")
+    monkeypatch.setattr(attester, "load_verifier", verifier)
+    assert attester.main(["--write"]) == 2
+    verifier.assert_not_called()
+    assert list(outside.iterdir()) == []
+
+
+@pytest.mark.parametrize("spelling", ["HEAD", "branch", "annotated", "abbreviated",
+                                      "full", "expression", "unicode"])
+def test_real_git_revision_is_data_not_a_command_argument(
+        invocation, monkeypatch, spelling):
+    module = load_script("validate-carve-manifest.py")
+    env = module.carved_reach._sanitized_git_environment()
+
+    def setup_git(*args):
+        return subprocess.check_output(
+            ["git", "-C", str(invocation), *args], env=env, stderr=subprocess.PIPE).decode().strip()
+
+    setup_git("init", "-q", "-b", "main")
+    setup_git("-c", "user.name=synthetic-test", "-c", "user.email=test@example.invalid",
+              "commit", "--allow-empty", "-q", "-m", "synthetic source")
+    setup_git("-c", "user.name=synthetic-test", "-c", "user.email=test@example.invalid",
+              "tag", "-a", "measured-label", "-m", "synthetic annotation")
+    setup_git("branch", "révision")
+    oid = setup_git("rev-parse", "HEAD")
+    ref = {"HEAD": "HEAD", "branch": "main", "annotated": "measured-label",
+           "abbreviated": oid[:8], "full": oid, "expression": "HEAD~0",
+           "unicode": "révision"}[spelling]
+    original_run = subprocess.run
+    calls = []
+
+    def observed_run(argv, **kwargs):
+        calls.append((argv, kwargs))
+        return original_run(argv, **kwargs)
+
+    monkeypatch.setattr(module.subprocess, "run", observed_run)
+    assert module.resolve_revision(invocation, ref) == oid
+    assert len(calls) == 1
+    argv, options = calls[0]
+    assert ref not in argv
+    assert ref + "^{commit}" not in argv
+    assert options["input"] == (ref + "^{commit}\n").encode("utf-8")

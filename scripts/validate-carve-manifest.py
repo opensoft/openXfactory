@@ -841,7 +841,8 @@ class CarveRefusal(Exception):
 # git
 # --------------------------------------------------------------------------
 
-def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
+def _git(repo: Path, *args: str,
+         input_data: bytes | None = None) -> subprocess.CompletedProcess:
     """git, capturing BYTES — blob contents must not go through a decoder.
 
     Runs `--no-replace-objects` against a SANITIZED environment (register
@@ -861,7 +862,7 @@ def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
         return subprocess.run(
             ["git", "--no-replace-objects", "-C", str(repo), *args],
             capture_output=True, check=False,
-            env=carved_reach._sanitized_git_environment(),
+            env=carved_reach._sanitized_git_environment(), input=input_data,
         )
     except OSError as exc:  # pragma: no cover - no git on the host
         raise CarveRefusal("carve-unreadable",
@@ -876,10 +877,13 @@ def resolve_revision(repo: Path, at: str | None) -> str:
                    or char == chr(92) for char in ref)):
         raise CarveRefusal("carve-revision-mismatch",
                            "the requested revision is not a safe Git operand")
-    done = _git(repo, "rev-parse", "--verify", "--quiet", "--end-of-options",
-                f"{ref}^{{commit}}")
-    revision = done.stdout.decode("ascii", "replace").strip()
-    if done.returncode != 0 or re.fullmatch(r"[0-9a-f]{40}", revision) is None:
+    # Batch stdin is object data, never a command option. Require a commit,
+    # including for annotated tags, before forwarding its canonical object ID.
+    done = _git(repo, "cat-file", "--batch-check=%(objectname) %(objecttype)",
+                input_data=(ref + "^{commit}\n").encode("utf-8", "surrogateescape"))
+    resolution = re.fullmatch(r"([0-9a-f]{40}) commit",
+                              done.stdout.decode("ascii", "replace").strip())
+    if done.returncode != 0 or resolution is None:
         if at is not None:
             raise CarveRefusal(
                 "carve-revision-mismatch",
@@ -890,7 +894,7 @@ def resolve_revision(repo: Path, at: str | None) -> str:
             "carve-unreadable",
             f"{repo} has no resolvable HEAD; this validator reads the carve "
             "commit's tree out of a real git repository")
-    return revision
+    return resolution.group(1)
 
 
 class TreeEntry(NamedTuple):

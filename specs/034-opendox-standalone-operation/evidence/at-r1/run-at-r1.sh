@@ -82,7 +82,7 @@ ODC_URL=${ODC_URL:-https://github.com/opensoft/openDox-code}
 PORT=${PORT:-8080}
 W=$(mktemp -d)
 OUT=${OUT:-$W/out}
-if [ -e "$OUT" ] && { [ ! -d "$OUT" ] || [ -n "$(ls -A "$OUT")" ]; }; then
+if [[ -e "$OUT" ]] && { [[ ! -d "$OUT" ]] || [[ -n "$(ls -A "$OUT")" ]]; }; then
   echo "REFUSE: the output already holds evidence; choose a new record directory" >&2
   exit 2
 fi

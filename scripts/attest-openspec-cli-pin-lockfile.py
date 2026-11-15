@@ -80,6 +80,7 @@ import argparse
 import importlib.util
 import ipaddress
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -201,24 +202,47 @@ def checked_npm(raw: str) -> str:
 
 
 def checked_destination(raw: str, default: Path) -> Path:
-    """Where the record lands, REFUSED outside this repository.
-
-    A record is a governed artifact of THIS repository — reviewed in its diff
-    and indexed in its README — so a destination outside the tree is a record
-    nothing reviews. The parent must already exist: creating directories on the
-    way to writing a record would invent a home for it rather than land it in
-    the one the convention names.
-    """
-    if not raw:
-        return default
-    destination = Path(raw).expanduser().resolve()
-    root = ROOT.resolve()
-    if root != destination and root not in destination.parents:
+    """Validate both default and explicit new record paths before audit work."""
+    candidate = Path(raw).expanduser() if raw else default
+    if candidate.is_symlink():
+        raise Refusal("--write destination is a symlink")
+    try:
+        destination = candidate.resolve()
+        root = ROOT.resolve()
+    except (OSError, RuntimeError) as error:
+        raise Refusal(f"--write cannot resolve its destination: {error}") from error
+    if destination == root or not destination.is_relative_to(root):
         raise Refusal(f"--write must land inside {root}, not {destination}")
     if not destination.parent.is_dir():
         raise Refusal(f"--write parent directory does not exist: "
                       f"{destination.parent}")
+    if destination.exists():
+        raise Refusal(f"--write destination already exists: {destination}")
     return destination
+
+
+def write_record(destination: Path, record: str) -> None:
+    """Create a new record under the repository without following swapped links."""
+    destination = checked_destination(str(destination), destination)
+    root = ROOT.resolve()
+    relative = destination.relative_to(root)
+    try:
+        directory_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            for part in relative.parts[:-1]:
+                child_fd = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                                   dir_fd=directory_fd)
+                os.close(directory_fd)
+                directory_fd = child_fd
+            output_fd = os.open(relative.name,
+                                os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                                0o600, dir_fd=directory_fd)
+            with os.fdopen(output_fd, "w", encoding="utf-8") as stream:
+                stream.write(record)
+        finally:
+            os.close(directory_fd)
+    except OSError as error:
+        raise Refusal(f"--write cannot safely create its record: {error}") from error
 
 
 def load_verifier() -> ModuleType:
@@ -569,7 +593,8 @@ def build_parser() -> argparse.ArgumentParser:
                      "(closure task 6.1)."))
     parser.add_argument("--write", metavar="PATH", nargs="?", const="",
                         default=None,
-                        help=("write the dated record; with no PATH it lands at "
+                        help=("create a new dated record; existing records are refused. "
+                              "With no PATH it lands at "
                               "docs/openspec-cli-pin-lockfile-attestation-"
                               "<YYYY-MM-DD>.md"))
     parser.add_argument("--registry", default=DEFAULT_REGISTRY,
@@ -673,7 +698,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"\nATTESTED: {len(rows)} values, {len(rows)} agreeing with the "
               f"registry and every signature verified.")
         if destination is not None:
-            destination.write_text(record, encoding="utf-8")
+            write_record(destination, record)
             print(f"record written: {destination}")
         return 0
     except Refusal as refusal:
