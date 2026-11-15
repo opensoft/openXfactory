@@ -18,6 +18,8 @@ It preserves completed feature 044 and original issue/history identities.
 - [Original 40 P1 keys](p1-keys.json)
 - [Phase 1 local evidence](phase1-local-evidence.md)
 
+Phase 2 authority/I/O refinements are recorded in the implementation plan.
+
 Phase 1 repairs profile/state boundaries and privileged CI installers. Required
 exact-head review/CI and actual merged-main acceptance are separate pending
 steps. Remaining P1 worker/report/control, executable, vendor and fixture
