@@ -51,10 +51,18 @@ Two ways to reach a logged-in browser (either produces the same full profile):
                                     login form is seen once and reused after.
 """
 from __future__ import annotations
-import argparse, json, os, subprocess, sys, time
+import argparse, json, os, re, subprocess, sys, time
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
+
+# Script execution and importlib-based consumers resolve the same owned module.
+if str(Path(__file__).resolve().parent.parent) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from scripts.safe_tooling_io import (
+    UnsafePath, directory_handle, private_child, exclusive_writer,
+    target_signature, read_private_file, atomic_private_files,
+)
 
 os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", os.path.expanduser("~/.cache/ms-playwright"))
 from playwright.sync_api import sync_playwright
@@ -236,8 +244,37 @@ def harvest_list(ctx, wait_s: int) -> list[dict]:
 
 def profile_dir(profile: str, store: str | os.PathLike | None = None) -> Path:
     """The native store directory for `profile` (root injectable for tests)."""
+    validate_profile_name(profile)
     base = store or os.environ.get("NOTEBOOKLM_MCP_CLI_PATH", NLM_STORE)
-    return Path(os.path.expanduser(str(base))) / "profiles" / profile
+    return Path(os.path.expanduser(str(base))).absolute() / "profiles" / profile
+
+
+def validate_profile_name(profile: str) -> str:
+    """A native profile is an identity, never a path or child option."""
+    if not isinstance(profile, str) or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", profile) is None:
+        raise UnsafePath("profile must be a bounded alphanumeric-led name")
+    return profile
+
+
+def prepare_browser_profile(path: str) -> Path:
+    """Authorize dedicated browser state before extractors or browser startup."""
+    chosen = Path(path).expanduser().absolute()
+    default = Path(DEFAULT_PROFILE_DIR).expanduser().absolute()
+    root = Path.cwd().resolve()
+    if chosen != default and (chosen == root or not chosen.is_relative_to(root)):
+        raise UnsafePath("browser profile must be the dedicated default or inside the invocation root")
+    # Even a missing leaf must not hide a substituted ancestor. Keep all
+    # operations descriptor-relative; never clear Chromium ownership markers.
+    with directory_handle(chosen, create=True, private=True) as descriptor:
+        for name in ("SingletonLock", "SingletonSocket", "SingletonCookie",
+                     "DevToolsActivePort"):
+            try:
+                os.stat(name, dir_fd=descriptor, follow_symlinks=False)
+            except FileNotFoundError:
+                continue
+            raise UnsafePath("browser profile is occupied; use its explicit CDP connection")
+        os.fchmod(descriptor, 0o700)
+    return chosen
 
 
 def read_profile_metadata(pdir: Path) -> dict:
@@ -248,10 +285,22 @@ def read_profile_metadata(pdir: Path) -> dict:
     "nothing to carry forward", never crash the extraction.
     """
     try:
-        data = json.loads((pdir / "metadata.json").read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+        with directory_handle(pdir, private=True) as descriptor:
+            raw = read_private_file(descriptor, "metadata.json")
+    except FileNotFoundError:
+        return {}
+    return _metadata_from_bytes(raw)
+
+
+def _metadata_from_bytes(raw: bytes | None) -> dict:
+    if raw is None:
+        return {}
+    try:
+        data = json.loads(raw.decode("utf-8"))
+    except (UnicodeError, ValueError):
         return {}
     return data if isinstance(data, dict) else {}
+
 
 
 def _clean(value) -> str | None:
@@ -358,21 +407,29 @@ def write_native_profile(profile: str, cookies: list[dict],
     cookies included. Returns (profile_dir, note).
     """
     pdir = profile_dir(profile, store)
-    metadata, note = merge_profile_metadata(
-        read_profile_metadata(pdir), profile=profile, csrf=csrf, session=session,
-        email=email, build_label=build_label, force=force)
-
-    pdir.mkdir(parents=True, exist_ok=True)
-    pdir.chmod(0o700)
-
-    cookies_file = pdir / "cookies.json"
-    cookies_file.write_text(json.dumps(cookies, indent=2, ensure_ascii=False), encoding="utf-8")
-    cookies_file.chmod(0o600)
-
-    meta_file = pdir / "metadata.json"
-    meta_file.write_text(json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8")
-    meta_file.chmod(0o600)
+    with directory_handle(pdir.parent.parent, create=True, private=True) as base:
+        with private_child(base, "profiles", create=True) as profiles:
+            with private_child(profiles, profile, create=True) as descriptor:
+                with exclusive_writer(descriptor):
+                    expected = {name: target_signature(descriptor, name)
+                                for name in ("cookies.json", "metadata.json")}
+                    existing = _metadata_from_bytes(
+                        read_private_file(descriptor, "metadata.json"))
+                    metadata, note = merge_profile_metadata(
+                        existing, profile=profile, csrf=csrf, session=session,
+                        email=email, build_label=build_label, force=force)
+                    # Serialization and account refusal precede permission or
+                    # native-file mutation. No existing file is truncated.
+                    output = {
+                        "cookies.json": json.dumps(
+                            cookies, indent=2, ensure_ascii=False).encode("utf-8"),
+                        "metadata.json": json.dumps(
+                            metadata, indent=2, ensure_ascii=False).encode("utf-8"),
+                    }
+                    os.fchmod(descriptor, 0o700)
+                    atomic_private_files(descriptor, output, expected=expected)
     return pdir, note
+
 
 
 def extract_and_save(ctx, page, profile: str, wait_s: int,
@@ -476,6 +533,9 @@ def main() -> int:
                          "when the live session is a DIFFERENT account (same "
                          "semantics as `nlm login --force`)")
     args = ap.parse_args()
+    validate_profile_name(args.profile)
+    # CDP does not open or change persistent browser state.
+    browser_profile = None if args.cdp_url else prepare_browser_profile(args.profile_dir)
 
     extract_csrf, extract_session = _load_cli_extractors(args.cli_site_packages)
     extract_email = _load_email_extractor(args.cli_site_packages)
@@ -502,7 +562,6 @@ def main() -> int:
             return rc
 
         # Launch path: persistent profile, headed for bootstrap.
-        Path(args.profile_dir).mkdir(parents=True, exist_ok=True)
         headed = args.mode == "bootstrap"
         launch_kwargs = dict(
             headless=not headed,
@@ -510,7 +569,7 @@ def main() -> int:
         )
         if args.channel and args.channel != "bundled":
             launch_kwargs["channel"] = args.channel
-        ctx = p.chromium.launch_persistent_context(args.profile_dir, **launch_kwargs)
+        ctx = p.chromium.launch_persistent_context(str(browser_profile), **launch_kwargs)
         # This browser is OURS (a dedicated profile dir we just launched), so
         # navigating its first tab hijacks nobody — the #537 hazard is the
         # --cdp-url path above, which connects to the operator's own browser.

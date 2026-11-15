@@ -586,7 +586,8 @@ jobs:
         # run_suite() below runs preflight too (--family is not passed, so
         # only_family is None): same OpsxFactory `make validate` dependency
         # as the finalize job's install step, kept in sync with it.
-        run: pip install pyyaml "cryptography>=41,<46"
+        run: |
+          python3 -m pip install --require-hashes --only-binary :all: -r openxFactory/.github/requirements/privileged-ci.lock
       - name: Build semantic sweep bundle
         if: inputs.readiness-only != true
         env:
@@ -1288,6 +1289,8 @@ jobs:
     env:
       HAS_APP_KEY: ${{ secrets.XFACTORY_APP_PRIVATE_KEY != '' }}
       HAS_ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+      # Keep the accepted locked native worker version for the whole job.
+      DISABLE_AUTOUPDATER: "1"
     steps:
       - name: Mint xFactory app token
         id: app-token
@@ -1681,11 +1684,12 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install suite dependencies
-        # cryptography backs OpsxFactory's own `make validate` (imported via
-        # scripts/cloudpc_worker_fleet.py), which the preflight step below
-        # runs as a subprocess in THIS environment; pinned to the same range
-        # as OpsxFactory's requirements-dev.txt so both stay compatible.
-        run: pip install pyyaml jsonschema pytest rfc3339-validator "cryptography>=41,<46"
+        # cryptography backs OpsxFactory's make validate through its
+        # Ed25519 verifier. Use the existing provider runtime pin, exercised
+        # against that preflight; the old <46 CI bound admits known advisories.
+        # This CI-only lock leaves every developer/runtime lock unchanged.
+        run: |
+          python3 -m pip install --require-hashes --only-binary :all: -r openxFactory/.github/requirements/privileged-ci.lock
       - name: Download prepared deterministic inventory
         if: needs.prepare.result == 'success'
         continue-on-error: true
@@ -1697,7 +1701,7 @@ jobs:
       # sweep runs in-job when a model key exists, else records a skip.
       - name: Install analysis worker CLI (inline fallback)
         if: needs.prepare.outputs.omnigent != 'true' && env.HAS_ANTHROPIC_KEY == 'true'
-        run: npm install -g @anthropic-ai/claude-code
+        run: bash openxFactory/.github/worker-cli/install.sh
       - name: Collect bounded worker result
         if: needs.prepare.outputs.omnigent == 'true'
         continue-on-error: true

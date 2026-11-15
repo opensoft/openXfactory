@@ -1,5 +1,7 @@
 # openXfactory
 
+P1 security repairs: [feature 045 requirements, plan, tasks and evidence](specs/045-p1-security-boundaries/README.md), separate from completed feature 044.
+
 Canonical repository name: `openXfactory`. Historical records, frozen contract identifiers, and compatibility selectors retain their original spelling.
 
 `openxFactory` documents the open reference stack and domain-neutral xFactory
