@@ -12,7 +12,7 @@ The sole executable implementation list remains [feature 043 tasks](../../../spe
 
 ## 2. Qualification and authentication
 
-- [ ] 2.1 Qualify the bounded repair through T010; verify the reproduced pre-repair disagreement, agreement after repair, all actual production sources still measured, affected regressions, exact-head measured CI/Python 3.14 and fresh Codex review, with unchanged gate identities/thresholds/skips/named verdicts.
+- [x] 2.1 Qualify the bounded repair through T010; verify the reproduced pre-repair disagreement, agreement after repair, all actual production sources still measured, affected regressions, exact-head measured CI/Python 3.14 and fresh Codex review, with unchanged gate identities/thresholds/skips/named verdicts.
 - [ ] 2.2 Present the new actual source/CI packet separately for custodian authentication; verify original refused/superseded observations remain preserved and default T010 verification passes only after that actual review. Keep all four PRs draft and full Q0/Q1–Q5 pending.
 
 ## Recorded scope and definition handoff
@@ -28,3 +28,11 @@ The corrected source 328b83a7e4 passed root run 43674587047 (including measured 
 The [actual source-CI review packet](../commission-private-connectivity-production-evidence/review/commissioning-authentication.md) proposes manifest d9dc8dc309 and content SHA-256 d37b183495bbe604580c7a737621296cfcb71ac08e0a79bdcbf38a8bf8451d26. Its original output, receipt and current control remain separately immutable; prior failed/superseded observations remain retained. Read-only preparation checks pass, while default T010 admission correctly refuses pending actual custodian authentication. Task 2.2 remains open; no Q0-Q5 authority is granted.
 
 Qualification reopened after the a274bb7c6a packet review: the post-squash runner lacked explicit coordinator-object provisioning. The d37b1834 packet is withdrawn before authentication. Its actual successful source/CI observations and all immutable references remain preserved; fresh qualification of the bounded public-history repair is required before a replacement review target is offered. All four PRs remain draft and rollout gates remain pending.
+
+## Replacement qualification after public-history repair
+
+Source 94caf6717e passed the complete measured root/Sonar workflow (run 43682139006) and Python 3.14/doc-health workflow (run 43682138887). All 584 feature cases passed: 475 verifier, 40 inventory and 69 proof cases, with no failures/errors/skips. Local affected validation passed 723 cases. Codex cleared the exact source; Sonar passed with A security/reliability/maintainability and 90.7% new-code coverage. Required gate identities, root floors, skip pins and named verdicts remain unchanged.
+
+The four isolated old-workflow failures now pass. Candidate code remains excluded before private token minting; token revocation precedes candidate public-history execution and tests. An independent main-only clone fetched the missing original historical objects anonymously from the actual coordinator retention namespace, without alternates, and verified T010/T011/T012/T016. The two empty-repository cold-start timeouts remain recorded as failed diagnostics, with no pass claimed for them.
+
+The replacement actual source-CI review manifest is 95abc40b8e, core c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54. The c49a6a5e and d37b1834 targets remain withdrawn and immutable. Read-only preparation checks pass; default admission still refuses pending actual custodian authentication. Task 2.2 remains open, all four PRs stay draft, and Q0-Q5 remain pending.
