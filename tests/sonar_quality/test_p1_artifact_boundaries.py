@@ -196,16 +196,15 @@ def test_model_cluster_id_cannot_escape_bundle(tmp_path, monkeypatch, module):
     assert not (output / "manifest.json").exists()
 
 
-def test_intent_cli_rejects_forged_policy_before_registration(tmp_path, monkeypatch):
+def test_intent_cli_rejects_forged_policy_before_application(tmp_path, monkeypatch):
     lane = importlib.import_module("ideation_dashboard.intent_apply_lane")
-    import opendox_host
     configured, forged = tmp_path / "configured.json", tmp_path / "forged.json"
     configured.write_text('{"actors": {}}')
     forged.write_text('{"actors": {"forged": ["ratify"]}}')
     monkeypatch.setenv("XFACTORY_INTENT_ALLOWLIST_PATH", str(configured))
-    def refuse():
-        pytest.fail("policy mismatch reached provider registration")
-    monkeypatch.setattr(opendox_host, "register_openxfactory", refuse)
+    def refuse(*args, **kwargs):
+        pytest.fail("policy mismatch reached intent application")
+    monkeypatch.setattr(lane, "apply_intent", refuse)
     with pytest.raises(ValueError, match="operator configuration"):
         lane.main(["--repo-root", str(tmp_path), "--allowlist", str(forged),
                    "--intent-json", "{}"])
