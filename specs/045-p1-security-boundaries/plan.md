@@ -75,3 +75,24 @@ root. Artifact input reads remain bounded, regular/single-link and no-follow.
 Existing non-secret modes are retained; special-mode/shared-write/read-only
 targets refuse. Descriptor-held compare-and-replace detects changes during
 preparation without claiming exclusion of arbitrary same-UID native writers.
+
+## Phase 3 execution boundaries
+The maintained OpenSpec verifier stays standalone for byte-identical vending.
+CLI-selected npm executables must match the independently operator-configured
+XFACTORY_NPM_BINARY (default: npm resolved from trusted PATH); subsequent
+execution uses that trusted selection. Change identifiers are bounded single
+identifiers and cannot become options or paths. Existing content addresses,
+closure validation, strict flags, complete-target iteration and reported
+findings/disposition predicates remain enforced.
+
+The PostgreSQL readiness CLI requires its template to match the independently
+operator-configured XFACTORY_PSQL_COMMAND. The committed synthetic PostgreSQL
+harness supplies its generated disposable-cluster template through that
+environment setting, before invoking the CLI. Database operands are bounded
+names, never child options; no live database or running workload is targeted.
+Direct trusted library composition retains its explicit injected runner API.
+
+Provider publication must precede vendored consumer-byte and exact-pin movement;
+there is no parity exception. Contract release members move through a proper
+release cut; the currently open #1298 reserves contract-v4.1, so no competing
+cut or historical inventory rewrite is authorized by this plan.

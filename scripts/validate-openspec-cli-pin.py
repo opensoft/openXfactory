@@ -1272,6 +1272,20 @@ def staging_manifest(document: dict, package: str) -> dict:
 # resolving the CLI — the pinned artifact, or an explicitly requested PATH
 # --------------------------------------------------------------------------
 
+
+def trusted_npm_executable(selected: str) -> str:
+    """A CLI operand may name the operator's npm, never choose an executable."""
+    configured = os.environ.get("XFACTORY_NPM_BINARY") or shutil.which("npm")
+    if not configured:
+        raise PinRefusal("pin-unresolvable", "the operator-selected npm is unavailable")
+    trusted = Path(configured).expanduser().absolute()
+    candidate = trusted if selected == "npm" else Path(selected).expanduser().absolute()
+    if candidate.resolve() != trusted.resolve() or not trusted.is_file() or not os.access(trusted, os.X_OK):
+        raise PinRefusal("pin-unresolvable",
+                         "--npm differs from the operator-selected XFACTORY_NPM_BINARY")
+    return str(trusted)
+
+
 def _run(argv: list[str], **kwargs) -> subprocess.CompletedProcess:
     try:
         return subprocess.run(argv, capture_output=True, text=True, check=False,
@@ -1294,7 +1308,10 @@ def fetch_artifact(package: str, version: str, destination: Path,
     path that could agree with the pin while everyone else's npm disagrees.
     Whatever it returns is checked against the content address regardless.
     """
-    if shutil.which(npm) is None:
+    explicit = Path(npm)
+    available = (explicit.is_file() and os.access(explicit, os.X_OK)
+                 if explicit.is_absolute() else shutil.which(npm) is not None)
+    if not available:
         raise PinRefusal(
             "pin-unresolvable",
             f"`{npm}` is not on PATH, so the pinned artifact cannot be fetched "
@@ -1487,6 +1504,10 @@ def validation_targets(args: argparse.Namespace) -> list[list[str]]:
     if args.all:
         return [["validate", "--all", "--strict"]]
     if args.change:
+        for name in args.change:
+            if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", name) is None:
+                raise PinRefusal("pin-no-target",
+                                 "change id must be a bounded identifier, not an option or path")
         return [["validate", name, "--strict"] for name in args.change]
     raise PinRefusal(
         "pin-no-target",
@@ -1983,6 +2004,8 @@ def main(argv: list[str] | None = None) -> int:
             pin, pin_path)
         dispositions = pinned_dispositions(pin)
         targets = validation_targets(args)                  # check 2
+        if not args.path_mode:
+            args.npm = trusted_npm_executable(args.npm)
         repo = Path(args.repo).resolve() if args.repo else ROOT
         # Asked BEFORE anything is fetched, for the same reason the shape checks
         # are: a pin whose exceptions cannot be scoped is unusable, and learning

@@ -78,7 +78,7 @@ def _run_tool(
     return run_subprocess(
         [sys.executable, script, *arguments],
         cwd=REPOSITORY_ROOT,
-        env=cluster.environment,
+        env={**cluster.environment, "XFACTORY_PSQL_COMMAND": _psql_template(cluster)},
         timeout=timeout,
     )
 
