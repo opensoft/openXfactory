@@ -40,23 +40,34 @@ def npm_install_command(script):
 def test_privileged_python_installs_require_hashes_and_wheels():
     installs = []
     for name in ("doc-health-reusable.yml", "merge-master-approval.yml"):
-        runtimes = [step["with"]["python-version"] for step in steps(workflow(name))
-                    if step.get("uses", "").startswith("actions/setup-python@")]
-        assert runtimes and all(runtime == "3.12" for runtime in runtimes)
-        for step in steps(workflow(name)):
-            script = step.get("run", "").replace(chr(92) + chr(10), " ")
-            for line in script.splitlines():
-                if re.match(r"^\s*(?:python[0-9.]*\s+-m\s+)?pip\s+install\b", line) is None:
-                    continue
-                argv = shlex.split(line)
-                assert "--require-hashes" in argv
-                binary = argv.index("--only-binary")
-                assert argv[binary + 1] == ":all:"
-                lock = argv[argv.index("-r") + 1]
-                local = lock.removeprefix("openxFactory/").removeprefix("$INSTALLER_SUPPORT_ROOT/")
-                assert (ROOT / local).is_file()
-                assert "--hash=sha256:" in (ROOT / local).read_text()
-                installs.append((name, step["name"]))
+        workflow_runtimes = [step["with"]["python-version"] for step in steps(workflow(name))
+                             if step.get("uses", "").startswith("actions/setup-python@")]
+        assert workflow_runtimes and all(runtime == "3.12" for runtime in workflow_runtimes)
+        for job in workflow(name)["jobs"].values():
+            job_steps = job.get("steps", [])
+            runtimes = [step.get("with", {}).get("python-version") for step in job_steps
+                        if step.get("uses", "").startswith("actions/setup-python@")]
+            for step in job_steps:
+                script = step.get("run", "").replace(chr(92) + chr(10), " ")
+                for line in script.splitlines():
+                    if re.match(r"^\s*(?:python[0-9.]*\s+-m\s+)?pip\s+install\b", line) is None:
+                        continue
+                    argv = shlex.split(line)
+                    assert "--require-hashes" in argv
+                    binary = argv.index("--only-binary")
+                    assert argv[binary + 1] == ":all:"
+                    lock = argv[argv.index("-r") + 1]
+                    local = lock.removeprefix("openxFactory/").removeprefix("$INSTALLER_SUPPORT_ROOT/")
+                    assert (ROOT / local).is_file()
+                    locked = (ROOT / local).read_text()
+                    assert "--hash=sha256:" in locked
+                    target = re.search(r"--python-version\s+(\d+\.\d+)(?![\d.])", locked)
+                    assert target is not None, "locked dependency closure must declare its Python ABI"
+                    assert runtimes == [target.group(1)], (
+                        f"{name}: wheel-only install must use the lock's reviewed Python minor, "
+                        f"not a floating or different runtime: {runtimes}"
+                    )
+                    installs.append((name, step["name"]))
     assert len(installs) == 3
 
 
