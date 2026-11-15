@@ -67,3 +67,17 @@ published revision; no validator stub, fake Git metadata or test relaxation was
 used. The remaining shape guard expected the old LedgerxFactory path; it now
 checks canonical ledgerXfactory first and retains the legacy fallback.
 That guard's current actual-consumer proof follows publication of this update.
+
+The published canonical-path correction was then checked against the actual
+pinned ledgerXfactory checkout in that isolated aggregation: all 12 domain-pin
+setter tests passed, including the formerly skipped live-shape guard. Together
+with the 153-case real-layout run, all 14 cases skipped in the earlier standalone
+expanded run have now executed successfully under their actual prerequisites.
+No skip is counted as a passed case in the earlier 4,054-test receipt.
+
+Brett later signed in to the existing Sourcery account. Its dashboard shows zero
+tracked findings for repository ID 1275848622; scheduled default-branch findings
+are separate from PR findings. The PR-specific license discussion is resolved
+with existing-use approval recorded; the requested complete re-review reports a
+seven-day budget skip. No dashboard issue was ignored and no risk/scanner/billing
+setting was changed. This service-budget limitation remains explicit.
