@@ -12,7 +12,7 @@ The sole executable implementation list remains [feature 043 tasks](../../../spe
 
 ## 2. Qualification and authentication
 
-- [x] 2.1 Qualify the bounded repair through T010; verify the reproduced pre-repair disagreement, agreement after repair, all actual production sources still measured, affected regressions, exact-head measured CI/Python 3.14 and fresh Codex review, with unchanged gate identities/thresholds/skips/named verdicts.
+- [ ] 2.1 Qualify the bounded repair through T010; verify the reproduced pre-repair disagreement, agreement after repair, all actual production sources still measured, affected regressions, exact-head measured CI/Python 3.14 and fresh Codex review, with unchanged gate identities/thresholds/skips/named verdicts.
 - [ ] 2.2 Present the new actual source/CI packet separately for custodian authentication; verify original refused/superseded observations remain preserved and default T010 verification passes only after that actual review. Keep all four PRs draft and full Q0/Q1–Q5 pending.
 
 ## Recorded scope and definition handoff
@@ -26,3 +26,5 @@ The isolated pre-repair regression fails for both inventory and scanner. Both co
 The corrected source 328b83a7e4 passed root run 43674587047 (including measured Sonar) and Python 3.14/doc-health run 43674587176. The explicit feature suites passed 571 cases: 475 verifier, 40 inventory and 56 proof cases, without failures/errors/skips. Local affected validation passed 710 cases. Sonar passed all conditions, with security/reliability/maintainability A and 90.8% new-code coverage. Codex cleared the exact source. Root floors, skip pins and named verdicts remain unchanged.
 
 The [actual source-CI review packet](../commission-private-connectivity-production-evidence/review/commissioning-authentication.md) proposes manifest d9dc8dc309 and content SHA-256 d37b183495bbe604580c7a737621296cfcb71ac08e0a79bdcbf38a8bf8451d26. Its original output, receipt and current control remain separately immutable; prior failed/superseded observations remain retained. Read-only preparation checks pass, while default T010 admission correctly refuses pending actual custodian authentication. Task 2.2 remains open; no Q0-Q5 authority is granted.
+
+Qualification reopened after the a274bb7c6a packet review: the post-squash runner lacked explicit coordinator-object provisioning. The d37b1834 packet is withdrawn before authentication. Its actual successful source/CI observations and all immutable references remain preserved; fresh qualification of the bounded public-history repair is required before a replacement review target is offered. All four PRs remain draft and rollout gates remain pending.

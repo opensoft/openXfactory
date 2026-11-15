@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Bounded CI commit proof preparation. No task, release or rollout acceptance.
 
-Planning/checking are offline. Only prepare performs explicitly scoped GitHub
-reads. Credentialed execution uses an authenticated producer selected by the
+Planning/checking are offline. History reads only public coordinator retention
+objects; prepare performs explicitly scoped private GitHub reads. Credentialed execution uses an authenticated producer selected by the
 trusted base, never the candidate's script. Private stores are ephemeral, bare
 and commit-only; full source evidence verification uses separate owner clones.
 """
@@ -27,6 +27,7 @@ FEATURE = "specs/043-private-connectivity-production"
 EVIDENCE_DIRECTORY = FEATURE + "/evidence"
 GITHUB = "https://github.com/"
 FETCH_PREFIX = ("fetch", "--no-tags", "--depth=1", "--filter=tree:0", "origin")
+PUBLIC_FETCH_PREFIX = ("fetch", "--no-tags", "--no-recurse-submodules", "--no-write-fetch-head", GITHUB + LOCAL + ".git")
 COMMISSIONING = FEATURE + "/evidence/commissioning.json"
 SELF = FEATURE + "/prepare-source-roots.py"
 AUTHENTICATION = "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md"
@@ -110,10 +111,7 @@ def proof_git_arguments(arguments):
                 if url == allowed:
                     return ["remote", "add", "origin", allowed]
         case ["fetch", *rest]:
-            pins = rest[4:]
-            require(tuple(arguments[:5]) == FETCH_PREFIX and 1 <= len(pins) <= 256 and
-                    all(PIN.fullmatch(pin) for pin in pins), "invalid proof fetch pins")
-            return [*FETCH_PREFIX, *pins]
+            return proof_fetch_arguments(arguments)
     raise ValueError("unregistered Git proof operation")
 
 
@@ -121,15 +119,28 @@ def proof_blob_path(path):
     return path in {SELF, AUTHENTICATION} or registered(path)
 
 
+def proof_fetch_arguments(arguments):
+    pins = arguments[5:]
+    require(1 <= len(pins) <= 256, "invalid proof fetch bound")
+    if tuple(arguments[:5]) == PUBLIC_FETCH_PREFIX:
+        require(all(re.fullmatch(r"refs/retention/pins/([0-9a-f]{40}):refs/retention/pins/\1", pin) for pin in pins),
+                "invalid public retention ref")
+        return [*PUBLIC_FETCH_PREFIX, *pins]
+    require(tuple(arguments[:5]) == FETCH_PREFIX and all(PIN.fullmatch(pin) for pin in pins), "invalid proof fetch pins")
+    return [*FETCH_PREFIX, *pins]
+
+
 def run_git(root, arguments, token=None):
     directory = str(Path(root).resolve(strict=True))
     require(Path(directory).is_dir(), "Git proof root must be a directory")
     operation = proof_git_arguments(arguments)
-    require(not token or operation[0] == "fetch", "proof credentials are fetch-only")
+    require(not token or tuple(operation[:5]) == FETCH_PREFIX, "proof credentials are fetch-only for private commit stores")
+    public = (tuple(operation[:5]) == PUBLIC_FETCH_PREFIX)
+    headers = ["-c", "http.extraheader=", "-c", "http.https://github.com/.extraheader="] if public else []
     try:
         process = subprocess.run(["git", "--no-optional-locks", "--no-replace-objects", "-c", "core.hooksPath=/dev/null",
                                   "-c", "credential.helper=", "-c", "protocol.allow=never", "-c", "protocol.https.allow=always",
-                                  *operation], cwd=directory, env=git_environment(token), capture_output=True,
+                                  *headers, *operation], cwd=directory, env=git_environment(token), capture_output=True,
                                  timeout=90, check=False)
     except subprocess.TimeoutExpired as exc:
         raise ValueError("bounded Git proof operation timed out") from exc
@@ -160,7 +171,7 @@ def registered(path):
              re.fullmatch(r"[A-Za-z0-9_.-]+\.json", parts[2]) is not None))
 
 
-def discover(root, revision="HEAD"):
+def inventory_plan(root, revision="HEAD"):
     require(origin(root) == LOCAL, "coordinator origin mismatch")
     revision = run_git(root, ["rev-parse", "--verify", revision + "^{commit}"]).decode().strip()
     paths = run_git(root, ["ls-tree", "-r", "--name-only", revision, "--", EVIDENCE_DIRECTORY]).decode().splitlines()
@@ -183,13 +194,35 @@ def discover(root, revision="HEAD"):
             require(set(row) == {"repository", field} and isinstance(row[field], str) and PIN.fullmatch(row[field]),
                     "invalid full commit inventory")
             identity = (owner, row[field]); require(identity not in seen, "duplicate inventory row"); seen.add(identity)
-            if owner != LOCAL:
-                result.setdefault(owner, set()).add(row[field])
+            result.setdefault(owner, set()).add(row[field])
         content = {key: item for key, item in value.items() if key != "pin_inventory"}
         require({pin for owner, pin in seen} == set(TOKEN.findall(json.dumps(content, sort_keys=True))),
                 "inventory token coverage changed before preparation")
     require(all(len(pins) <= 256 for pins in result.values()), "source proof commit bound exceeded")
     return {owner: sorted(pins) for owner, pins in sorted(result.items())}
+
+
+def discover(root, revision="HEAD"):
+    return {owner: pins for owner, pins in inventory_plan(root, revision).items() if owner != LOCAL}
+
+
+def hydrate_history(root, runner=run_git):
+    """Restore declared public Git objects without credentials or shallow/working-tree changes."""
+    pins = inventory_plan(root).get(LOCAL, [])
+    missing = []
+    for pin in pins:
+        try:
+            require(run_git(root, ["rev-parse", "--verify", pin + "^{commit}"]).decode().strip() == pin,
+                    "public evidence commit mismatch")
+        except ValueError:
+            missing.append(pin)
+    if missing:
+        refs = ["refs/retention/pins/" + pin + ":refs/retention/pins/" + pin for pin in missing]
+        runner(root, [*PUBLIC_FETCH_PREFIX, *refs])
+        for pin in missing:
+            require(run_git(root, ["rev-parse", "--verify", pin + "^{commit}"]).decode().strip() == pin,
+                    "public retained evidence unavailable")
+    return missing
 
 
 def _blob(root, ref, path):
@@ -318,7 +351,7 @@ def cleanup(directory):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("plan", "prepare", "cleanup"))
+    parser.add_argument("mode", choices=("plan", "prepare", "cleanup", "history"))
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--base")
     parser.add_argument("--directory", required=True, type=Path)
@@ -327,6 +360,8 @@ def main(argv=None):
         parent = args.directory.parent.resolve(strict=True)
         require(parent == Path(os.environ["RUNNER_TEMP"]).resolve(strict=True), "proof must belong to runner temporary storage")
         require(args.directory.name == "pc043-source-proof", "unexpected proof directory")
+        if args.mode == "history":
+            hydrate_history(args.root); return 0
         if args.mode == "cleanup":
             cleanup(args.directory); return 0
         needed = discover(args.root)

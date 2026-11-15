@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 
 import pytest
@@ -44,6 +45,52 @@ def commit(path, value):
 def record(owner=FOREIGN, pin="a" * 40):
     return {"source": {"repository": owner, "revision": pin},
             "pin_inventory": [{"repository": owner, "foreign_commit": pin}]}
+
+
+def local_record(pins):
+    return {"sources": [{"repository": LOCAL, "revision": pin} for pin in pins],
+            "pin_inventory": [{"repository": LOCAL, "openxfactory_commit": pin} for pin in pins]}
+
+
+def test_public_history_restores_missing_objects_in_fresh_squash_without_alternates(tmp_path):
+    retained = repo(tmp_path / "retained")
+    first = commit(retained, {"synthetic": "historical control"})
+    reader = retained / s.SELF
+    reader.parent.mkdir(parents=True, exist_ok=True)
+    reader.write_text("synthetic original reader bytes\n")
+    second = commit(retained, {"synthetic": "original referenced output"})
+    for pin in (first, second):
+        git(retained, "update-ref", "refs/retention/pins/" + pin, pin)
+    root = repo(tmp_path / "fresh-squash")
+    head = commit(root, local_record([first, second]))
+    assert not (root / ".git/objects/info/alternates").exists()
+    assert subprocess.run(["git", "-C", str(root), "cat-file", "-e", first + "^{commit}"], capture_output=True).returncode != 0
+    calls = []
+    def transport(directory, arguments):
+        checked = s.proof_git_arguments(arguments)
+        assert tuple(checked[:5]) == s.PUBLIC_FETCH_PREFIX
+        calls.append(checked)
+        return subprocess.check_output(["git", "-C", str(directory), "-c", "protocol.file.allow=always",
+                                        *checked[:4], retained.as_uri(), *checked[5:]], env=s.git_environment())
+    assert s.hydrate_history(root, runner=transport) == sorted([first, second])
+    assert len(calls) == 1
+    assert json.loads(git(root, "show", first + ":" + s.COMMISSIONING)) == {"synthetic": "historical control"}
+    assert git(root, "show", second + ":" + s.SELF) == "synthetic original reader bytes"
+    assert git(root, "rev-parse", "HEAD") == head and git(root, "status", "--porcelain") == ""
+    assert git(root, "rev-parse", "--is-shallow-repository") == "false"
+    assert not (root / ".git/objects/info/alternates").exists()
+    assert subprocess.run(["git", "-C", str(root), "merge-base", "--is-ancestor", first, "HEAD"]).returncode == 1
+    assert s.hydrate_history(root, runner=lambda *args: pytest.fail("present history fetched again")) == []
+
+
+@pytest.mark.parametrize("failure", ["missing-objects", "wrong-origin"])
+def test_public_history_refuses_missing_objects_or_foreign_coordinator(tmp_path, failure):
+    root = repo(tmp_path / "coordinator", FOREIGN if failure == "wrong-origin" else LOCAL)
+    commit(root, local_record(["a" * 40]))
+    calls = []
+    with pytest.raises(ValueError):
+        s.hydrate_history(root, runner=lambda *args: calls.append(args))
+    assert bool(calls) == (failure == "missing-objects")
 
 
 def test_closed_record_discovery_uses_committed_data_only(tmp_path):
@@ -156,7 +203,8 @@ def test_credentialed_http_redirect_is_refused():
 
 @pytest.mark.parametrize("workflow", ["pytest-suite.yml", "doc-health-py314.yml"])
 @pytest.mark.parametrize("private,accepted", [(False, False), (True, False), (True, True)])
-def test_workflow_bootstrap_never_executes_candidate_code(tmp_path, workflow, private, accepted):
+@pytest.mark.parametrize("history", ["present", "retained"])
+def test_workflow_bootstrap_never_executes_candidate_code(tmp_path, workflow, private, accepted, history):
     import yaml
     root = repo(tmp_path / "coordinator")
     code_ref = write_commit(root, s.SELF, HELPER.read_bytes())
@@ -169,6 +217,24 @@ def test_workflow_bootstrap_never_executes_candidate_code(tmp_path, workflow, pr
     review = "```json\n" + json.dumps(auth) + "\n```\n"
     value["review"] = write_commit(root, s.AUTHENTICATION, review.encode())
     base = write_commit(root, s.COMMISSIONING, json.dumps(value).encode())["commit"]
+    test_path = os.environ["PATH"]
+    if history == "retained":
+        retained = root
+        for ref in (code_ref, manifest, value["review"]):
+            git(retained, "update-ref", "refs/retention/pins/" + ref["commit"], ref["commit"])
+        root = repo(tmp_path / "squashed-coordinator")
+        base = write_commit(root, s.COMMISSIONING, json.dumps(value).encode())["commit"]
+        assert subprocess.run(["git", "-C", str(root), "cat-file", "-e", code_ref["commit"]], capture_output=True).returncode != 0
+        assert not (root / ".git/objects/info/alternates").exists()
+        adapter = tmp_path / "transport"; adapter.mkdir()
+        wrapper = adapter / "git"
+        wrapper.write_text("#!/usr/bin/env python3\nimport os,sys\na=sys.argv[1:]\n" +
+                           "url=" + repr(s.PUBLIC_FETCH_PREFIX[4]) + "\n" +
+                           "if 'fetch' in a and url in a:\n a[a.index(url)]=" + repr(retained.as_uri()) +
+                           "\n a=['-c','protocol.file.allow=always',*a]\n" +
+                           "real=" + repr(shutil.which("git")) + "\nos.execv(real,[real,*a])\n")
+        wrapper.chmod(0o700)
+        test_path = str(adapter) + os.pathsep + test_path
     value["pin_inventory"] = [{"repository": LOCAL, "openxfactory_commit": code_ref["commit"]},
                               {"repository": LOCAL, "openxfactory_commit": value["review"]["commit"]}]
     if private:
@@ -182,7 +248,7 @@ def test_workflow_bootstrap_never_executes_candidate_code(tmp_path, workflow, pr
     steps = definition["jobs"][workflow.removesuffix(".yml")]["steps"]
     script = next(step["run"] for step in steps if step.get("id") == "pc043_plan")
     result = subprocess.run(["bash", "-eu", "-c", script], cwd=root, capture_output=True, text=True,
-                            env={**os.environ, "RUNNER_TEMP": str(runner), "GITHUB_OUTPUT": str(out),
+                            env={**os.environ, "PATH": test_path, "RUNNER_TEMP": str(runner), "GITHUB_OUTPUT": str(out),
                                  "GITHUB_ENV": str(envfile), "PC_SOURCE_BASE": base})
     assert not (root / "CANDIDATE_EXECUTED").exists()
     if private and not accepted:
@@ -297,6 +363,9 @@ def test_git_wrapper_refuses_option_injection_in_real_repository(tmp_path):
     ["show", "a" * 40 + ":" + s.FEATURE + "/evidence/instances/T057/../T010.json"],
     ["ls-tree", "a" * 40, "--", ":(glob)**"],
     ["cat-file", "--batch"],
+    [*s.PUBLIC_FETCH_PREFIX, "+refs/retention/pins/" + "a" * 40 + ":refs/retention/pins/" + "a" * 40],
+    [*s.PUBLIC_FETCH_PREFIX, "refs/retention/pins/" + "a" * 40 + ":refs/retention/pins/" + "b" * 40],
+    [*s.PUBLIC_FETCH_PREFIX, "refs/heads/main:refs/heads/main"],
 ])
 def test_git_wrapper_denies_unregistered_operations_before_execution(tmp_path, monkeypatch, arguments):
     def unexpected(*args, **kwargs):
@@ -314,6 +383,15 @@ def test_git_wrapper_never_attaches_fetch_credentials_to_local_reads(tmp_path, m
         s.run_git(tmp_path, ["config", "--get", "remote.origin.url"], "synthetic-token")
 
 
+def test_public_history_fetch_never_receives_private_credentials(tmp_path, monkeypatch):
+    def unexpected(*args, **kwargs):
+        pytest.fail("public history received private credentials")
+    monkeypatch.setattr(s.subprocess, "run", unexpected)
+    ref = "refs/retention/pins/" + "a" * 40
+    with pytest.raises(ValueError, match="fetch-only"):
+        s.run_git(tmp_path, [*s.PUBLIC_FETCH_PREFIX, ref + ":" + ref], "synthetic-token")
+
+
 @pytest.mark.parametrize("workflow", ["pytest-suite.yml", "doc-health-py314.yml"])
 def test_both_ci_lanes_revoke_before_tests_and_cleanup_afterwards(workflow):
     import yaml
@@ -323,6 +401,10 @@ def test_both_ci_lanes_revoke_before_tests_and_cleanup_afterwards(workflow):
     assert named["pc043_plan"] < named["pc043_opensoft_token"] < named["pc043_prepare"] < named["pc043_revoke"]
     tests = [i for i, step in enumerate(steps) if "pytest " in step.get("run", "")]
     assert tests and named["pc043_revoke"] < min(tests) < named["pc043_cleanup"]
+    assert named["pc043_revoke"] < named["pc043_history"] < min(tests)
+    history = steps[named["pc043_history"]]
+    assert "history" in history["run"] and "prepare-source-roots.py" in history["run"]
+    assert not history.get("env"), "public history must receive no private token inputs"
     for name in ("pc043_opensoft_token", "pc043_domain_token"):
         step = steps[named[name]]
         assert step["with"]["permission-contents"] == "read"

@@ -2,6 +2,8 @@
 
 Status: draft
 
+Withdrawn before authentication: Codex found missing retained coordinator objects on a fresh post-squash runner. This d37b1834 target remains immutable history; do not authenticate it. A replacement will follow the public-history repair and fresh exact-source qualification.
+
 ## Exact corrected source-CI review target
 
 This is a source-only review. Authenticate the actual original source/CI exports and human provenance in the exact control below. Source-scope ratification does not authenticate these new observations.
