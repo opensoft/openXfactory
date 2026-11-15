@@ -871,8 +871,15 @@ def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
 def resolve_revision(repo: Path, at: str | None) -> str:
     """The revision this run is asking about: `--at <sha>` or `HEAD`."""
     ref = at if at is not None else "HEAD"
-    done = _git(repo, "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}")
-    if done.returncode != 0 or not done.stdout.strip():
+    if (not isinstance(ref, str) or not ref or ref.startswith("-")
+            or any(char.isspace() or ord(char) < 32 or ord(char) == 127
+                   or char == chr(92) for char in ref)):
+        raise CarveRefusal("carve-revision-mismatch",
+                           "the requested revision is not a safe Git operand")
+    done = _git(repo, "rev-parse", "--verify", "--quiet", "--end-of-options",
+                f"{ref}^{{commit}}")
+    revision = done.stdout.decode("ascii", "replace").strip()
+    if done.returncode != 0 or re.fullmatch(r"[0-9a-f]{40}", revision) is None:
         if at is not None:
             raise CarveRefusal(
                 "carve-revision-mismatch",
@@ -883,7 +890,7 @@ def resolve_revision(repo: Path, at: str | None) -> str:
             "carve-unreadable",
             f"{repo} has no resolvable HEAD; this validator reads the carve "
             "commit's tree out of a real git repository")
-    return done.stdout.decode("utf-8", "replace").strip()
+    return revision
 
 
 class TreeEntry(NamedTuple):

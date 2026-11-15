@@ -297,7 +297,8 @@ concurrency:
 jobs:
   pytest-suite:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    # Branch/subprocess measurement is bounded separately from the old unmeasured budget.
+    timeout-minutes: 120
     defaults:
       run:
         working-directory: openxFactory
@@ -592,7 +593,21 @@ jobs:
       - name: Install the pinned OpenSpec CLI for tests/proposal-support
         run: python3 scripts/install-pinned-openspec-cli.py --cache-dir "${RUNNER_TEMP}/openspec-cli-pin"
 
-      - run: pip install --require-hashes -r requirements/hermes-runtime-contracts.lock
+      - run: 'pip install --require-hashes -r requirements/hermes-runtime-contracts.lock --only-binary :all:'
+      - name: Install isolated hash-pinned analysis tooling
+        run: 'pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary :all:'
+
+      - name: Verify real child coverage before the full suite
+        run: python3 -m pytest tests/sonar_quality/test_coverage_evidence.py::test_subprocess_startup_records_real_child_execution -q
+
+      - name: Preserve original bounded CLI checks
+        run: |
+          unset COVERAGE_PROCESS_START COVERAGE_PROCESS_CONFIG
+          python3 -m pytest tests/hermes_runtime_contracts/test_validator_cli.py -q
+
+      - name: Prepare a fresh exact-source measurement
+        run: python3 scripts/validate-sonar-coverage.py prepare
+
 
       # `--junitxml` is a CLI option, not a pytest.ini option: `pytest.ini`'s
       # ratified option-free design is untouched. `|| true` is deliberately
@@ -606,6 +621,9 @@ jobs:
       # and the freshness verifier skips — which is the alarm, not a hole.
       - run: python3 -m pytest tests/ -q -m "not postgres" --junitxml=pytest-report.xml
         env:
+          COVERAGE_PROCESS_START: ${{ github.workspace }}/openxFactory/.coveragerc
+          COVERAGE_ROOT: ${{ github.workspace }}/openxFactory
+          COVERAGE_FILE: ${{ github.workspace }}/openxFactory/.coverage-reports/.coverage
           PINNED_CORE_CHECKOUT: ${{ github.workspace }}/.merge-master-core
 
       # THE PINNED TRIPLE, read from the JUnit XML attributes, PLUS the named
@@ -953,3 +971,69 @@ jobs:
           [ "$FRESHNESS" = "passed" ] || { echo "::error::snapshot freshness verifier did not run — pinned core checkout unavailable or test removed ($FRESHNESS_CLASSNAME::$FRESHNESS_TESTNAME is '$FRESHNESS' in pytest-report.xml, wanted 'passed'). contracts/review-lane-floor-snapshot.yaml was NOT compared byte for byte against the pinned decision core on this run, so a stale copy could assert coverage the real floor does not give. Fix the cross-repository checkout (see the 'Check out the pinned decision core' step's warning above for its outcome); if the test was deliberately renamed or moved, move FRESHNESS_CLASSNAME/FRESHNESS_TESTNAME with it in the same diff. Do not delete this assertion — the skipped-count pin CANNOT cover for it, which is the Codex P2 finding on PR #569"; rc=1; }
           [ "$VECTOR_REPLAY" = "passed" ] || { echo "::error::vector replay did not run — pinned core checkout unavailable or test removed ($VECTOR_REPLAY_CLASSNAME::$VECTOR_REPLAY_TESTNAME is '$VECTOR_REPLAY' in pytest-report.xml, wanted 'passed'). The required lane's mirrored completeness rule (mirror-floor-addition-grace) was NOT falsified against the pinned core's own vectors on this run, so a divergence between the two floor lanes could go undetected. Fix the cross-repository checkout (see the 'Check out the pinned decision core' step's warning above for its outcome); if the test was deliberately renamed or moved, move VECTOR_REPLAY_CLASSNAME/VECTOR_REPLAY_TESTNAME with it in the same diff. Do not delete this assertion — the skipped-count pin CANNOT cover for it, the same Codex P2 finding on PR #569 applied a second time"; rc=1; }
           exit $rc
+
+
+      # Runs only after the unchanged skip/floor/named-verdict guards pass.
+      - name: Generate and verify exhaustive measured coverage
+        run: python3 scripts/validate-sonar-coverage.py report
+
+      - name: Publish same-run coverage evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonar-coverage
+          path: |
+            openxFactory/.coverage-reports/coverage.xml
+            openxFactory/.coverage-reports/coverage.json
+            openxFactory/.coverage-reports/pytest-report.xml
+            openxFactory/.coverage-reports/receipt.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  sonar-analysis:
+    needs: pytest-suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: openxFactory
+    steps:
+      # Separate source-only checkout: provider gitlinks are not root-owned code.
+      # No analysis credential is available to the pytest job or its subprocesses.
+      - uses: actions/checkout@v4
+        with:
+          path: openxFactory
+          fetch-depth: 0
+          submodules: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: sonar-coverage
+          path: openxFactory/.coverage-reports
+      - name: Install hash-pinned coverage reader
+        run: 'pip install --require-hashes -r requirements/sonar-analysis.lock --only-binary :all:'
+      - name: Verify artifact against the scanner checkout
+        run: python3 scripts/validate-sonar-coverage.py check
+      - name: Analyze and wait for the existing quality gate
+        uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: openxFactory
+          skipSignatureVerification: 'false'
+      - name: Verify evaluated conditions and exact main source
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: python3 scripts/validate-sonar-coverage.py gate
+      - name: Publish evaluated gate receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonar-gate
+          path: openxFactory/.coverage-reports/gate.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

@@ -1136,12 +1136,30 @@ def selector_tokens(selector: str) -> dict:
     return {"classes": classes, "ids": ids, "elements": elements}
 
 
+def checked_output_path(value: str) -> Path:
+    """Keep the output within the operator's invocation directory."""
+    try:
+        target = Path(value).resolve()
+        root = Path.cwd().resolve()
+        if (target == root or not target.is_relative_to(root)
+                or not target.parent.is_dir()
+                or (target.exists() and not target.is_file())):
+            raise ValueError("output is outside the invocation file boundary")
+    except (OSError, RuntimeError) as exc:
+        raise ValueError("output cannot resolve inside the invocation directory") from exc
+    return target
+
+
 def main() -> int:
     dox = Path(sys.argv[1]).resolve()
     xdox = Path(sys.argv[2]).resolve()
     out_json = None
     if "--json" in sys.argv:
-        out_json = Path(sys.argv[sys.argv.index("--json") + 1])
+        try:
+            out_json = checked_output_path(sys.argv[sys.argv.index("--json") + 1])
+        except (IndexError, ValueError) as exc:
+            print(f"refused --json output: {exc}", file=sys.stderr)
+            return 2
 
     web = dox / "src" / "opendox" / "web"
     css_path = web / "styles.css"

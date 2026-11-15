@@ -24,6 +24,11 @@ Run it with the Playwright venv's python, with the server from § 3 running:
         --copy "$OPENDOX_STATE_DIR/console/$PORT.html" \
         [--copy-url <the file:// URL the start printed>]
 
+Run from the trusted evidence invocation directory. Output stays beneath it,
+is private, and never overwrites an earlier result. OPENDOX_STATE_DIR must
+declare the private state used by the server; all preflight checks also run
+under optimized Python.
+
 With `--copy-url`, the page is opened through exactly the URL the start
 printed (quickstart.md § 4 step 1), which must name the same file as
 `--copy`. Without it, the URL is `--copy`'s own `file://` form.
@@ -42,20 +47,17 @@ The falsifier is DECLARED plus zero pageerror, which cannot be declared at all.
 from __future__ import annotations
 
 import argparse
-import html as htmlmod
 import json
-import os
 import re
-import stat
 import sys
 import time
 import traceback
 import urllib.error
-import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from playwright.sync_api import sync_playwright
+from preflight import (PreflightError, opened_through, prepare_output_directory,
+                       read_private_copy, require, write_output)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--port", required=True, type=int)
@@ -66,11 +68,12 @@ ap.add_argument("--copy", required=True, help="the private copy the start wrote"
 ap.add_argument("--copy-url", default=None,
                 help="the file:// URL the start printed for the private copy")
 a = ap.parse_args()
-OUT = Path(a.out)
-OUT.mkdir(parents=True, exist_ok=True)
+try:
+    OUT = prepare_output_directory(a.out, a.label)
+except PreflightError as exc:
+    print(f"AT-R1 browser half: ERROR before the drive: {exc}", file=sys.stderr)
+    sys.exit(2)
 BASE = f"http://127.0.0.1:{a.port}"
-sys.path.insert(0, str(Path(a.odc) / "tests"))
-import smoke_signals  # noqa: E402  (stdlib-only oracle module, from the commit under test)
 import yaml  # noqa: E402
 
 GATELESS_SAVE_WORDS = "Save needs the first-edit transport"   # staging-workbench-model.js GATELESS_SAVE_REFUSAL
@@ -100,9 +103,9 @@ def check(name, ok, **evidence):
 
 
 def shot(page, name):
-    p = OUT / f"{a.label}-{name}.png"
     try:
-        page.screenshot(path=str(p), full_page=True)
+        data = page.screenshot(full_page=True)
+        p = write_output(OUT, f"{a.label}-{name}.png", data)
     except Exception as exc:  # a screenshot is evidence, never the verdict
         return f"(screenshot failed: {exc!r})"
     return p.name
@@ -117,45 +120,6 @@ def http(method, path, body=None, headers=None):
         return e.code, e.read()
 
 
-def read_private_copy(copy: str, port: int) -> str:
-    """quickstart.md § 3 as openxFactory#1222 amends it: the token is read
-    from the private copy, never from /capabilities."""
-    for path, mode in ((os.path.dirname(copy), 0o700), (copy, 0o600)):
-        info = os.lstat(path)
-        assert info.st_uid == os.getuid() and stat.S_IMODE(info.st_mode) == mode, \
-            f"{path} is not this user's own, mode {mode:o}"
-    assert stat.S_ISREG(os.lstat(copy).st_mode), "the private copy is not a regular file"
-    text = open(copy, encoding="utf-8").read()
-    # quickstart.md § 3 on main: every "console_token=" in the copy opens a
-    # fragment, none follows "?", "&" or "&amp;", and none starts the file
-    assert all(m.start() > 0 and text[m.start() - 1] == "#" for m in re.finditer("console_token=", text)), \
-        "the private copy puts the token outside a fragment"
-    target = re.search(r"""(?i)http-equiv=["']?refresh["']?\s+content=["']\s*\d+\s*;\s*url=([^"']+)""", text)
-    assert target, "the private copy forwards to no page"
-    url = urllib.parse.urlsplit(htmlmod.unescape(target.group(1)))
-    assert (url.scheme, url.netloc, url.path, url.query) == ("http", f"127.0.0.1:{port}", "/index.html", ""), \
-        "the private copy does not forward to this server's /index.html with an empty query"
-    token = urllib.parse.parse_qs(url.fragment).get("console_token", [""])[0]
-    assert token, "the opened URL carries no token in its fragment"
-    return token
-
-
-def opened_through(copy: str, copy_url: str | None) -> str:
-    """The `file://` URL the drive opens: the one the start printed, which
-    must name this same private copy, or else the copy's own `file://`."""
-    if not copy_url:
-        return Path(copy).as_uri()
-    parts = urllib.parse.urlsplit(copy_url)
-    assert parts.scheme == "file" and parts.netloc in ("", "localhost") \
-        and not parts.query and not parts.fragment, \
-        "the printed console URL is not a plain file:// URL"
-    named = urllib.parse.unquote(parts.path)
-    assert os.path.samefile(named, copy), \
-        "the printed console URL does not name the private copy"
-    assert "console_token" not in copy_url, "the printed console URL carries the token"
-    return copy_url
-
-
 try:
     TOKEN = read_private_copy(a.copy, a.port)
     OPEN_URL = opened_through(a.copy, a.copy_url)
@@ -163,10 +127,14 @@ try:
     snap = json.loads(body)
     st, body = http("GET", "/capabilities")
     caps = json.loads(body)
-    assert "console_token" not in caps, "/capabilities still carries the console token (T104)"
+    require("console_token" not in caps,
+            "/capabilities still carries the console token (T104)")
 except Exception as exc:  # no verdict can be reached: say so, never a PASS
     print(f"AT-R1 browser half ({a.label}): ERROR before the drive: {exc!r}")
     sys.exit(2)
+
+sys.path.insert(0, str(Path(a.odc) / "tests"))
+import smoke_signals  # noqa: E402  (stdlib-only oracle module, from the commit under test)
 
 # ---- what the snapshot fills, station by station (the display facet's map) --
 fields = caps["display"]["fields"]
@@ -181,6 +149,10 @@ print("snapshot fills:", filled, flush=True)
 
 raw = smoke_signals.Errors()
 save_step_signals: dict = {}
+
+# The preflight module and its checks need no browser dependency; invalid
+# inputs are refused before importing or launching Playwright.
+from playwright.sync_api import sync_playwright
 
 BROWSER_VERSION = [None]
 with sync_playwright() as p:
@@ -390,8 +362,6 @@ with sync_playwright() as p:
               http_status=st, http_error=(body.get("error") if isinstance(body, dict) else body),
               ui_refused=ui_refused, ui_send_withheld=ui_withheld, ui=rail,
               screenshot=shot(page, "4d-chat-after-turn"))
-        STEP[0] = "chat"
-
         # ---- both editors stay usable: each opens and accepts edits (5971834845)
         STEP[0] = "editors"
         ed: dict = {"buffers": {}}
@@ -623,7 +593,8 @@ result = {"label": a.label, "base": BASE, "browser_version": BROWSER_VERSION[0],
           "events": [e for e in events if e["kind"] != "request"],
           "requests": [e for e in events if e["kind"] == "request"],
           "four_xx": fourxx, "five_xx": fivexx}
-(OUT / f"{a.label}-result.json").write_text(json.dumps(result, indent=1, default=str))
+write_output(OUT, f"{a.label}-result.json",
+             json.dumps(result, indent=1, default=str).encode("utf-8"))
 print("NON-REQUEST EVENTS:")
 for e in result["events"]:
     print(" ", json.dumps(e, default=str)[:700])

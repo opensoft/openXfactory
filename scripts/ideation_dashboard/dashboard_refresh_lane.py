@@ -3247,7 +3247,7 @@ def validate_in_render_environment(product, target, *, validator, strict: bool,
         [SEALED_PYTHON, "-c", _VALIDATE_HARNESS, inside[0],
          f"{SEALED_JUDGED}/{target.name}", inside[1],
          "strict" if strict else "lenient", *legs],
-        mounts=((target.parent, SEALED_JUDGED),), workdir="/tmp",
+        mounts=((target.parent, SEALED_JUDGED),), workdir=SEALED_JUDGED,
         stdout_limit=SEALED_LOG_LIMIT, timeout=timeout)
     stderr = run.stderr.decode("utf-8", "replace")
     if run.timed_out:

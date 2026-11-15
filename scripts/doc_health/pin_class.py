@@ -437,6 +437,16 @@ class NonMember:
 # state at `origin/main` — see the module docstring on why the packet's table is
 # not the seed. Ordered by the capability that owns each artifact.
 PIN_CLASS: tuple[PinMember, ...] = (
+    PinMember(
+        id="sonar-scanner-action",
+        paths=(".github/workflows/pytest-suite.yml",),
+        key="SonarSource/sonarqube-scan-action", key_form="prose",
+        generator="official SonarSource sonarqube-scan-action v7",
+        reproduction=MEASURED, locality=CROSS_REPOSITORY, presence=CURRENT,
+        pattern=r"SonarSource/sonarqube-scan-action@([0-9a-f]{40})" + HEX_BOUNDARY,
+        note="Immutable official scanner implementation, resolved against "
+             "SonarSource/sonarqube-scan-action; no local retention exemption.",
+    ),
     # Feature 040 carries mixed-owner gate and source references. Its generated
     # inventory declares every commit token in each record by repository;
     # local derivation pins retain the same MUST_RESOLVE obligation.

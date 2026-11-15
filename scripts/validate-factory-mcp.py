@@ -1192,10 +1192,15 @@ def parse_snapshots(parser, values):
 
 def read_declaration(path):
     try:
+        # CLI operands are untrusted; the invocation directory is the
+        # operator-selected boundary, not a prefix supplied by the operand.
+        path = Path(path).resolve()
+        if not path.is_relative_to(Path.cwd().resolve()) or not path.is_file():
+            return None, "input_unreadable"
         raw = bounded_read(path, INPUT_LIMIT, "input_size_limit")
     except Invalid as error:
         return None, str(error)
-    except OSError:
+    except (OSError, RuntimeError, ValueError):
         return None, "input_unreadable"
     try:
         return json_loads(raw), None

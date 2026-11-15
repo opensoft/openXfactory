@@ -745,6 +745,17 @@ def retired_at(row: dict) -> tuple:
     return None, None
 
 
+def _required_row(key: str):
+    try:
+        return _rows()[key]
+    except KeyError:
+        raise NotACarvedPath(
+            f"{key} is in no row of {MANIFEST.relative_to(REPO_ROOT)}. The "
+            f"manifest declares every file under its `moved_paths:` surface, so "
+            f"a path it does not carry either never was under the surface (ask "
+            f"for it directly — it never moved) or is misspelled.") from None
+
+
 def source(path: str | Path) -> Path:
     """The file `path` NAMES TODAY, wherever the § 5.2 shed left it.
 
@@ -779,14 +790,7 @@ def source(path: str | Path) -> Path:
     reason: a source assertion that silently read nothing would pass.
     """
     key = str(path).replace("\\", "/")
-    try:
-        row = _rows()[key]
-    except KeyError:
-        raise NotACarvedPath(
-            f"{key} is in no row of {MANIFEST.relative_to(REPO_ROOT)}. The "
-            f"manifest declares every file under its `moved_paths:` surface, so "
-            f"a path it does not carry either never was under the surface (ask "
-            f"for it directly — it never moved) or is misspelled.") from None
+    row = _required_row(key)
     if row["disposition"] == "not_moved":
         if row.get("reason") == "deleted_at_carve":
             reason = NO_DESTINATION.get("ideation_dashboard.profile_openxfactory", "")
@@ -853,9 +857,7 @@ def module(path: str | Path):
     named refusals without having to remember to arrange them.
     """
     key = str(path).replace("\\", "/")
-    row = _rows().get(key)
-    if row is None:
-        source(key)  # raises NotACarvedPath with the sentence that explains it
+    row = _required_row(key)
     install()
     if row["disposition"] == "not_moved":
         if row.get("reason") == "deleted_at_carve":
