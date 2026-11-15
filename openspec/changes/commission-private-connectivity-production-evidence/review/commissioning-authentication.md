@@ -21,7 +21,7 @@ The corrected source is [746e9316c](https://github.com/opensoft/openXfactory/com
 
 The initial Python 3.14 run at 3a53fc7f53c3cfe86ee895edec8887c2614cd283 failed because a test read the rewritten remote URL rather than the stored SSH configuration. The exact failed GitHub run, source and original step output are retained during export. A controlled local URL rewrite reproduced the failure; the corrected assertion checks the stored origin without changing it. Python 3.14 qualification now runs the explicit PR revision and checks all 42 JUnit cases.
 
-At this first pending review context, Python 3.14/doc-health and consumer CI pass and Codex has cleared the corrected head. The full pytest source step is still pending. No successful source-CI receipt is manufactured from that pending run. Its actual original output, both run/job identities, unchanged source and closed required cases must be captured before an exact new review anchor is presented.
+Both entry points completed successfully at the exact corrected source revision. Root pytest-suite run 43653058553/job 132625600781 explicitly collected and passed 298 evidence, 40 inventory and 42 proof-root cases, with no source-suite skips, failures or errors. Its original source step ran from 2026-11-14T23:54:28Z through 2026-11-14T23:54:41Z. Python 3.14/doc-health run 43653058532/job 132625527820 passed its existing doc-health run and all 42 explicitly pinned proof cases at that same PR head. Required root floors, exact skip obligations and named verdicts passed unchanged. Codex cleared source 746e9316cfe7dbed7fac3ecc0104fb5bfdec15a7.
 
 ## Custody and admission boundary
 
@@ -41,3 +41,27 @@ The new packet requires actual custodian authentication after its original outpu
 ```
 
 Full Q0 and Q1–Q5 remain pending. All four PRs remain draft. No merge, version/tag, release publication, target operation, deployment, enrollment, paid resource or commercial gate is granted. Actual provider/domain/integration, live custody, staging and canary decisions retain their own gates.
+
+
+## Exact source-CI review target
+
+| Item | Immutable review identity |
+| --- | --- |
+| New-definition control | [02be87d2b](https://github.com/opensoft/openXfactory/blob/02be87d2bdd40abb92f3f232d84f667b661aa10e/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Manifest file SHA-256 | 8b18f3ef78031e2d7cb2fd4060e141f05fa8daf4275762ff5441c461914c9b43 |
+| Authenticated content SHA-256 | c49a6a5ec2dfab98d76a9dd407afbcc4d0eabb0e7acfc0151083f63b03e1e854 |
+| Definition SHA-256 | e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298 |
+| Tested source | [746e9316c](https://github.com/opensoft/openXfactory/commit/746e9316cfe7dbed7fac3ecc0104fb5bfdec15a7) |
+| Original two-lane output | [17f4bbe5e](https://github.com/opensoft/openXfactory/blob/17f4bbe5ef950d2ee8e9f41c6959c031fc85cb18/specs/043-private-connectivity-production/evidence/T010.json) |
+| Distinct receipt | [731fee366](https://github.com/opensoft/openXfactory/blob/731fee366ee2b47f0e32d6d0cc907bb2f4c78df6/specs/043-private-connectivity-production/evidence/T010.json) |
+| Required source CI | [run 43653058553/job 132625600781](https://github.com/opensoft/openXfactory/actions/runs/43653058553/job/132625600781) |
+| Python 3.14 source CI | [run 43653058532/job 132625527820](https://github.com/opensoft/openXfactory/actions/runs/43653058532/job/132625527820) |
+| Preserved failed preparation | [Python 3.14 run 43652162290](https://github.com/opensoft/openXfactory/actions/runs/43652162290) at source 3a53fc7f53c3cfe86ee895edec8887c2614cd283 |
+
+The actual CI output remains separately immutable and is also copied exactly into the permitted T010 E container so its original references are visible to the closed shared sweep. Their decoded values are checked equal; no original observation or command/output identity is changed. The earlier unreviewed preparation control is retained in prior_containers. The actual failed Python 3.14 source step remains in the original export, including its one failure and 41 passes; it supplies no passing dependency.
+
+Committed data measure 1245 standing sites across 36 members with no uncovered site. The foreign member remains FUTURE: this packet introduces no private evidence binding. Exact computed retention references are published and independently read back without changing earlier refs.
+
+Binding/source/closed cases/CI, actual authority, immutable artifacts and all historical dependencies pass preparation. The default new T010 command correctly refuses pending actual custodian authentication. The prior accepted T012 anchor remains separately usable with its exact fixed historical reader. No source/CI control is treated as a live or commercial acceptance.
+
+Authenticate this actual source-only E packet and its original human/CI provenance. Acceptance permits recording the new immutable accepted review/control pair and default T010 verification only after those checks pass. It does not authenticate a new package run, activate private fetching, put the producer on a trusted base, authorize a merge, or advance full Q0/Q1–Q5. All four PRs stay draft.

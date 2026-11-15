@@ -1163,7 +1163,10 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # retaining its separate original output/receipt and accepted L control.
     # The parallel Sonar recovery feature adds two measured receipt anchors
     # under one exact-path standing member; the integrated tree is measured.
-    assert (standing_sites, standing_members) == (1169, 36)
+    # The new-definition CI control retains original observations, binds the
+    # authenticated historical control and the actual two-lane source exports.
+    # Measured after committing those records: 76 additional sites, no new member.
+    assert (standing_sites, standing_members) == (1245, 36)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
