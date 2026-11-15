@@ -47,6 +47,61 @@ def test_actual_historical_control_uses_matching_frozen_reader(accepted_historic
         prior.verify(task)
 
 
+@pytest.fixture
+def current_historical_world(accepted_historical_control, monkeypatch):
+    """Synthetic current custody review over immutable real historical bytes."""
+    git_store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    world = World()
+    original_blob = world.store.blob
+    def blob(ref):
+        identity = (ref["repository"], ref["commit"], ref["path"])
+        return original_blob(ref) if identity in world.store.objects else git_store.blob(ref)
+    monkeypatch.setattr(world.store, "blob", blob)
+    monkeypatch.setattr(world.store, "changed", git_store.changed)
+    monkeypatch.setattr(world.store, "git", git_store.git, raising=False)
+    monkeypatch.setattr(world.store, "root", git_store.root, raising=False)
+    world.trust = v.decode(git_store.blob(accepted_historical_control))
+    world.trust["definition"] = v.DEFINITION
+    world.trust["historical_controls"] = {task: accepted_historical_control for task in ("T011", "T012", "T016")}
+    return world
+
+
+@pytest.mark.parametrize("task", ["T011", "T012", "T016"])
+@pytest.mark.parametrize("state", ["revoked-authority", "revoked-decision", "closed-authority"])
+@pytest.mark.parametrize("cached", [False, True])
+def test_historical_prerequisites_use_current_authority_state(current_historical_world, task, state, cached):
+    world = current_historical_world
+    binding = world.trust["bindings"]["T007"]
+    authority = world.trust["source_container"]["objects"][binding["authority"]["object"]]["value"]
+    anchor = source_anchor(world)
+    reader = v.Verifier(TASKS, world.store, anchor, now=NOW)
+    if cached:
+        reader.verify(task)
+    identity = authority["id"]
+    if state == "revoked-decision":
+        ref = authority["decisions"]["C-01"]
+        identity = world.trust["source_container"]["objects"][ref["object"]]["value"]["id"]
+    if state == "closed-authority":
+        reader.trust["completed_authorities"] = {identity: world.store.put(
+            dict(kind="authority-closure", authority_id=identity, scope=binding["scope"],
+                 disposition="completed", closed_at=START, owner="Synthetic Owner"), "closures/current.json")}
+    else:
+        reader.trust["revoked_authorities"].append(identity)
+    with pytest.raises(v.EvidenceError, match="revoked|closed"):
+        reader.verify("T007")
+    with pytest.raises(v.EvidenceError, match="revoked|closed"):
+        reader.verify(task)
+
+
+@pytest.mark.parametrize("task", ["T011", "T012", "T016"])
+def test_historical_dependencies_keep_their_actual_prior_ci(current_historical_world, task):
+    world = current_historical_world
+    # This child consumed the old accepted T010, not a later replacement's command.
+    world.trust["bindings"]["T010"]["command"] = "synthetic later CI awaiting qualification"
+    reader = v.Verifier(TASKS, world.store, source_anchor(world), now=NOW)
+    reader.verify(task)
+
+
 @pytest.mark.parametrize("mutation", ["control", "definition", "reader", "frozen-input"])
 def test_historical_bridge_rejects_unaccepted_content(accepted_historical_control, monkeypatch, mutation):
     ref = dict(accepted_historical_control)
@@ -74,7 +129,8 @@ def test_historical_dependency_retains_current_authentication_and_authority(monk
     if mutation == "binding": original["command"] += " changed"
     if mutation == "revoked": world.trust["revoked_authorities"].append(json.loads(world.store.blob(binding["authority"]))["id"])
     monkeypatch.setattr(v, "historical_verifier", lambda *a: SimpleNamespace(binding=lambda key: original,
-                                                                            verify=lambda *a: calls.append(True)))
+                                                                            verify=lambda *a: calls.append(True),
+                                                                            trust=deepcopy(world.trust), objects={}))
     verifier = world.verifier()
     if mutation == "pending": verifier.authenticated = False
     if mutation:

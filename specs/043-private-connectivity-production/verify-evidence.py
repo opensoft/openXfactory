@@ -685,7 +685,15 @@ class Verifier:
         if key in self.trust.get("historical_controls", {}):
             prior = historical_verifier(self.store, self.trust["historical_controls"][key], self.now)
             require(binding == prior.binding(key), "historical binding changed")
-            prior.verify(key, data)
+            # Keep the frozen graph/original objects, but apply current authority
+            # state throughout its dependency traversal, including cache rechecks.
+            prior.trust["revoked_authorities"] = prior.trust["revoked_authorities"] + self.trust["revoked_authorities"]
+            prior.trust["completed_authorities"] = self.trust.get("completed_authorities", {})
+            prior.objects = {**self.objects, **prior.objects}
+            try:
+                prior.verify(key, data)
+            except ValueError as exc:
+                raise EvidenceError(str(exc)) from exc
             self.cache.add(key)
             return
         if key in self.cache:
