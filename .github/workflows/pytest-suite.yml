@@ -1139,6 +1139,9 @@ jobs:
         shell: bash
         env:
           PC043_EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          COVERAGE_PROCESS_START: ${{ github.workspace }}/openxFactory/.coveragerc
+          COVERAGE_ROOT: ${{ github.workspace }}/private-connectivity-043-source
+          COVERAGE_FILE: ${{ github.workspace }}/openxFactory/.coverage-reports/.coverage
         run: |
           set -euo pipefail
           original_tree="$(pwd)"
