@@ -234,13 +234,16 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import base64
 import binascii
 import hashlib
 import json
 import os
 import re
+import secrets
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -278,78 +281,23 @@ REMEDIATION = (
     "docs/contract-versioning-policy.md."
 )
 
-# The refusal vocabulary, fixed. Other code may branch on the CODE, so no
-# failure path here may invent one.
-#
-# `pin-unreadable` is NOT in the vocabulary and its absence is the point, on the
-# siblings' reasoning: the five below describe an ENVIRONMENT that disagrees with
-# a well-formed pin, each a finding a reviewer can act on. `pin-unreadable`
-# describes a state in which no finding can be reached at all. It still exits 2 —
-# excluded from the vocabulary, not from fail-closure.
-REFUSAL_CODES: tuple[str, ...] = (
-    "pin-tag-only",
-    "pin-no-target",
-    "pin-unresolvable",
-    "pin-integrity-mismatch",
-    "pin-lockfile-mismatch",
-    "pin-version-mismatch",
-    "pin-disposition-malformed",
-    "pin-disposition-stale",
-    "pin-report-unreadable",
-    "pin-repo-unidentified",
-)
+# One fixed refusal catalog drives the machine vocabulary and operator help.
+# pin-unreadable remains outside this vocabulary: it means no finding could
+# be reached, rather than disagreement with an otherwise usable pin.
+REFUSALS: dict[str, str] = {
+    "pin-tag-only": "The artifact or dependency closure is not content-addressed.",
+    "pin-no-target": "No valid complete or named validation target was selected.",
+    "pin-unresolvable": "The pinned tool cannot be safely resolved or executed.",
+    "pin-integrity-mismatch": "Published artifact bytes disagree with the pin.",
+    "pin-lockfile-mismatch": "The committed lockfile, package or closure disagrees with the pin.",
+    "pin-version-mismatch": "The installed or reported tool version disagrees with the pin.",
+    "pin-disposition-malformed": "A declared exception lacks its matching fields or cited authority.",
+    "pin-disposition-stale": "An exception matches no finding in this validation run.",
+    "pin-report-unreadable": "The pinned CLI returned no usable machine-readable verdict.",
+    "pin-repo-unidentified": "The repository identity needed to scope exceptions is unavailable.",
+}
+REFUSAL_CODES: tuple[str, ...] = tuple(REFUSALS)
 
-# The four codes above the line are ENVIRONMENT disagreements with a well-formed
-# pin. The four below are the disposition mechanism's own, and they are in the
-# vocabulary on the same test the first five passed: each describes a finding a
-# REVIEWER CAN ACT ON, in a place a reviewer can reach.
-#
-#   pin-disposition-malformed  an exception was declared without a citation, or
-#                              without the keys that decide what it matches
-#   pin-disposition-stale      an exception is matched by no finding in this run
-#   pin-report-unreadable      the pinned CLI produced no machine-readable
-#                              verdict, so no finding could be reconciled against
-#                              anything — refused rather than degraded to the
-#                              streaming path, because a run that cannot read its
-#                              own findings cannot honour a disposition and would
-#                              re-fail conditions the pin has settled
-#   pin-repo-unidentified      dispositions are declared and the validated tree's
-#                              identity is unresolvable, so which of them are in
-#                              scope is unanswerable
-#
-# AND ONE MORE, ADDED 2026-09-08 WITH THE DEPENDENCY CLOSURE. It is a NEW code
-# and not an overload of `pin-integrity-mismatch`, because the two send a reader
-# to different files: `pin-integrity-mismatch` says the REGISTRY served bytes
-# this repository does not pin, and the remedy is to re-cut the pin or to
-# distrust the registry; `pin-lockfile-mismatch` says the two halves of THIS
-# REPOSITORY'S OWN pin disagree with each other, and the remedy is to regenerate
-# the committed lockfile at the pinned version. Collapsing them would name the
-# wrong defect in the one message a reviewer reads.
-#
-#   pin-lockfile-mismatch      the committed lockfile and the pin disagree — the
-#                              file's bytes do not hash to `lockfile_integrity:`,
-#                              or its entry for the pinned package carries an
-#                              integrity other than the pin's referent (or no
-#                              entry at all), or the tree it locks is not the
-#                              size `lockfile_packages:` records, or SOME OTHER
-#                              locked entry carries no `resolved`/`integrity` of
-#                              its own (or is a `link: true` local directory), or
-#                              its ROOT entry does not ASK FOR the pinned package
-#                              at all — the last two added 2026-09-08 on review
-#                              of PR #813: the staging manifest is derived from
-#                              the root entry, so a root asking for nothing
-#                              yields an `npm ci` that installs nothing and exits
-#                              0; and a closure with one unaddressed member is
-#                              not a closure, `npm ci` verifying a package
-#                              against the integrity recorded FOR IT
-#
-# A lockfile in a FORM this reader does not implement — a `lockfileVersion`
-# outside `LOCKFILE_VERSIONS` — is NOT this code either: it is `pin-unreadable`,
-# because the two statements do not disagree, one of them is illegible.
-#
-# A pin that declares NO lockfile at all is NOT this code: it is `pin-tag-only`,
-# because unresolved caret ranges are a MOVING REFERENCE, and "the moment a pin
-# trusts a range the fail-closed property is gone" is that code's own sentence.
 
 # The disposition keys, split into what MUST be present and what MAY be. The
 # split is a declaration rather than a chain of `if key not in entry`, so
@@ -476,6 +424,183 @@ def _unquote(raw: str) -> str:
     return value
 
 
+
+def _operand_path(value) -> Path:
+    path = Path(value).expanduser()
+    if (".." in path.parts or any(ord(c) < 32 for part in path.parts for c in part)):
+        raise PinRefusal("pin-unresolvable", "parent path components are not authorized")
+    return path.absolute()
+
+
+@contextmanager
+def controlled_directory(path: Path, *, create=False):
+    """Retain directory identity without following any supplied links."""
+    required = ("O_NOFOLLOW", "O_DIRECTORY")
+    if any(not hasattr(os, name) for name in required) or os.open not in os.supports_dir_fd:
+        raise PinRefusal("pin-unresolvable", "safe filesystem descriptor operations are unavailable")
+    path = _operand_path(path)
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    fd = os.open(path.anchor, flags)
+    try:
+        for name in path.parts[1:]:
+            try:
+                child = os.open(name, flags, dir_fd=fd)
+            except FileNotFoundError:
+                if not create:
+                    raise
+                try:
+                    os.mkdir(name, 0o700, dir_fd=fd)
+                except FileExistsError:
+                    pass
+                child = os.open(name, flags, dir_fd=fd)
+            os.close(fd)
+            fd = child
+        yield fd
+    except FileNotFoundError:
+        raise
+    except OSError as error:
+        raise PinRefusal("pin-unresolvable", "filesystem authority is linked, absent or inaccessible") from error
+    finally:
+        os.close(fd)
+
+
+def _read_leaf_bytes(parent, name, *, limit):
+    if Path(name).name != name or name in (".", ".."):
+        raise PinRefusal("pin-unresolvable", "input name must be one component")
+    try:
+        fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent)
+        with os.fdopen(fd, "rb") as stream:
+            before = os.fstat(stream.fileno())
+            if (not stat.S_ISREG(before.st_mode) or before.st_nlink != 1
+                    or before.st_mode & 0o022):
+                raise PinRefusal("pin-unresolvable", "input must be an unshared-write regular single-link file")
+            data = stream.read(limit + 1)
+            after = os.fstat(stream.fileno())
+        fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns", "st_mode", "st_nlink")
+        if len(data) > limit or any(getattr(before, field) != getattr(after, field) for field in fields):
+            raise PinRefusal("pin-unresolvable", "input is oversized or changed during its read")
+        return data
+    except FileNotFoundError:
+        raise
+    except OSError as error:
+        raise PinRefusal("pin-unresolvable", "input is linked or inaccessible") from error
+
+
+def controlled_file_bytes(path: Path, *, limit=16 * 1024 * 1024) -> bytes:
+    """Bounded regular-file read with the parent identity retained."""
+    path = _operand_path(path)
+    with controlled_directory(path.parent) as parent:
+        return _read_leaf_bytes(parent, path.name, limit=limit)
+
+
+def _write_new_leaf(parent, name, data):
+    fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                 0o600, dir_fd=parent)
+    with os.fdopen(fd, "wb") as stream:
+        stream.write(data)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def _cache_directory_info(fd):
+    info = os.fstat(fd)
+    if info.st_uid != os.geteuid() or info.st_mode & 0o022:
+        raise PinRefusal("pin-unresolvable", "cache directory must be owned and not writable by others")
+    return info
+
+
+def _directory_still_named(path, fd):
+    try:
+        with controlled_directory(path) as current:
+            if not os.path.samestat(os.fstat(current), os.fstat(fd)):
+                raise PinRefusal("pin-unresolvable", "directory changed during materialization")
+    except FileNotFoundError as error:
+        raise PinRefusal("pin-unresolvable", "directory disappeared during materialization") from error
+
+
+def _descriptor_directory(fd):
+    anchor = Path("/proc") / str(os.getpid()) / "fd" / str(fd)
+    if not anchor.is_dir() or not os.path.samestat(anchor.stat(), os.fstat(fd)):
+        raise PinRefusal("pin-unresolvable",
+                         "anchored install directories unavailable; use the qualified Linux bench")
+    return anchor
+
+
+def retained_fetch_workspace(cache_root):
+    """Each installer invocation keeps its own evidence, never clearing another."""
+    root = _operand_path(cache_root)
+    with controlled_directory(root, create=True) as fd:
+        _cache_directory_info(fd)
+        name = ".fetch-" + secrets.token_hex(12)
+        os.mkdir(name, 0o700, dir_fd=fd)
+        _directory_still_named(root, fd)
+    return root / name
+
+
+def _authority_root(value) -> Path:
+    # Launch configuration may spell a trusted parent through a mounted alias;
+    # the selected leaf itself remains subject to the no-follow checks.
+    if isinstance(value, str) and not value.strip():
+        raise PinRefusal("pin-unresolvable", "operator roots cannot be empty")
+    root = _operand_path(value)
+    if root == Path(root.anchor):
+        raise PinRefusal("pin-unresolvable", "operator roots must be bounded directories")
+    return root.parent.resolve() / root.name
+
+
+def _within_roots(value, roots, *, directory=False) -> Path:
+    selected = _operand_path(value)
+    for declared in roots:
+        root = _authority_root(declared)
+        for ancestor in reversed((selected, *selected.parents)):
+            try:
+                same_root = ancestor.resolve() == root
+            except (OSError, RuntimeError):
+                same_root = False
+            if not same_root:
+                continue
+            chosen = root / selected.relative_to(ancestor)
+            # Existing components, including a missing leaf's existing parents,
+            # must not conceal a link. Creation belongs to the later writer.
+            parts = chosen.parts
+            for index in range(1, len(parts) + 1):
+                component = Path(*parts[:index])
+                try:
+                    info = component.lstat()
+                except FileNotFoundError:
+                    break
+                if stat.S_ISLNK(info.st_mode):
+                    raise PinRefusal("pin-unresolvable", "linked operand locations are not authorized")
+                if index < len(parts) or directory:
+                    if not stat.S_ISDIR(info.st_mode):
+                        raise PinRefusal("pin-unresolvable", "operand parent is not a directory")
+            return chosen
+    raise PinRefusal("pin-unresolvable", "operand is outside operator-selected roots")
+
+
+def authorize_cli_sources(args):
+    """Bind model selectors to separately supplied operator authority."""
+    configured = os.environ.get("XFACTORY_OPENSPEC_PIN_PATH")
+    expected = _authority_root(PIN_PATH if configured is None else configured)
+    supplied = _operand_path(args.pin) if args.pin is not None else expected
+    if supplied.resolve() != expected.resolve():
+        raise PinRefusal("pin-unresolvable", "--pin differs from operator-selected XFACTORY_OPENSPEC_PIN_PATH")
+    args.pin = str(expected)
+    scratch = os.environ.get("RUNNER_TEMP")
+    if getattr(args, "tarball", None) is not None:
+        artifact_root = os.environ.get("XFACTORY_OPENSPEC_ARTIFACT_ROOT")
+        roots = [Path.cwd() if artifact_root is None else artifact_root]
+        if scratch:
+            roots.append(scratch)
+        args.tarball = str(_within_roots(args.tarball, roots))
+    if not getattr(args, "no_cache", False) and not getattr(args, "path_mode", False):
+        roots = [default_cache_root()]
+        if scratch:
+            roots.append(scratch)
+        args.cache_dir = str(_within_roots(args.cache_dir or default_cache_root(),
+                                           roots, directory=True))
+
+
 def read_pin(pin_path: Path = PIN_PATH) -> dict:
     """The pin as a mapping, or `pin-unreadable`.
 
@@ -492,7 +617,7 @@ def read_pin(pin_path: Path = PIN_PATH) -> dict:
             "OpenSpec CLI only through this pin, so its absence is not an "
             "unpinned pass but an unanswerable question")
     try:
-        text = pin_path.read_text(encoding="utf-8")
+        text = controlled_file_bytes(pin_path).decode("utf-8")
     except OSError as exc:  # pragma: no cover - filesystem failure
         raise PinRefusal(
             "pin-unreadable",
@@ -924,7 +1049,7 @@ def verify_artifact(tarball: Path, integrity: str, shasum: str) -> None:
     over bytes whose SHA-512 already disagrees would name the weaker fact.
     """
     try:
-        payload = tarball.read_bytes()
+        payload = controlled_file_bytes(tarball, limit=128 * 1024 * 1024)
     except OSError as exc:
         raise PinRefusal(
             "pin-unresolvable",
@@ -1177,7 +1302,7 @@ def verify_lockfile(lockfile: Path, lockfile_integrity: str, packages: int,
     has been spent tells a reviewer nothing the question had already told them.
     """
     try:
-        raw = lockfile.read_bytes()
+        raw = controlled_file_bytes(lockfile)
     except OSError as exc:
         raise PinRefusal(
             "pin-unreadable",
@@ -1272,6 +1397,22 @@ def staging_manifest(document: dict, package: str) -> dict:
 # resolving the CLI — the pinned artifact, or an explicitly requested PATH
 # --------------------------------------------------------------------------
 
+
+def trusted_npm_executable(selected: str) -> str:
+    """A CLI operand may name the operator's npm, never choose an executable."""
+    configured = os.environ.get("XFACTORY_NPM_BINARY")
+    if configured is None:
+        configured = shutil.which("npm")
+    if not configured:
+        raise PinRefusal("pin-unresolvable", "the operator-selected npm is unavailable")
+    trusted = Path(configured).expanduser().absolute()
+    candidate = trusted if selected == "npm" else Path(selected).expanduser().absolute()
+    if candidate.resolve() != trusted.resolve() or not trusted.is_file() or not os.access(trusted, os.X_OK):
+        raise PinRefusal("pin-unresolvable",
+                         "--npm differs from the operator-selected XFACTORY_NPM_BINARY")
+    return str(trusted)
+
+
 def _run(argv: list[str], **kwargs) -> subprocess.CompletedProcess:
     try:
         return subprocess.run(argv, capture_output=True, text=True, check=False,
@@ -1294,17 +1435,23 @@ def fetch_artifact(package: str, version: str, destination: Path,
     path that could agree with the pin while everyone else's npm disagrees.
     Whatever it returns is checked against the content address regardless.
     """
-    if shutil.which(npm) is None:
+    explicit = Path(npm)
+    available = (explicit.is_file() and os.access(explicit, os.X_OK)
+                 if explicit.is_absolute() else shutil.which(npm) is not None)
+    if not available:
         raise PinRefusal(
             "pin-unresolvable",
             f"`{npm}` is not on PATH, so the pinned artifact cannot be fetched "
             "or verified. This tool refuses rather than falling back to an "
             "ambient `openspec`: an unanswerable question is never an implicit "
             "pass")
-    destination.mkdir(parents=True, exist_ok=True)
-    result = _run([npm, "pack", f"{package}@{version}",
-                   "--pack-destination", str(destination),
-                   "--no-audit", "--no-fund"])
+    with controlled_directory(destination, create=True) as fd:
+        _cache_directory_info(fd)
+        anchored = _descriptor_directory(fd)
+        result = _run([npm, "pack", f"{package}@{version}",
+                       "--pack-destination", str(anchored),
+                       "--no-audit", "--no-fund"])
+        _directory_still_named(destination, fd)
     if result.returncode != 0:
         raise PinRefusal(
             "pin-unresolvable",
@@ -1363,26 +1510,29 @@ def install_locked(prefix: Path, lockfile_bytes: bytes, package: str,
     the REGISTRY SHIPPED and that one reads what the BINARY SAYS, and a pin is
     satisfied only when both agree with it.
     """
-    prefix.mkdir(parents=True, exist_ok=True)
-    (prefix / "package-lock.json").write_bytes(lockfile_bytes)
-    manifest = staging_manifest(read_lockfile(lockfile_bytes), package)
-    (prefix / "package.json").write_text(
-        json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    result = _run([npm, "ci", "--ignore-scripts", "--no-audit", "--no-fund"],
-                  cwd=str(prefix))
-    executable = prefix / "node_modules" / ".bin" / binary
-    if result.returncode != 0 or not executable.exists():
-        raise PinRefusal(
-            "pin-unresolvable",
-            f"installing the pinned dependency closure into {prefix} failed "
-            f"(exit {result.returncode}, executable "
-            f"{'present' if executable.exists() else 'absent'}): "
-            f"{(result.stderr or result.stdout).strip() or 'no output'}")
-    assert_installed_package(prefix, package, version)
-    return executable
+    with controlled_directory(prefix, create=True) as fd:
+        _cache_directory_info(fd)
+        if os.listdir(fd):
+            raise PinRefusal("pin-unresolvable", "install generation is not empty; existing evidence is retained")
+        _write_new_leaf(fd, "package-lock.json", lockfile_bytes)
+        manifest = staging_manifest(read_lockfile(lockfile_bytes), package)
+        _write_new_leaf(fd, "package.json",
+                        (json.dumps(manifest, indent=2) + "\n").encode("utf-8"))
+        anchored = _descriptor_directory(fd)
+        result = _run([npm, "ci", "--ignore-scripts", "--no-audit", "--no-fund"],
+                      cwd=str(anchored))
+        executable = anchored / "node_modules" / ".bin" / binary
+        if result.returncode != 0 or not executable.exists():
+            raise PinRefusal("pin-unresolvable",
+                             "installing the pinned closure failed or left no executable")
+        assert_installed_package(anchored, package, version, directory_fd=fd)
+        _checked_cached_executable(anchored, binary)
+        _directory_still_named(prefix, fd)
+    return prefix / "node_modules" / ".bin" / binary
 
 
-def assert_installed_package(prefix: Path, package: str, version: str) -> str:
+def assert_installed_package(prefix: Path, package: str, version: str, *,
+                             directory_fd=None, cache_generation=False) -> str:
     """The pinned package is ON DISK, at its own path, at the pinned version.
 
     Split out rather than inlined because it is an ASSERTION ABOUT THE TREE and
@@ -1392,17 +1542,33 @@ def assert_installed_package(prefix: Path, package: str, version: str) -> str:
     named as such instead of arriving as a confusing verdict about a binary.
     """
     manifest = prefix / "node_modules" / Path(package) / "package.json"
-    if not manifest.is_file():
+    try:
+        if directory_fd is None:
+            raw = controlled_file_bytes(manifest)
+        else:
+            package_path = Path("node_modules") / package
+            if package_path.is_absolute() or ".." in package_path.parts:
+                raise PinRefusal("pin-unresolvable", "package directory escapes its install")
+            parent = os.dup(directory_fd)
+            try:
+                for part in package_path.parts:
+                    child = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                                    dir_fd=parent)
+                    os.close(parent)
+                    parent = child
+                raw = _read_leaf_bytes(parent, "package.json", limit=1024 * 1024)
+            finally:
+                os.close(parent)
+        installed = json.loads(raw.decode("utf-8"))
+        reported = str(installed["version"])
+    except FileNotFoundError as exc:
+        if cache_generation:
+            # Absence is a cache miss, not permission to follow a substitute.
+            # No-follow/special/link refusals remain PinRefusal and propagate.
+            raise
         raise PinRefusal(
             "pin-unresolvable",
-            f"`npm ci` reported success and left no {package} at "
-            f"node_modules/{package}/package.json under {prefix}. An install "
-            "that installed nothing is not a satisfied pin, however green its "
-            "exit code: the tree this gate adjudicates over would be a tree "
-            "nothing put the pinned product into")
-    try:
-        installed = json.loads(manifest.read_text(encoding="utf-8"))
-        reported = str(installed["version"])
+            f"npm ci left no complete {package} installation under {prefix}") from exc
     except (OSError, ValueError, KeyError, TypeError) as exc:
         raise PinRefusal(
             "pin-unresolvable",
@@ -1487,6 +1653,10 @@ def validation_targets(args: argparse.Namespace) -> list[list[str]]:
     if args.all:
         return [["validate", "--all", "--strict"]]
     if args.change:
+        for name in args.change:
+            if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", name) is None:
+                raise PinRefusal("pin-no-target",
+                                 "change id must be a bounded identifier, not an option or path")
         return [["validate", name, "--strict"] for name in args.change]
     raise PinRefusal(
         "pin-no-target",
@@ -1860,6 +2030,20 @@ def cache_key(package: str, version: str, shasum: str,
     return f"{package.replace('/', '__')}-{version}-{shasum}-{closure}"
 
 
+
+def _checked_cached_executable(prefix, binary):
+    if Path(binary).name != binary or binary in (".", ".."):
+        raise PinRefusal("pin-unresolvable", "binary name is not a bounded component")
+    executable = prefix / "node_modules" / ".bin" / binary
+    target = executable.resolve()
+    if not target.is_relative_to(prefix.resolve()):
+        raise PinRefusal("pin-unresolvable", "cached executable leaves its verified generation")
+    info = target.stat()
+    if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_mode & 0o022):
+        raise PinRefusal("pin-unresolvable", "cached executable is not an unshared regular file")
+    return executable
+
+
 def resolve_pinned(package: str, version: str, integrity: str, shasum: str,
                    binary: str, workspace: Path, cache_root: Path | None,
                    lockfile_bytes: bytes, lockfile_integrity: str,
@@ -1888,28 +2072,67 @@ def resolve_pinned(package: str, version: str, integrity: str, shasum: str,
         return install_locked(workspace / "prefix", lockfile_bytes, package,
                               version, binary, npm=npm)
 
-    prefix = cache_root / cache_key(package, version, shasum, lockfile_bytes)
-    stamp = prefix / ".pin-verified"
-    executable = prefix / "node_modules" / ".bin" / binary
+    root = _operand_path(cache_root)
+    key = cache_key(package, version, shasum, lockfile_bytes)
+    if Path(key).name != key or key in (".", ".."):
+        raise PinRefusal("pin-unresolvable", "cache key is not one component")
     stamped = f"{integrity}\n{lockfile_integrity}"
-    if executable.exists() and stamp.is_file():
-        try:
-            if stamp.read_text(encoding="utf-8").strip() == stamped:
-                return executable
-        except OSError:
-            pass
-    if prefix.exists():
-        shutil.rmtree(prefix, ignore_errors=True)
-    executable = install_locked(prefix, lockfile_bytes, package, version,
-                                binary, npm=npm)
-    try:
-        stamp.write_text(stamped + "\n", encoding="utf-8")
-    except OSError:
-        # A cache that cannot be stamped is a cache that will be rebuilt next
-        # run. That costs time and nothing else, so it is never a reason to
-        # refuse a run whose artifact verified.
-        pass
-    return executable
+    with controlled_directory(root, create=True) as root_fd:
+        _cache_directory_info(root_fd)
+        names = [key] + sorted(name for name in os.listdir(root_fd)
+                               if name.startswith(key + ".install-"))
+        for name in names:
+            try:
+                fd = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                             dir_fd=root_fd)
+            except FileNotFoundError:
+                continue
+            except OSError as error:
+                raise PinRefusal("pin-unresolvable", "cache generation is linked or non-directory") from error
+            try:
+                _cache_directory_info(fd)
+                try:
+                    recorded = _read_leaf_bytes(fd, ".pin-verified", limit=4096).decode("utf-8").strip()
+                except (FileNotFoundError, UnicodeError):
+                    continue
+                if recorded != stamped:
+                    continue
+                anchored = _descriptor_directory(fd)
+                try:
+                    assert_installed_package(anchored, package, version,
+                                             directory_fd=fd, cache_generation=True)
+                    _checked_cached_executable(anchored, binary)
+                except FileNotFoundError:
+                    # Preserve an evicted/incomplete tree and inspect later
+                    # generations before allocating a new exclusive install.
+                    continue
+                _directory_still_named(root / name, fd)
+                _directory_still_named(root, root_fd)
+                return root / name / "node_modules" / ".bin" / binary
+            finally:
+                os.close(fd)
+        # An invalid or in-progress generation stays untouched. Concurrent
+        # invocations allocate their own private generation with exclusive mkdir.
+        name = key
+        for _attempt in range(10):
+            try:
+                os.mkdir(name, 0o700, dir_fd=root_fd)
+                break
+            except FileExistsError:
+                name = key + ".install-" + secrets.token_hex(12)
+        else:
+            raise PinRefusal("pin-unresolvable", "could not allocate a fresh install generation")
+        _directory_still_named(root, root_fd)
+        prefix = root / name
+        executable = install_locked(prefix, lockfile_bytes, package, version, binary, npm=npm)
+        with controlled_directory(prefix) as fd:
+            try:
+                _write_new_leaf(fd, ".pin-verified", (stamped + "\n").encode("utf-8"))
+            except OSError:
+                pass  # This verified run can succeed; an unstamped tree is never reused.
+            _directory_still_named(prefix, fd)
+        _directory_still_named(root, root_fd)
+        return executable
 
 
 # --------------------------------------------------------------------------
@@ -1922,7 +2145,10 @@ def build_parser() -> argparse.ArgumentParser:
         description=("Run `openspec validate … --strict` through the CLI pinned "
                      "by contracts/openspec-cli-pin.yaml, verifying the "
                      "artifact's content address before it is invoked."),
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="Fixed refusal codes (exit 2):\n" + "\n".join(
+            f"  {code}: {description}" for code, description in REFUSALS.items())
+        + "\npin-unreadable also exits 2 when no pin finding can be reached.")
     parser.add_argument(
         "--all", action="store_true",
         help="validate every change and specification (`validate --all --strict`)")
@@ -1973,7 +2199,8 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
     try:
-        pin_path = Path(args.pin) if args.pin else PIN_PATH
+        authorize_cli_sources(args)
+        pin_path = Path(args.pin)
         pin = read_pin(pin_path)
         version = pinned_version(pin)                       # check 1
         integrity, shasum = pinned_integrity(pin)
@@ -1983,6 +2210,8 @@ def main(argv: list[str] | None = None) -> int:
             pin, pin_path)
         dispositions = pinned_dispositions(pin)
         targets = validation_targets(args)                  # check 2
+        if not args.path_mode:
+            args.npm = trusted_npm_executable(args.npm)
         repo = Path(args.repo).resolve() if args.repo else ROOT
         # Asked BEFORE anything is fetched, for the same reason the shape checks
         # are: a pin whose exceptions cannot be scoped is unusable, and learning

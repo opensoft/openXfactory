@@ -9,6 +9,51 @@ predate mandatory annotated tags and carry none. Tag enforcement begins at
 `contract-v1.7` — the first realized release published with an annotated tag —
 without fabricating historical tags.
 
+## contract-v4.2 — 2026-11-15 (nonbreaking conformance maintenance)
+
+Realizes the credential-marker portion of feature
+[045 P1 security boundaries](../specs/045-p1-security-boundaries/spec.md),
+under Brett Heap's instruction to finish the P1 repairs, preserve active
+sessions and historical evidence, retain checks and billing, and verify main.
+
+The negative identity-brokering fixture
+[committed provider credential](identity-brokering/examples/negative/idp-credential-committed-in-manifest.yaml)
+now carries the explicit nonissued marker NOT_ISSUED. It retains the exact
+credential-value-embedded expected failure and forbidden client_secret
+property. The unchanged credential-name scanner and closed schema still refuse
+it; the full unchanged family corpus passes 14 positive examples and 41
+negative confirmations across all nine requirements. The historical literal's
+issuance remains unknown; no liveness request or credential rotation occurred.
+
+This is a compatible maintenance minor in the existing two-part release
+series. No schema shape, integer schema version, required field, authorization
+rule or validator semantics changes. Existing major-4 consumers remain valid
+at their declared pins and need no migration for this fixture correction.
+
+The conformance example is outside the closed digest membership but is
+content-addressed by the realized release commit. AGENTS.md requires this
+cut despite that exclusion. The manifest version, this entry, fixture
+declaration and generated contract-v4.2 inventory land atomically. The new
+inventory reproduces all existing 342 members. The two editorial manifest
+and changelog digests change, and the cut-coupled intent-compliance boundary
+test explicitly classifies contract-v4.2 with its existing membership and
+schema-pin assertions. That test is itself a member, so its digest is rebuilt
+after the advance. Unknown future releases still fail. All published older
+inventories and annotated tags remain byte-identical; membership, contract
+schemas and runtime semantics stay intact.
+
+Allocated after #1321 and #1323 landed at main 5b636c767fccf253165b36b6aed4fe04eb8cd27b;
+row-4 claim is opensoft/openXfactory#630 comment 6901128126. The forward-only
+candidate refresh integrates main a3bef00d503176c55660fb2e1bc9133a9a510686
+(#1326 and #1328); version/tag availability was rechecked and contract-v4.2
+remains unpublished and next available. The first full cut CI passed 10,762
+tests and exposed the two deliberately closed release-state cases above;
+their explicit advance and regenerated test digest are part of this cut.
+The annotated
+tag remains owed until the exact published realization passes all gates,
+supported-domain regression, independent review and promotion verification.
+It is then published once and independently read back; it is never moved.
+
 ## contract-v4.1 — 2026-10-09 (additive; the factory MCP declaration is registered for the first time, with the authorization block a deployed service carries, and the clearing family joins the release inventory at its floor)
 
 Realizes `amend-factory-mcp-conformance-auth-profile` **task 2.6**, through

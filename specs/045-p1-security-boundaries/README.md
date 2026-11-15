@@ -26,3 +26,10 @@ steps. Remaining P1 worker/report/control, executable, vendor and fixture
 provenance work stays explicit in the task list.
 
 [Phase 2 local evidence](phase2-local-evidence.md) records artifact/policy verification.
+
+[Phase 3 local evidence](phase3-local-evidence.md) records execution-boundary verification.
+
+[Fixture marker and provenance evidence](phase4-fixture-evidence.md) records
+the unchanged negative refusal and the remaining historical issuance uncertainty.
+[Archived prior PostgreSQL records](../../tests/hermes_runtime_contracts/postgres/evidence/history/pre-p1-security-20261115/README.md)
+preserve the old source-bound acceptance bytes beside the new current records.
