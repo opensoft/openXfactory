@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import sys
 import types
 import unittest
@@ -221,6 +222,8 @@ class WriteNativeProfile(unittest.TestCase):
     """The on-disk half: merge, permissions, and refuse-before-write."""
 
     def setUp(self):
+        previous_umask = os.umask(0o077)
+        self.addCleanup(os.umask, previous_umask)
         self.tmp = TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.store = Path(self.tmp.name)
@@ -354,6 +357,8 @@ class ExtractAndSave(unittest.TestCase):
     """The wiring: capture -> merge -> refuse, with `verify()` never run."""
 
     def setUp(self):
+        previous_umask = os.umask(0o077)
+        self.addCleanup(os.umask, previous_umask)
         self.tmp = TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.store = Path(self.tmp.name)

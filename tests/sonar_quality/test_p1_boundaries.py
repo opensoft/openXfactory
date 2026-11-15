@@ -13,12 +13,23 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 
 
+@pytest.fixture(autouse=True)
+def private_synthetic_creation():
+    """Valid synthetic private state; unsafe-mode cases set their own modes."""
+    previous = os.umask(0o077)
+    try:
+        yield
+    finally:
+        os.umask(previous)
+
+
 @pytest.fixture
-def auth():
+def auth(tmp_path, monkeypatch):
     spec = importlib.util.spec_from_file_location(
         "p1_auth_test_support", ROOT / "tests/notebooklm/test_nlm_auth.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    monkeypatch.setenv("NOTEBOOKLM_MCP_CLI_PATH", str(tmp_path / "native-store"))
     return module.nlm_auth
 
 
@@ -101,7 +112,7 @@ def test_busy_profile_writer_refuses_without_touching_state(auth, tmp_path):
 def test_wrong_account_keeps_modes_and_all_native_bytes(auth, tmp_path):
     pdir = tmp_path / "profiles/safe"
     pdir.mkdir(parents=True)
-    pdir.chmod(0o755)
+    pdir.chmod(0o700)
     (pdir / "cookies.json").write_text('["original"]')
     (pdir / "metadata.json").write_text('{"email": "stored@example.invalid", "unknown": 42}')
     before = {p.name: p.read_bytes() for p in pdir.iterdir()}
@@ -109,7 +120,7 @@ def test_wrong_account_keeps_modes_and_all_native_bytes(auth, tmp_path):
         auth.write_native_profile("safe", [], "new", "new",
                                   email="different@example.invalid", store=tmp_path)
     assert {p.name: p.read_bytes() for p in pdir.iterdir()} == before
-    assert pdir.stat().st_mode & 0o777 == 0o755
+    assert pdir.stat().st_mode & 0o777 == 0o700
 
 
 def refuse_extractor(*args, **kwargs):
@@ -140,7 +151,7 @@ def test_occupied_browser_profile_refuses_before_setup(auth, tmp_path, monkeypat
     with pytest.raises((ValueError, OSError)):
         auth.main()
     assert (browser / marker).read_text() == "synthetic-live-owner"
-    assert browser.stat().st_mode & 0o777 == 0o755
+    assert browser.stat().st_mode & 0o777 == 0o700
 
 
 def test_legitimate_profile_keeps_unknown_keys_and_private_creation(auth, tmp_path):
@@ -231,14 +242,16 @@ def test_foreign_writable_store_refuses_without_creating_profile(auth, tmp_path)
 def test_browser_invocation_root_itself_is_not_a_dedicated_profile(auth, tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     with pytest.raises((ValueError, OSError)):
-        auth.prepare_browser_profile(str(tmp_path))
+        with auth.prepare_browser_profile(str(tmp_path)):
+            pytest.fail("invocation root accepted")
     assert tmp_path.stat().st_mode & 0o777 == 0o700
 
 
 def test_safe_browser_subdirectory_is_created_privately_without_startup(auth, tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     chosen = tmp_path / "browser"
-    assert auth.prepare_browser_profile(str(chosen)) == chosen
+    with auth.prepare_browser_profile(str(chosen)) as anchored:
+        assert os.path.samestat(anchored.stat(), chosen.stat())
     assert chosen.stat().st_mode & 0o777 == 0o700
 
 
@@ -305,14 +318,14 @@ def test_native_metadata_update_during_staging_is_preserved(auth, tmp_path, monk
 def test_serialization_failure_keeps_profile_modes_and_bytes(auth, tmp_path):
     pdir = tmp_path / "profiles/safe"
     pdir.mkdir(parents=True)
-    pdir.chmod(0o755)
+    pdir.chmod(0o700)
     (pdir / "cookies.json").write_text('["original"]')
     (pdir / "metadata.json").write_text('{"unknown": 42}')
     before = {p.name: p.read_bytes() for p in pdir.iterdir()}
     with pytest.raises(TypeError):
         auth.write_native_profile("safe", [object()], "new", "new", store=tmp_path)
     assert {p.name: p.read_bytes() for p in pdir.iterdir()} == before
-    assert pdir.stat().st_mode & 0o777 == 0o755
+    assert pdir.stat().st_mode & 0o777 == 0o700
 
 
 def test_oversized_metadata_refuses_before_cookie_write(auth, tmp_path):
@@ -335,7 +348,8 @@ def test_browser_directory_link_is_refused_without_outside_changes(auth, tmp_pat
     (cwd / "browser").symlink_to(outside, target_is_directory=True)
     monkeypatch.chdir(cwd)
     with pytest.raises((ValueError, OSError)):
-        auth.prepare_browser_profile(str(cwd / "browser"))
+        with auth.prepare_browser_profile(str(cwd / "browser")):
+            pytest.fail("linked browser accepted")
     assert list(outside.iterdir()) == []
 
 
@@ -345,7 +359,8 @@ def test_default_private_browser_state_is_authorized_independently_from_cwd(auth
     default = tmp_path / "private-default"
     monkeypatch.chdir(cwd)
     monkeypatch.setattr(auth, "DEFAULT_PROFILE_DIR", str(default))
-    assert auth.prepare_browser_profile(str(default)) == default
+    with auth.prepare_browser_profile(str(default)) as anchored:
+        assert os.path.samestat(anchored.stat(), default.stat())
     assert default.stat().st_mode & 0o777 == 0o700
 
 
@@ -362,3 +377,121 @@ def test_read_only_or_shared_write_credential_targets_preserve_native_state(auth
         save(auth, tmp_path)
     assert {p.name: p.read_bytes() for p in pdir.iterdir()} == before
     assert (pdir / leaf).stat().st_mode & 0o777 == mode
+
+
+@pytest.mark.parametrize("target", ["store", "profiles", "profile", "cookies.json", "metadata.json"])
+def test_readable_private_state_refuses_before_setup_without_mode_changes(auth, tmp_path, monkeypatch, target):
+    store = tmp_path / "store"
+    pdir, _ = save(auth, store)
+    selected = {"store": store, "profiles": pdir.parent, "profile": pdir}.get(target, pdir / target)
+    mode = 0o755 if selected.is_dir() else 0o644
+    selected.chmod(mode)
+    before = {p.name: p.read_bytes() for p in pdir.iterdir()}
+    monkeypatch.setenv("NOTEBOOKLM_MCP_CLI_PATH", str(store))
+    monkeypatch.setattr(auth, "_load_cli_extractors", refuse_extractor)
+    monkeypatch.setattr(sys, "argv", ["nlm_auth.py", "refresh", "--profile", "safe", "--cdp-url", "http://127.0.0.1:9444"])
+    with pytest.raises(ValueError, match="private"):
+        auth.main()
+    assert selected.stat().st_mode & 0o777 == mode
+    assert {p.name: p.read_bytes() for p in pdir.iterdir()} == before
+
+
+def test_preflight_missing_store_is_read_only(auth, tmp_path):
+    store = tmp_path / "not-created"
+    token = auth.profile_generation("safe", store)
+    assert token[1:] == (None, (None, None))
+    assert not store.exists()
+
+
+def test_preflight_inspects_existing_ancestors_even_when_profile_is_missing(auth, tmp_path):
+    store = tmp_path / "store"
+    store.mkdir(mode=0o755)
+    store.chmod(0o755)
+    with pytest.raises(ValueError, match="private"):
+        auth.profile_generation("safe", store)
+    assert not (store / "profiles").exists()
+
+
+def test_older_capture_cannot_replace_newer_credentials(auth, tmp_path):
+    store = tmp_path / "store"
+    pdir, _ = save(auth, store)
+    older = auth.profile_generation("safe", store)
+    newer = auth.profile_generation("safe", store)
+    auth.write_native_profile("safe", [], "newer-csrf", "newer-session",
+                              store=store, expected_generation=newer)
+    before = {p.name: p.read_bytes() for p in pdir.iterdir()}
+    with pytest.raises(ValueError, match="since capture began"):
+        auth.write_native_profile("safe", [], "older-csrf", "older-session",
+                                  store=store, expected_generation=older)
+    assert {p.name: p.read_bytes() for p in pdir.iterdir()} == before
+
+
+def test_browser_anchor_survives_original_path_substitution(auth, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    browser, parked, outside = (tmp_path / name for name in ("browser", "parked", "outside"))
+    outside.mkdir()
+    with auth.prepare_browser_profile(str(browser)) as anchored:
+        browser.rename(parked)
+        browser.symlink_to(outside, target_is_directory=True)
+        # Exercise a separate process, like Playwright's driver/browser.
+        import subprocess
+        subprocess.run([sys.executable, "-c",
+                        "import pathlib,sys; (pathlib.Path(sys.argv[1])/'synthetic').write_text('anchored')",
+                        str(anchored)], check=True)
+        assert (parked / "synthetic").read_text() == "anchored"
+        assert list(outside.iterdir()) == []
+    assert not anchored.exists()
+
+
+@pytest.mark.parametrize("cdp,mode,existing", [
+    (False, "bootstrap", True), (False, "refresh", False),
+    (True, "refresh", True), (True, "refresh", False),
+])
+def test_main_keeps_profile_anchor_and_closes_only_owned_browser(
+        auth, tmp_path, monkeypatch, cdp, mode, existing):
+    from contextlib import contextmanager
+    from types import SimpleNamespace
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(auth, "_load_cli_extractors", lambda _: (None, None))
+    monkeypatch.setattr(auth, "_load_email_extractor", lambda _: None)
+    monkeypatch.setattr(auth.time, "sleep", lambda _: None)
+    events = []
+    page = SimpleNamespace(url=auth.NB_URL, goto=lambda *a, **k: events.append("navigate"))
+    context = SimpleNamespace(pages=[page] if existing else [], new_page=lambda: page,
+                              close=lambda: events.append("close"))
+    browser = SimpleNamespace(contexts=[context] if existing else [], new_context=lambda: context)
+    anchor = []
+
+    def launch(path, **kwargs):
+        assert Path(path).is_dir()
+        anchor.append(Path(path))
+        return context
+
+    @contextmanager
+    def driver():
+        yield SimpleNamespace(chromium=SimpleNamespace(
+            launch_persistent_context=launch, connect_over_cdp=lambda _: browser))
+        events.append("driver-stop")
+
+    def capture(*args, **kwargs):
+        if not cdp:
+            assert anchor[0].is_dir()
+        assert kwargs["expected_generation"] == auth.profile_generation("safe")
+        events.append("capture")
+        return 0
+
+    monkeypatch.setattr(auth, "sync_playwright", driver)
+    monkeypatch.setattr(auth, "extract_and_save", capture)
+    argv = ["nlm_auth.py", mode, "--profile", "safe", "--profile-dir",
+            str(tmp_path / "browser"), "--channel", "bundled"]
+    if cdp:
+        argv += ["--cdp-url", "http://127.0.0.1:9444"]
+    monkeypatch.setattr(sys, "argv", argv)
+    assert auth.main() == 0
+    assert events[-1] == "driver-stop"
+    if cdp:
+        assert "close" not in events
+        assert not (tmp_path / "browser").exists()
+    else:
+        assert events.index("close") < events.index("driver-stop")
+        assert not anchor[0].exists()

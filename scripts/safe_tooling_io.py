@@ -33,8 +33,8 @@ def _component(name):
 
 def _private_directory(fd):
     info = os.fstat(fd)
-    if info.st_uid != os.geteuid() or info.st_mode & 0o022:
-        raise UnsafePath("private directory is foreign-owned or writable by others")
+    if info.st_uid != os.geteuid() or info.st_mode & 0o077:
+        raise UnsafePath("private directory is foreign-owned or accessible by others")
 
 
 @contextmanager
@@ -97,8 +97,8 @@ def exclusive_writer(directory_fd):
 
 def _owned_regular(info, *, writable=False):
     if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
-            or info.st_nlink != 1 or info.st_mode & 0o022):
-        raise UnsafePath("private file must be regular, owned, unshared-write and single-link")
+            or info.st_nlink != 1 or info.st_mode & 0o077):
+        raise UnsafePath("private file must be regular, owned, private and single-link")
     if writable and not info.st_mode & stat.S_IWUSR:
         raise UnsafePath("read-only credential state cannot be replaced")
 

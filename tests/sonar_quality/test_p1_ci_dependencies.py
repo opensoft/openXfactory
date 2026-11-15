@@ -3,6 +3,11 @@ from pathlib import Path
 import json
 import shlex
 import re
+import os
+import shutil
+import subprocess
+
+import pytest
 
 import yaml
 
@@ -15,6 +20,21 @@ def workflow(name):
 
 def steps(doc):
     return [step for job in doc["jobs"].values() for step in job.get("steps", [])]
+
+
+
+def npm_install_command(script):
+    commands = []
+    for line in script.replace(chr(92) + chr(10), " ").splitlines():
+        argv = shlex.split(line, comments=True)
+        if argv[:2] == ["npm", "ci"]:
+            commands.append(argv)
+    assert len(commands) == 1
+    argv = commands[0]
+    assert "--ignore-scripts" in argv
+    assert "--no-audit" in argv and "--no-fund" in argv
+    assert "--prefix" in argv and "-g" not in argv and "--global" not in argv
+    return argv
 
 
 def test_privileged_python_installs_require_hashes_and_wheels():
@@ -58,7 +78,7 @@ def test_worker_fallback_is_still_enrolled_and_has_no_global_or_unlocked_install
     assert fallback["if"] == "needs.prepare.outputs.omnigent != 'true' && env.HAS_ANTHROPIC_KEY == 'true'"
     assert fallback["run"] == "bash openxFactory/.github/worker-cli/install.sh"
     script = (ROOT / ".github/worker-cli/install.sh").read_text()
-    assert "npm ci" in script and "--ignore-scripts" in script
+    npm_install_command(script)
     assert "npm install" not in script and " -g " not in script
     assert "--version" in script and "env -i" in script
     assert "GITHUB_PATH" in script
@@ -92,3 +112,38 @@ def test_privileged_job_permissions_and_trusted_core_are_preserved():
     core = next(s for s in steps(review) if s.get("id") == "core")
     assert core["with"]["persist-credentials"] is False
     assert core["with"]["ref"] == "ce9236363d044bc6d8cf9b9f7a5bd15ecaff9559"
+
+
+def test_comment_cannot_mask_missing_lifecycle_protection():
+    script = (ROOT / ".github/worker-cli/install.sh").read_text()
+    mutated = script.replace(" --ignore-scripts", "") + "\n# --ignore-scripts"
+    with pytest.raises(AssertionError):
+        npm_install_command(mutated)
+
+
+def test_worker_launcher_enforces_updates_after_real_worker_env_scrub(tmp_path, monkeypatch):
+    from scripts.doc_health.semantic import _scrubbed_env
+    install = tmp_path / "worker"
+    bindir = install / "bin"
+    native = install / "node_modules/@anthropic-ai/claude-code-linux-x64/claude"
+    bindir.mkdir(parents=True)
+    native.parent.mkdir(parents=True)
+    shutil.copyfile(ROOT / ".github/worker-cli/launcher.sh", bindir / "claude")
+    (bindir / "claude").chmod(0o700)
+    native.write_text('#!/bin/sh\nprintf \'%s|%s|%s\' "$DISABLE_UPDATES" "$DISABLE_AUTOUPDATER" "$*"\n')
+    native.chmod(0o700)
+    monkeypatch.setenv("DISABLE_UPDATES", "0")
+    monkeypatch.setenv("DISABLE_AUTOUPDATER", "0")
+    env = _scrubbed_env()
+    result = subprocess.run([str(bindir / "claude"), "--version", "synthetic"], env=env,
+                            capture_output=True, text=True, check=True)
+    assert result.stdout == "1|1|--version synthetic"
+
+
+def test_dependency_acceptance_uses_the_actual_aggregation_provider_layout():
+    doc = workflow("privileged-dependencies.yml")
+    checkout = next(s for s in steps(doc) if "actions/checkout@" in s.get("uses", ""))
+    assert checkout["with"]["path"] == "openxFactory"
+    scripts = [s["run"] for s in steps(doc) if "run" in s]
+    assert any("bash openxFactory/.github/worker-cli/install.sh" in s for s in scripts)
+    assert all("-r .github/" not in s for s in scripts)

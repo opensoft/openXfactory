@@ -52,6 +52,7 @@ Two ways to reach a logged-in browser (either produces the same full profile):
 """
 from __future__ import annotations
 import argparse, json, os, re, subprocess, sys, time
+from contextlib import contextmanager, ExitStack
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
@@ -256,7 +257,8 @@ def validate_profile_name(profile: str) -> str:
     return profile
 
 
-def prepare_browser_profile(path: str) -> Path:
+@contextmanager
+def prepare_browser_profile(path: str):
     """Authorize dedicated browser state before extractors or browser startup."""
     chosen = Path(path).expanduser().absolute()
     default = Path(DEFAULT_PROFILE_DIR).expanduser().absolute()
@@ -273,8 +275,46 @@ def prepare_browser_profile(path: str) -> Path:
             except FileNotFoundError:
                 continue
             raise UnsafePath("browser profile is occupied; use its explicit CDP connection")
-        os.fchmod(descriptor, 0o700)
-    return chosen
+        # The driver and browser are separate processes: /proc/self would
+        # refer to their descriptor tables. Retain our descriptor throughout
+        # the launched context lifetime, even if the original path is moved.
+        anchored = Path("/proc") / str(os.getpid()) / "fd" / str(descriptor)
+        if not anchored.is_dir() or not os.path.samestat(
+                os.stat(anchored), os.fstat(descriptor)):
+            raise UnsafePath("anchored browser profiles are unavailable")
+        yield anchored
+
+
+
+def profile_generation(profile, store=None):
+    """Read-only preflight before any browser/extractor/authentication work.
+
+    Inspect every existing store/profile component and both native file
+    signatures. Missing state is valid; nothing is created or repaired here.
+    """
+    pdir = profile_dir(profile, store)
+    try:
+        with directory_handle(pdir.parent.parent, private=True) as base:
+            with private_child(base, "profiles") as profiles:
+                with private_child(profiles, profile) as descriptor:
+                    info = os.fstat(descriptor)
+                    signatures = tuple(target_signature(descriptor, name)
+                                       for name in ("cookies.json", "metadata.json"))
+                    return str(pdir), (info.st_dev, info.st_ino), signatures
+    except FileNotFoundError:
+        return str(pdir), None, (None, None)
+
+
+def _check_generation(pdir, descriptor, expected_generation):
+    if expected_generation is None:
+        return
+    path, identity, signatures = expected_generation
+    info = os.fstat(descriptor)
+    current = tuple(target_signature(descriptor, name)
+                    for name in ("cookies.json", "metadata.json"))
+    if (path != str(pdir) or current != signatures or
+            identity is not None and identity != (info.st_dev, info.st_ino)):
+        raise UnsafePath("native profile changed since capture began; capture again")
 
 
 def read_profile_metadata(pdir: Path) -> dict:
@@ -393,7 +433,8 @@ def write_native_profile(profile: str, cookies: list[dict],
                          email: str | None = None,
                          build_label: str | None = None,
                          force: bool = False,
-                         store: str | os.PathLike | None = None) -> tuple[Path, str]:
+                         store: str | os.PathLike | None = None,
+                         expected_generation=None) -> tuple[Path, str]:
     """Write the FULL native profile: cookies.json (LIST) + metadata.json.
 
     Mirrors AuthManager.save_profile: cookies.json is the cookie list, and
@@ -411,6 +452,7 @@ def write_native_profile(profile: str, cookies: list[dict],
         with private_child(base, "profiles", create=True) as profiles:
             with private_child(profiles, profile, create=True) as descriptor:
                 with exclusive_writer(descriptor):
+                    _check_generation(pdir, descriptor, expected_generation)
                     expected = {name: target_signature(descriptor, name)
                                 for name in ("cookies.json", "metadata.json")}
                     existing = _metadata_from_bytes(
@@ -435,8 +477,11 @@ def write_native_profile(profile: str, cookies: list[dict],
 def extract_and_save(ctx, page, profile: str, wait_s: int,
                      extract_csrf, extract_session, extract_email=None, *,
                      force: bool = False,
-                     store: str | os.PathLike | None = None) -> int:
+                     store: str | os.PathLike | None = None,
+                     expected_generation=None) -> int:
     """Harvest the full session and write the native profile. Returns exit code."""
+    if expected_generation is None:
+        expected_generation = profile_generation(profile, store)
     cookies = harvest_list(ctx, wait_s)
     have = REQUIRED & present_names(cookies)
     if not (REQUIRED <= present_names(cookies)):
@@ -479,7 +524,8 @@ def extract_and_save(ctx, page, profile: str, wait_s: int,
 
     try:
         pdir, note = write_native_profile(profile, cookies, csrf, session,
-                                          email=email, force=force, store=store)
+                                          email=email, force=force, store=store,
+                                          expected_generation=expected_generation)
     except AccountMismatch as e:
         print(f"[nlm-auth] REFUSING TO WRITE: profile {e.profile!r} records the "
               f"account {e.stored!r}, but the browser this extraction read is "
@@ -534,58 +580,63 @@ def main() -> int:
                          "semantics as `nlm login --force`)")
     args = ap.parse_args()
     validate_profile_name(args.profile)
-    # CDP does not open or change persistent browser state.
-    browser_profile = None if args.cdp_url else prepare_browser_profile(args.profile_dir)
+    generation = profile_generation(args.profile)
 
-    extract_csrf, extract_session = _load_cli_extractors(args.cli_site_packages)
-    extract_email = _load_email_extractor(args.cli_site_packages)
-    wait_s = args.wait if args.mode == "bootstrap" else 30
+    with ExitStack() as lifetime:
+        # CDP does not open or change persistent browser state.
+        browser_profile = (None if args.cdp_url else lifetime.enter_context(
+            prepare_browser_profile(args.profile_dir)))
+        extract_csrf, extract_session = _load_cli_extractors(args.cli_site_packages)
+        extract_email = _load_email_extractor(args.cli_site_packages)
+        wait_s = args.wait if args.mode == "bootstrap" else 30
 
-    with sync_playwright() as p:
-        if args.cdp_url:
-            # Connect to an already-signed-in browser. No navigation/re-login.
-            browser = p.chromium.connect_over_cdp(args.cdp_url)
-            ctx = browser.contexts[0] if browser.contexts else browser.new_context()
-            page, how = select_notebooklm_page(ctx)
-            if how == "existing":
-                print(f"[nlm-auth] reusing the open NotebookLM tab ({page.url}).",
+        with sync_playwright() as p, ExitStack() as owned_contexts:
+            if args.cdp_url:
+                # Connect to an already-signed-in browser. No navigation/re-login.
+                browser = p.chromium.connect_over_cdp(args.cdp_url)
+                ctx = browser.contexts[0] if browser.contexts else browser.new_context()
+                page, how = select_notebooklm_page(ctx)
+                if how == "existing":
+                    print(f"[nlm-auth] reusing the open NotebookLM tab ({page.url}).",
+                          flush=True)
+                else:
+                    print(f"[nlm-auth] no NotebookLM tab open on "
+                          f"{' or '.join(NB_HOSTS)}; opening a NEW tab on {NB_URL} "
+                          f"rather than navigating one you are using.", flush=True)
+                    page.goto(NB_URL, wait_until="domcontentloaded", timeout=60000)
+                time.sleep(6)
+                rc = extract_and_save(ctx, page, args.profile, wait_s, extract_csrf,
+                                      extract_session, extract_email, force=args.force,
+                                      expected_generation=generation)
+                # Do not close a browser we did not launch.
+                return rc
+
+            # Launch path: persistent profile, headed for bootstrap.
+            headed = args.mode == "bootstrap"
+            launch_kwargs = dict(
+                headless=not headed,
+                args=["--no-sandbox", "--disable-blink-features=AutomationControlled"],
+            )
+            if args.channel and args.channel != "bundled":
+                launch_kwargs["channel"] = args.channel
+            ctx = p.chromium.launch_persistent_context(str(browser_profile), **launch_kwargs)
+            owned_contexts.callback(ctx.close)
+            # This browser is OURS (a dedicated profile dir we just launched), so
+            # navigating its first tab hijacks nobody — the #537 hazard is the
+            # --cdp-url path above, which connects to the operator's own browser.
+            page = ctx.pages[0] if ctx.pages else ctx.new_page()
+            page.goto(NB_URL, wait_until="domcontentloaded", timeout=60000)
+            if args.mode == "bootstrap":
+                print("[nlm-auth] A browser window is open. Sign in as the TARGET (books) "
+                      "account and open NotebookLM — either notebook.google.com (the "
+                      "live host since the rebrand) or notebooklm.google.com (L-M), "
+                      f"which redirects there. Waiting for the session (up to {wait_s}s)...",
                       flush=True)
-            else:
-                print(f"[nlm-auth] no NotebookLM tab open on "
-                      f"{' or '.join(NB_HOSTS)}; opening a NEW tab on {NB_URL} "
-                      f"rather than navigating one you are using.", flush=True)
-                page.goto(NB_URL, wait_until="domcontentloaded", timeout=60000)
             time.sleep(6)
             rc = extract_and_save(ctx, page, args.profile, wait_s, extract_csrf,
-                                  extract_session, extract_email, force=args.force)
-            # Do not close a browser we did not launch.
+                                  extract_session, extract_email, force=args.force,
+                                  expected_generation=generation)
             return rc
-
-        # Launch path: persistent profile, headed for bootstrap.
-        headed = args.mode == "bootstrap"
-        launch_kwargs = dict(
-            headless=not headed,
-            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"],
-        )
-        if args.channel and args.channel != "bundled":
-            launch_kwargs["channel"] = args.channel
-        ctx = p.chromium.launch_persistent_context(str(browser_profile), **launch_kwargs)
-        # This browser is OURS (a dedicated profile dir we just launched), so
-        # navigating its first tab hijacks nobody — the #537 hazard is the
-        # --cdp-url path above, which connects to the operator's own browser.
-        page = ctx.pages[0] if ctx.pages else ctx.new_page()
-        page.goto(NB_URL, wait_until="domcontentloaded", timeout=60000)
-        if args.mode == "bootstrap":
-            print("[nlm-auth] A browser window is open. Sign in as the TARGET (books) "
-                  "account and open NotebookLM — either notebook.google.com (the "
-                  "live host since the rebrand) or notebooklm.google.com (L-M), "
-                  f"which redirects there. Waiting for the session (up to {wait_s}s)...",
-                  flush=True)
-        time.sleep(6)
-        rc = extract_and_save(ctx, page, args.profile, wait_s, extract_csrf,
-                              extract_session, extract_email, force=args.force)
-        ctx.close()
-        return rc
 
 
 if __name__ == "__main__":

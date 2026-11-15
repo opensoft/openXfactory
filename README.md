@@ -549,6 +549,13 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [remediate-p1-security-boundaries](openspec/changes/remediate-p1-security-boundaries/proposal.md)
+  — draft implementation packet for Brett Heap's 2026-11-15 direction to fix
+  legacy P1 security boundaries. [Feature 045](specs/045-p1-security-boundaries/spec.md)
+  owns implementation and verification; PR #1321 is the first repair phase.
+  No completed landing, production action or credential rotation is asserted.
+
+
 - [add-workload-factory-binding](openspec/changes/add-workload-factory-binding/proposal.md)
   - source acceptance ratified by Brett Heap on 2026-11-11 at factory
     102d5f906cc4 and adapter 9e0b60e89bb3; [owner decision](openspec/changes/add-workload-factory-binding/review/ratification-2026-11-11.md).

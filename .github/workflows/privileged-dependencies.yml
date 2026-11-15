@@ -14,14 +14,15 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+          path: openxFactory
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
       - name: Download only verified binary Python artifacts
         run: |
           python3 -m pip download --require-hashes --only-binary :all: \
-            -r .github/requirements/privileged-ci.lock \
-            -r .github/requirements/review-lane.lock \
+            -r openxFactory/.github/requirements/privileged-ci.lock \
+            -r openxFactory/.github/requirements/review-lane.lock \
             --dest "$RUNNER_TEMP/verified-wheels"
       - name: Accept the dependency set from offline wheel storage
         run: |
@@ -29,9 +30,36 @@ jobs:
           "$RUNNER_TEMP/verified-ci/bin/python" -m pip install \
             --no-index --find-links "$RUNNER_TEMP/verified-wheels" \
             --require-hashes --only-binary :all: \
-            -r .github/requirements/privileged-ci.lock \
-            -r .github/requirements/review-lane.lock
+            -r openxFactory/.github/requirements/privileged-ci.lock \
+            -r openxFactory/.github/requirements/review-lane.lock
           "$RUNNER_TEMP/verified-ci/bin/python" -I -c \
             'import yaml, jsonschema, pytest, cryptography, rfc3339_validator; raise SystemExit(0 if cryptography.__version__ == "50.0.0" else "Unexpected cryptography version")'
       - name: Accept the script-free worker binary without provider credentials
-        run: bash .github/worker-cli/install.sh
+        run: bash openxFactory/.github/worker-cli/install.sh
+      - name: Run named dependency contract checks
+        run: |
+          cd openxFactory
+          "$RUNNER_TEMP/verified-ci/bin/python" -m pytest \
+            tests/sonar_quality/test_p1_ci_dependencies.py -q \
+            --junitxml="$RUNNER_TEMP/privileged-dependencies.xml"
+          "$RUNNER_TEMP/verified-ci/bin/python" - <<'PY'
+          import xml.etree.ElementTree as ET
+          import os
+          from pathlib import Path
+          report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "privileged-dependencies.xml")
+          expected = {
+              "test_privileged_python_installs_require_hashes_and_wheels",
+              "test_both_doc_health_phases_use_the_same_fixed_compatible_closure",
+              "test_worker_fallback_is_still_enrolled_and_has_no_global_or_unlocked_install",
+              "test_worker_binary_manifest_and_integrity_lock_agree_without_install_hooks",
+              "test_privileged_job_permissions_and_trusted_core_are_preserved",
+              "test_comment_cannot_mask_missing_lifecycle_protection",
+              "test_worker_launcher_enforces_updates_after_real_worker_env_scrub",
+              "test_dependency_acceptance_uses_the_actual_aggregation_provider_layout",
+          }
+          cases = report.findall(".//testcase")
+          if len(cases) != 8 or {c.get("name") for c in cases} != expected:
+              raise SystemExit("Named dependency acceptance coverage changed")
+          if any(c.find(tag) is not None for c in cases for tag in ("skipped", "failure", "error")):
+              raise SystemExit("Dependency acceptance did not pass every named test")
+          PY
