@@ -232,3 +232,42 @@ def test_dashboard_cli_rejects_unsafe_output_before_any_lane_phase(tmp_path, mon
     with pytest.raises(ValueError):
         lane.main(["--repo-root", ".", "--phase", "decide", "--pin-out", str(linked)])
     assert list(outside.iterdir()) == []
+
+
+def test_omitting_project_register_option_still_uses_operator_configuration(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    lane = importlib.import_module("ideation_dashboard.intent_apply_lane")
+    import opendox_host
+    import openxdox.kickoff
+    allowlist = tmp_path / "allowlist.json"
+    register = tmp_path / "operator-projects.yaml"
+    allowlist.write_text('{"actors": {}}')
+    register.write_text("projects: []\n")
+    monkeypatch.setenv("XFACTORY_INTENT_ALLOWLIST_PATH", str(allowlist))
+    monkeypatch.setenv("XFACTORY_PROJECT_REGISTER_PATH", str(register))
+    monkeypatch.setattr(opendox_host, "register_openxfactory", lambda: None)
+    def refuse(*args, **kwargs):
+        pytest.fail("configured register fell back to discovery")
+    monkeypatch.setattr(openxdox.kickoff, "discover_project_register", refuse)
+    observed = []
+    def apply(*args, **kwargs):
+        observed.append(kwargs["project_register"])
+        return SimpleNamespace(outcome="refused", as_dict=lambda: {"outcome": "refused"})
+    monkeypatch.setattr(lane, "apply_intent", apply)
+    assert lane.main(["--repo-root", str(tmp_path), "--allowlist", str(allowlist),
+                      "--intent-json", "{}"]) == 0
+    assert observed == [register]
+
+
+@pytest.mark.parametrize("entrypoint", [
+    "ideation_dashboard/intent_apply_lane.py",
+    "ideation_dashboard/dashboard_refresh_lane.py",
+])
+def test_direct_cli_help_bootstraps_helpers_without_incidental_pythonpath(tmp_path, entrypoint):
+    import subprocess
+    env = dict(os.environ)
+    env.pop("PYTHONPATH", None)
+    result = subprocess.run([sys.executable, str(ROOT / "scripts" / entrypoint), "--help"],
+                            cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert "usage:" in result.stdout

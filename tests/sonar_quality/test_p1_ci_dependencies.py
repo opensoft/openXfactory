@@ -50,7 +50,7 @@ def test_privileged_python_installs_require_hashes_and_wheels():
                 binary = argv.index("--only-binary")
                 assert argv[binary + 1] == ":all:"
                 lock = argv[argv.index("-r") + 1]
-                local = lock.removeprefix("openxFactory/")
+                local = lock.removeprefix("openxFactory/").removeprefix("$INSTALLER_SUPPORT_ROOT/")
                 assert (ROOT / local).is_file()
                 assert "--hash=sha256:" in (ROOT / local).read_text()
                 installs.append((name, step["name"]))
@@ -62,7 +62,7 @@ def test_both_doc_health_phases_use_the_same_fixed_compatible_closure():
     for job in ("prepare", "finalize"):
         install = next(s for s in doc["jobs"][job]["steps"]
                        if s.get("name") == "Install suite dependencies")
-        assert "openxFactory/.github/requirements/privileged-ci.lock" in install["run"]
+        assert "$INSTALLER_SUPPORT_ROOT/.github/requirements/privileged-ci.lock" in install["run"]
     lock = (ROOT / ".github/requirements/privileged-ci.lock").read_text()
     assert "cryptography==50.0.0" in lock
     assert "cryptography==50.0.0" in (ROOT / "requirements/hermes-runtime-contracts.in").read_text()
@@ -76,7 +76,7 @@ def test_worker_fallback_is_still_enrolled_and_has_no_global_or_unlocked_install
     fallback = next(s for s in steps(doc)
                     if s.get("name") == "Install analysis worker CLI (inline fallback)")
     assert fallback["if"] == "needs.prepare.outputs.omnigent != 'true' && env.HAS_ANTHROPIC_KEY == 'true'"
-    assert fallback["run"] == "bash openxFactory/.github/worker-cli/install.sh"
+    assert fallback["run"] == 'bash "$INSTALLER_SUPPORT_ROOT/.github/worker-cli/install.sh"'
     script = (ROOT / ".github/worker-cli/install.sh").read_text()
     npm_install_command(script)
     assert "npm install" not in script and " -g " not in script
@@ -145,5 +145,58 @@ def test_dependency_acceptance_uses_the_actual_aggregation_provider_layout():
     checkout = next(s for s in steps(doc) if "actions/checkout@" in s.get("uses", ""))
     assert checkout["with"]["path"] == "openxFactory"
     scripts = [s["run"] for s in steps(doc) if "run" in s]
-    assert any("bash openxFactory/.github/worker-cli/install.sh" in s for s in scripts)
+    assert any('bash "$INSTALLER_SUPPORT_ROOT/.github/worker-cli/install.sh"' in s for s in scripts)
     assert all("-r .github/" not in s for s in scripts)
+
+def test_reusable_installer_source_is_immutable_and_independent_of_caller_pin(tmp_path):
+    reusable = workflow("doc-health-reusable.yml")
+    acceptance = workflow("privileged-dependencies.yml")
+    materialize = []
+    for job in ("prepare", "finalize"):
+        step = next(s for s in reusable["jobs"][job]["steps"]
+                    if s.get("id") == "installer-support")
+        materialize.append(step["run"])
+    smoke = next(s for s in steps(acceptance) if s.get("id") == "installer-support")
+    assert materialize == [smoke["run"], smoke["run"]]
+    script = smoke["run"]
+    assert re.search(r"^\s*ref=[0-9a-f]{40}$", script, re.M)
+    assert 'git -C openxFactory archive "$ref"' in script
+    assert "checkout" not in "\n".join(line for line in script.splitlines()
+                                      if not line.lstrip().startswith("#"))
+    assert "--depth" not in script
+    byte_check = next(s for s in steps(acceptance)
+                      if s.get("name") == "Verify immutable support bytes match this candidate")
+    assert 'cmp -- "openxFactory/$relative" "$INSTALLER_SUPPORT_ROOT/$relative"' in byte_check["run"]
+    assert "continue-on-error" not in byte_check
+
+    artifacts = [
+        ".github/requirements/privileged-ci.in",
+        ".github/requirements/privileged-ci.lock",
+        ".github/requirements/review-lane.in",
+        ".github/requirements/review-lane.lock",
+        ".github/worker-cli/package.json",
+        ".github/worker-cli/package-lock.json",
+        ".github/worker-cli/install.sh",
+        ".github/worker-cli/launcher.sh",
+    ]
+    support = tmp_path / "support"
+    for relative in artifacts:
+        for parent in (tmp_path / "openxFactory", support):
+            destination = parent / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text("synthetic bytes for " + relative)
+    def check():
+        return subprocess.run(["bash", "-c", byte_check["run"]], cwd=tmp_path,
+                              env={**os.environ, "INSTALLER_SUPPORT_ROOT": str(support)},
+                              capture_output=True, text=True)
+    good = check()
+    assert good.returncode == 0, good.stderr
+    for relative in artifacts:
+        target = support / relative
+        original = target.read_text()
+        target.write_text("corrupted artifact")
+        try:
+            bad = check()
+            assert bad.returncode != 0, "unverified artifact: " + relative
+        finally:
+            target.write_text(original)

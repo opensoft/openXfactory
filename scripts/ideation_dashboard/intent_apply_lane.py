@@ -29,11 +29,9 @@ CLI always runs with git on.
 
 from __future__ import annotations
 
-from safe_tooling_io import read_artifact_text, operator_input_operand
-
-
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -46,6 +44,8 @@ import yaml
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:  # plain-script parity with serve.py
     sys.path.insert(0, str(_SCRIPTS_DIR))
+
+from safe_tooling_io import read_artifact_text, operator_input_operand  # noqa: E402
 
 # § 5.2 SHED REACH (RULED (a) / RULED Q7, `#656`): the modules this file reads
 # from `opendox.*` / `openxdox.*` below left openxFactory at the carve and are
@@ -763,11 +763,14 @@ def main(argv=None) -> int:
     args.allowlist = str(operator_input_operand(
         args.allowlist, setting="XFACTORY_INTENT_ALLOWLIST_PATH",
         default=Path.cwd() / "allowlist.json"))
-    if args.project_register:
+    configured_register = os.environ.get("XFACTORY_PROJECT_REGISTER_PATH")
+    if args.project_register is not None or configured_register is not None:
         from openxdox.kickoff import discover_project_register
+        default_register = (None if configured_register is not None else
+                            discover_project_register(Path(args.repo_root).resolve()))
         args.project_register = str(operator_input_operand(
-            args.project_register, setting="XFACTORY_PROJECT_REGISTER_PATH",
-            default=discover_project_register(Path(args.repo_root).resolve())))
+            args.project_register if args.project_register is not None else configured_register,
+            setting="XFACTORY_PROJECT_REGISTER_PATH", default=default_register))
     from opendox_host import register_openxfactory
     register_openxfactory()
 

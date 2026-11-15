@@ -115,12 +115,6 @@ INJECTED (`run_refresh_lane(build=...)`) and in production is only ever the
 
 from __future__ import annotations
 
-from safe_tooling_io import (
-    UnsafePath, bind_cli_paths, ensure_artifact_directory,
-    write_artifact_text, update_artifact_text, validate_artifact_path,
-)
-
-
 import argparse
 import base64
 import contextlib
@@ -143,6 +137,12 @@ from pathlib import Path, PurePosixPath
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
+
+from safe_tooling_io import (  # noqa: E402
+    UnsafePath, bind_cli_paths, ensure_artifact_directory,
+    write_artifact_text, update_artifact_text, validate_artifact_path,
+)
+
 
 from output_boundary import OutputBoundary  # noqa: E402
 
