@@ -543,6 +543,8 @@ class Verifier:
                 require("C-11" in binding["decisions"], "offer requires C-11")
                 if binding["scope"]["wave"] != "not-applicable":
                     require("C-12" in binding["decisions"], "wave requires C-12")
+        if task == "T050":
+            require({"C-03", "C-07"} <= set(binding["decisions"]), "staging preparation decisions incomplete")
         if task == "T051":
             require(set(f"C-{i:02}" for i in range(3, 9)) <= set(binding["decisions"]), "Q1 decisions incomplete")
         if binding["scope"]["phase"] in ("staging", "production"):

@@ -237,6 +237,8 @@ class World:
             binding["ci"] = {"tests/synthetic.py": 3}
         if task == "T010":
             binding["ci"] = {v.FEATURE_PATH + "/tests/" + name: 3 for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py")}
+        if task == "T050":
+            binding["decisions"] = ["C-03", "C-07"]
         if task == "T051":
             binding["decisions"] = [f"C-{i:02}" for i in range(3, 9)]
         if scope["phase"] in ("staging", "production"):
@@ -618,6 +620,45 @@ def test_current_actual_authority(world, mutation):
     binding["authority"] = world.store.put(decision, "decisions/revised.json")
     world.records[key]["authority"] = binding["authority"]
     with pytest.raises(v.EvidenceError): world.check(key)
+
+
+@pytest.mark.parametrize("missing", [("C-03",), ("C-07",), ("C-03", "C-07")])
+def test_staging_preparation_requires_separate_preparation_and_spend_decisions(world, missing):
+    key = world.add("T050")
+    binding = world.trust["bindings"][key]
+    authority = v.decode(world.store.blob(binding["authority"]))
+    for kind in missing:
+        binding["decisions"].remove(kind)
+        authority["decisions"].pop(kind)
+    binding["authority"] = world.store.put(authority, "decisions/preparation-missing.json")
+    world.records[key]["authority"] = binding["authority"]
+    with pytest.raises(v.EvidenceError, match="staging preparation decisions incomplete"):
+        world.check(key)
+
+
+@pytest.mark.parametrize("kind", ["C-03", "C-07"])
+@pytest.mark.parametrize("field", ["valid_from", "valid_until"])
+@pytest.mark.parametrize("historical", [False, True])
+def test_staging_preparation_decisions_cover_actual_execution(world, kind, field, historical):
+    key = world.add("T050")
+    binding = world.trust["bindings"][key]
+    authority = v.decode(world.store.blob(binding["authority"]))
+    decision = v.decode(world.store.blob(authority["decisions"][kind]))
+    output = world.outputs[key]
+    decision[field] = shifted(output["started_at"], 1) if field == "valid_from" else output["ended_at"]
+    authority["decisions"][kind] = world.store.put(decision, "decisions/preparation-invalid-period.json")
+    binding["authority"] = world.store.put(authority, "decisions/preparation-invalid-authority.json")
+    world.records[key]["authority"] = binding["authority"]
+    if historical:
+        admit_run(world, key)
+    with pytest.raises(v.EvidenceError, match="earlier run|not current|retroactively authorize"):
+        world.check(key)
+
+
+def test_staging_preparation_with_separate_current_decisions_passes(world):
+    key = world.add("T050")
+    assert set(world.trust["bindings"][key]["decisions"]) == {"C-03", "C-07", "C-08"}
+    world.check(key)
 
 
 def test_dependencies_are_immutable_and_failed_predecessor_cannot_pass(world):
