@@ -74,7 +74,7 @@ def _tree(tmp_path: Path, styles: str, own: dict[str, str],
 def _run(dox: Path, xdox: Path, out: Path) -> dict:
     proc = subprocess.run(
         [sys.executable, str(SCRIPT), str(dox), str(xdox), "--json", str(out)],
-        capture_output=True, text=True, timeout=300)
+        capture_output=True, text=True, timeout=300, cwd=out.parent)
     assert proc.returncode == 0, proc.stderr
     return json.loads(out.read_text(encoding="utf-8"))
 

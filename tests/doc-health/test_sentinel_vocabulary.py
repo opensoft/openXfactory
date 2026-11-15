@@ -1166,7 +1166,8 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # The new-definition CI control retains original observations, binds the
     # authenticated historical control and the actual two-lane source exports.
     # Measured after committing those records: 76 additional sites, no new member.
-    assert (standing_sites, standing_members) == (1245, 36)
+    # The integrated Sonar scanner adds one measured site and member.
+    assert (standing_sites, standing_members) == (1246, 37)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]

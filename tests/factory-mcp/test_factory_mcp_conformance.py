@@ -140,10 +140,10 @@ class ConformanceTests(unittest.TestCase):
         """Pin an extra artifact in source.artifacts (a cross-file schema target)."""
         self.doc["source"]["artifacts"].append(dict(ref))
 
-    def cli(self, *args):
+    def cli(self, *args, cwd=None):
         env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
         return subprocess.run([sys.executable, str(SCRIPT), *map(str, args)],
-                              capture_output=True, text=True, encoding="utf-8", cwd=ROOT, env=env)
+                              capture_output=True, text=True, encoding="utf-8", cwd=self.root if cwd is None else cwd, env=env)
 
     # ---- the core report ---------------------------------------------------
 
@@ -1600,7 +1600,7 @@ class ConformanceTests(unittest.TestCase):
     def test_packaged_example(self):
         """M7: the shipped example validates exactly as the runbook says."""
         run = self.cli(EXAMPLES / "declaration.example.json", "--json",
-                       "--snapshot", f"synthetic@{'a' * 40}={EXAMPLES}")
+                       "--snapshot", f"synthetic@{'a' * 40}={EXAMPLES}", cwd=ROOT)
         self.assertEqual(run.returncode, 0, run.stderr)
         report = json.loads(run.stdout)
         self.assertEqual(report["status"], "valid-with-gaps")
@@ -1955,7 +1955,7 @@ class ConformanceTests(unittest.TestCase):
         """039 FR-017: the shipped deployed example validates as the runbook says, and
         names only reserved hosts."""
         path = EXAMPLES / "declaration-deployed.example.json"
-        run = self.cli(path, "--json", "--snapshot", f"synthetic@{'a' * 40}={EXAMPLES}")
+        run = self.cli(path, "--json", "--snapshot", f"synthetic@{'a' * 40}={EXAMPLES}", cwd=ROOT)
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
         report = json.loads(run.stdout)
         self.assertEqual((report["status"], report["diagnostics"]), ("valid-with-gaps", []))

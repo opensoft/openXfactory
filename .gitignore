@@ -33,3 +33,10 @@ ideation/workbench/
 # a CI runner are three different answers, and the third is "nothing", which
 # the ratified requirement already defines as UNDECLARED.
 .xfactory/
+
+# Local measured analysis and scanner output
+.coverage
+.coverage.*
+.coverage-reports/
+.scannerwork/
+pytest-report.xml

@@ -81,4 +81,5 @@ Read by `/speckit-tasks` and `/speckit-analyze` (shared protocol, "Build Tiers")
 - Feature 040 implementation plan: [Private connectivity](specs/040-private-connectivity/plan.md)
 - Conditional lane-check feature plan: [Conditional lane check](specs/041-conditional-lane-check/plan.md)
 - Private connectivity production qualification plan: [043-private-connectivity-production](specs/043-private-connectivity-production/plan.md)
+- Sonar quality remediation: [Feature 044 plan](specs/044-sonar-quality-remediation/plan.md)
 <!-- SPECKIT END -->

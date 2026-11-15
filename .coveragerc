@@ -1,0 +1,15 @@
+[run]
+branch = True
+parallel = True
+relative_files = True
+patch = subprocess
+include =
+    ${COVERAGE_ROOT?}/scripts/*
+    ${COVERAGE_ROOT?}/xfactory/*
+    ${COVERAGE_ROOT?}/experiments/*
+    ${COVERAGE_ROOT?}/specs/*
+    ${COVERAGE_ROOT?}/openspec/*
+data_file = ${COVERAGE_FILE?}
+
+[report]
+include_namespace_packages = True

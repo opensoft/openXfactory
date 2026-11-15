@@ -5327,7 +5327,7 @@ def test_every_sealed_run_is_one_docker_run_in_the_childs_shape(
                         r"readonly", judged), judged
     assert validator[len(shape)] == "--mount"
     assert validator[len(shape) + 2:len(shape) + 7] == [
-        "--workdir", "/tmp", STAND_IN_IMAGE, "/usr/local/bin/python3", "-c"]
+        "--workdir", "/judged", STAND_IN_IMAGE, "/usr/local/bin/python3", "-c"]
 
 
 def test_the_probe_runs_in_a_sealed_container_never_on_the_runner(

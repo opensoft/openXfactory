@@ -54,6 +54,7 @@
 #      tests/smoke_signals.py.
 # Exit 0 only when the harness exits 0 AND both browser passes pass.
 set -euo pipefail
+umask 077
 export LANG=C.UTF-8 LC_ALL=C.UTF-8
 # GNU grep, resolved at run time: the first `grep` on the PATH that reports
 # itself as GNU grep, where a host puts another first (ugrep reads some
@@ -81,7 +82,12 @@ ODC_URL=${ODC_URL:-https://github.com/opensoft/openDox-code}
 PORT=${PORT:-8080}
 W=$(mktemp -d)
 OUT=${OUT:-$W/out}
+if [ -e "$OUT" ] && { [ ! -d "$OUT" ] || [ -n "$(ls -A "$OUT")" ]; }; then
+  echo "REFUSE: the output already holds evidence; choose a new record directory" >&2
+  exit 2
+fi
 mkdir -p "$OUT"
+OUT=$(cd "$OUT" && pwd)
 LOG=$OUT/run.log
 exec > >(tee -a "$LOG") 2>&1
 say() { printf '%s %s\n' "$(date -u +%H:%M:%SZ)" "$*"; }
@@ -306,15 +312,15 @@ PY
   # (`PrivateCopy.file_url`, `Path.as_uri()`), never the token. quickstart.md
   # § 4 step 1 opens exactly the URL the command printed, so it is read from
   # the start's output, and it must name the copy at the documented path.
-  copy_url=$(python3 - "$out/server.stdout" "$copy" <<'PY'
-import os, re, sys, urllib.parse
+  copy_url=$(python3 - "$out/server.stdout" "$copy" "$HERE" <<'PY'
+import re, sys
+sys.path.insert(0, sys.argv[3])
+from preflight import opened_through, require
 lines = open(sys.argv[1], encoding="utf-8", errors="replace").read().splitlines()
-urls = [m.group(1) for m in (re.match(r"\s*console (file://\S+)", line) for line in lines) if m]
-assert len(urls) == 1, f"the start printed {len(urls)} console file:// URL line(s), not one"
-parts = urllib.parse.urlsplit(urls[0])
-assert parts.scheme == "file" and parts.netloc in ("", "localhost") and not parts.query and not parts.fragment, "the printed console URL is not a plain file:// URL"
-assert os.path.samefile(urllib.parse.unquote(parts.path), sys.argv[2]), "the printed console URL does not name OPENDOX_STATE_DIR/console/PORT.html"
-print(urls[0])
+urls = [match.group(1) for match in
+        (re.match(r"\s*console (file://\S+)", line) for line in lines) if match]
+require(len(urls) == 1, f"the start printed {len(urls)} console file URL lines, not one")
+print(opened_through(sys.argv[2], urls[0]))
 PY
 ) || { fail "the start did not print the private copy's file:// URL"; return 1; }
   echo "$copy_url" > "$out/console-url.txt"
@@ -323,43 +329,37 @@ PY
   if grep -q 'STATE_DIR to a folder that is not hidden' "$out/server.stdout"; then echo printed > "$out/b3-hint.txt"; else echo absent > "$out/b3-hint.txt"; fi
   # quickstart.md § 3 on main (T007 batch N): the token from the private copy, and
   # the RAW /capabilities payload carries it neither by name nor by value
-  token=$(python3 - "$copy" "$PORT" "$out/caps.json" <<'PY'
-import html, os, re, stat, sys, urllib.parse
+  token=$(python3 - "$copy" "$PORT" "$out/caps.json" "$HERE" <<'PY'
+import sys
+sys.path.insert(0, sys.argv[4])
+from preflight import read_private_copy, require
 copy, port, caps_path = sys.argv[1], int(sys.argv[2]), sys.argv[3]
-for path, mode in ((os.path.dirname(copy), 0o700), (copy, 0o600)):
-    info = os.lstat(path)
-    assert info.st_uid == os.getuid() and stat.S_IMODE(info.st_mode) == mode, f"{path} is not this user's own, mode {mode:o}"
-assert stat.S_ISREG(os.lstat(copy).st_mode), "the private copy is not a regular file"
-text = open(copy).read()
-assert all(m.start() > 0 and text[m.start() - 1] == "#" for m in re.finditer("console_token=", text)), "the private copy puts the token outside a fragment"
-target = re.search(r"""(?i)http-equiv=["']?refresh["']?\s+content=["']\s*\d+\s*;\s*url=([^"']+)""", text)
-assert target, "the private copy forwards to no page"
-url = urllib.parse.urlsplit(html.unescape(target.group(1)))
-assert (url.scheme, url.netloc, url.path, url.query) == ("http", f"127.0.0.1:{port}", "/index.html", ""), "the private copy does not forward to this server's /index.html with an empty query"
-token = urllib.parse.parse_qs(url.fragment).get("console_token", [""])[0]
-assert token, "the opened URL carries no token in its fragment"
+token = read_private_copy(copy, port)
 caps_raw = open(caps_path).read()
-assert "console_token" not in caps_raw and token not in caps_raw, "/capabilities carries the console token"
+require("console_token" not in caps_raw and token not in caps_raw,
+        "/capabilities carries the console token")
 print(token)
 PY
 ) || { fail "the private copy"; return 1; }
   # the header goes over stdin, never onto curl's command line, which every user of the machine can read, as quickstart § 3 sends it
   printf 'X-XF-Console-Token: %s\n' "$token" | curl -sf -H @- "http://127.0.0.1:$PORT/workbench/model-catalog" > "$out/catalog.json" \
     || { fail "the model catalog with the copy's token"; return 1; }
-  python3 - "$out/snap.json" "$out/caps.json" "$out/catalog.json" > "$out/http-checks.txt" <<'PY' || { cat "$out/http-checks.txt"; fail "quickstart § 3's checks"; return 1; }
+  python3 - "$out/snap.json" "$out/caps.json" "$out/catalog.json" "$HERE" > "$out/http-checks.txt" <<'PY' || { cat "$out/http-checks.txt"; fail "quickstart § 3's checks"; return 1; }
 import json, sys
+sys.path.insert(0, sys.argv[4])
+from preflight import require
 snap, caps, cat = (json.load(open(p)) for p in sys.argv[1:4])
-assert snap.get("documents"), "the snapshot is empty"
-assert (caps.get("install") or {}).get("mode") == "local", caps.get("install")
-assert "console_token" not in caps, "/capabilities still carries the console token"
+require(bool(snap.get("documents")), "the snapshot is empty")
+require((caps.get("install") or {}).get("mode") == "local", "the install is not local")
+require("console_token" not in caps, "/capabilities still carries the console token")
 available = [m["model_id"] for m in cat["models"] if m["available"]]   # xfactory-workbench-model-catalog
-assert not available, f"no model is configured, yet the catalog offers {available}"
+require(not available, f"no model is configured, yet the catalog offers {available}")
 print("quickstart § 3: bundle, neutral snapshot, local mode, no token on /capabilities, and an empty catalog")
 PY
   cat "$out/http-checks.txt"
   # § 4: the browser half
-  "$DRV_PYTHON" "$DRIVER" --port "$PORT" --label "$label" --out "$out" --odc "$W/openDox-code" --copy "$copy" \
-    --copy-url "$copy_url" > "$out/driver.log" 2>&1 || rc=$?
+  (cd "$out" && "$DRV_PYTHON" "$DRIVER" --port "$PORT" --label "$label" --out . --odc "$W/openDox-code" --copy "$copy" \
+    --copy-url "$copy_url") > "$out/driver.log" 2>&1 || rc=$?
   tail -45 "$out/driver.log"
   failed=$(sed -n 's/^FAILED CHECKS: //p' "$out/driver.log" | tail -1)
   case "$failed" in "[]") ;; "") echo "the driver reached no verdict (exit $rc)" >> "$out/failed.txt";; *) echo "$failed" >> "$out/failed.txt";; esac
