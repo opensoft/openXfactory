@@ -31,3 +31,19 @@ Local validation:
 Provider publication, exact consumer-byte coordination, CI and main readback
 remain required. The negative fixture's issuance provenance remains unknown;
 its original history is retained, and no token exchange or rotation was tried.
+
+## Pin, artifact and retained-cache boundaries
+Both entrypoints now bind source selection to independent operator authority.
+Pin, lockfile and tarball reads are bounded, regular, single-link and no-follow.
+Materialization retains directory descriptors through npm; a substituted parent
+cannot redirect writes and is refused before publishing the resulting path.
+Cache generations are owned and not shared-writable. Incomplete or invalid
+generations and unique fetch workspaces are retained; concurrent runs do not
+clear shared install state. Escaping cached executable links refuse.
+
+The expanded pin/execution suite passed 205 tests. The real pinned CLI 1.12.0
+was then installed twice through the changed installer and returned the same
+verified executable. Both cached and fresh no-cache strict full-corpus runs
+completed with zero undispositioned failures and the same one retained accepted
+exception. The new filesystem execution path is qualified in the declared Linux
+bench; unavailable safe descriptor/proc support refuses instead of falling back.

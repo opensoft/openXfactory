@@ -93,6 +93,15 @@ names, never child options; no live database or running workload is targeted.
 Direct trusted library composition retains its explicit injected runner API.
 
 Provider publication must precede vendored consumer-byte and exact-pin movement;
-there is no parity exception. Contract release members move through a proper
-release cut; the currently open #1298 reserves contract-v4.1, so no competing
-cut or historical inventory rewrite is authorized by this plan.
+there is no parity exception. Contract release members move through a proper release cut. Live readback
+confirmed contract-v4.1 is already published and #1298 is an archive-only PR.
+The next minor is allocated only at realization after merge order is known;
+an open proposal cannot reserve a number. Historical inventories stay intact.
+
+OpenSpec execution repair also binds alternative pin authority independently,
+bounds tarball and cache locations, uses descriptor-relative bounded reads and
+refuses linked or substituted state. Invalid cache generations and fetch
+evidence remain intact; a new verified generation replaces destructive cache
+rebuilds. Both maintained verifier and installer entrypoints use the same
+standalone verifier logic. Existing strictness, hash checks and installed
+package/version assertions remain enforced.

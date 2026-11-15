@@ -105,3 +105,71 @@ def test_database_operand_refuses_before_subprocess(postgres, monkeypatch, datab
 def test_database_placeholder_cannot_choose_the_executable(postgres):
     with pytest.raises(postgres.ToolError):
         postgres.PsqlRunner("{database} --version")
+
+
+def test_pin_selector_cannot_replace_operator_authority(openspec, tmp_path, monkeypatch):
+    approved, forged = tmp_path / "approved.yaml", tmp_path / "forged.yaml"
+    approved.write_text("approved")
+    forged.write_text("forged")
+    monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(approved))
+    args = argparse.Namespace(pin=str(forged), no_cache=True, path_mode=False, tarball=None)
+    with pytest.raises(openspec.PinRefusal):
+        openspec.authorize_cli_sources(args)
+    args.pin = None
+    openspec.authorize_cli_sources(args)
+    assert args.pin == str(approved)
+
+
+@pytest.mark.parametrize("kind", ["symlink", "hardlink", "fifo"])
+def test_pin_and_tarball_reads_reject_unsafe_file_objects(openspec, tmp_path, kind):
+    original, target = tmp_path / "outside", tmp_path / "candidate"
+    original.write_bytes(b"outside-sentinel")
+    if kind == "symlink":
+        target.symlink_to(original)
+    elif kind == "hardlink":
+        os.link(original, target)
+    else:
+        os.mkfifo(target)
+    with pytest.raises(openspec.PinRefusal):
+        openspec.controlled_file_bytes(target)
+    assert original.read_bytes() == b"outside-sentinel"
+
+
+def test_tarball_and_cache_selectors_are_scoped_to_independent_roots(openspec, tmp_path, monkeypatch):
+    root = tmp_path / "root"
+    root.mkdir()
+    cache = tmp_path / "cache"
+    monkeypatch.chdir(root)
+    monkeypatch.delenv("RUNNER_TEMP", raising=False)
+    monkeypatch.setenv("OPENSPEC_CLI_PIN_CACHE", str(cache))
+    args = argparse.Namespace(pin=None, no_cache=False, path_mode=False,
+                              tarball=str(tmp_path / "outside.tgz"), cache_dir=None)
+    with pytest.raises(openspec.PinRefusal):
+        openspec.authorize_cli_sources(args)
+    args.tarball = None
+    args.pin = None
+    args.cache_dir = str(tmp_path / "outside-cache")
+    with pytest.raises(openspec.PinRefusal):
+        openspec.authorize_cli_sources(args)
+    assert not (tmp_path / "outside-cache").exists()
+
+
+def test_fetch_workspaces_preserve_old_fetch_and_each_other(openspec, tmp_path):
+    cache = tmp_path / "cache"
+    stale = cache / ".fetch"
+    stale.mkdir(parents=True)
+    (stale / "evidence").write_text("retain")
+    first = openspec.retained_fetch_workspace(cache)
+    second = openspec.retained_fetch_workspace(cache)
+    assert first != second and first.is_dir() and second.is_dir()
+    assert (stale / "evidence").read_text() == "retain"
+
+
+def test_shared_write_cache_root_refuses_without_mutation(openspec, tmp_path):
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    cache.chmod(0o777)
+    with pytest.raises(openspec.PinRefusal):
+        openspec.retained_fetch_workspace(cache)
+    assert list(cache.iterdir()) == []
+    assert cache.stat().st_mode & 0o777 == 0o777
