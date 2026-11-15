@@ -352,3 +352,41 @@ def test_original_bounded_mode_checks_run_before_measurement():
     assert "unset COVERAGE_PROCESS_START COVERAGE_PROCESS_CONFIG" in steps[bounded]["run"]
     assert ("python3 -m pytest tests/hermes_runtime_contracts/test_validator_cli.py -q") in steps[bounded]["run"]
     assert "COVERAGE_PROCESS_START" in steps[measured]["env"]
+
+
+@pytest.mark.parametrize("classifier", ["inventory", "scanner"])
+def test_exact_043_test_classification_preserves_production_sources(tool, repository, classifier):
+    test_paths = {
+        "tests/test_fixture.py",
+        "experiments/avatar-brokered-call/tests/test_probe.py",
+        "experiments/avatar-brokered-call/conftest.py",
+        "specs/040-private-connectivity/tests/test_probe.py",
+        *("specs/043-private-connectivity-production/tests/" + name + ".py"
+          for name in ("test_evidence", "test_evidence_pins", "test_source_roots")),
+    }
+    production_paths = {
+        "scripts/covered.py", "scripts/namespace/unreached.py",
+        *("specs/043-private-connectivity-production/" + name + ".py"
+          for name in ("verify-evidence", "register-evidence-pins", "prepare-source-roots")),
+        "specs/043-private-connectivity-production/tests_neighbor/ordinary.py",
+        "specs/999-uncommissioned/tests/ordinary.py",
+    }
+    for name in test_paths | production_paths:
+        target = repository / name
+        if not target.exists():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("def synthetic():\n    return 1\n")
+    git(repository, "add", ".")
+    git(repository, "commit", "-qm", "synthetic exact classification controls")
+    if classifier == "inventory":
+        assert set(tool.inventory(repository)) == production_paths
+    else:
+        from fnmatch import fnmatchcase
+
+        properties = dict(line.split("=", 1) for line in
+                          (repository / "sonar-project.properties").read_text().splitlines()
+                          if line and not line.startswith("#"))
+        patterns = properties["sonar.test.inclusions"].split(",")
+        actual_tests = {name for name in test_paths | production_paths
+                        if any(fnmatchcase(name, pattern) for pattern in patterns)}
+        assert actual_tests == test_paths
