@@ -1135,6 +1135,7 @@ jobs:
       # T010's source suites are outside tests/. Keep the existing root gate
       # and its pins intact, then run all three suites at the actual PR head.
       # The sibling worktree keeps the merge checkout and its HEAD unchanged.
+      # Explicit source cases include the closed Git grammar and native working-directory controls.
       - name: Run private-connectivity production source suites (043)
         shell: bash
         env:
