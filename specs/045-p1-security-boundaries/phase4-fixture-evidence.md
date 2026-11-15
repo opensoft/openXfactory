@@ -41,3 +41,14 @@ tag exists, the original no-tag-findings and tag/main transport checks remain.
 The production validator, prepublication gate, tag policy and 30-second CLI
 limits are unchanged. The PostgreSQL 78-member identity remains exactly
 sha256:532945ef596214b429b2e2fc1112e313276587fbb06311180b2c69147d52b33b.
+
+The first full new-cut CI completed 10,762 passing tests and 831 subtests,
+with two failures because intent-compliance's deliberate closed release enum
+stopped at contract-v4.1. The forward candidate explicitly adds contract-v4.2
+to both existing registered-family cases, preserving the unknown-version
+failure and every membership/schema-pin assertion. Its new inventory is
+generated after this release-member test changes: unchanged 342-member set,
+two editorial digest changes plus this cut-coupled test digest. All older
+published inventories remain byte-identical. Upstream #1326/#1328 at
+a3bef00d503176c55660fb2e1bc9133a9a510686 are integrated without overwriting
+their lock-ABI checks or the earlier workflow-wide qualified-runtime check.

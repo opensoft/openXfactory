@@ -163,3 +163,14 @@ fixture declaration and generated contract-v4.2 inventory form one forward
 candidate; old release objects remain immutable. Verify exact candidate,
 supported-domain regression and post-merge promotion before publishing its
 annotated tag, then verify independent tag readback.
+
+Forward-only candidate refresh after main #1326/#1328:
+a3bef00d503176c55660fb2e1bc9133a9a510686 is integrated normally, retaining
+both the workflow-wide qualified-runtime assertion and the upstream per-job
+lock-ABI assertion. No history is rewritten. The 10,762-pass full cut CI
+exposed two failures in the intentionally closed intent-compliance release
+enum. T009 also advances tests/intent-compliance/test_release_boundary.py to
+explicitly classify contract-v4.2 on the existing registered side; unknown
+future versions still fail, and the membership/schema-pin assertions remain.
+Rebuild the new inventory after that release-member test changes. The
+supported-domain denominator and PostgreSQL source footprint remain required.

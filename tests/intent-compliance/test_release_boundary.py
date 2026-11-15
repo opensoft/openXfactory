@@ -185,6 +185,15 @@ class ReleaseState(StrEnum):
     ``tests/intent-compliance/`` and ``scripts/validate-intent-compliance.py``
     reports ZERO paths BEFORE this edit. THIS FILE then moves, for this advance
     alone, and the cut's inventory is BUILT AFTER this line is added.
+    Advanced again at the ``contract-v4.2`` compatible maintenance cut for
+    ``remediate-p1-security-boundaries``: the nonissued credential marker in
+    the identity-brokering conformance corpus changes no intent-compliance
+    schema, implementation or membership. MEASURED against ``contract-v4.1``:
+    the family diff was empty BEFORE this edit. THIS FILE then moves solely
+    to classify the new bundle explicitly, keeping unknown future values a
+    hard failure and retaining both membership and schema-pin assertions.
+    The new inventory is BUILT AFTER this advance, so it records this test's
+    digest along with the two editorial member changes.
     ``contract-v2.6`` stays named above although it was never published: its
     number is spent, and a value this enum has been told how to classify costs
     nothing to keep while removing it would make a historical manifest
@@ -206,6 +215,7 @@ class ReleaseState(StrEnum):
     FEATURE_SUCCESSOR_11 = "contract-v3.7"
     FEATURE_SUCCESSOR_12 = "contract-v4.0"
     FEATURE_SUCCESSOR_13 = "contract-v4.1"
+    FEATURE_SUCCESSOR_14 = "contract-v4.2"
 
 
 def _release_state() -> ReleaseState:
@@ -303,6 +313,7 @@ def test_release_membership_when_registration_changes_then_transition_is_atomic(
             | ReleaseState.FEATURE_SUCCESSOR_11
             | ReleaseState.FEATURE_SUCCESSOR_12
             | ReleaseState.FEATURE_SUCCESSOR_13
+            | ReleaseState.FEATURE_SUCCESSOR_14
         ):
             assert feature_members | {"scripts/__init__.py"} <= members
         case unreachable:
@@ -345,6 +356,7 @@ def test_release_inventory_when_registration_changes_then_schema_pins_are_atomic
             | ReleaseState.FEATURE_SUCCESSOR_11
             | ReleaseState.FEATURE_SUCCESSOR_12
             | ReleaseState.FEATURE_SUCCESSOR_13
+            | ReleaseState.FEATURE_SUCCESSOR_14
         ):
             for path in schema_paths:
                 assert entries[path]["schema_id"].startswith("intent-compliance-")

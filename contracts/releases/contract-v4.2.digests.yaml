@@ -10,7 +10,7 @@ entries:
   path: contracts/CHANGELOG.md
   type: changelog
   git_mode: '100644'
-  digest: sha256:f4dc5f54a958dc704f647b1933f4f840189619a4c509ae4f303a856e819c6df7
+  digest: sha256:ccd255f9bc86a56f6a80dba71d42647a9e66a8cd47df7f009d9c9ae22ae8fab4
 - artifact_id: contracts-readme.md
   path: contracts/README.md
   type: documentation
@@ -1803,7 +1803,7 @@ entries:
   path: tests/intent-compliance/test_release_boundary.py
   type: documentation
   git_mode: '100644'
-  digest: sha256:921a8288c690ea557cb32b8ea68a84c677143afe9216197233a3f0e678273539
+  digest: sha256:2d6d8a541f465676b20dbafe0a4106899a20c7742128d5e153f58b7a2c8d4614
 - artifact_id: tests-intent-compliance-test_temporal.py
   path: tests/intent-compliance/test_temporal.py
   type: documentation
