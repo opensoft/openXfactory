@@ -105,3 +105,17 @@ evidence remain intact; a new verified generation replaces destructive cache
 rebuilds. Both maintained verifier and installer entrypoints use the same
 standalone verifier logic. Existing strictness, hash checks and installed
 package/version assertions remain enforced.
+
+## Fixture marker and verified membership
+The historical Entra-shaped literal has unknown issuance provenance. Its
+forbidden client_secret property is independently rejected by the unchanged
+closed schema and credential-name scanner, including with a plain NOT_ISSUED
+marker. Replace only the current fixture value and explanatory comments;
+retain expected_failure and expected_failure_detail exactly. Other packaged
+negative fixtures continue to exercise value-class detection.
+
+Exact current catalog membership and the published contract-v4.1 inventory
+both exclude this negative example. No contract, manifest, changelog, inventory
+or tag needs to change for this marker repair. Original history is retained;
+no liveness test or rotation occurs. The original assumption that every
+contracts/ example was a release member was disproved before any cut was made.
