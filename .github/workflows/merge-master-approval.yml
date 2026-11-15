@@ -688,12 +688,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.12"
 
       - name: Ensure PyYAML
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet pyyaml
+          python3 -m pip install --quiet --require-hashes --only-binary :all: -r .github/requirements/review-lane.lock
 
       # ---- 6. Resolve the candidate ----------------------------------------
       - name: Resolve the candidate pull request

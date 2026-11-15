@@ -41,6 +41,12 @@ where this lane's report wiring DIFFERS from the readiness lane's.
 
 from __future__ import annotations
 
+from safe_tooling_io import (
+    UnsafePath, bind_cli_paths, ensure_artifact_directory,
+    write_artifact_text, update_artifact_text, validate_artifact_path,
+)
+
+
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -189,6 +195,7 @@ def prepare_derive_bundle(agg_root: Path, out_dir: Path, *, run_id: str,
     `cluster_count != '0'` guard then never dispatches)."""
     agg_root = Path(agg_root)
     out_dir = Path(out_dir)
+    validate_artifact_path(out_dir, directory=True, writing=True)
     openx = agg_root / OPENX_CHECKOUT
 
     cluster_ids: list[str] = []
@@ -200,16 +207,16 @@ def prepare_derive_bundle(agg_root: Path, out_dir: Path, *, run_id: str,
         register = _register(index)
         eligible, _skipped = _eligible_clusters(index, by_path)
         clusters_dir = out_dir / "clusters"
-        clusters_dir.mkdir(parents=True, exist_ok=True)
+        ensure_artifact_directory(clusters_dir, root=out_dir)
         for cluster, sources in eligible:
             existing = dp.cluster_possibles(register, cluster["id"])
             text = dp.build_analysis_input(prompt_text, cluster, sources,
                                            existing)
-            (clusters_dir / f"{cluster['id']}.txt").write_text(
-                text, encoding="utf-8")
+            write_artifact_text(clusters_dir / f"{cluster['id']}.txt",
+                                text, root=clusters_dir)
             cluster_ids.append(cluster["id"])
 
-    out_dir.mkdir(parents=True, exist_ok=True)
+    ensure_artifact_directory(out_dir)
     manifest = {
         "run_id": run_id,
         "model": model,
@@ -217,12 +224,10 @@ def prepare_derive_bundle(agg_root: Path, out_dir: Path, *, run_id: str,
         "cluster_count": len(cluster_ids),
         "cluster_ids": cluster_ids,
     }
-    (out_dir / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8")
-    (out_dir / "output.schema.json").write_text(
-        json.dumps(dp.WORKER_OUTPUT_SCHEMA, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8")
+    write_artifact_text(out_dir / "manifest.json",
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", root=out_dir)
+    write_artifact_text(out_dir / "output.schema.json",
+        json.dumps(dp.WORKER_OUTPUT_SCHEMA, indent=2, sort_keys=True) + "\n", root=out_dir)
     return manifest
 
 
@@ -435,6 +440,9 @@ def main(argv: list[str] | None = None) -> int:
                     help="merge phase: write the machine-readable lane "
                          "outcome JSON here (the commit-back step's input)")
     args = ap.parse_args(argv)
+    bind_cli_paths(args, paths=("out_dir", "findings_in", "report_in", "status_out"),
+                   directories=("out_dir",),
+                   outputs=("out_dir", "report_in", "status_out"))
     as_of = date.fromisoformat(args.as_of)
     agg_root = Path(args.repo_root)
 
@@ -456,16 +464,15 @@ def main(argv: list[str] | None = None) -> int:
         if args.report_in:
             from . import report as report_mod
             report_path = Path(args.report_in)
-            text = report_path.read_text(encoding="utf-8")
-            report_path.write_text(
-                report_mod.insert_derive_possibles_section(text, meta),
-                encoding="utf-8")
+            update_artifact_text(report_path,
+                lambda text: report_mod.insert_derive_possibles_section(text, meta))
         if args.status_out:
-            Path(args.status_out).write_text(
-                json.dumps(meta.status_json(), indent=2, sort_keys=True)
-                + "\n", encoding="utf-8")
+            write_artifact_text(Path(args.status_out),
+                json.dumps(meta.status_json(), indent=2, sort_keys=True) + "\n")
         print(meta.log_line())
         return 0
+    except UnsafePath:
+        raise  # Unsafe filesystem authority is not an optional worker outage.
     except Exception as exc:  # noqa: BLE001 — never fail the nightly
         print(f"derive-possibles lane: SKIPPED — unhandled "
               f"{type(exc).__name__}: {exc}")

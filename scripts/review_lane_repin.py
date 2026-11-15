@@ -44,6 +44,9 @@ stale.
 
 from __future__ import annotations
 
+from safe_tooling_io import bind_cli_paths, write_artifact_text
+
+
 import argparse
 import dataclasses
 import hashlib
@@ -703,6 +706,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="perform the advance in the checkout. Without it "
                              "the lane measures and reports and writes nothing")
     args = parser.parse_args(argv)
+    bind_cli_paths(args, paths=("plan_out", "body_out"),
+                   outputs=("plan_out", "body_out"))
 
     root = pathlib.Path(args.repo).resolve()
     floor_bytes = _read_optional_bytes(args.floor_document)
@@ -739,12 +744,12 @@ def main(argv: list[str] | None = None) -> int:
                 [site.label for site in SNAPSHOT_WITNESS_SITES]
 
     if args.plan_out:
-        pathlib.Path(args.plan_out).write_text(
-            json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        write_artifact_text(pathlib.Path(args.plan_out),
+            json.dumps(payload, indent=2) + "\n")
 
     if isinstance(outcome, Advance) and args.body_out:
-        pathlib.Path(args.body_out).write_text(
-            render_pr_body(outcome, run_url=args.run_url), encoding="utf-8")
+        write_artifact_text(pathlib.Path(args.body_out),
+            render_pr_body(outcome, run_url=args.run_url))
 
     print(json.dumps(payload, indent=2))
     if isinstance(outcome, Refusal):

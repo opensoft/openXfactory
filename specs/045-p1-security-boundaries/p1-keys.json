@@ -1,0 +1,322 @@
+[
+  {
+    "key": "AaHGGxfmXfVYYfeyHqh8",
+    "batch": "B01",
+    "path": "scripts/nlm_auth.py",
+    "originalLine": 365,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaHGGxfmXfVYYfeyHqh7",
+    "batch": "B01",
+    "path": "scripts/nlm_auth.py",
+    "originalLine": 373,
+    "rule": "pythonsecurity:S2083",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimVP1WTeVOIYRV5N",
+    "batch": "B01",
+    "path": "scripts/nlm_auth.py",
+    "originalLine": 505,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIinGi1WTeVOIYRWQq",
+    "batch": "B02",
+    "path": ".github/workflows/doc-health-reusable.yml",
+    "originalLine": 589,
+    "rule": "githubactions:S8541",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIinGi1WTeVOIYRWQr",
+    "batch": "B02",
+    "path": ".github/workflows/doc-health-reusable.yml",
+    "originalLine": 589,
+    "rule": "githubactions:S8544",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIinGi1WTeVOIYRWQs",
+    "batch": "B02",
+    "path": ".github/workflows/doc-health-reusable.yml",
+    "originalLine": 1688,
+    "rule": "githubactions:S8541",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIinGi1WTeVOIYRWQt",
+    "batch": "B02",
+    "path": ".github/workflows/doc-health-reusable.yml",
+    "originalLine": 1688,
+    "rule": "githubactions:S8544",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIinGi1WTeVOIYRWQu",
+    "batch": "B02",
+    "path": ".github/workflows/doc-health-reusable.yml",
+    "originalLine": 1700,
+    "rule": "githubactions:S6505",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIinGi1WTeVOIYRWQv",
+    "batch": "B02",
+    "path": ".github/workflows/doc-health-reusable.yml",
+    "originalLine": 1700,
+    "rule": "githubactions:S8543",
+    "status": "pending"
+  },
+  {
+    "key": "AaCrEXwZNd9EY7sT_hsJ",
+    "batch": "B02",
+    "path": ".github/workflows/merge-master-approval.yml",
+    "originalLine": 696,
+    "rule": "githubactions:S8541",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIinG11WTeVOIYRWQx",
+    "batch": "B02",
+    "path": ".github/workflows/merge-master-approval.yml",
+    "originalLine": 696,
+    "rule": "githubactions:S8544",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimEw1WTeVOIYRVyN",
+    "batch": "B03",
+    "path": "scripts/doc_health/derive_possibles_dispatch.py",
+    "originalLine": 203,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimEw1WTeVOIYRVyP",
+    "batch": "B03",
+    "path": "scripts/doc_health/derive_possibles_dispatch.py",
+    "originalLine": 212,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimEw1WTeVOIYRVyL",
+    "batch": "B03",
+    "path": "scripts/doc_health/derive_possibles_dispatch.py",
+    "originalLine": 220,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimEw1WTeVOIYRVyO",
+    "batch": "B03",
+    "path": "scripts/doc_health/derive_possibles_dispatch.py",
+    "originalLine": 223,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimEw1WTeVOIYRVyH",
+    "batch": "B03",
+    "path": "scripts/doc_health/derive_possibles_dispatch.py",
+    "originalLine": 460,
+    "rule": "pythonsecurity:S2083",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimEw1WTeVOIYRVyK",
+    "batch": "B03",
+    "path": "scripts/doc_health/derive_possibles_dispatch.py",
+    "originalLine": 460,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimEw1WTeVOIYRVyM",
+    "batch": "B03",
+    "path": "scripts/doc_health/derive_possibles_dispatch.py",
+    "originalLine": 464,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimBs1WTeVOIYRVxs",
+    "batch": "B03",
+    "path": "scripts/doc_health/readiness_dispatch.py",
+    "originalLine": 184,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimBs1WTeVOIYRVxt",
+    "batch": "B03",
+    "path": "scripts/doc_health/readiness_dispatch.py",
+    "originalLine": 202,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimBs1WTeVOIYRVxr",
+    "batch": "B03",
+    "path": "scripts/doc_health/readiness_dispatch.py",
+    "originalLine": 205,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimBs1WTeVOIYRVxq",
+    "batch": "B03",
+    "path": "scripts/doc_health/readiness_dispatch.py",
+    "originalLine": 424,
+    "rule": "pythonsecurity:S2083",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimBs1WTeVOIYRVxu",
+    "batch": "B03",
+    "path": "scripts/doc_health/readiness_dispatch.py",
+    "originalLine": 424,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIil7G1WTeVOIYRVvU",
+    "batch": "B03",
+    "path": "scripts/ideation_dashboard/dashboard_refresh_lane.py",
+    "originalLine": 4565,
+    "rule": "pythonsecurity:S2083",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIil7G1WTeVOIYRVvg",
+    "batch": "B03",
+    "path": "scripts/ideation_dashboard/dashboard_refresh_lane.py",
+    "originalLine": 4565,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIil7G1WTeVOIYRVvY",
+    "batch": "B03",
+    "path": "scripts/ideation_dashboard/dashboard_refresh_lane.py",
+    "originalLine": 4775,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIil7G1WTeVOIYRVva",
+    "batch": "B03",
+    "path": "scripts/ideation_dashboard/dashboard_refresh_lane.py",
+    "originalLine": 4778,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIil7G1WTeVOIYRVvV",
+    "batch": "B03",
+    "path": "scripts/ideation_dashboard/dashboard_refresh_lane.py",
+    "originalLine": 4780,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIil7G1WTeVOIYRVvb",
+    "batch": "B03",
+    "path": "scripts/ideation_dashboard/dashboard_refresh_lane.py",
+    "originalLine": 5140,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIil2o1WTeVOIYRVtW",
+    "batch": "B03",
+    "path": "scripts/ideation_dashboard/intent_apply_lane.py",
+    "originalLine": 156,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIil2o1WTeVOIYRVtV",
+    "batch": "B03",
+    "path": "scripts/ideation_dashboard/intent_apply_lane.py",
+    "originalLine": 514,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimUp1WTeVOIYRV44",
+    "batch": "B03",
+    "path": "scripts/review_lane_repin.py",
+    "originalLine": 742,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimUp1WTeVOIYRV45",
+    "batch": "B03",
+    "path": "scripts/review_lane_repin.py",
+    "originalLine": 746,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimU71WTeVOIYRV5F",
+    "batch": "B03",
+    "path": "scripts/set-domain-openxfactory-pin.py",
+    "originalLine": 139,
+    "rule": "pythonsecurity:S2083",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimU71WTeVOIYRV5H",
+    "batch": "B03",
+    "path": "scripts/set-domain-openxfactory-pin.py",
+    "originalLine": 139,
+    "rule": "pythonsecurity:S8707",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimK91WTeVOIYRV0e",
+    "batch": "B04",
+    "path": "scripts/validate-openspec-cli-pin.py",
+    "originalLine": 1277,
+    "rule": "pythonsecurity:S8701",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimK91WTeVOIYRV0g",
+    "batch": "B04",
+    "path": "scripts/validate-openspec-cli-pin.py",
+    "originalLine": 1540,
+    "rule": "pythonsecurity:S8705",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimK91WTeVOIYRV0f",
+    "batch": "B04",
+    "path": "scripts/validate-openspec-cli-pin.py",
+    "originalLine": 1674,
+    "rule": "pythonsecurity:S8705",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIimWJ1WTeVOIYRV5e",
+    "batch": "B06",
+    "path": "scripts/validate-hermes-runtime-postgres.py",
+    "originalLine": 1060,
+    "rule": "pythonsecurity:S8705",
+    "status": "pending"
+  },
+  {
+    "key": "AaCIinIs1WTeVOIYRWTa",
+    "batch": "B08",
+    "path": "contracts/identity-brokering/examples/negative/idp-credential-committed-in-manifest.yaml",
+    "originalLine": 29,
+    "rule": "secrets:S7525",
+    "status": "pending"
+  }
+]

@@ -13,6 +13,8 @@ from pathlib import Path
 import re
 import sys
 
+from safe_tooling_io import invocation_operand, update_artifact_text
+
 
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 TAG_RE = re.compile(r"^v[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
@@ -118,8 +120,7 @@ def preserved_subblocks(block: list[str]) -> list[str]:
     return kept
 
 
-def update_stack(path: Path, ref: str, ref_type: str, declared_at: str, source: str) -> bool:
-    original = path.read_text(encoding="utf-8")
+def _updated_stack(original: str, ref: str, ref_type: str, declared_at: str, source: str) -> str:
     lines = original.splitlines(keepends=True)
     start, end = find_block(lines, "xfactory")
 
@@ -135,10 +136,12 @@ def update_stack(path: Path, ref: str, ref_type: str, declared_at: str, source: 
     ]
     replacement.extend(preserved_subblocks(lines[start + 1:end]))
     updated = "".join(lines[:start] + replacement + lines[end:])
-    if updated != original:
-        path.write_text(updated, encoding="utf-8")
-        return True
-    return False
+    return updated
+
+
+def update_stack(path: Path, ref: str, ref_type: str, declared_at: str, source: str) -> bool:
+    return update_artifact_text(path,
+        lambda text: _updated_stack(text, ref, ref_type, declared_at, source))
 
 
 def main() -> int:
@@ -150,8 +153,10 @@ def main() -> int:
     args = parser.parse_args()
 
     ref_type = infer_ref_type(args.openxfactory_ref)
-    for domain in args.domains:
-        path = Path(domain)
+    domains = [invocation_operand(Path(domain) if Path(domain).name == "stack.yaml"
+                                  else Path(domain) / "stack.yaml", writing=True,
+                                  required=True) for domain in args.domains]
+    for path in domains:
         stack_path = path if path.name == "stack.yaml" else path / "stack.yaml"
         if not stack_path.exists():
             raise FileNotFoundError(stack_path)
