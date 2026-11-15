@@ -7483,9 +7483,9 @@
   "authorizes_production": false,
   "review": {
     "repository": "opensoft/openxfactory",
-    "commit": "ba96a8f15ed4b60aef767e6574c515d84ad4f395",
+    "commit": "24c3292df534310c7582fef86bb4baa8653b5c3f",
     "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-    "sha256": "fb3e7700eb3bb7d43916a51a1080dbae260112d636cbd117d7455a833c89eb9a"
+    "sha256": "e001668b61bbc44558a95538f122beaa13d9ad84f5547ebec6bade272f68838e"
   },
   "qualification_history": [
     {
@@ -7627,6 +7627,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "24c3292df534310c7582fef86bb4baa8653b5c3f"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "2bd29c6b7db14cad3f877d2cc062881472540a32"
     },
     {
@@ -7740,10 +7744,6 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "b71a9c4e31bccbcc8df94edf1a6f26a6e9fb2454"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "ba96a8f15ed4b60aef767e6574c515d84ad4f395"
     },
     {
       "repository": "opensoft/openxfactory",
