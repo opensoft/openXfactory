@@ -11937,3 +11937,4 @@ records the restored assessment, unresolved findings and missing coverage
 measurement without treating them as passing acceptance.
 
 - [Sonar quality remediation and measured main acceptance](specs/044-sonar-quality-remediation/README.md)
+- [Older Sonar reliability/security backlog](specs/044-sonar-quality-remediation/legacy-sonar-backlog.md)

@@ -1,6 +1,7 @@
 ## Context
 
-Main has ten active reliability/security findings and no coverage measurement.
+At feature start, automatic main analysis surfaced ten active reliability/security
+findings and no coverage measurement.
 The original eleven-finding receipt is dated evidence; the attestation finding
 is currently auto-closed and has repeated close/reopen cycles on unchanged
 source. The September manual baseline and six-condition Sonar way gate stand.
@@ -81,3 +82,24 @@ ancestry, release inventories and domain-dependency error through real Git.
 A command-scoped URL rewrite in a test-only executable redirects transport;
 no active repository configuration is modified and no Git results are faked.
 The independent live release-tag workflow remains unchanged.
+
+## Full-main analysis follow-up
+
+The first complete main scan measures 88.1 percent new-code coverage and
+passes five conditions, but retains two new-period security findings.
+The Git revision guard is already positive and option-safe; transport the
+untrusted revision as batch data on Git's stdin, then require exactly one
+commit OID. Keep the existing syntax guard, sanitized environment and all
+commit/tree/inventory checks. No caller string becomes a command option.
+
+The attestation finding reopened on unchanged source. Preserve its declared
+repository-root output boundary, validate default and explicit destinations
+before registry/audit work, and create new records exclusively through an
+anchored, no-follow descriptor. Separate record content from path creation.
+Refuse existing records and symlink substitutions instead of overwriting
+evidence. Registry integrity/signature checks and the no-write skip-audit
+rule remain unchanged; synthetic tests grant no live attestation.
+
+The full scan also restores visibility of older baseline debt. Those issues
+stay open with their original identities. This feature fixes the new-period
+gate blockers; it does not waive older debt or advance the historical period.
