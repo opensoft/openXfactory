@@ -47,3 +47,20 @@ verified executable. Both cached and fresh no-cache strict full-corpus runs
 completed with zero undispositioned failures and the same one retained accepted
 exception. The new filesystem execution path is qualified in the declared Linux
 bench; unavailable safe descriptor/proc support refuses instead of falling back.
+
+## Complete PostgreSQL source-bound acceptance
+The unchanged complete matrix runner passed all 171 required nodes on each
+unchanged pinned PostgreSQL 15 and 16 image: 342 real cases, zero missing,
+skipped, deselected-in-scope or non-passing nodes. Its execution-report checker
+verified actual node results before emitting either record. Both reports bind
+the repaired 78-input digest
+sha256:532945ef596214b429b2e2fc1112e313276587fbb06311180b2c69147d52b33b,
+which independently matches the current source. Node digests and matrix digest
+are unchanged. Each task-owned Compose stack completed its scoped teardown.
+
+The earlier canonical records are preserved byte-identically under
+tests/hermes_runtime_contracts/postgres/evidence/history/pre-p1-security-20261115/.
+Only the current canonical reports are refreshed from actual runner output.
+The fixture index, all release members/inventories/tags and image lock remain
+unchanged. Exact release membership disproved the earlier blanket assumption
+that the marker example or these acceptance reports required a new cut.

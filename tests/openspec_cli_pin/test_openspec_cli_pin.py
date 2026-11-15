@@ -3148,3 +3148,55 @@ def test_empty_operator_authority_refuses_without_registry_work(
     assert mod.main(["--all", "--repo", str(tmp_path), "--pin", str(pin),
                      "--tarball", str(artifact), "--no-cache"]) == 2
     assert calls == []
+
+
+@pytest.mark.parametrize("missing", ["manifest", "binary", "node_modules"])
+def test_stamped_incomplete_generation_is_retained_and_bypassed(
+        mod, tmp_path, fake_npm, missing):
+    import shutil
+    calls, _served = fake_npm
+    (tmp_path / "openspec").mkdir()
+    cache = tmp_path / "cache"
+    args = ["--all", "--repo", str(tmp_path), "--cache-dir", str(cache),
+            "--pin", str(write_pin(tmp_path))]
+    assert mod.main(args) == 0
+    original = next(path for path in cache.iterdir() if path.is_dir())
+    if missing == "node_modules":
+        shutil.rmtree(original / "node_modules")
+    else:
+        leaf = (original / "node_modules" / PACKAGE / "package.json"
+                if missing == "manifest" else original / "node_modules/.bin/openspec")
+        leaf.unlink()
+    retained = {str(p.relative_to(original)): p.read_bytes()
+                for p in original.rglob("*") if p.is_file()}
+    assert mod.main(args) == 0
+    assert {str(p.relative_to(original)): p.read_bytes()
+            for p in original.rglob("*") if p.is_file()} == retained
+    assert len([c for c in calls if c[1:2] == ["ci"]]) == 2
+    assert mod.main(args) == 0
+    assert len([c for c in calls if c[1:2] == ["ci"]]) == 2
+
+
+@pytest.mark.parametrize("kind", ["symlink", "hardlink"])
+def test_linked_stamped_manifest_refuses_instead_of_becoming_a_cache_miss(
+        mod, tmp_path, fake_npm, kind):
+    import os
+    calls, _served = fake_npm
+    (tmp_path / "openspec").mkdir()
+    cache = tmp_path / "cache"
+    args = ["--all", "--repo", str(tmp_path), "--cache-dir", str(cache),
+            "--pin", str(write_pin(tmp_path))]
+    assert mod.main(args) == 0
+    generation = next(path for path in cache.iterdir() if path.is_dir())
+    leaf = generation / "node_modules" / PACKAGE / "package.json"
+    outside = tmp_path / "outside-manifest.json"
+    outside.write_bytes(leaf.read_bytes())
+    original = outside.read_bytes()
+    leaf.unlink()
+    if kind == "symlink":
+        leaf.symlink_to(outside)
+    else:
+        os.link(outside, leaf)
+    assert mod.main(args) == 2
+    assert outside.read_bytes() == original
+    assert len([c for c in calls if c[1:2] == ["ci"]]) == 1

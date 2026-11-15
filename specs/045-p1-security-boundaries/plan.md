@@ -130,3 +130,9 @@ both exclude this negative example. No contract, manifest, changelog, inventory
 or tag needs to change for this marker repair. Original history is retained;
 no liveness test or rotation occurs. The original assumption that every
 contracts/ example was a release member was disproved before any cut was made.
+
+A matching stamp does not make an incomplete cached tree reusable. Missing
+owned install files bypass that retained generation and allow a healthy later
+generation or a fresh exclusive install. Linked/unsafe state still refuses
+rather than being reclassified as absence. Both cases are exercised through
+the real CLI path with a synthetic registry before consumer re-vending.

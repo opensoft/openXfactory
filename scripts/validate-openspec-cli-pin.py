@@ -1587,7 +1587,7 @@ def install_locked(prefix: Path, lockfile_bytes: bytes, package: str,
 
 
 def assert_installed_package(prefix: Path, package: str, version: str, *,
-                             directory_fd=None) -> str:
+                             directory_fd=None, cache_generation=False) -> str:
     """The pinned package is ON DISK, at its own path, at the pinned version.
 
     Split out rather than inlined because it is an ASSERTION ABOUT THE TREE and
@@ -1597,14 +1597,6 @@ def assert_installed_package(prefix: Path, package: str, version: str, *,
     named as such instead of arriving as a confusing verdict about a binary.
     """
     manifest = prefix / "node_modules" / Path(package) / "package.json"
-    if not manifest.is_file():
-        raise PinRefusal(
-            "pin-unresolvable",
-            f"`npm ci` reported success and left no {package} at "
-            f"node_modules/{package}/package.json under {prefix}. An install "
-            "that installed nothing is not a satisfied pin, however green its "
-            "exit code: the tree this gate adjudicates over would be a tree "
-            "nothing put the pinned product into")
     try:
         if directory_fd is None:
             raw = controlled_file_bytes(manifest)
@@ -1624,6 +1616,14 @@ def assert_installed_package(prefix: Path, package: str, version: str, *,
                 os.close(parent)
         installed = json.loads(raw.decode("utf-8"))
         reported = str(installed["version"])
+    except FileNotFoundError as exc:
+        if cache_generation:
+            # Absence is a cache miss, not permission to follow a substitute.
+            # No-follow/special/link refusals remain PinRefusal and propagate.
+            raise
+        raise PinRefusal(
+            "pin-unresolvable",
+            f"npm ci left no complete {package} installation under {prefix}") from exc
     except (OSError, ValueError, KeyError, TypeError) as exc:
         raise PinRefusal(
             "pin-unresolvable",
@@ -2153,8 +2153,14 @@ def resolve_pinned(package: str, version: str, integrity: str, shasum: str,
                 if recorded != stamped:
                     continue
                 anchored = _descriptor_directory(fd)
-                assert_installed_package(anchored, package, version, directory_fd=fd)
-                _checked_cached_executable(anchored, binary)
+                try:
+                    assert_installed_package(anchored, package, version,
+                                             directory_fd=fd, cache_generation=True)
+                    _checked_cached_executable(anchored, binary)
+                except FileNotFoundError:
+                    # Preserve an evicted/incomplete tree and inspect later
+                    # generations before allocating a new exclusive install.
+                    continue
                 _directory_still_named(root / name, fd)
                 _directory_still_named(root, root_fd)
                 return root / name / "node_modules" / ".bin" / binary
