@@ -47,6 +47,8 @@ Full Q0 and Q1–Q5 remain pending. All four PRs remain draft. No merge, version
 
 The c49a6a5e packet below was withdrawn before authentication. Codex review of packet head 507b1b4fb6d076b7b36b7379286021eec6b9568d found that the reader could admit a production child that ran before Q2 completed or its separately recorded admission was reviewed. The original observations remain preserved; they do not qualify the corrected reader. Corrected source, exact-head CI and a new actual authentication target are required before the expanded T010 control is accepted. No earlier approval transfers to that new target.
 
+Follow-up review at 360e2dad3bc10395518133a6af73c4ab8eea8cf8 identified the same missing ordering at Q1. The corrected source now checks completion and any admission review of every accepted predecessor before consuming execution at T050–T064, plus the complete program Q2, same-scope managed-service eligibility and corresponding offer admission. This applies the existing dependency and rollout requirements without changing the frozen task definitions. Synthetic regressions reproduce 28 additional wrongly accepted predecessor cases before repair and retain positive boundary controls. The source-CI packet remains withdrawn until the complete repair has fresh actual qualification and review.
+
 | Item | Immutable review identity |
 | --- | --- |
 | New-definition control | [02be87d2b](https://github.com/opensoft/openXfactory/blob/02be87d2bdd40abb92f3f232d84f667b661aa10e/specs/043-private-connectivity-production/evidence/commissioning.json) |

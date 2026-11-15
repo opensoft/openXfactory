@@ -1,7 +1,7 @@
 """Synthetic source regressions. These fixtures are never qualification evidence."""
 
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import importlib.util
 import json
 from pathlib import Path
@@ -20,6 +20,10 @@ TASKS = v.load_contract(ROOT)
 NOW = datetime(2030, 1, 2, tzinfo=timezone.utc)
 START = "2030-01-01T00:00:00Z"
 END = "2030-01-01T00:01:00Z"
+
+
+def shifted(value, seconds):
+    return (v.timestamp(value) + timedelta(seconds=seconds)).isoformat().replace("+00:00", "Z")
 
 
 @pytest.fixture(scope="module")
@@ -206,9 +210,11 @@ class World:
                           coverage=dict(window=[START, END], intervals=[[START, END]]))
         self.records[key], self.outputs[key] = record, output
         self.publish(key)
-        if task == "T056":
-            # Synthetic Q2 finishes before the default production execution window.
-            move_live_observation(self, key, "2029-12-31T23:59:00Z", START)
+        if 50 <= int(task[1:]) <= 64:
+            # Source completes first; preparation and each runtime task have a
+            # separate synthetic minute, with a minute between adjacent tasks.
+            offset = 3600 + (int(task[1:]) - 50) * 120
+            move_live_observation(self, key, shifted(START, offset), shifted(END, offset))
         return key
 
     def ref(self, key):
@@ -694,15 +700,16 @@ def test_wave_requires_corresponding_previously_admitted_offer(world):
     with pytest.raises((v.EvidenceError, KeyError)): world.check(key)
     offer = world.child("T063", "offer")
     world.trust["bindings"][key]["offer_admission"] = offer
-    move_live_observation(world, key, "2030-01-01T00:02:00Z", "2030-01-01T00:03:00Z")
+    move_live_observation(world, key, shifted(world.outputs[offer]["ended_at"], 60), shifted(world.outputs[offer]["ended_at"], 120))
     world.check(key)
 
 
 def move_live_observation(world, key, start, end):
     output, binding = world.outputs[key], world.trust["bindings"][key]
-    output.update(started_at=start, ended_at=end, events={"probe": start},
-                  coverage=dict(window=[start, end], intervals=[[start, end]]))
-    binding["observation"]["window"] = [start, end]
+    output.update(started_at=start, ended_at=end)
+    if binding["observation"] is not None:
+        output.update(events={"probe": start}, coverage=dict(window=[start, end], intervals=[[start, end]]))
+        binding["observation"]["window"] = [start, end]
     world.publish(key)
 
 
@@ -727,13 +734,36 @@ def refresh_dependency_records(world):
         world.publish(key)
 
 
+@pytest.mark.parametrize("task", [f"T{i:03}" for i in range(50, 65)])
+@pytest.mark.parametrize("timing", ["late-completion", "late-admission", "completion-boundary", "admission-boundary"])
+def test_runtime_predecessor_acceptance_precedes_consuming_execution(world, task, timing):
+    key = world.child(task) if task in v.INSTANCE_TASKS else world.add(task)
+    deps = world.trust["bindings"][key]["dependencies"]
+    predecessor = deps[max(deps)]
+    start = world.outputs[key]["started_at"]
+    if "completion" in timing:
+        end = shifted(start, 30) if timing == "late-completion" else start
+        move_live_observation(world, predecessor, shifted(end, -60), end)
+    else:
+        reviewed = shifted(start, 30) if timing == "late-admission" else start
+        admit_run(world, predecessor, reviewed_at=reviewed, valid_from=world.outputs[predecessor]["ended_at"])
+    refresh_dependency_records(world)
+    if timing.startswith("late-"):
+        with pytest.raises(v.EvidenceError, match="must precede.*execution"):
+            world.check(key)
+    else:
+        world.check(key)
+
+
 @pytest.mark.parametrize("task", sorted(v.INSTANCE_TASKS))
 def test_each_production_child_rejects_late_q2_admission(world, task):
     key = world.child(task)
-    admit_run(world, "T056", reviewed_at="2030-01-01T00:00:30Z", valid_from=START)
+    admit_run(world, "T056", reviewed_at=shifted(world.outputs[key]["started_at"], 30),
+              valid_from=world.outputs["T056"]["ended_at"])
     for predecessor in world.records:
         if predecessor != key and world.trust["bindings"][predecessor]["task"] in v.INSTANCE_TASKS:
-            move_live_observation(world, predecessor, "2030-01-01T00:02:00Z", "2030-01-01T00:03:00Z")
+            number = int(world.trust["bindings"][predecessor]["task"][1:])
+            move_live_observation(world, predecessor, shifted(START, 7200 + number * 120), shifted(END, 7200 + number * 120))
     refresh_dependency_records(world)
     with pytest.raises(v.EvidenceError, match="Q2 acceptance must precede production execution"):
         world.check(key)
@@ -741,23 +771,21 @@ def test_each_production_child_rejects_late_q2_admission(world, task):
 
 @pytest.mark.parametrize("task", sorted(v.INSTANCE_TASKS))
 @pytest.mark.parametrize("admitted", [False, True])
-def test_each_production_child_accepts_q2_at_execution_boundary(world, task, admitted):
+def test_each_production_child_accepts_prior_q2(world, task, admitted):
     key = world.child(task)
     if admitted:
-        admit_run(world, "T056", reviewed_at=START, valid_from="2029-12-31T23:59:00Z")
+        admit_run(world, "T056", reviewed_at=world.outputs["T056"]["ended_at"], valid_from=world.outputs["T056"]["ended_at"])
         refresh_dependency_records(world)
     world.check(key)
 
 
-@pytest.mark.parametrize("offer_start,offer_end", [
-    ("2030-01-01T00:02:00Z", "2030-01-01T00:03:00Z"),
-    ("2030-01-01T00:00:30Z", "2030-01-01T00:01:30Z"),
-])
-def test_wave_rejects_later_or_overlapping_offer_execution(world, offer_start, offer_end):
+@pytest.mark.parametrize("offset", [60, -30])
+def test_wave_rejects_later_or_overlapping_offer_execution(world, offset):
     wave = world.child("T063", "wave", {"wave": "wave-1"})
     offer = world.child("T063", "offer")
     world.trust["bindings"][wave]["offer_admission"] = offer
-    move_live_observation(world, offer, offer_start, offer_end)
+    offer_start = shifted(world.outputs[wave]["started_at"], offset)
+    move_live_observation(world, offer, offer_start, shifted(offer_start, 60))
     with pytest.raises(v.EvidenceError, match="offer admission must precede wave execution"):
         world.check(wave)
 
@@ -766,7 +794,7 @@ def test_wave_rejects_later_human_admission_even_when_offer_execution_finished_e
     wave = world.child("T063", "wave", {"wave": "wave-1"})
     offer = world.child("T063", "offer")
     world.trust["bindings"][wave]["offer_admission"] = offer
-    move_live_observation(world, wave, "2030-01-01T00:02:00Z", "2030-01-01T00:03:00Z")
+    move_live_observation(world, wave, shifted(world.outputs[offer]["ended_at"], 60), shifted(world.outputs[offer]["ended_at"], 120))
     admit_run(world, offer)
     world.publish(offer)
     with pytest.raises(v.EvidenceError, match="offer admission must precede wave execution"):
@@ -777,7 +805,7 @@ def test_wave_accepts_offer_with_actual_admission_before_execution(world):
     wave = world.child("T063", "wave", {"wave": "wave-1"})
     offer = world.child("T063", "offer")
     world.trust["bindings"][wave]["offer_admission"] = offer
-    move_live_observation(world, wave, "2030-01-01T00:04:00Z", "2030-01-01T00:05:00Z")
+    move_live_observation(world, wave, shifted(world.outputs[offer]["ended_at"], 180), shifted(world.outputs[offer]["ended_at"], 240))
     admit_run(world, offer)
     world.publish(offer)
     world.check(wave)
@@ -928,13 +956,43 @@ def test_authorized_channels_and_missing_or_expired_carriers(world, mode):
     with pytest.raises(v.EvidenceError, match="not current"): world.check(key)
 
 
-def test_managed_attachment_needs_service_eligible_for_same_phase_and_scope(world):
-    key = world.child("T058", "domain", {"offering": "hosted-domain"})
+def prepare_managed_attachment(world, task, offering):
+    key = world.child(task, "domain", {"offering": offering})
+    service = world.child(task, "service")
+    for child, binding in world.trust["bindings"].items():
+        if binding["instance"] == "domain":
+            binding["eligibility"] = binding["task"] + "@service"
+            output = world.outputs[child]
+            move_live_observation(world, child, shifted(output["started_at"], 60), shifted(output["ended_at"], 60))
+    refresh_dependency_records(world)
+    return key, service
+
+
+@pytest.mark.parametrize("task", sorted(v.INSTANCE_TASKS))
+@pytest.mark.parametrize("offering", ["local-managed", "hosted-domain"])
+@pytest.mark.parametrize("timing", ["late-completion", "late-admission", "admission-boundary"])
+def test_managed_service_eligibility_precedes_each_attachment(world, task, offering, timing):
+    key, service = prepare_managed_attachment(world, task, offering)
+    world.check(key)  # Actual service completion is exactly at attachment start.
+    start = world.outputs[key]["started_at"]
+    if timing == "late-completion":
+        move_live_observation(world, service, shifted(start, -30), shifted(start, 30))
+    else:
+        reviewed = shifted(start, 30) if timing == "late-admission" else start
+        admit_run(world, service, reviewed_at=reviewed, valid_from=start)
+    refresh_dependency_records(world)
+    if timing.startswith("late-"):
+        with pytest.raises(v.EvidenceError, match="eligibility must precede attachment execution"):
+            world.check(key)
+    else:
+        world.check(key)
+
+
+@pytest.mark.parametrize("offering", ["local-managed", "hosted-domain"])
+def test_managed_attachment_needs_service_eligible_for_same_phase_and_scope(world, offering):
+    key = world.child("T058", "domain", {"offering": offering})
     with pytest.raises((v.EvidenceError, KeyError)): world.check(key)
-    service = world.child("T058", "service")
-    world.trust["bindings"][key]["eligibility"] = service
-    # Its decision predecessor also needs its own service eligibility.
-    world.trust["bindings"]["T057@domain"]["eligibility"] = "T057@service"
+    key, service = prepare_managed_attachment(world, "T058", offering)
     world.check(key)
     foreign = world.child("T058", "foreign", {"customer": "another-customer"})
     world.trust["bindings"][key]["eligibility"] = foreign
@@ -1094,17 +1152,18 @@ def completed_run(world, key, mode="managed-push"):
     binding = world.trust["bindings"][key]
     authority = v.decode(world.store.blob(binding["authority"]))
     authority["mode"] = mode
+    end = world.outputs[key]["ended_at"]
     fields = ["consent"] if mode == "customer" else ["request", "grant" if mode == "managed-push" else "reviewed_merge"]
     for field in fields:
         carrier = v.decode(world.store.blob(world.decision(field, binding["scope"])))
-        carrier["valid_until"] = "2030-01-01T00:02:00Z"
+        carrier["valid_until"] = shifted(end, 60)
         authority[field] = world.store.put(carrier, "closed/" + field + ".json")
         if field == "grant":
             world.trust["revoked_authorities"].append(carrier["id"])
             closure = dict(kind="authority-closure", authority_id=carrier["id"], scope=binding["scope"],
-                           closed_at="2030-01-01T00:01:01Z", disposition="completed", owner="Synthetic Ops Owner")
+                           closed_at=shifted(end, 1), disposition="completed", owner="Synthetic Ops Owner")
             world.trust.setdefault("completed_authorities", {})[carrier["id"]] = world.store.put(closure, "closed/proof.json")
-    authority["valid_until"] = "2030-01-01T00:02:00Z"
+    authority["valid_until"] = shifted(end, 60)
     binding["authority"] = world.store.put(authority, "closed/authority.json")
     world.records[key]["authority"] = binding["authority"]
     return binding
@@ -1113,10 +1172,11 @@ def completed_run(world, key, mode="managed-push"):
 def admit_run(world, key, **changes):
     binding = world.trust["bindings"][key]
     world.publish(key)
+    end = world.outputs[key]["ended_at"]
     admission = dict(kind="evidence-admission", id="admission-" + key, decision="accepted",
                      scope=binding["scope"], owner="Synthetic Evidence Owner", roles=["synthetic-evidence-owner"],
                      authority=binding["authority"], reviewed_output_sha256=world.records[key]["output"]["sha256"],
-                     reviewed_at="2030-01-01T00:03:00Z", valid_from="2030-01-01T00:02:00Z",
+                     reviewed_at=shifted(end, 120), valid_from=shifted(end, 60),
                      valid_until="2031-01-01T00:00:00Z")
     admission.update(changes)
     binding["admission_roles"] = ["synthetic-evidence-owner"]
@@ -1174,7 +1234,8 @@ def test_admission_does_not_retroactively_authorize_execution(world, changes):
     key = world.child("T058")
     binding = completed_run(world, key)
     authority = v.decode(world.store.blob(binding["authority"]))
-    authority.update(changes)
+    authority.update({field: world.outputs[key]["started_at" if value == START else "ended_at"]
+                      for field, value in changes.items()})
     binding["authority"] = world.store.put(authority, "closed/invalid-period.json")
     world.records[key]["authority"] = binding["authority"]
     admit_run(world, key)

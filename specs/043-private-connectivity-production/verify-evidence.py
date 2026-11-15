@@ -658,6 +658,15 @@ class Verifier:
             for field in ("run_id", "job_id"):
                 require(type(run[field]) is int and run[field] > 0, "actual GitHub run/job identity required")
 
+    def prior_acceptance(self, key, start, message):
+        self.verify(key)
+        binding = self.binding(key)
+        record = self.read(binding["record"], binding)
+        _, _, end, _ = self.evidence_authority(binding, record)
+        accepted_at = (timestamp(self.read(binding["admission"], binding)["reviewed_at"])
+                       if binding.get("admission") else end)
+        require(end <= start and accepted_at <= start, message)
+
     def verify(self, key, supplied=None):
         require(self.authenticated, "actual custodian authentication pending")
         if key in INSTANCE_TASKS:
@@ -730,18 +739,15 @@ class Verifier:
         self.ci(output, binding)
         require(record["dependencies"] == {dep: (self.trust["aggregates"][selected] if selected in INSTANCE_TASKS else self.trust["bindings"][selected]["record"])
                                            for dep, selected in binding["dependencies"].items()}, "immutable dependency substitution")
-        for selected in binding["dependencies"].values():
-            self.verify(selected)
         # Every child still depends on the complete program Q2; no partial union.
         if task in INSTANCE_TASKS:
-            self.verify("T056")
-            q2 = self.binding("T056")
-            q2_record = self.read(q2["record"], q2)
-            _, _, q2_end, _ = self.evidence_authority(q2, q2_record)
-            q2_accepted_at = (timestamp(self.read(q2["admission"], q2)["reviewed_at"])
-                              if q2.get("admission") else q2_end)
-            require(q2_end <= start and q2_accepted_at <= start,
-                    "Q2 acceptance must precede production execution")
+            self.prior_acceptance("T056", start, "Q2 acceptance must precede production execution")
+        for selected in binding["dependencies"].values():
+            if 50 <= int(task[1:]) <= 64:
+                self.prior_acceptance(selected, start, "accepted dependency must precede consuming execution")
+            else:
+                self.verify(selected)
+        if task in INSTANCE_TASKS:
             if binding["scope"]["offering"] in ("local-managed", "hosted-domain"):
                 eligibility = binding["eligibility"]
                 eligible = self.binding(eligibility)
@@ -749,19 +755,13 @@ class Verifier:
                 for field in SCOPE_FIELDS - {"offering", "domain", "profile"}:
                     require(eligible["scope"][field] == binding["scope"][field], "managed service is not eligible in this phase/scope")
                 require(eligible["task"] == task, "managed service eligibility phase mismatch")
-                self.verify(eligibility)
+                self.prior_acceptance(eligibility, start, "managed service eligibility must precede attachment execution")
             if task == "T063" and binding["scope"]["wave"] != "not-applicable":
                 offer = self.binding(binding["offer_admission"])
                 require(offer["task"] == "T063" and offer["scope"]["wave"] == "not-applicable", "wave requires prior offer admission")
                 for field in ("offer", "offering", "candidate", "profile", "phase"):
                     require(offer["scope"][field] == binding["scope"][field], "wrong corresponding offer admission")
-                self.verify(binding["offer_admission"])
-                offer_record = self.read(offer["record"], offer)
-                _, _, offer_end, _ = self.evidence_authority(offer, offer_record)
-                admitted_at = (timestamp(self.read(offer["admission"], offer)["reviewed_at"])
-                               if offer.get("admission") else offer_end)
-                require(offer_end <= start and admitted_at <= start,
-                        "offer admission must precede wave execution")
+                self.prior_acceptance(binding["offer_admission"], start, "offer admission must precede wave execution")
         for prior in record["history"]:
             failed = self.read(prior, binding)
             require(failed["verdict"] in ("fail", "blocked") and failed["task"] == task
