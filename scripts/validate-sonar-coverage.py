@@ -54,7 +54,8 @@ def test_source(name):
     return (name.startswith("tests/") or
             name.startswith("experiments/avatar-brokered-call/tests/") or
             name == "experiments/avatar-brokered-call/conftest.py" or
-            name.startswith("specs/040-private-connectivity/tests/"))
+            name.startswith("specs/040-private-connectivity/tests/") or
+            name.startswith("specs/043-private-connectivity-production/tests/"))
 
 
 def inventory(root):
