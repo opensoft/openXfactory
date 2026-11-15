@@ -1,16 +1,17 @@
 # Authentication review: Corrected private-connectivity source CI
 
-Status: draft
+Status: record
+Created: 2026-11-15
 
 ## Exact corrected source-CI review target
 
-This is a source-only review. Authenticate the actual original source/CI exports and human provenance in the exact control below. Source-scope ratification does not authenticate these new observations.
+This records the actual source-only authentication of the original source/CI exports and human provenance in the exact control below. The preparation and review target were published before the custodian decision; source-scope ratification supplied no authentication of these observations.
 
 | Item | Immutable review identity |
 | --- | --- |
-| Proposed reviewed manifest | [95abc40b8](https://github.com/opensoft/openXfactory/blob/95abc40b8ed0eb92c811da439604975615b3c06d/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Reviewed manifest | [95abc40b8](https://github.com/opensoft/openXfactory/blob/95abc40b8ed0eb92c811da439604975615b3c06d/specs/043-private-connectivity-production/evidence/commissioning.json) |
 | Manifest file SHA-256 | 72b2cd02d7cbb4cde460c733bd1768600e5ecb8e0eea8efa18b53afe304866f1 |
-| Content SHA-256 proposed for authentication | c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54 |
+| Authenticated content SHA-256 | c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54 |
 | Complete accepted definition SHA-256 | c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431 |
 | Actual tested source | [94caf6717ece69af66dfde121bf4b868a6c3abdf](https://github.com/opensoft/openXfactory/commit/94caf6717ece69af66dfde121bf4b868a6c3abdf) |
 | Actual source baseline | 8a69bb218bef7341a5b09e3ae9f28d9585f3b661 |
@@ -50,17 +51,32 @@ No private binding is introduced. Both private token mints and private preparati
 
 ## Actual authentication boundary
 
-The JSON decision below remains pending. Full default T010 verification must refuse admission until the custodian authenticates this exact actual packet and an accepted immutable review/control pair is recorded and verified. Preparation, hashes, CI, Codex review and source consent do not supply that authentication.
+The preparation above remained unauthenticated until Brett Heap's actual decision below. This accepted review authenticates only the exact reviewed manifest and content identity. A subsequent immutable control must bind it, and default T010 verification must pass before expanded completion is recorded. Preparation, hashes, CI, Codex review and source consent did not supply this authentication.
 
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "pending",
+  "decision": "accepted",
   "custodian": "Brett Heap",
-  "reviewed_manifest": null,
-  "content_sha256": null,
-  "reviewed_at": null
+  "reviewed_manifest": {
+    "repository": "opensoft/openxfactory",
+    "commit": "95abc40b8ed0eb92c811da439604975615b3c06d",
+    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+    "sha256": "72b2cd02d7cbb4cde460c733bd1768600e5ecb8e0eea8efa18b53afe304866f1"
+  },
+  "content_sha256": "c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54",
+  "reviewed_at": "2026-11-15T11:47:39.004Z"
 }
 ```
 
 All four PRs remain draft: coordinator #1310, Ops #628, codeXfactory #583 and Headscale-Install #2. T020 remains unchecked. Full Q0, Q1-Q5, merge, version/tag allocation, publication, target operations, deployment, enrollment, paid resources and commercial admission retain separate gates.
+
+## Actual custodian decision
+
+Brett Heap authenticated this exact corrected source-only packet at 2026-11-15T11:47:39.004Z. The [preceding immutable review target](https://github.com/opensoft/openXfactory/blob/ba96a8f15ed4b60aef767e6574c515d84ad4f395/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) identifies manifest 95abc40b8e, its complete file digest and the unchanged c8be9c1d content identity.
+
+> I authenticate the corrected source-only packet, manifest 95abc40b8e. Record the authentication, complete expanded T010 after default verification, rerun validation, and keep all four PRs draft. Honor Q0–Q5.
+
+The actual native user input is recorded in session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 32775, individual raw-record SHA-256 cd595fec9a491173c710bfee7062b51d518e0880e7b82c9027926d4ecf2abd89 (UTF-8 JSON record without its line terminator). This is supplied human provenance, not a generated signature. It authenticates these actual source outputs separately from the earlier role/scope/definition decisions and preserves the failed and withdrawn preparations.
+
+Bind this immutable accepted review into a later control with the reviewed core unchanged, then pass default verification before recording expanded T010 completion. All four PRs stay draft. Full Q0 and Q1–Q5, protected provider/customer custody, release/tag/version allocation, publication, deployment, enrollment, paid resources and commercial admission retain their separate gates.
