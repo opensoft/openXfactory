@@ -2664,6 +2664,234 @@
         "sha256": "ec985ebdbce06427ec403c04b40e09758ee5afa3de8ce61be3f329589d8512f6"
       },
       "class": "Q0-I"
+    },
+    "T020": {
+      "task": "T020",
+      "instance": null,
+      "owner": "L",
+      "scope": {
+        "phase": "source",
+        "candidate": "043-local-source",
+        "environment": "source",
+        "run": "043-q0-package-source",
+        "network": "not-applicable",
+        "target": "not-applicable",
+        "customer": "not-applicable",
+        "offering": "local-headscale",
+        "site": "not-applicable",
+        "region": "not-applicable",
+        "profile": "local-linux-docker",
+        "domain": "not-applicable",
+        "wave": "not-applicable",
+        "offer": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/headscale-install",
+        "base": "11bd61fe665cf40f2bbf02980c512475329b3151",
+        "revision": "9e94411f893836550b481085f0ef628f4b14b99b"
+      },
+      "files": [
+        "deploy/production/instance.py",
+        "packaging/production-images.json",
+        "tests/qualification/test_production_package.py",
+        "evidence/private-connectivity-production/T020.json"
+      ],
+      "command": "python3 -u -c 'import os,subprocess,re,json,hashlib,runpy,ast\nfrom pathlib import Path\nos.environ[\"PYTHONDONTWRITEBYTECODE\"]=\"1\"\nsubprocess.run([\"make\",\"validate\"],check=True)\nr=subprocess.run([\"make\",\"test\"],text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)\nprint(r.stdout,flush=True)\nassert r.returncode==0\ncounts=re.findall(r\"Ran ([0-9]+) tests\",r.stdout)\nassert counts==[\"45\"] and re.search(r\"^OK$\",r.stdout,re.M) and \"skipped=\" not in r.stdout\nhelp_result=subprocess.run([\"python3\",\"deploy/production/instance.py\",\"--help\"],check=True,text=True,capture_output=True)\nprint(help_result.stdout,flush=True)\nm=runpy.run_path(\"deploy/production/instance.py\")\nraw=Path(\"packaging/production-images.json\").read_bytes()\ninputs_sha=hashlib.sha256(raw).hexdigest()\npins=m[\"load_inputs\"](inputs_sha)\ntree=ast.parse(Path(\"tests/qualification/test_production_package.py\").read_text())\nnew_tests=sum(isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)) and node.name.startswith(\"test_\") for node in ast.walk(tree))\nbase=\"11bd61fe665cf40f2bbf02980c512475329b3151\"\nchanged=subprocess.check_output([\"git\",\"diff\",\"--name-only\",base,\"HEAD\"],text=True).splitlines()\nallowed=[\"deploy/production/instance.py\",\"packaging/production-images.json\",\"tests/qualification/test_production_package.py\",\"evidence/private-connectivity-production/T020.json\"]\nassert sorted(changed)==sorted(allowed)\nlegacy=subprocess.check_output([\"git\",\"ls-tree\",\"-r\",\"--name-only\",base],text=True).splitlines()\nold_changes=subprocess.check_output([\"git\",\"diff\",\"--name-only\",base,\"HEAD\",\"--\"]+legacy,text=True).splitlines()\nassert old_changes==[]\nfacts={\n \"supported-package-foundation\":{\"source_tests\":int(counts[0]),\"new_source_tests\":new_tests,\"source_skips\":0,\"entrypoint_help_exit\":help_result.returncode,\"local_server_candidate\":pins[\"local_server\"],\"execution_adapter\":\"trusted in-process current-authority/fenced host controller required; no default\",\"runtime_qualification\":\"not performed\"},\n \"real-release-inputs\":{\"input_sha256\":inputs_sha,\"headscale\":pins[\"headscale\"],\"helper\":pins[\"helper\"],\"client_candidates\":pins[\"client_candidates\"],\"qualification\":pins[\"qualification\"]},\n \"lab-preserved\":{\"changed_source_files\":changed,\"legacy_paths_checked\":len(legacy),\"changed_legacy_paths\":old_changes,\"pilot_image_lock_sha256\":hashlib.sha256(Path(\"packaging/pilot-images.json\").read_bytes()).hexdigest(),\"pilot_entrypoint_sha256\":hashlib.sha256(Path(\"deploy/pilot.py\").read_bytes()).hexdigest()}\n}\nprint(\"L_FOUNDATION_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+      "roles": [
+        "Brett Heap (Headscale package source/release owner and source-evidence custodian)"
+      ],
+      "decisions": [],
+      "incidents": [],
+      "cases": {
+        "lab-preserved": [
+          {
+            "id": "actual-package-foundation-source-facts",
+            "kind": "equal",
+            "expected": {
+              "changed_legacy_paths": [],
+              "changed_source_files": [
+                "deploy/production/instance.py",
+                "evidence/private-connectivity-production/T020.json",
+                "packaging/production-images.json",
+                "tests/qualification/test_production_package.py"
+              ],
+              "legacy_paths_checked": 26,
+              "pilot_entrypoint_sha256": "ba5552f4815ca7dd6137dcd7537783e27ef3bcdcf27029492d18a95e4c8e177d",
+              "pilot_image_lock_sha256": "298bc7d44e2c4f551696434595ca8b9a0b4007b6ac9f818370e4e365d32b68ca"
+            }
+          }
+        ],
+        "real-release-inputs": [
+          {
+            "id": "actual-package-foundation-source-facts",
+            "kind": "equal",
+            "expected": {
+              "client_candidates": {
+                "artifacts": {
+                  "macos_standalone": {
+                    "architectures_to_qualify": [
+                      "arm64",
+                      "amd64"
+                    ],
+                    "sha256": "0ecab60e098d31f9cbd334867474293dc08978154665da75c3f3fe1f8215d6e7",
+                    "url": "https://pkgs.tailscale.com/stable/Tailscale-1.104.7-macos.pkg"
+                  },
+                  "ubuntu_noble_amd64": {
+                    "sha256": "a41efd469875e27b4d8f313e07476f9bae459bafab305a3f2621ff5b5254a885",
+                    "size": 40778580,
+                    "url": "https://pkgs.tailscale.com/stable/ubuntu/pool/tailscale_1.104.7_amd64.deb"
+                  },
+                  "windows_amd64": {
+                    "sha256": "676b5b32fdd1aeaee90d8e8f38e222635b216fbdfbf877bf01cb1d7cda330ec5",
+                    "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.104.7-amd64.msi"
+                  }
+                },
+                "platforms": [
+                  "windows-11-amd64-msi",
+                  "macos-15-arm64-standalone-pkg",
+                  "macos-15-amd64-standalone-pkg",
+                  "ubuntu-24.04-amd64-deb"
+                ],
+                "qualification": "separate profile-specific release evidence required",
+                "trust_remaining": [
+                  "Verify Authenticode, macOS installer signatures and signed apt metadata/binary bytes before qualification",
+                  "Qualify actual supported server/client combinations and current target/custody/limits; metadata availability is not compatibility"
+                ],
+                "version": "1.104.7"
+              },
+              "headscale": {
+                "binary": {
+                  "sha256": "e827fc9b12d958bc95b081c4401dd63f8e0471d025b45b508535a920532150a8",
+                  "size": 52527264,
+                  "url": "https://github.com/juanfont/headscale/releases/download/v0.29.7/headscale_0.29.7_linux_amd64"
+                },
+                "config_digest": "sha256:b3b28401486c0afe69b54757ba456c294eab0de55a5468155eb76724a4e82fc4",
+                "configuration_example": {
+                  "sha256": "4b58f20fe9b14324bb79b6cbdb23022d3b7ff6ffbbb2280c23104c2752b1f85b",
+                  "url": "https://raw.githubusercontent.com/juanfont/headscale/v0.29.7/config-example.yaml"
+                },
+                "entrypoint": [
+                  "/ko-app/headscale"
+                ],
+                "environment": [
+                  "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/ko-app",
+                  "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt",
+                  "KO_DATA_PATH=/var/run/ko"
+                ],
+                "image": "ghcr.io/juanfont/headscale@sha256:4f36e125a41713eedc98a7baa5ab6849fd8c4f769281d832997eb2e59d7ace37",
+                "index": "ghcr.io/juanfont/headscale@sha256:11f81665e842809db9fe3006a38c56a66e968baa5abd4bac498e86445572b970",
+                "platform": "linux/amd64",
+                "upstream_default_user": "0",
+                "version": "0.29.7"
+              },
+              "helper": {
+                "path": "deploy/production/instance.py",
+                "runtime": "CPython 3.12; standard library only",
+                "sha256": "6d90e0e6ef261c91d6f7e3516c70c505462de8f180193ee3d7e728a911220d0c"
+              },
+              "input_sha256": "91ec7e921cf95de3f6f746bbd6d98a4dc8061be0f24a9bb214ac050b5fc4ace9",
+              "qualification": "inputs-only; qualification is external"
+            }
+          }
+        ],
+        "supported-package-foundation": [
+          {
+            "id": "actual-package-foundation-source-facts",
+            "kind": "equal",
+            "expected": {
+              "entrypoint_help_exit": 0,
+              "execution_adapter": "trusted in-process current-authority/fenced host controller required; no default",
+              "local_server_candidate": {
+                "architecture": "amd64",
+                "docker_engine": "29.9.3",
+                "os": "ubuntu-24.04"
+              },
+              "new_source_tests": 19,
+              "runtime_qualification": "not performed",
+              "source_skips": 0,
+              "source_tests": 45
+            }
+          }
+        ]
+      },
+      "dependencies": {
+        "T011": "T011",
+        "T010": "T010"
+      },
+      "history": [],
+      "remediation": null,
+      "metrics": {},
+      "observation": null,
+      "ci": {},
+      "artifacts": [
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "deploy/production/instance.py",
+          "sha256": "6d90e0e6ef261c91d6f7e3516c70c505462de8f180193ee3d7e728a911220d0c"
+        },
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "packaging/production-images.json",
+          "sha256": "91ec7e921cf95de3f6f746bbd6d98a4dc8061be0f24a9bb214ac050b5fc4ace9"
+        },
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "tests/qualification/test_production_package.py",
+          "sha256": "f27c39191412ccaa215358ebde99deadc6ba4bc21e0e306ee3d0f5c4600c578b"
+        },
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "Makefile",
+          "sha256": "99e3213d98f4768d5a042fe55388807a797e3be035a64fdc3c2fee81d44cda06"
+        },
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "README.md",
+          "sha256": "e492bb17b3fd3674192927f7e4937624d6065139c7a179f9638c2cd0dedbe093"
+        },
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "SECURITY.md",
+          "sha256": "abe6119b09423f7446de992c30f8c9b5d333b9e31489b87520e2e5174050f9b4"
+        },
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "docs/ownership.md",
+          "sha256": "7d8b69919734b95b18eaf6f544c4a85f13c52b593b64dd358e504211d44e445f"
+        },
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "packaging/pilot-images.json",
+          "sha256": "298bc7d44e2c4f551696434595ca8b9a0b4007b6ac9f818370e4e365d32b68ca"
+        },
+        {
+          "repository": "opensoft/headscale-install",
+          "commit": "9e94411f893836550b481085f0ef628f4b14b99b",
+          "path": "deploy/pilot.py",
+          "sha256": "ba5552f4815ca7dd6137dcd7537783e27ef3bcdcf27029492d18a95e4c8e177d"
+        }
+      ],
+      "authority": {
+        "repository": "opensoft/openxfactory",
+        "commit": "cd13fe4bc03a050d3ad2169b3795e05a3a8bf24d",
+        "path": "openspec/changes/commission-headscale-production/review/source-owner-permission.json",
+        "sha256": "5ad2a5dc6dfab6e2feb34832e0296a23d84ac34e1b03eca4986b8231cc5ed543"
+      },
+      "record": {
+        "repository": "opensoft/headscale-install",
+        "commit": "9b4c6106633d5d28b777ef00f1d9bd695588efcf",
+        "path": "evidence/private-connectivity-production/T020.json",
+        "sha256": "ee242a31569d4c10726a0007c99ed19526824988325b45ee8e08d1aa8cef31c7"
+      },
+      "class": "source-L"
     }
   },
   "instances": {},
@@ -7483,9 +7711,9 @@
   "authorizes_production": false,
   "review": {
     "repository": "opensoft/openxfactory",
-    "commit": "24c3292df534310c7582fef86bb4baa8653b5c3f",
+    "commit": "878ef4b18e45e11859223ef41ff4a8b7983ffa31",
     "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-    "sha256": "e001668b61bbc44558a95538f122beaa13d9ad84f5547ebec6bade272f68838e"
+    "sha256": "c50db8d852936429dca0c6a5c6caa0075d29966748d19d660e13768da8032dae"
   },
   "qualification_history": [
     {
@@ -7594,6 +7822,12 @@
       "commit": "c5edba57d6ce8ea6debe16930335600f03aaa182",
       "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
       "sha256": "d4e0748ba411d3ce063967b1c386bd14006e372d16eb1af4a1e6f464687c6dc9"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "698bf83671be642421fb28987c820fe36b49b0a6",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+      "sha256": "31aa0576d1c9c0ac99ccf6faa14b038b0a74e985568ab5645f543d75de13bb35"
     }
   ],
   "pin_inventory": [
@@ -7610,6 +7844,10 @@
       "openxfactory_commit": "094eb96f61469b87d9ca8217f77bff5f54069536"
     },
     {
+      "repository": "opensoft/headscale-install",
+      "foreign_commit": "11bd61fe665cf40f2bbf02980c512475329b3151"
+    },
+    {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "12d6d10cc81640be1839434b5eb826ddc531d1e6"
     },
@@ -7624,10 +7862,6 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "2438f54b65e43837a33e3c0f3aff7dbbd4ba0cb4"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "24c3292df534310c7582fef86bb4baa8653b5c3f"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -7671,6 +7905,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "698bf83671be642421fb28987c820fe36b49b0a6"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "70893344cdd67cd22af5a7605f173becd00b5577"
     },
     {
@@ -7703,6 +7941,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "878ef4b18e45e11859223ef41ff4a8b7983ffa31"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "8a69bb218bef7341a5b09e3ae9f28d9585f3b661"
     },
     {
@@ -7712,6 +7954,14 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "94caf6717ece69af66dfde121bf4b868a6c3abdf"
+    },
+    {
+      "repository": "opensoft/headscale-install",
+      "foreign_commit": "9b4c6106633d5d28b777ef00f1d9bd695588efcf"
+    },
+    {
+      "repository": "opensoft/headscale-install",
+      "foreign_commit": "9e94411f893836550b481085f0ef628f4b14b99b"
     },
     {
       "repository": "opensoft/openxfactory",
