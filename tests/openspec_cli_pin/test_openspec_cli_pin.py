@@ -3200,3 +3200,11 @@ def test_linked_stamped_manifest_refuses_instead_of_becoming_a_cache_miss(
     assert mod.main(args) == 2
     assert outside.read_bytes() == original
     assert len([c for c in calls if c[1:2] == ["ci"]]) == 1
+
+
+def test_operator_help_describes_every_fixed_machine_refusal(mod):
+    help_text = mod.build_parser().format_help()
+    for code in mod.REFUSAL_CODES:
+        assert code + ":" in help_text
+        assert mod.REFUSALS[code] in help_text
+    assert "pin-unreadable also exits 2" in help_text

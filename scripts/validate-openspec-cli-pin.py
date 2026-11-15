@@ -281,78 +281,23 @@ REMEDIATION = (
     "docs/contract-versioning-policy.md."
 )
 
-# The refusal vocabulary, fixed. Other code may branch on the CODE, so no
-# failure path here may invent one.
-#
-# `pin-unreadable` is NOT in the vocabulary and its absence is the point, on the
-# siblings' reasoning: the five below describe an ENVIRONMENT that disagrees with
-# a well-formed pin, each a finding a reviewer can act on. `pin-unreadable`
-# describes a state in which no finding can be reached at all. It still exits 2 —
-# excluded from the vocabulary, not from fail-closure.
-REFUSAL_CODES: tuple[str, ...] = (
-    "pin-tag-only",
-    "pin-no-target",
-    "pin-unresolvable",
-    "pin-integrity-mismatch",
-    "pin-lockfile-mismatch",
-    "pin-version-mismatch",
-    "pin-disposition-malformed",
-    "pin-disposition-stale",
-    "pin-report-unreadable",
-    "pin-repo-unidentified",
-)
+# One fixed refusal catalog drives the machine vocabulary and operator help.
+# pin-unreadable remains outside this vocabulary: it means no finding could
+# be reached, rather than disagreement with an otherwise usable pin.
+REFUSALS: dict[str, str] = {
+    "pin-tag-only": "The artifact or dependency closure is not content-addressed.",
+    "pin-no-target": "No valid complete or named validation target was selected.",
+    "pin-unresolvable": "The pinned tool cannot be safely resolved or executed.",
+    "pin-integrity-mismatch": "Published artifact bytes disagree with the pin.",
+    "pin-lockfile-mismatch": "The committed lockfile, package or closure disagrees with the pin.",
+    "pin-version-mismatch": "The installed or reported tool version disagrees with the pin.",
+    "pin-disposition-malformed": "A declared exception lacks its matching fields or cited authority.",
+    "pin-disposition-stale": "An exception matches no finding in this validation run.",
+    "pin-report-unreadable": "The pinned CLI returned no usable machine-readable verdict.",
+    "pin-repo-unidentified": "The repository identity needed to scope exceptions is unavailable.",
+}
+REFUSAL_CODES: tuple[str, ...] = tuple(REFUSALS)
 
-# The four codes above the line are ENVIRONMENT disagreements with a well-formed
-# pin. The four below are the disposition mechanism's own, and they are in the
-# vocabulary on the same test the first five passed: each describes a finding a
-# REVIEWER CAN ACT ON, in a place a reviewer can reach.
-#
-#   pin-disposition-malformed  an exception was declared without a citation, or
-#                              without the keys that decide what it matches
-#   pin-disposition-stale      an exception is matched by no finding in this run
-#   pin-report-unreadable      the pinned CLI produced no machine-readable
-#                              verdict, so no finding could be reconciled against
-#                              anything — refused rather than degraded to the
-#                              streaming path, because a run that cannot read its
-#                              own findings cannot honour a disposition and would
-#                              re-fail conditions the pin has settled
-#   pin-repo-unidentified      dispositions are declared and the validated tree's
-#                              identity is unresolvable, so which of them are in
-#                              scope is unanswerable
-#
-# AND ONE MORE, ADDED 2026-09-08 WITH THE DEPENDENCY CLOSURE. It is a NEW code
-# and not an overload of `pin-integrity-mismatch`, because the two send a reader
-# to different files: `pin-integrity-mismatch` says the REGISTRY served bytes
-# this repository does not pin, and the remedy is to re-cut the pin or to
-# distrust the registry; `pin-lockfile-mismatch` says the two halves of THIS
-# REPOSITORY'S OWN pin disagree with each other, and the remedy is to regenerate
-# the committed lockfile at the pinned version. Collapsing them would name the
-# wrong defect in the one message a reviewer reads.
-#
-#   pin-lockfile-mismatch      the committed lockfile and the pin disagree — the
-#                              file's bytes do not hash to `lockfile_integrity:`,
-#                              or its entry for the pinned package carries an
-#                              integrity other than the pin's referent (or no
-#                              entry at all), or the tree it locks is not the
-#                              size `lockfile_packages:` records, or SOME OTHER
-#                              locked entry carries no `resolved`/`integrity` of
-#                              its own (or is a `link: true` local directory), or
-#                              its ROOT entry does not ASK FOR the pinned package
-#                              at all — the last two added 2026-09-08 on review
-#                              of PR #813: the staging manifest is derived from
-#                              the root entry, so a root asking for nothing
-#                              yields an `npm ci` that installs nothing and exits
-#                              0; and a closure with one unaddressed member is
-#                              not a closure, `npm ci` verifying a package
-#                              against the integrity recorded FOR IT
-#
-# A lockfile in a FORM this reader does not implement — a `lockfileVersion`
-# outside `LOCKFILE_VERSIONS` — is NOT this code either: it is `pin-unreadable`,
-# because the two statements do not disagree, one of them is illegible.
-#
-# A pin that declares NO lockfile at all is NOT this code: it is `pin-tag-only`,
-# because unresolved caret ranges are a MOVING REFERENCE, and "the moment a pin
-# trusts a range the fail-closed property is gone" is that code's own sentence.
 
 # The disposition keys, split into what MUST be present and what MAY be. The
 # split is a declaration rather than a chain of `if key not in entry`, so
@@ -2200,7 +2145,10 @@ def build_parser() -> argparse.ArgumentParser:
         description=("Run `openspec validate … --strict` through the CLI pinned "
                      "by contracts/openspec-cli-pin.yaml, verifying the "
                      "artifact's content address before it is invoked."),
-        formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="Fixed refusal codes (exit 2):\n" + "\n".join(
+            f"  {code}: {description}" for code, description in REFUSALS.items())
+        + "\npin-unreadable also exits 2 when no pin finding can be reached.")
     parser.add_argument(
         "--all", action="store_true",
         help="validate every change and specification (`validate --all --strict`)")

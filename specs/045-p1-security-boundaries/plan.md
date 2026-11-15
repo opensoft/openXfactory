@@ -136,3 +136,11 @@ owned install files bypass that retained generation and allow a healthy later
 generation or a fresh exclusive install. Linked/unsafe state still refuses
 rather than being reclassified as absence. Both cases are exercised through
 the real CLI path with a synthetic registry before consumer re-vending.
+
+The wallet duplication gate identified the old copied refusal-code block in
+the pinned neutral spec. The provider now maintains one described refusal
+catalog and derives the unchanged fixed vocabulary and CLI help from it.
+This removes the parallel comment/tuple catalog, documents machine refusals
+at the entrypoint and keeps every existing code, check and exception rule.
+All consumers re-vendor these provider bytes; no local fork or exclusion is
+introduced and no threshold changes.

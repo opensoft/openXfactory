@@ -64,3 +64,22 @@ Only the current canonical reports are refreshed from actual runner output.
 The fixture index, all release members/inventories/tags and image lock remain
 unchanged. Exact release membership disproved the earlier blanket assumption
 that the marker example or these acceptance reports required a new cut.
+
+## Consumer review and duplication correction
+Three new missing-tree cases failed before the cache correction; missing
+manifest, binary and node_modules now bypass retained stamped generations.
+Linked and hardlinked manifests still refuse. With the catalog/help correction,
+302 pin/execution/citation tests pass. The real 1.12.0 installer also recovered
+from an intentionally incomplete task-owned generation entirely offline,
+selected the retained healthy generation, and passed the complete strict corpus
+with zero undispositioned failures and the same one accepted exception.
+
+The refusal catalog now supplies both the unchanged ten machine codes and
+their operator help descriptions, replacing the parallel tuple/comment table.
+Physical condition citations were updated with their exact guard assertions
+retained. No source exclusion, threshold, code waiver or billing change occurs.
+
+The broader local correction run passed 325 cases with one unchanged
+30-second realization-mode timeout; its candidate companion passed on retry
+and realization again timed out locally. The original unmeasured 30-second
+CI guard is unchanged and must pass on the hosted candidate before landing.
