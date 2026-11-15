@@ -495,3 +495,13 @@ def test_main_keeps_profile_anchor_and_closes_only_owned_browser(
     else:
         assert events.index("close") < events.index("driver-stop")
         assert not anchor[0].exists()
+
+
+@pytest.mark.parametrize("name", ["../escape", "/absolute", ".", "..", "a/b",
+                                  "a\\\\b", "", "a\\nb", "a" * 65])
+def test_private_child_validates_its_own_identifier_before_syscalls(auth, tmp_path, name):
+    with auth.directory_handle(tmp_path, private=True) as descriptor:
+        with pytest.raises(auth.UnsafePath):
+            with auth.private_child(descriptor, name, create=True):
+                pytest.fail("unsafe private child was opened")
+    assert list(tmp_path.iterdir()) == []

@@ -81,9 +81,185 @@ jobs:
           git submodule update --init openXwallet
           git submodule update --init --recursive openXdox openDox
 
+      # No private token reaches a candidate script. The plan must select an
+      # actually authenticated producer from the trusted base before any mint.
+      - name: Plan private-connectivity commit proof (043)
+        id: pc043_plan
+        env:
+          PC_SOURCE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, re, subprocess, sys
+          from datetime import datetime, timezone
+          from pathlib import Path
+          feature = "specs/043-private-connectivity-production"
+          control = feature + "/evidence/commissioning.json"
+          auth_path = "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md"
+          helper = feature + "/prepare-source-roots.py"
+          local = "opensoft/openxfactory"
+          def need(condition):
+              if not condition:
+                  raise SystemExit("source proof bootstrap prerequisite failed")
+          def pairs(items):
+              value = {}
+              for key, item in items:
+                  need(key not in value)
+                  value[key] = item
+              return value
+          def decode(raw):
+              return json.loads(raw, object_pairs_hook=pairs)
+          def git(*args):
+              env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+              env.update(GIT_NO_LAZY_FETCH="1", GIT_TERMINAL_PROMPT="0", GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
+              r = subprocess.run(["git", "--no-replace-objects", "-c", "core.hooksPath=/dev/null", *args],
+                                 env=env, capture_output=True, timeout=30)
+              need(r.returncode == 0)
+              return r.stdout
+          def blob(ref, path):
+              need(set(ref) == {"repository", "commit", "path", "sha256"} and
+                   ref["repository"].lower() == local and ref["path"] == path and
+                   re.fullmatch("[0-9a-f]{40}", ref["commit"]) and re.fullmatch("[0-9a-f]{64}", ref["sha256"]))
+              # Trusted-base blobs can outlive their original branch after a squash.
+              # Fetch only this validated coordinator retention ref, without credentials.
+              try:
+                  git("cat-file", "-e", ref["commit"] + "^{commit}")
+              except SystemExit:
+                  retained = "refs/retention/pins/" + ref["commit"]
+                  git("-c", "credential.helper=", "-c", "http.extraheader=",
+                      "-c", "http.https://github.com/.extraheader=", "-c", "protocol.allow=never",
+                      "-c", "protocol.https.allow=always", "fetch", "--no-tags",
+                      "--no-recurse-submodules", "--no-write-fetch-head",
+                      "https://github.com/opensoft/openxfactory.git", retained + ":" + retained)
+              row = git("ls-tree", ref["commit"], "--", path).split()
+              need(row and row[0] in (b"100644", b"100755"))
+              data = git("show", ref["commit"] + ":" + path)
+              need(hashlib.sha256(data).hexdigest() == ref["sha256"])
+              return data
+          def core(value):
+              return hashlib.sha256(json.dumps({k: v for k, v in value.items() if k not in {"review", "pin_inventory"}},
+                                               sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+          tasks = {"T010", "T011", "T012", "T013", "T014", "T015", "T016", "T017", "T018", "T019", "T027", "T042",
+                   "T049", "T051", "T056", "T057", "T061", "T062", "T064", "T065", "T066", "T067", "T068"}
+          private = False
+          for path in git("ls-tree", "-r", "--name-only", "HEAD", "--", feature + "/evidence").decode().splitlines():
+              relative = path.removeprefix(feature + "/evidence/").split("/")
+              registered = path == control or (len(relative) == 1 and relative[0].removesuffix(".json") in tasks and relative[0].endswith(".json"))
+              registered |= (len(relative) == 3 and relative[0] == "instances" and
+                             relative[1] in {"T057", "T061", "T062", "T064"} and re.fullmatch(r"[A-Za-z0-9_.-]+\.json", relative[2]) is not None)
+              if registered:
+                  need(int(git("cat-file", "-s", "HEAD:" + path)) <= 16 * 1024 * 1024)
+                  value = decode(git("show", "HEAD:" + path))
+                  need(isinstance(value.get("pin_inventory"), list))
+                  private |= any("foreign_commit" in row for row in value["pin_inventory"])
+          if not private:
+              with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+                  out.write("required=false\nopensoft=\ncodexfactory=\n")
+              with open(os.environ["GITHUB_ENV"], "a") as out:
+                  out.write("PC_SOURCE_PROOF_ROOTS={}\n")
+          else:
+              base = os.environ["PC_SOURCE_BASE"]
+              need(re.fullmatch("[0-9a-f]{40}", base))
+              value = decode(git("show", base + ":" + control))
+              need(value["schema"] == "043-reviewed-trust-v1" and value["feature"] == "043-private-connectivity-production")
+              blocks = re.findall(rb"^```json\r?\n(.*?)^```[ \t]*$", blob(value["review"], auth_path), re.M | re.S)
+              need(len(blocks) == 1)
+              auth = decode(blocks[0])
+              need(set(auth) == {"schema", "decision", "custodian", "reviewed_manifest", "content_sha256", "reviewed_at"} and
+                   auth["schema"] == "043-source-authentication-v1" and auth["decision"] == "accepted" and auth["custodian"] == "Brett Heap")
+              when = datetime.fromisoformat(auth["reviewed_at"].replace("Z", "+00:00"))
+              need(when.tzinfo is not None and when <= datetime.now(timezone.utc))
+              reviewed = decode(blob(auth["reviewed_manifest"], control))
+              need(core(value) == core(reviewed) == auth["content_sha256"])
+              code = blob(value["source_ci_producer"], helper)
+              parent = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
+              target = parent / "pc043-reviewed-producer.py"
+              need(not target.exists() and not target.is_symlink())
+              target.write_bytes(code)
+              target.chmod(0o600)
+              subprocess.run([sys.executable, str(target), "plan", "--base", base,
+                              "--directory", str(parent / "pc043-source-proof")], check=True)
+          PY
+
+      - name: Require the commissioned App identity (043)
+        if: steps.pc043_plan.outputs.required == 'true'
+        env:
+          PC_APP_ID: ${{ secrets.OPENXFACTORY_APP_ID }}
+        run: test "$PC_APP_ID" = "4253636"
+
+      - name: Mint scoped Opensoft source read token (043)
+        id: pc043_opensoft_token
+        if: steps.pc043_plan.outputs.opensoft != ''
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.OPENXFACTORY_APP_ID }}
+          private-key: ${{ secrets.OPENXFACTORY_APP_PRIVATE_KEY }}
+          owner: opensoft
+          repositories: ${{ steps.pc043_plan.outputs.opensoft }}
+          permission-contents: read
+
+      - name: Mint scoped domain source read token (043)
+        id: pc043_domain_token
+        if: steps.pc043_plan.outputs.codexfactory != ''
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.OPENXFACTORY_APP_ID }}
+          private-key: ${{ secrets.OPENXFACTORY_APP_PRIVATE_KEY }}
+          owner: codeXfactory
+          repositories: ${{ steps.pc043_plan.outputs.codexfactory }}
+          permission-contents: read
+
+      - name: Prepare commit-only owner roots with the reviewed producer (043)
+        id: pc043_prepare
+        if: steps.pc043_plan.outputs.required == 'true'
+        env:
+          PC_OPENSOFT_TOKEN: ${{ steps.pc043_opensoft_token.outputs.token }}
+          PC_DOMAIN_TOKEN: ${{ steps.pc043_domain_token.outputs.token }}
+          PC_APP_ID: ${{ secrets.OPENXFACTORY_APP_ID }}
+          PC_APP_SLUG: ${{ steps.pc043_opensoft_token.outputs.app-slug || steps.pc043_domain_token.outputs.app-slug }}
+          PC_OPENSOFT_INSTALLATION: ${{ steps.pc043_opensoft_token.outputs.installation-id }}
+          PC_DOMAIN_INSTALLATION: ${{ steps.pc043_domain_token.outputs.installation-id }}
+        run: |
+          python3 "$RUNNER_TEMP/pc043-reviewed-producer.py" prepare \
+            --directory "$RUNNER_TEMP/pc043-source-proof"
+
+      - name: Revoke source tokens before any tests (043)
+        id: pc043_revoke
+        if: always()
+        env:
+          PC_OPENSOFT_TOKEN: ${{ steps.pc043_opensoft_token.outputs.token }}
+          PC_DOMAIN_TOKEN: ${{ steps.pc043_domain_token.outputs.token }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from urllib import request, error
+          class NoRedirect(request.HTTPRedirectHandler):
+              def redirect_request(self, *args):
+                  raise RuntimeError("credentialed redirect refused")
+          for name in ("PC_OPENSOFT_TOKEN", "PC_DOMAIN_TOKEN"):
+              token = os.environ.get(name)
+              if not token:
+                  continue
+              req = request.Request("https://api.github.com/installation/token", method="DELETE",
+                                    headers={"Authorization": "Bearer " + token,
+                                             "X-GitHub-Api-Version": "2022-11-28"})
+              try:
+                  with request.build_opener(NoRedirect).open(req, timeout=20) as response:
+                      if response.status != 204:
+                          raise SystemExit("source token revocation not confirmed")
+              except error.HTTPError as exc:
+                  if exc.code != 401:
+                      raise SystemExit("source token revocation failed") from None
+          PY
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.14"
+
+      - name: Restore coordinator evidence history (043)
+        id: pc043_history
+        run: |
+          python3 specs/043-private-connectivity-production/prepare-source-roots.py history \
+            --directory "$RUNNER_TEMP/pc043-source-proof"
 
       - run: python --version
 
@@ -94,3 +270,90 @@ jobs:
             -r requirements/hermes-runtime-contracts.lock
 
       - run: python -m pytest tests/doc-health -q -rs
+
+      - name: Exercise source proof under Python 3.14 (043)
+        shell: bash
+        env:
+          PC043_EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          PC043_BASE_REVISION: ${{ github.event.pull_request.base.sha || github.sha }}
+          PC043_CHECKOUT_REVISION: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          requested_head="$PC043_EXPECTED_REVISION"
+          feature_path="specs/043-private-connectivity-production"
+          for revision in "$requested_head" "$PC043_BASE_REVISION" "$PC043_CHECKOUT_REVISION"; do
+            [[ "$revision" =~ ^[0-9a-f]{40}$ ]]
+            git cat-file -e "$revision^{commit}"
+          done
+          [ "$(git rev-parse HEAD)" = "$PC043_CHECKOUT_REVISION" ]
+          git merge-base --is-ancestor "$requested_head" "$PC043_CHECKOUT_REVISION"
+          export PC043_SOURCE_MODE=pr-head
+          if git cat-file -e "$requested_head:$feature_path" 2>/dev/null; then
+            [ "$(git cat-file -t "$requested_head:$feature_path")" = tree ]
+          else
+            git merge-base --is-ancestor "$PC043_BASE_REVISION" "$PC043_CHECKOUT_REVISION"
+            ancestor="$(git merge-base "$requested_head" "$PC043_BASE_REVISION")"
+            touched="$(git log --full-history -1 --format=%H "$ancestor..$requested_head" -- "$feature_path")"
+            if git cat-file -e "$ancestor:$feature_path" 2>/dev/null || [ -n "$touched" ]; then
+              echo "::error::A head that changed or removed feature 043 requires its own complete source suites."
+              exit 1
+            fi
+            export PC043_EXPECTED_REVISION="$PC043_CHECKOUT_REVISION"
+            export PC043_SOURCE_MODE=merge-checkout
+            echo "::notice::Unrelated head predates feature 043; testing the merge checkout does not qualify the PR head."
+          fi
+          for module in test_evidence.py test_evidence_pins.py test_source_roots.py; do
+            [ "$(git cat-file -t "$PC043_EXPECTED_REVISION:$feature_path/tests/$module")" = blob ]
+          done
+          printf '043 source selection: mode=%s revision=%s requested_head=%s\n' \
+            "$PC043_SOURCE_MODE" "$PC043_EXPECTED_REVISION" "$requested_head"
+          original_tree="$(pwd)"
+          source_tree="$RUNNER_TEMP/pc043-py314-source"
+          git -c core.hooksPath=/dev/null worktree add --detach "$source_tree" "$PC043_EXPECTED_REVISION"
+          cd "$source_tree"
+          [ "$(git rev-parse HEAD)" = "$PC043_EXPECTED_REVISION" ]
+          python -m pytest specs/043-private-connectivity-production/tests/test_source_roots.py -q -rs \
+            --junitxml="$RUNNER_TEMP/pc043-py314.xml"
+          python - <<'PY'
+          from collections import Counter
+          import os
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "pc043-py314.xml").getroot()
+          cases = list(report.iter("testcase"))
+          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 97}
+          if dict(Counter(case.get("classname") for case in cases)) != expected:
+              raise SystemExit("Python 3.14 proof suite collection mismatch")
+          identities = {(case.get("classname"), case.get("name")) for case in cases}
+          if len(identities) != len(cases):
+              raise SystemExit("duplicate Python 3.14 proof cases")
+          if any(int(suite.get(field, 0)) for suite in report.iter("testsuite") for field in ("skipped", "failures", "errors")):
+              raise SystemExit("Python 3.14 proof suite must run and pass without skips")
+          if any(child.tag in ("skipped", "failure", "error") for case in cases for child in case):
+              raise SystemExit("Python 3.14 proof case did not pass")
+          print("043 Python 3.14 proof: collected=97 passed=97 skipped=0 failures=0 errors=0 revision=" + os.environ["PC043_EXPECTED_REVISION"])
+          PY
+          [ -z "$(git status --porcelain)" ]
+          cd "$original_tree"
+          git worktree remove "$source_tree"
+
+      - name: Remove ephemeral source proof (043)
+        id: pc043_cleanup
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          import shutil
+          parent = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
+          proof = parent / "pc043-source-proof"
+          if proof.is_symlink():
+              raise SystemExit("linked source proof cleanup refused")
+          if proof.exists():
+              marker = proof / ".pc043-commit-proof"
+              if not marker.is_file() or marker.is_symlink() or marker.read_text() != "043-commit-proof-v1\n":
+                  raise SystemExit("unowned source proof cleanup refused")
+              shutil.rmtree(proof)
+          producer = parent / "pc043-reviewed-producer.py"
+          producer.unlink(missing_ok=True)
+          PY

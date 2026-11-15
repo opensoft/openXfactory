@@ -1,0 +1,176 @@
+{
+  "schema": "043-source-owner-permission-v1",
+  "id": "043-installer-source-owner-20261114",
+  "decision": "accepted",
+  "owner": "Brett Heap",
+  "roles": [
+    "Brett Heap (installer source/release owner and source-evidence custodian)"
+  ],
+  "mode": "source",
+  "scope": {
+    "domain": "not-applicable",
+    "phase": "source",
+    "customer": "not-applicable",
+    "environment": "source",
+    "region": "not-applicable",
+    "candidate": "043-installer-source",
+    "offering": "local-managed-installer",
+    "wave": "not-applicable",
+    "offer": "not-applicable",
+    "target": "not-applicable",
+    "run": "043-q0-installer-source",
+    "site": "not-applicable",
+    "network": "not-applicable",
+    "profile": "ubuntu-python-cli"
+  },
+  "valid_from": "2026-11-14T17:25:29.544Z",
+  "valid_until": "until-superseded",
+  "decisions": {},
+  "proposal": "openspec/changes/commission-connectivity-installer-production/proposal.md",
+  "proposal_sha256": "64fb64c9f9be7da1571fe0dc4e456133042ccd8150f40b1be29218266b4bf34c",
+  "definition_sha256": "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0",
+  "existing_role_and_scope": "review/ratification.md",
+  "latest_consumed_choice": {
+    "kind": "C-05 internal installer runtime/distribution",
+    "at": "2026-11-14T17:25:29.544Z",
+    "raw_record_sha256": "ea17c6c998809e8fc1b580d6dc0917d7891febfd1ca66a08f83d7a1c9a95de4d",
+    "text": "Approve this internal qualification channel (Recommended)",
+    "record": "review/distribution-scope-acceptance.md"
+  },
+  "matrix": {
+    "headscale": "0.29.7",
+    "tailscale": "1.104.7",
+    "server": {
+      "os": "Ubuntu 24.04 LTS",
+      "architecture": "amd64",
+      "docker_engine": "29.9.3"
+    },
+    "clients": [
+      {
+        "os": "Windows 11",
+        "architecture": "amd64",
+        "channel": "official MSI"
+      },
+      {
+        "os": "macOS 15",
+        "architecture": "Apple Silicon",
+        "channel": "official Standalone GUI PKG"
+      },
+      {
+        "os": "macOS 15",
+        "architecture": "Intel",
+        "channel": "official Standalone GUI PKG"
+      },
+      {
+        "os": "Ubuntu 24.04 LTS",
+        "architecture": "amd64",
+        "channel": "official Debian package/repository"
+      }
+    ],
+    "qualified": false
+  },
+  "matrix_choice": {
+    "at": "2026-11-14T16:57:52.719Z",
+    "raw_record_sha256": "fb7c79ad567ff3cd440a3cd4cb4f0d1d58ffbef3af327d9e5504964d5e483249",
+    "record": "review/support-scope-acceptance.md"
+  },
+  "distribution": {
+    "command_host": "Ubuntu 24.04 LTS amd64",
+    "python_minor": "3.12",
+    "environment": "isolated virtual environment",
+    "exact_runtime": "Security-patched runtime/build identities pinned before T026 build/release/qualification",
+    "console_command": "xfactory-connectivity",
+    "package_name": "xfactory-private-connectivity",
+    "channel": "Private xFactory-Installer GitHub owner-release wheel/sdist assets plus complete hash-pinned offline dependency bundle",
+    "installation": "Verified approved local bundle with no package-index fallback",
+    "trust": "Exact owner release tag/commit, asset identity, SHA-256 and normal approved provenance/readback",
+    "customer_delivery": "not selected",
+    "published": false,
+    "qualified": false
+  },
+  "per_task_source_scope": {
+    "T024": [
+      "src/private_connectivity/local_provider.py",
+      "src/private_connectivity/selection.py",
+      "src/private_connectivity/contract-pin.json",
+      "src/private_connectivity/headscale-pin.json",
+      "src/private_connectivity/vendor/contracts/private-connectivity/binding.schema.json",
+      "src/private_connectivity/vendor/scripts/validate-private-connectivity.py",
+      "src/private_connectivity/runtime-inventory.json",
+      "tests/private_connectivity/test_production_local.py",
+      "evidence/private-connectivity-production/T024.json"
+    ],
+    "T025": [
+      "src/private_connectivity/selection.py",
+      "tests/private_connectivity/test_migration.py",
+      "tests/private_connectivity/test_production_migration.py",
+      "evidence/private-connectivity-production/T025.json"
+    ],
+    "T026": [
+      "packaging/private-connectivity/build.py",
+      "packaging/private-connectivity/pyproject.toml",
+      "packaging/private-connectivity/requirements-build.in",
+      "packaging/private-connectivity/requirements-build.lock",
+      "release/private-connectivity/manifest.json",
+      "tests/private_connectivity/qualify_production.py",
+      "tests/private_connectivity/test_production_runner.py",
+      "docs/private-connectivity.md",
+      ".github/workflows/validate.yml",
+      "evidence/private-connectivity-production/T026.json",
+      "src/private_connectivity/cli.py",
+      "tests/private_connectivity/test_production_cli.py"
+    ],
+    "T034": [
+      "src/private_connectivity/managed_provider.py",
+      "src/private_connectivity/selection.py",
+      "src/private_connectivity/runtime-inventory.json",
+      "tests/private_connectivity/test_managed.py",
+      "tests/private_connectivity/test_production_managed.py",
+      "evidence/private-connectivity-production/T034.json"
+    ],
+    "T035": [
+      "tests/private_connectivity/qualify_production.py",
+      "tests/private_connectivity/test_production_runner.py",
+      ".github/workflows/validate.yml",
+      "release/private-connectivity/manifest.json",
+      "docs/private-connectivity.md",
+      "evidence/private-connectivity-production/T035.json"
+    ]
+  },
+  "custody_process": {
+    "custodian": "Brett Heap",
+    "records": "Reviewed/redacted original source/CI output and genuine human provenance",
+    "location": "Private owner Git under existing permissions",
+    "retention": "project lifetime",
+    "authentication": "Actual output/provenance review with exact commit/SHA-256 and genuine source/run/job identities",
+    "live_custody": "not granted"
+  },
+  "source_limits": {
+    "target_effects": false,
+    "cloud_spend_usd": 0,
+    "runner_dispatch": false,
+    "installation": false,
+    "enrollment": false,
+    "fault_injection": false
+  },
+  "exclusions": {
+    "workstation_intake": true,
+    "store_work": true,
+    "unrelated_workstation_build": true,
+    "public_repository_or_pypi_publication": true
+  },
+  "later_required_inputs": [
+    "Actual published compatible neutral/package/service pins before their adapter consumers",
+    "Real deterministic artifact build/CI, patched runtime/dependency identities and current owner release authority before publication/readback",
+    "Actual hosted identity/entitlement/custody and current attachment authority before managed integration or use",
+    "Exact target/operator/client/custody and finite numeric objectives with Q1-Q5 entry before execution"
+  ],
+  "boundaries": {
+    "source_only": true,
+    "allocates_version": false,
+    "advances_pins": false,
+    "authorizes_tag": false,
+    "authorizes_target_effects": false,
+    "all_three_prs_remain_draft": true
+  }
+}

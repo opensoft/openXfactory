@@ -1,0 +1,65 @@
+{
+  "schema": "043-source-owner-permission-v1",
+  "id": "043-neutral-source-owner-20261114",
+  "decision": "accepted",
+  "owner": "Brett Heap",
+  "roles": [
+    "Brett Heap (neutral publication and release owner)"
+  ],
+  "mode": "source",
+  "scope": {
+    "profile": "neutral-private-connectivity-contract",
+    "network": "not-applicable",
+    "domain": "not-applicable",
+    "offer": "not-applicable",
+    "phase": "source",
+    "offering": "neutral-contract",
+    "target": "not-applicable",
+    "wave": "not-applicable",
+    "candidate": "043-neutral-source",
+    "run": "043-q0-neutral-source",
+    "customer": "not-applicable",
+    "environment": "source",
+    "site": "not-applicable",
+    "region": "not-applicable"
+  },
+  "valid_from": "2026-11-14T13:36:48.174Z",
+  "valid_until": "until-superseded",
+  "decisions": {},
+  "accepted_publication_surfaces": [
+    "contracts/private-connectivity/binding.schema.json",
+    "contracts/private-connectivity/README.md",
+    "contracts/private-connectivity/conformance.json",
+    "scripts/validate-private-connectivity.py",
+    "tests/private_connectivity/test_binding.py",
+    "tests/private_connectivity/test_published_contract.py",
+    "contracts/manifest.yaml",
+    "contracts/CHANGELOG.md",
+    "contracts/releases/",
+    "specs/043-private-connectivity-production/evidence/T018.json",
+    "specs/043-private-connectivity-production/evidence/T019.json"
+  ],
+  "proposal": "openspec/changes/publish-private-connectivity-production-contract/proposal.md",
+  "proposal_sha256": "ddca9eb960677c53e37005b6cc79b5b9c63a25eda5692f842845acf7b0720d27",
+  "definition_sha256": "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0",
+  "actual_owner_input": {
+    "at": "2026-11-14T13:36:48.174Z",
+    "raw_record_sha256": "1d2e014c77ecd911b3a090d3d8aed14b657917d9c96d5c39db6ffccb4c2ec78d",
+    "text": "Go ahead and ratify both proposals, approve Brett as neutral publication/release owner for the exact proposed scope, and continue in dependency order. Keep all three PRs draft and honor Q0–Q5.",
+    "provenance": "Actual user input recorded in review/ratification.md; this projection preserves the original decision and source-only boundaries."
+  },
+  "custody_process": {
+    "source_records": "Reviewed/redacted source evidence under existing repository permissions and normal versioning/publication policy; actual output authentication is separate.",
+    "release_policy": "docs/contract-versioning-policy.md",
+    "actual_cut": "Version/inventory filename allocated and accepted only at the actual authorized cut.",
+    "tag_publication": "Current realization authority and reviewed landing/readback required; no tag authorized by this source check."
+  },
+  "boundaries": {
+    "source_only": true,
+    "allocates_version": false,
+    "advances_pins": false,
+    "authorizes_tag": false,
+    "authorizes_target_effects": false,
+    "all_three_prs_remain_draft": true
+  }
+}

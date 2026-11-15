@@ -1145,12 +1145,33 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # per-record owner-resolved sites and exactly two standing members.
     # Local pins retain reachability obligations; foreign ownership is
     # checked by the feature inventory verifier and required doc-health test.
-    # Feature 043 adds exactly two measured receipt anchors under one
-    # exact-path standing member, preserving their MUST_RESOLVE obligation.
-    # Feature 044 adds the immutable official scanner action as one ordinary
-    # cross-repository member. Measured with verify(allow_remote=False) over
-    # the staged candidate commit: (704, 33), no uncovered/vanished/arrived.
-    assert (standing_sites, standing_members) == (704, 33)
+    # Feature 043 T009 initially declared its empty inventory/original-ref
+    # members FUTURE. Deliberate first-record promotion measures actual data.
+    # T010's first real commissioning export adds 278 sites across four
+    # populated members, measured from its committed tree. The foreign member
+    # has no site and remains FUTURE; presence does not authenticate evidence.
+    # The repaired source export preserves its prior container and failed
+    # prerequisite/ref-retention history: seven additional measured sites.
+    # The actual required CI output and distinct T010 receipt add 31 sites.
+    # The neutral source acceptance candidate adds 44 measured sites, with
+    # its original output/receipt refs and prior accepted E control preserved.
+    # The T011 package candidate adds 42 measured sites through
+    # its separate original output/receipt and preserved accepted N control.
+    # Corrected T011 rerun retains rejected control/preflight/parser/wrapper
+    # history: 15 additional sites, with all class obligations intact.
+    # The T012 installer source candidate adds 49 measured sites,
+    # retaining its separate original output/receipt and accepted L control.
+    # The parallel Sonar recovery feature adds two measured receipt anchors
+    # under one exact-path standing member; the integrated tree is measured.
+    # The new-definition CI control retains original observations, binds the
+    # authenticated historical control and the actual two-lane source exports.
+    # Measured after committing those records: 76 additional sites, no new member.
+    # The integrated Sonar scanner adds one measured site and member.
+    # The corrected classification/source-CI packet preserves the withdrawn
+    # preparations and new original/receipt/control refs: 53 measured sites.
+    # Public-history requalification preserves the withdrawn d37 control and
+    # the actual transport diagnostics: 11 additional measured sites.
+    assert (standing_sites, standing_members) == (1310, 37)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
@@ -1205,6 +1226,29 @@ def test_no_deterministic_check_family_is_added():
     assert "pin_sentinels" not in source, (
         "the vocabulary must not be reachable from the family registry, or a "
         "later edit registers it as a family without deciding to")
+
+
+def test_production_connectivity_registration_matches_actual_source_population():
+    members = [member for member in pc.PIN_CLASS if member.id.startswith("private-connectivity-production-")]
+    assert {member.id for member in members} == {
+        "private-connectivity-production-original-commit",
+        "private-connectivity-production-original-revision",
+        "private-connectivity-production-original-source_revision",
+        "private-connectivity-production-local-evidence",
+        "private-connectivity-production-foreign-evidence",
+    }
+    assert {member.id for member in members if member.presence == pc.CURRENT} == {
+        "private-connectivity-production-original-commit",
+        "private-connectivity-production-original-revision",
+        "private-connectivity-production-original-source_revision",
+        "private-connectivity-production-local-evidence",
+    }
+    assert {member.id for member in members if member.presence == pc.FUTURE} == {
+        "private-connectivity-production-foreign-evidence",
+    }
+    assert all(member.population == pc.STANDING and not member.key_expected for member in members)
+    assert all(member.reachability == pc.MUST_RESOLVE for member in members)
+    assert {member.locality for member in members} == {pc.REPO_LOCAL, pc.CROSS_REPOSITORY}
 
 
 # Feature 043's measured service receipt introduces two repo-local anchors.

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 import os
+import re
 from pathlib import Path
 import secrets
 import stat
@@ -67,7 +68,11 @@ def directory_handle(path, *, create=False, private=False):
 @contextmanager
 def private_child(parent_fd, name, *, create=False):
     _require_descriptors()
-    _component(name)
+    # Native profiles use the same bounded identifier grammar at the sink.
+    # A descriptor confines the parent; this grammar also rules out absolute
+    # paths, separators, dot components and control characters in the leaf.
+    if not isinstance(name, str) or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", name) is None:
+        raise UnsafePath("private child must be a bounded profile identifier")
     flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
     try:
         fd = os.open(name, flags, dir_fd=parent_fd)
