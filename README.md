@@ -560,6 +560,14 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [add-protected-runtime-report](openspec/changes/add-protected-runtime-report/proposal.md)
+  — draft T012T report-source decision; not ratified or commissioned for implementation.
+  [Design](openspec/changes/add-protected-runtime-report/design.md) ·
+  [Requirements](openspec/changes/add-protected-runtime-report/specs/protected-runtime-report/spec.md) ·
+  [Handoff](openspec/changes/add-protected-runtime-report/tasks.md) ·
+  [Preparation evidence](openspec/changes/add-protected-runtime-report/evidence.md).
+  The sole implementation list remains openXwallet feature017; setup/dispatch remain unauthorized.
+
 - [remediate-p1-security-boundaries](openspec/changes/remediate-p1-security-boundaries/proposal.md)
   — draft implementation packet for Brett Heap's 2026-11-15 direction to fix
   legacy P1 security boundaries. [Feature 045](specs/045-p1-security-boundaries/spec.md)
