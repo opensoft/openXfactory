@@ -1,0 +1,165 @@
+{
+  "schema": "043-source-owner-permission-v1",
+  "id": "043-hosted-source-owner-20261116",
+  "decision": "accepted",
+  "owner": "Brett Heap",
+  "roles": [
+    "Brett Heap (Hosted Headscale source/release owner and source-evidence custodian)"
+  ],
+  "mode": "source",
+  "scope": {
+    "network": "not-applicable",
+    "target": "not-applicable",
+    "customer": "not-applicable",
+    "site": "not-applicable",
+    "region": "not-applicable",
+    "domain": "not-applicable",
+    "wave": "not-applicable",
+    "offer": "not-applicable",
+    "phase": "source",
+    "candidate": "043-hosted-qa-source",
+    "environment": "source",
+    "run": "043-q0-hosted-source",
+    "offering": "standalone-hosted-headscale",
+    "profile": "hosted-headscale-qa-source"
+  },
+  "valid_from": "2026-11-16T22:16:06.872Z",
+  "valid_until": "until-superseded",
+  "decisions": {},
+  "proposal": "openspec/changes/commission-hosted-headscale-production/proposal.md",
+  "proposal_sha256": "4447456ecc6b38c361aa4411f820c4f9a32ad544e60356960547ac6ea644c3a6",
+  "definition_sha256": "2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796",
+  "existing_role_and_scope": "review/ratification.md",
+  "actual_choice": {
+    "at": "2026-11-16T22:16:06.872Z",
+    "raw_record_sha256": "b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82",
+    "hash_scope": "UTF-8 original JSON record line excluding terminator",
+    "answer": "Approve the plan and source choices (Recommended)",
+    "record": "review/qa-commissioning.md"
+  },
+  "approved_private_plan": {
+    "repository": "opensoft/openxsoft-hosted-services",
+    "commit": "6b8b7c4542eb48f9c602afe64ecca460978a674b",
+    "path": ".azure/plan.md",
+    "sha256": "3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1"
+  },
+  "source_choices": {
+    "provider": "Azure AKS through current managing-factory request and governed channel",
+    "environment": "QA",
+    "region": "westus",
+    "issuer": "https://keycloak.opensoft.dev/realms/opensoft",
+    "api_signature_algorithm": "RS256",
+    "resource_audience": "openxsoft-headscale-qa",
+    "adopting_caller": "openxsoft-connectivity-qa",
+    "entitlement": "independent product-owned SQLite current entitlement/revocation journal",
+    "credential_custody": "scoped existing QA Key Vault references; actual delivery/access separately gated",
+    "state": "dedicated fenced single-writer persistent filesystem",
+    "registry": "existing QA registry; immutable supported candidate required"
+  },
+  "per_task_source_scope": {
+    "T028": [
+      "services/network-provisioning/production/provider.py",
+      "tests/qualification/test_production_provider.py",
+      "release/install-pin.json",
+      "evidence/private-connectivity-production/T028.json"
+    ],
+    "T029": [
+      "services/network-provisioning/production/identity.py",
+      "services/network-provisioning/production/entitlement.py",
+      "services/network-provisioning/production/custody.py",
+      "tests/qualification/test_production_authority.py",
+      "evidence/private-connectivity-production/T029.json"
+    ],
+    "T030": [
+      "services/network-provisioning/service.py",
+      "services/network-provisioning/operations.py",
+      "tests/qualification/test_operations.py",
+      "tests/qualification/test_production_operations.py",
+      "evidence/private-connectivity-production/T030.json",
+      "services/network-provisioning/production/app.py",
+      "tests/qualification/test_production_api.py"
+    ],
+    "T031": [
+      "services/network-provisioning/service.py",
+      "services/network-provisioning/attachments.py",
+      "services/network-provisioning/supervisor.py",
+      "tests/qualification/test_production_lifecycle.py",
+      "evidence/private-connectivity-production/T031.json"
+    ],
+    "T032": [
+      "services/catalog/production.py",
+      "services/catalog/qualification.py",
+      "tests/qualification/test_production_catalog.py",
+      "evidence/private-connectivity-production/T032.json"
+    ],
+    "T033": [
+      "tests/qualification/qualify_production.py",
+      "tests/qualification/test_production_runner.py",
+      ".github/workflows/qualification.yml",
+      "release/runtime-inventory.json",
+      "release/install-pin.json",
+      "docs/production-headscale.md",
+      "evidence/private-connectivity-production/T033.json",
+      "services/network-provisioning/production/requirements.in",
+      "services/network-provisioning/production/requirements.lock",
+      "services/network-provisioning/production/Dockerfile",
+      "services/network-provisioning/production/__main__.py"
+    ],
+    "T039": [
+      "services/factory-onboarding/production_binder.py",
+      "services/factory-onboarding/onboarding.py",
+      "tests/qualification/test_production_onboarding.py",
+      "release/installer-pin.json",
+      "release/domain-profile-pin.json",
+      "evidence/private-connectivity-production/T039.json"
+    ],
+    "T040": [
+      "services/catalog/production.py",
+      "services/catalog/qualification.py",
+      "tests/qualification/test_production_catalog_integration.py",
+      "release/domain-inventory.json",
+      "evidence/private-connectivity-production/T040.json"
+    ],
+    "T041": [
+      "tests/qualification/qualify_production.py",
+      "tests/qualification/test_production_runner.py",
+      ".github/workflows/qualification.yml",
+      "release/runtime-inventory.json",
+      "release/installer-pin.json",
+      "release/domain-profile-pin.json",
+      "evidence/private-connectivity-production/T041.json"
+    ]
+  },
+  "custody_process": {
+    "custodian": "Brett Heap",
+    "records": "Reviewed/redacted commissioning source facts and genuine human provenance; private plan/source remains in private owner Git",
+    "location": "Existing coordinator and private owner Git permissions",
+    "retention": "project lifetime",
+    "authentication": "Separate actual output/provenance review with exact Git commits/SHA-256",
+    "live_custody": "not granted"
+  },
+  "source_limits": {
+    "target_effects": false,
+    "cloud_spend_usd": 0,
+    "runner_dispatch": false,
+    "installation": false,
+    "enrollment": false,
+    "fault_injection": false
+  },
+  "later_required_inputs": [
+    "Actual task output authentication and default admission",
+    "T019 neutral and T023 package releases before their H source consumers",
+    "Owning target/operational admission and edge/TLS/relay compatibility",
+    "Actual protected custody, target authority, current capacity/cost and finite approved Q1 inputs",
+    "Full program/domain/installer/Ops final candidate closure before T050/Q1"
+  ],
+  "boundaries": {
+    "source_only": true,
+    "allocates_version": false,
+    "advances_pins": false,
+    "authorizes_tag": false,
+    "authorizes_target_effects": false,
+    "authorizes_Q1": false,
+    "completes_T013_without_actual_output_authentication": false
+  }
+}
