@@ -1607,3 +1607,121 @@ def test_current_t010_requires_exactly_the_commissioned_three_suites(mutation):
     else: binding["ci"]["uncommissioned.py"] = 1
     with pytest.raises(v.EvidenceError, match="feature suites"):
         world.verifier().ci(world.outputs["T010"], binding)
+
+
+# Synthetic reviews of actual immutable source controls. No private owner bytes
+# are copied into this test tree; the selected C-only closures use public Git.
+def c37_control(kind):
+    return deepcopy(v.C37_CONTROLS[kind]["reference"])
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "package"])
+@pytest.mark.parametrize("task", ["T010", "T011", "T012", "T016"])
+def test_fixed_c37_reader_retains_actual_source_closures(kind, task):
+    reader = v.make_verifier(TASKS, v.GitStore({v.COORDINATOR: str(ROOT)}), c37_control(kind))
+    assert reader.definition == v.C37_DEFINITION
+    reader.verify(task)
+
+
+def c37_world(kind, monkeypatch):
+    git_store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    world = World()
+    original_blob = world.store.blob
+    def blob(ref):
+        identity = (ref["repository"], ref["commit"], ref["path"])
+        return original_blob(ref) if identity in world.store.objects else git_store.blob(ref)
+    monkeypatch.setattr(world.store, "blob", blob)
+    monkeypatch.setattr(world.store, "changed", git_store.changed)
+    monkeypatch.setattr(world.store, "git", git_store.git, raising=False)
+    monkeypatch.setattr(world.store, "root", git_store.root, raising=False)
+    prior = c37_control(kind)
+    world.trust = v.decode(git_store.blob(prior))
+    world.trust["definition"] = v.DEFINITION
+    world.trust["historical_controls"] = {task: prior for task in ("T011", "T012", "T016")}
+    return world
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "package"])
+@pytest.mark.parametrize("task", ["T011", "T012", "T016"])
+@pytest.mark.parametrize("state", ["revoked-authority", "revoked-decision", "closed-authority"])
+@pytest.mark.parametrize("cached", [False, True])
+def test_current_state_reaches_nested_c37_history(kind, task, state, cached, monkeypatch):
+    world = c37_world(kind, monkeypatch)
+    binding = world.trust["bindings"]["T007"]
+    authority = world.trust["source_container"]["objects"][binding["authority"]["object"]]["value"]
+    reader = v.Verifier(TASKS, world.store, source_anchor(world), now=NOW)
+    if cached:
+        reader.verify(task)
+    identity = authority["id"]
+    if state == "revoked-decision":
+        ref = authority["decisions"]["C-01"]
+        identity = world.trust["source_container"]["objects"][ref["object"]]["value"]["id"]
+    if state == "closed-authority":
+        reader.trust["completed_authorities"] = {identity: world.store.put(
+            dict(kind="authority-closure", authority_id=identity, scope=binding["scope"],
+                 disposition="completed", closed_at=START, owner="Synthetic Owner"), "closures/c37-current.json")}
+    else:
+        reader.trust["revoked_authorities"].append(identity)
+    with pytest.raises(v.EvidenceError, match="revoked|closed"):
+        reader.verify(task)
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "package"])
+@pytest.mark.parametrize("task", ["T011", "T012", "T016"])
+def test_c37_children_keep_the_original_consumed_ci(kind, task, monkeypatch):
+    world = c37_world(kind, monkeypatch)
+    world.trust["bindings"]["T010"]["command"] = "synthetic replacement CI awaiting its own admission"
+    v.Verifier(TASKS, world.store, source_anchor(world), now=NOW).verify(task)
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "package"])
+@pytest.mark.parametrize("field,value", [
+    ("commit", "a" * 40), ("path", "evidence/unaccepted.json"),
+    ("repository", "opensoft/another-factory"), ("sha256", "a" * 64),
+])
+def test_fixed_c37_control_does_not_accept_reference_substitution(kind, field, value):
+    ref = c37_control(kind)
+    ref[field] = value
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    with pytest.raises(v.EvidenceError):
+        v.historical_verifier(store, ref)
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "package"])
+@pytest.mark.parametrize("mutation", ["core", "reader", "definition", "frozen-input"])
+def test_fixed_c37_history_checks_all_immutable_inputs(kind, mutation, monkeypatch):
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    ref = c37_control(kind)
+    if mutation == "core":
+        controls = deepcopy(v.C37_CONTROLS)
+        controls[kind]["content_sha256"] = "a" * 64
+        monkeypatch.setattr(v, "C37_CONTROLS", controls)
+    elif mutation == "reader":
+        monkeypatch.setattr(v, "C37_READER", dict(v.C37_READER, sha256="a" * 64))
+    elif mutation == "definition":
+        monkeypatch.setattr(v, "C37_DEFINITION", "a" * 64)
+    else:
+        original = store.git
+        def changed(root, *args):
+            raw = original(root, *args)
+            return raw + b"\nsynthetic drift" if args[0] == "show" and args[1].endswith("/spec.md") else raw
+        monkeypatch.setattr(store, "git", changed)
+    with pytest.raises(v.EvidenceError):
+        v.historical_verifier(store, ref)
+
+
+@pytest.mark.parametrize("task", ["T018", "T021", "T052"])
+def test_c37_history_cannot_admit_a_pending_or_live_task(task, monkeypatch):
+    world = c37_world("package", monkeypatch)
+    world.trust["historical_controls"] = {task: c37_control("package")}
+    anchor = source_anchor(world)
+    with pytest.raises(v.EvidenceError, match="unaccepted historical task"):
+        v.Verifier(TASKS, world.store, anchor, now=NOW)
+
+
+def test_t020_history_requires_its_actual_package_control(monkeypatch):
+    world = c37_world("source-ci", monkeypatch)
+    world.trust["historical_controls"] = {"T020": c37_control("source-ci")}
+    anchor = source_anchor(world)
+    with pytest.raises(v.EvidenceError, match="unaccepted historical control"):
+        v.Verifier(TASKS, world.store, anchor, now=NOW)

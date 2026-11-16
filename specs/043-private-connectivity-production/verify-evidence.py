@@ -29,11 +29,41 @@ from datetime import datetime, timezone
 
 FEATURE = "043-private-connectivity-production"
 FEATURE_PATH = "specs/" + FEATURE
-DEFINITION = "c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431"
+COORDINATOR = "opensoft/openxfactory"
+HISTORICAL_CONTROL_ERROR = "unaccepted historical control"
+DEFINITION = "2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796"
 LEGACY_DEFINITION = "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0"
 LEGACY_CONTROL_SHA256 = "0dc18a4053e07fd484534dcd4b572a5f8c6b72718b6901ac1323298d4ec7243e"
 LEGACY_READER_SHA256 = "0ce860921467e94e942274905c45c99295a830a3f14b8a0b66ddb944103f697f"
-COORDINATOR = "opensoft/openxfactory"
+# Closed source history accepted before this exact T018 scope refinement.
+C37_DEFINITION = "c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431"
+C37_READER = {
+    "repository": COORDINATOR,
+    "commit": "98a20eeeb6435f4bcd195fe86d2221e27fb3de5b",
+    "path": "specs/043-private-connectivity-production/verify-evidence.py",
+    "sha256": "2f7327b038f4ba54e3653b0f0247c18da87713220b2cba9ed11dc515407a597b"
+}
+C37_CONTROLS = {
+    "source-ci": {
+        "reference": {
+            "repository": COORDINATOR,
+            "commit": "698bf83671be642421fb28987c820fe36b49b0a6",
+            "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+            "sha256": "31aa0576d1c9c0ac99ccf6faa14b038b0a74e985568ab5645f543d75de13bb35"
+        },
+        "content_sha256": "c8be9c1d56f7fd7dbbaca5ca4c3f416ae03f7e1855722fb4aa0e54e5a6f3ef54"
+    },
+    "package": {
+        "reference": {
+            "repository": COORDINATOR,
+            "commit": "c4e380b43e27093a2a3b99264a3fb52a6cf36c21",
+            "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+            "sha256": "902903efb19398d014ef2c84acd6afa227c0cc97ee4df87f5d9cecf56fd29816"
+        },
+        "content_sha256": "f9d89883516aa147f3b0054b7132f1f53b66bd948c2c5834b2d9a4cea3dd3332"
+    }
+}
+
 FIXED_REPOSITORIES = {"C": COORDINATOR, "L": "opensoft/headscale-install", "I": "opensoft/xfactory-installer",
                       "H": "opensoft/openxsoft-hosted-services"}
 SCOPE_FIELDS = frozenset("run candidate profile customer site network domain environment target region offering phase offer wave".split())
@@ -242,32 +272,42 @@ def _load_contract(read, definition):
     return tasks
 
 
-def historical_verifier(store, ref, now=None, *, prepare=False):
-    """One fixed actually authenticated packet and its exact immutable reader.
+def fixed_c37_control(ref):
+    normalized = {**ref, "repository": ref["repository"].lower()}
+    return next((item for item in C37_CONTROLS.values() if normalized == item["reference"]), None)
 
-    The operator still selects the independent control anchor. This function
-    accepts neither a caller-selected definition nor executable source identity.
-    """
+
+def historical_verifier(store, ref, now=None, *, prepare=False):
+    """Use only the fixed accepted source control and its original frozen reader."""
     reference(ref)
-    require(ref["repository"].lower() == COORDINATOR and ref["path"] == COMMISSIONING_PATH
-            and ref["sha256"] == LEGACY_CONTROL_SHA256, "unaccepted historical control")
+    require(ref["repository"].lower() == COORDINATOR and ref["path"] == COMMISSIONING_PATH,
+            HISTORICAL_CONTROL_ERROR)
     value = decode(store.blob(ref))
-    require(value["definition"] == LEGACY_DEFINITION, "unaccepted historical definition")
-    reader_ref = dict(repository=COORDINATOR, commit=ref["commit"], path=FEATURE_PATH + "/verify-evidence.py",
-                      sha256=LEGACY_READER_SHA256)
+    if ref["sha256"] == LEGACY_CONTROL_SHA256:
+        definition = LEGACY_DEFINITION
+        reader_ref = {"repository": COORDINATOR, "commit": ref["commit"],
+                      "path": FEATURE_PATH + "/verify-evidence.py", "sha256": LEGACY_READER_SHA256}
+    else:
+        selected = fixed_c37_control(ref)
+        require(selected is not None, HISTORICAL_CONTROL_ERROR)
+        definition = C37_DEFINITION
+        require(commissioning_digest(value) == selected["content_sha256"], "unaccepted historical core")
+        reader_ref = C37_READER
+    require(value["definition"] == definition, "unaccepted historical definition")
+    root = store.root(COORDINATOR)
+    tasks = _load_contract(lambda path: store.git(root, "show", ref["commit"] + ":" + FEATURE_PATH + "/" + relative(path)),
+                           definition)
     code = store.blob(reader_ref)
     namespace = {"__name__": "_pc043_fixed_historical_reader", "__file__": __file__}
     exec(compile(code, "<authenticated historical 043 reader>", "exec"), namespace)
-    root = store.root(COORDINATOR)
-    tasks = _load_contract(lambda path: store.git(root, "show", ref["commit"] + ":" + FEATURE_PATH + "/" + relative(path)),
-                           LEGACY_DEFINITION)
     verifier = namespace["Verifier"](tasks, store, ref, now, prepare=prepare)
-    verifier.definition = LEGACY_DEFINITION
+    verifier.definition = definition
     return verifier
 
 
 def make_verifier(tasks, store, ref, now=None, *, prepare=False):
-    if ref.get("sha256") == LEGACY_CONTROL_SHA256:
+    known = {LEGACY_CONTROL_SHA256} | {item["reference"]["sha256"] for item in C37_CONTROLS.values()}
+    if ref.get("sha256") in known:
         return historical_verifier(store, ref, now, prepare=prepare)
     return Verifier(tasks, store, ref, now, prepare=prepare)
 
@@ -301,10 +341,14 @@ class Verifier:
             require(store.blob(reference(t["review"])).strip(), "missing independent custody review")
         self.active, self.cache = set(), set()
         legacy = t.get("historical_controls", {})
-        require(isinstance(legacy, dict) and set(legacy) <= {f"T{i:03}" for i in range(1, 13)} | {"T016"},
+        require(isinstance(legacy, dict) and set(legacy) <= {f"T{i:03}" for i in range(1, 13)} | {"T016", "T020"},
                 "unaccepted historical task")
         for key, ref in legacy.items():
-            require(ref.get("sha256") == LEGACY_CONTROL_SHA256, "unaccepted historical control")
+            reference(ref)
+            selected = fixed_c37_control(ref)
+            require((ref["sha256"] == LEGACY_CONTROL_SHA256 and key != "T020")
+                    or (selected is not None and (key != "T020" or selected == C37_CONTROLS["package"])),
+                    HISTORICAL_CONTROL_ERROR)
 
     def source_container(self, container):
         require(isinstance(container, dict) and set(container) == {"schema", "objects"}
@@ -692,7 +736,8 @@ class Verifier:
             # Keep the frozen graph/original objects, but apply current authority
             # state throughout its dependency traversal, including cache rechecks.
             prior.trust["revoked_authorities"] = prior.trust["revoked_authorities"] + self.trust["revoked_authorities"]
-            prior.trust["completed_authorities"] = self.trust.get("completed_authorities", {})
+            prior.trust["completed_authorities"] = {**prior.trust.get("completed_authorities", {}),
+                                                    **self.trust.get("completed_authorities", {})}
             prior.objects = {**self.objects, **prior.objects}
             try:
                 prior.verify(key, data)

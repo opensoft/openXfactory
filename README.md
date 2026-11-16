@@ -568,6 +568,7 @@ Every DomainxFactory must validate against the canonical contract:
   [Preparation evidence](openspec/changes/add-protected-runtime-report/evidence.md).
   The sole implementation list remains openXwallet feature017; setup/dispatch remain unauthorized.
 
+- [register-private-connectivity-release-members](openspec/changes/register-private-connectivity-release-members/proposal.md) — source scope ratified 2026-11-15 by Brett Heap in draft [PR #1327](https://github.com/opensoft/openXfactory/pull/1327); for the exact T018 release-builder/test additions and evidence-safe definition refinement. Preserves the current T020 actual packet until its distinct authentication/default verification; allocates no release version or tag.
 - [remediate-p1-security-boundaries](openspec/changes/remediate-p1-security-boundaries/proposal.md)
   — draft implementation packet for Brett Heap's 2026-11-15 direction to fix
   legacy P1 security boundaries. [Feature 045](specs/045-p1-security-boundaries/spec.md)

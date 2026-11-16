@@ -1149,7 +1149,7 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # members FUTURE. Deliberate first-record promotion measures actual data.
     # T010's first real commissioning export adds 278 sites across four
     # populated members, measured from its committed tree. The foreign member
-    # has no site and remains FUTURE; presence does not authenticate evidence.
+    # had no site and remained FUTURE; presence does not authenticate evidence.
     # The repaired source export preserves its prior container and failed
     # prerequisite/ref-retention history: seven additional measured sites.
     # The actual required CI output and distinct T010 receipt add 31 sites.
@@ -1171,7 +1171,18 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # preparations and new original/receipt/control refs: 53 measured sites.
     # Public-history requalification preserves the withdrawn d37 control and
     # the actual transport diagnostics: 11 additional measured sites.
-    assert (standing_sites, standing_members) == (1310, 37)
+    # T020's first actual private binding and preserved accepted c8 control
+    # add 17 measured sites, including three foreign commit sites and one
+    # standing member. Measured from the committed pending control; presence
+    # does not supply authentication or replace either private CI proof lane.
+    # The bounded E definition/source-CI and local T021/T022 pending controls
+    # add 50 measured sites, including preserved superseded preparation refs.
+    # The member set is unchanged; presence supplies no authentication.
+    # The authenticated control and draft T018 source-review record add 13
+    # measured sites. These references grant no publication or rollout acceptance.
+    # The revised T018 review retains its prior candidate and exact review
+    # head: four additional measured sites, with the member set unchanged.
+    assert (standing_sites, standing_members) == (1394, 38)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
@@ -1242,10 +1253,9 @@ def test_production_connectivity_registration_matches_actual_source_population()
         "private-connectivity-production-original-revision",
         "private-connectivity-production-original-source_revision",
         "private-connectivity-production-local-evidence",
-    }
-    assert {member.id for member in members if member.presence == pc.FUTURE} == {
         "private-connectivity-production-foreign-evidence",
     }
+    assert {member.id for member in members if member.presence == pc.FUTURE} == set()
     assert all(member.population == pc.STANDING and not member.key_expected for member in members)
     assert all(member.reachability == pc.MUST_RESOLVE for member in members)
     assert {member.locality for member in members} == {pc.REPO_LOCAL, pc.CROSS_REPOSITORY}

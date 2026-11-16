@@ -314,6 +314,7 @@ rows:
   refresh-install-repository-enumerations-opsxfactory-gateway: {state: archived, class: co-modifier, declares: [refresh-install-repository-enumerations, amend-repo-boundary-governance-scope-first-line], depth: 2, prose: false, moved_by: "#1278", moved_on: "2026-10-08"}
   register-gate-rules-council-seats: {state: active, class: sole, declares: [add-wallet-carried-review-authority, openXwallet:widen-register-reader-for-a-second-council], depth: 1, prose: false, moved_by: "#717", moved_on: "2026-09-06"}
   register-private-connectivity-evidence-pins: {state: active, class: sole, declares: [implement-private-connectivity-binding], depth: 2, prose: false, moved_by: "#1303", moved_on: "2026-11-10"}
+  register-private-connectivity-release-members: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1327", moved_on: "2026-11-15"}
   relocate-review-authority-floor-mirror: {state: archived, class: co-modifier, declares: [mirror-floor-regeneration-automation, codexFactory:relocate-review-authority-floor], depth: 2, prose: false, moved_by: "#925", moved_on: "2026-09-10"}
   remediate-p1-security-boundaries: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1321", moved_on: "2026-11-15"}
   remediate-sonar-findings-and-coverage: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1316", moved_on: "2026-11-14"}
