@@ -560,6 +560,14 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [add-protected-runtime-report](openspec/changes/add-protected-runtime-report/proposal.md)
+  — draft T012T report-source decision; not ratified or commissioned for implementation.
+  [Design](openspec/changes/add-protected-runtime-report/design.md) ·
+  [Requirements](openspec/changes/add-protected-runtime-report/specs/protected-runtime-report/spec.md) ·
+  [Handoff](openspec/changes/add-protected-runtime-report/tasks.md) ·
+  [Preparation evidence](openspec/changes/add-protected-runtime-report/evidence.md).
+  The sole implementation list remains openXwallet feature017; setup/dispatch remain unauthorized.
+
 - [register-private-connectivity-release-members](openspec/changes/register-private-connectivity-release-members/proposal.md) — source scope ratified 2026-11-15 by Brett Heap in draft [PR #1327](https://github.com/opensoft/openXfactory/pull/1327); for the exact T018 release-builder/test additions and evidence-safe definition refinement. Preserves the current T020 actual packet until its distinct authentication/default verification; allocates no release version or tag.
 - [remediate-p1-security-boundaries](openspec/changes/remediate-p1-security-boundaries/proposal.md)
   — draft implementation packet for Brett Heap's 2026-11-15 direction to fix
@@ -11984,3 +11992,5 @@ measurement without treating them as passing acceptance.
 
 - [Sonar quality remediation and measured main acceptance](specs/044-sonar-quality-remediation/README.md)
 - [Older Sonar reliability/security backlog](specs/044-sonar-quality-remediation/legacy-sonar-backlog.md)
+
+OpenSpec CLI maintenance: [npm legacy checksum compatibility](specs/046-npm-legacy-checksum/plan.md).

@@ -155,6 +155,7 @@ rows:
   add-proposal-supporting-doc-lifecycle: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   add-propose-verb: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   add-protected-runtime-hosting-issuance: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1317", moved_on: "2026-11-14"}
+  add-protected-runtime-report: {state: active, class: sole, declares: [add-protected-runtime-hosting-issuance, fix-hosted-staging-refresh-budget], depth: 3, prose: false, moved_by: "#1332", moved_on: "2026-11-16"}
   add-register-edit-lane: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#666", moved_on: "2026-09-04"}
   add-release-inventory-drift-check: {state: archived, class: co-modifier, declares: absent, prose: true, moved_by: "#623", moved_on: "2026-09-03"}
   add-release-realization-flow: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}

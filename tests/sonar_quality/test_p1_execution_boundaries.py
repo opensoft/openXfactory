@@ -173,3 +173,33 @@ def test_shared_write_cache_root_refuses_without_mutation(openspec, tmp_path):
         openspec.retained_fetch_workspace(cache)
     assert list(cache.iterdir()) == []
     assert cache.stat().st_mode & 0o777 == 0o777
+
+
+@pytest.mark.parametrize("runner", ["run_validation", "run_reported_validation"])
+@pytest.mark.parametrize("invalid", [
+    ["archive", "one", "--strict"], ["validate", "--help", "--strict"],
+    ["validate", "../outside", "--strict"], ["validate", "one", "--no-strict"],
+    ["validate", "one", "--strict", "--json"], ["validate", "a\\nb", "--strict"],
+    ["validate", "", "--strict"], ["validate", "a" * 129, "--strict"],
+    ["validate", None, "--strict"], [],
+])
+def test_direct_validation_batch_refuses_before_any_process(openspec, tmp_path, monkeypatch, runner, invalid):
+    (tmp_path / "openspec").mkdir()
+    monkeypatch.setattr(openspec, "assert_governed_surface", lambda repo: None)
+    def refuse(*args, **kwargs):
+        pytest.fail("invalid batch reached a child process")
+    monkeypatch.setattr(openspec.subprocess, "run", refuse)
+    with pytest.raises(openspec.PinRefusal):
+        getattr(openspec, runner)(Path("/synthetic/verified/openspec"), tmp_path,
+                                 [["validate", "valid", "--strict"], invalid])
+
+
+def test_checked_validation_batch_keeps_all_targets_and_strictness(openspec):
+    targets = [["validate", "--all", "--strict"],
+               ["validate", "one-change", "--strict"]]
+    result = openspec.checked_validation_targets(targets)
+    assert result == targets
+    assert result is not targets
+    assert all(a is not b for a, b in zip(result, targets))
+    with pytest.raises(openspec.PinRefusal):
+        openspec.checked_validation_targets([])
