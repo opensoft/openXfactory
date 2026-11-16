@@ -1,9 +1,6 @@
 {
-  "schema": "043-task-evidence-v1",
   "task": "T013",
   "instance": null,
-  "owner": "C",
-  "evidence_class": "Q0-H",
   "scope": {
     "network": "not-applicable",
     "target": "not-applicable",
@@ -20,109 +17,314 @@
     "offering": "standalone-hosted-headscale",
     "profile": "hosted-headscale-qa-source"
   },
-  "attempt": "hosted-source-1",
-  "verdict": "pass",
   "source": {
     "repository": "opensoft/openxfactory",
-    "base": "f3d47312da796ba893022dc22b93f352b7bd3e0b",
-    "revision": "a8bff63ded4372294196b3cf36625990f07bd97d"
+    "base": "3ce7dc814f29c780b842fadb3664ce31bef0b5d9",
+    "revision": "e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8"
   },
-  "command": "python3 -c 'import hashlib,json,os,re,subprocess,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-hosted-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert permission[\"decision\"]==\"accepted\" and permission[\"mode\"]==\"source\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"actual_choice\"][\"at\"]==\"2026-11-16T22:16:06.872Z\"\nassert permission[\"actual_choice\"][\"raw_record_sha256\"]==\"b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82\"\nassert permission[\"actual_choice\"][\"answer\"]==\"Approve the plan and source choices (Recommended)\"\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"definition_sha256\"]==\"2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796\"\nassert json.loads(Path(\"specs/043-private-connectivity-production/evidence/commissioning.json\").read_text())[\"definition\"]==permission[\"definition_sha256\"]\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n m=re.match(r\"- \\[[ xX]\\] (T\\d{3}) \",line)\n if m and m[1] in permission[\"per_task_source_scope\"]:\n  _,_,tail=line.partition(\" — files: \")\n  files,_,_=tail.partition(\" — verify:\")\n  assert \"(Owner=H;\" in line\n  tasks[m[1]]=re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),files)\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n m=re.match(r\"\\| (T\\d{3}) \\| ([^|]+)\\|\",line)\n if m:declared[m[1]]=m[2].strip().split(\"<br>\")\nassert tasks==declared==permission[\"per_task_source_scope\"]\nassert set(tasks)=={\"T028\",\"T029\",\"T030\",\"T031\",\"T032\",\"T033\",\"T039\",\"T040\",\"T041\"}\nreview=(base/\"review/qa-commissioning.md\").read_text()\nfor value in [permission[\"actual_choice\"][\"at\"],permission[\"actual_choice\"][\"raw_record_sha256\"],permission[\"actual_choice\"][\"answer\"]]:\n assert value in review\nplan=permission[\"approved_private_plan\"]\nassert plan[\"repository\"]==\"opensoft/openxsoft-hosted-services\" and plan[\"commit\"]==\"6b8b7c4542eb48f9c602afe64ecca460978a674b\" and plan[\"path\"]==\".azure/plan.md\"\nowner=Path(os.environ[\"PC_HOSTED_SOURCE\"])\nraw=subprocess.check_output([\"git\",\"show\",plan[\"commit\"]+\":\"+plan[\"path\"]],cwd=owner)\nassert hashlib.sha256(raw).hexdigest()==plan[\"sha256\"]==\"3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1\"\nassert permission[\"source_choices\"][\"issuer\"]==\"https://keycloak.opensoft.dev/realms/opensoft\"\nassert permission[\"source_choices\"][\"api_signature_algorithm\"]==\"RS256\"\nassert permission[\"source_choices\"][\"resource_audience\"]==\"openxsoft-headscale-qa\"\nassert permission[\"source_choices\"][\"entitlement\"]==\"independent product-owned SQLite current entitlement/revocation journal\"\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\" and permission[\"custody_process\"][\"live_custody\"]==\"not granted\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert all(permission[\"boundaries\"][name] is False for name in [\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\",\"authorizes_Q1\",\"completes_T013_without_actual_output_authentication\"])\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-hosted-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"actual-provider-platform\":{\"provider\":permission[\"source_choices\"][\"provider\"],\"environment\":\"QA\",\"source_region\":\"westus\",\"approved_plan\":plan,\"actual_choice_at\":permission[\"actual_choice\"][\"at\"],\"raw_record_sha256\":permission[\"actual_choice\"][\"raw_record_sha256\"],\"target_effects\":False,\"actual_resource_configured\":False},\n \"identity-entitlement-custody\":{\"source_choices\":permission[\"source_choices\"],\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False},\n \"product-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":tasks,\"definition_sha256\":permission[\"definition_sha256\"]}\n}\nprint(\"H_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
-  "authority": {
-    "repository": "opensoft/openxfactory",
-    "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-    "path": "openspec/changes/commission-hosted-headscale-production/review/source-owner-permission.json",
-    "sha256": "ec24fe5ff778faf4629ccc24d8c8324af2c10533fe94b5a1a99c4b0385292eed"
-  },
-  "artifacts": [
+  "command": "python3 -c 'import hashlib,json,os,re,subprocess,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-hosted-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert permission[\"decision\"]==\"accepted\" and permission[\"mode\"]==\"source\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"actual_choice\"][\"at\"]==\"2026-11-16T22:16:06.872Z\"\nassert permission[\"actual_choice\"][\"raw_record_sha256\"]==\"b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82\"\nassert permission[\"actual_choice\"][\"answer\"]==\"Approve the plan and source choices (Recommended)\"\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"definition_sha256\"]==\"2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796\"\nassert json.loads(Path(\"specs/043-private-connectivity-production/evidence/commissioning.json\").read_text())[\"definition\"]==permission[\"definition_sha256\"]\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n m=re.match(r\"- \\[[ xX]\\] (T\\d{3}) \",line)\n if m and m[1] in permission[\"per_task_source_scope\"]:\n  _,_,tail=line.partition(\" — files: \")\n  files,_,_=tail.partition(\" — verify:\")\n  assert \"(Owner=H;\" in line\n  tasks[m[1]]=re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),files)\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n m=re.match(r\"\\| (T\\d{3}) \\| ([^|]+)\\|\",line)\n if m:declared[m[1]]=m[2].strip().split(\"<br>\")\nassert tasks==declared==permission[\"per_task_source_scope\"]\nassert set(tasks)=={\"T028\",\"T029\",\"T030\",\"T031\",\"T032\",\"T033\",\"T039\",\"T040\",\"T041\"}\nreview=(base/\"review/qa-commissioning.md\").read_text()\nfor value in [permission[\"actual_choice\"][\"at\"],permission[\"actual_choice\"][\"raw_record_sha256\"],permission[\"actual_choice\"][\"answer\"]]:\n assert value in review\nplan={'\"'\"'repository'\"'\"': '\"'\"'opensoft/openxsoft-hosted-services'\"'\"', '\"'\"'commit'\"'\"': '\"'\"'6b8b7c4542eb48f9c602afe64ecca460978a674b'\"'\"', '\"'\"'path'\"'\"': '\"'\"'.azure/plan.md'\"'\"', '\"'\"'sha256'\"'\"': '\"'\"'3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1'\"'\"'}\nassert \"canonical machine-readable artifact identity\" in review\nassert plan[\"commit\"] in review and \"/.azure/plan.md\" in review\nassert plan[\"repository\"]==\"opensoft/openxsoft-hosted-services\" and plan[\"commit\"]==\"6b8b7c4542eb48f9c602afe64ecca460978a674b\" and plan[\"path\"]==\".azure/plan.md\"\nowner=Path(os.environ[\"PC_HOSTED_SOURCE\"])\nraw=subprocess.check_output([\"git\",\"show\",plan[\"commit\"]+\":\"+plan[\"path\"]],cwd=owner)\nassert hashlib.sha256(raw).hexdigest()==plan[\"sha256\"]==\"3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1\"\nassert permission[\"source_choices\"][\"issuer\"]==\"https://keycloak.opensoft.dev/realms/opensoft\"\nassert permission[\"source_choices\"][\"api_signature_algorithm\"]==\"RS256\"\nassert permission[\"source_choices\"][\"resource_audience\"]==\"openxsoft-headscale-qa\"\nassert permission[\"source_choices\"][\"entitlement\"]==\"independent product-owned SQLite current entitlement/revocation journal\"\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\" and permission[\"custody_process\"][\"live_custody\"]==\"not granted\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert all(permission[\"boundaries\"][name] is False for name in [\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\",\"authorizes_Q1\",\"completes_T013_without_actual_output_authentication\"])\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-hosted-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"actual-provider-platform\":{\"provider\":permission[\"source_choices\"][\"provider\"],\"environment\":\"QA\",\"source_region\":\"westus\",\"approved_plan\":plan,\"actual_choice_at\":permission[\"actual_choice\"][\"at\"],\"raw_record_sha256\":permission[\"actual_choice\"][\"raw_record_sha256\"],\"target_effects\":False,\"actual_resource_configured\":False},\n \"identity-entitlement-custody\":{\"source_choices\":permission[\"source_choices\"],\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False},\n \"product-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":tasks,\"definition_sha256\":permission[\"definition_sha256\"]}\n}\nprint(\"H_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+  "exit_code": 0,
+  "started_at": "2026-11-16T23:39:47.453935+00:00",
+  "ended_at": "2026-11-16T23:39:51.052301+00:00",
+  "events": [],
+  "metrics": {},
+  "coverage": null,
+  "ci": {},
+  "cases": [
     {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "openspec/changes/commission-hosted-headscale-production/.openspec.yaml",
-      "sha256": "d8d345e3d2bd48f8a62fd8291e21337efc0aff1700bf340dc2a67fbfeeece504"
+      "id": "actual-provider-platform",
+      "scope": {
+        "network": "not-applicable",
+        "target": "not-applicable",
+        "customer": "not-applicable",
+        "site": "not-applicable",
+        "region": "not-applicable",
+        "domain": "not-applicable",
+        "wave": "not-applicable",
+        "offer": "not-applicable",
+        "phase": "source",
+        "candidate": "043-hosted-qa-source",
+        "environment": "source",
+        "run": "043-q0-hosted-source",
+        "offering": "standalone-hosted-headscale",
+        "profile": "hosted-headscale-qa-source"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "3ce7dc814f29c780b842fadb3664ce31bef0b5d9",
+        "revision": "e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8"
+      },
+      "checks": [
+        {
+          "id": "actual-hosted-source-facts",
+          "observed": {
+            "actual_choice_at": "2026-11-16T22:16:06.872Z",
+            "actual_resource_configured": false,
+            "approved_plan": {
+              "commit": "6b8b7c4542eb48f9c602afe64ecca460978a674b",
+              "path": ".azure/plan.md",
+              "repository": "opensoft/openxsoft-hosted-services",
+              "sha256": "3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1"
+            },
+            "environment": "QA",
+            "provider": "Azure AKS through current managing-factory request and governed channel",
+            "raw_record_sha256": "b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82",
+            "source_region": "westus",
+            "target_effects": false
+          }
+        }
+      ]
     },
     {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "openspec/changes/commission-hosted-headscale-production/design.md",
-      "sha256": "2a89fabaaec1b9af24eb6339da3c5a67d167196019bd20c09dcff8c3eaa5d7ca"
+      "id": "identity-entitlement-custody",
+      "scope": {
+        "network": "not-applicable",
+        "target": "not-applicable",
+        "customer": "not-applicable",
+        "site": "not-applicable",
+        "region": "not-applicable",
+        "domain": "not-applicable",
+        "wave": "not-applicable",
+        "offer": "not-applicable",
+        "phase": "source",
+        "candidate": "043-hosted-qa-source",
+        "environment": "source",
+        "run": "043-q0-hosted-source",
+        "offering": "standalone-hosted-headscale",
+        "profile": "hosted-headscale-qa-source"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "3ce7dc814f29c780b842fadb3664ce31bef0b5d9",
+        "revision": "e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8"
+      },
+      "checks": [
+        {
+          "id": "actual-hosted-source-facts",
+          "observed": {
+            "later_required_inputs": [
+              "Actual task output authentication and default admission",
+              "T019 neutral and T023 package releases before their H source consumers",
+              "Owning target/operational admission and edge/TLS/relay compatibility",
+              "Actual protected custody, target authority, current capacity/cost and finite approved Q1 inputs",
+              "Full program/domain/installer/Ops final candidate closure before T050/Q1"
+            ],
+            "live_authority_granted": false,
+            "source_choices": {
+              "adopting_caller": "openxsoft-connectivity-qa",
+              "api_signature_algorithm": "RS256",
+              "credential_custody": "scoped existing QA Key Vault references; actual delivery/access separately gated",
+              "entitlement": "independent product-owned SQLite current entitlement/revocation journal",
+              "environment": "QA",
+              "issuer": "https://keycloak.opensoft.dev/realms/opensoft",
+              "provider": "Azure AKS through current managing-factory request and governed channel",
+              "region": "westus",
+              "registry": "existing QA registry; immutable supported candidate required",
+              "resource_audience": "openxsoft-headscale-qa",
+              "state": "dedicated fenced single-writer persistent filesystem"
+            },
+            "source_custody": {
+              "authentication": "Separate actual output/provenance review with exact Git commits/SHA-256",
+              "custodian": "Brett Heap",
+              "live_custody": "not granted",
+              "location": "Existing coordinator and private owner Git permissions",
+              "records": "Reviewed/redacted commissioning source facts and genuine human provenance; private plan/source remains in private owner Git",
+              "retention": "project lifetime"
+            },
+            "source_limits": {
+              "cloud_spend_usd": 0,
+              "enrollment": false,
+              "fault_injection": false,
+              "installation": false,
+              "runner_dispatch": false,
+              "target_effects": false
+            }
+          }
+        }
+      ]
     },
     {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "openspec/changes/commission-hosted-headscale-production/proposal.md",
-      "sha256": "4447456ecc6b38c361aa4411f820c4f9a32ad544e60356960547ac6ea644c3a6"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "openspec/changes/commission-hosted-headscale-production/review/qa-commissioning.md",
-      "sha256": "f45542cbb21c4640db58de1d99a3ca44e358678176996f6e7d26cc587f46f2eb"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "openspec/changes/commission-hosted-headscale-production/review/ratification.md",
-      "sha256": "63160020329be4ac8f3209932419690c562b1efcea702301406e50d7db77372b"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "openspec/changes/commission-hosted-headscale-production/review/source-owner-permission.json",
-      "sha256": "ec24fe5ff778faf4629ccc24d8c8324af2c10533fe94b5a1a99c4b0385292eed"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "openspec/changes/commission-hosted-headscale-production/specs/hosted-headscale-production/spec.md",
-      "sha256": "cac0e90bc3d6beb0ff9dd91c28004aba06ea8946ba44053d364aaeba4b4e1f06"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "openspec/changes/commission-hosted-headscale-production/tasks.md",
-      "sha256": "b9732f9074a6cf099b804ba6b83a914eace53b03d636be64eb11dec8ebcb5acd"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "specs/043-private-connectivity-production/tasks.md",
-      "sha256": "24f698068aaf08882d73bda91b59e5e7e9c0fcb9551255778a25dd62b7f47196"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
-      "sha256": "b6592371c7987f040a44d6ecc9783979be786c11a0e9cfaefd46ae3628b31640"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "a8bff63ded4372294196b3cf36625990f07bd97d",
-      "path": "contracts/openspec-cli-pin.yaml",
-      "sha256": "1bab358ce6d5275fcad6fd1af3a4320aebe42d25c158aa0364d680fd4d8fa482"
+      "id": "product-owner-scope",
+      "scope": {
+        "network": "not-applicable",
+        "target": "not-applicable",
+        "customer": "not-applicable",
+        "site": "not-applicable",
+        "region": "not-applicable",
+        "domain": "not-applicable",
+        "wave": "not-applicable",
+        "offer": "not-applicable",
+        "phase": "source",
+        "candidate": "043-hosted-qa-source",
+        "environment": "source",
+        "run": "043-q0-hosted-source",
+        "offering": "standalone-hosted-headscale",
+        "profile": "hosted-headscale-qa-source"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "3ce7dc814f29c780b842fadb3664ce31bef0b5d9",
+        "revision": "e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8"
+      },
+      "checks": [
+        {
+          "id": "actual-hosted-source-facts",
+          "observed": {
+            "accepted_task_scopes": {
+              "T028": [
+                "services/network-provisioning/production/provider.py",
+                "tests/qualification/test_production_provider.py",
+                "release/install-pin.json",
+                "evidence/private-connectivity-production/T028.json"
+              ],
+              "T029": [
+                "services/network-provisioning/production/identity.py",
+                "services/network-provisioning/production/entitlement.py",
+                "services/network-provisioning/production/custody.py",
+                "tests/qualification/test_production_authority.py",
+                "evidence/private-connectivity-production/T029.json"
+              ],
+              "T030": [
+                "services/network-provisioning/service.py",
+                "services/network-provisioning/operations.py",
+                "tests/qualification/test_operations.py",
+                "tests/qualification/test_production_operations.py",
+                "evidence/private-connectivity-production/T030.json",
+                "services/network-provisioning/production/app.py",
+                "tests/qualification/test_production_api.py"
+              ],
+              "T031": [
+                "services/network-provisioning/service.py",
+                "services/network-provisioning/attachments.py",
+                "services/network-provisioning/supervisor.py",
+                "tests/qualification/test_production_lifecycle.py",
+                "evidence/private-connectivity-production/T031.json"
+              ],
+              "T032": [
+                "services/catalog/production.py",
+                "services/catalog/qualification.py",
+                "tests/qualification/test_production_catalog.py",
+                "evidence/private-connectivity-production/T032.json"
+              ],
+              "T033": [
+                "tests/qualification/qualify_production.py",
+                "tests/qualification/test_production_runner.py",
+                ".github/workflows/qualification.yml",
+                "release/runtime-inventory.json",
+                "release/install-pin.json",
+                "docs/production-headscale.md",
+                "evidence/private-connectivity-production/T033.json",
+                "services/network-provisioning/production/requirements.in",
+                "services/network-provisioning/production/requirements.lock",
+                "services/network-provisioning/production/Dockerfile",
+                "services/network-provisioning/production/__main__.py"
+              ],
+              "T039": [
+                "services/factory-onboarding/production_binder.py",
+                "services/factory-onboarding/onboarding.py",
+                "tests/qualification/test_production_onboarding.py",
+                "release/installer-pin.json",
+                "release/domain-profile-pin.json",
+                "evidence/private-connectivity-production/T039.json"
+              ],
+              "T040": [
+                "services/catalog/production.py",
+                "services/catalog/qualification.py",
+                "tests/qualification/test_production_catalog_integration.py",
+                "release/domain-inventory.json",
+                "evidence/private-connectivity-production/T040.json"
+              ],
+              "T041": [
+                "tests/qualification/qualify_production.py",
+                "tests/qualification/test_production_runner.py",
+                ".github/workflows/qualification.yml",
+                "release/runtime-inventory.json",
+                "release/installer-pin.json",
+                "release/domain-profile-pin.json",
+                "evidence/private-connectivity-production/T041.json"
+              ]
+            },
+            "definition_sha256": "2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796",
+            "origin_approved": true,
+            "owner": "Brett Heap",
+            "proposal_sha256": "4447456ecc6b38c361aa4411f820c4f9a32ad544e60356960547ac6ea644c3a6",
+            "ratified": true,
+            "roles": [
+              "Brett Heap (Hosted Headscale source/release owner and source-evidence custodian)"
+            ]
+          }
+        }
+      ]
     }
   ],
-  "incidents": [],
-  "history": [],
-  "dependencies": {
-    "T010": {
-      "repository": "opensoft/openxfactory",
-      "commit": "fd4f23037ab3fd0465cf870d9526e313085f25b6",
-      "path": "specs/043-private-connectivity-production/evidence/T010.json",
-      "sha256": "8797441f3fc411327c16e71c873a110cdca6c121ec8ebd2903511c5708129ba4"
-    }
-  },
-  "output": {
+  "original": {
+    "command": "python3 -c 'import hashlib,json,os,re,subprocess,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-hosted-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert permission[\"decision\"]==\"accepted\" and permission[\"mode\"]==\"source\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"actual_choice\"][\"at\"]==\"2026-11-16T22:16:06.872Z\"\nassert permission[\"actual_choice\"][\"raw_record_sha256\"]==\"b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82\"\nassert permission[\"actual_choice\"][\"answer\"]==\"Approve the plan and source choices (Recommended)\"\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"definition_sha256\"]==\"2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796\"\nassert json.loads(Path(\"specs/043-private-connectivity-production/evidence/commissioning.json\").read_text())[\"definition\"]==permission[\"definition_sha256\"]\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n m=re.match(r\"- \\[[ xX]\\] (T\\d{3}) \",line)\n if m and m[1] in permission[\"per_task_source_scope\"]:\n  _,_,tail=line.partition(\" — files: \")\n  files,_,_=tail.partition(\" — verify:\")\n  assert \"(Owner=H;\" in line\n  tasks[m[1]]=re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),files)\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n m=re.match(r\"\\| (T\\d{3}) \\| ([^|]+)\\|\",line)\n if m:declared[m[1]]=m[2].strip().split(\"<br>\")\nassert tasks==declared==permission[\"per_task_source_scope\"]\nassert set(tasks)=={\"T028\",\"T029\",\"T030\",\"T031\",\"T032\",\"T033\",\"T039\",\"T040\",\"T041\"}\nreview=(base/\"review/qa-commissioning.md\").read_text()\nfor value in [permission[\"actual_choice\"][\"at\"],permission[\"actual_choice\"][\"raw_record_sha256\"],permission[\"actual_choice\"][\"answer\"]]:\n assert value in review\nplan={'\"'\"'repository'\"'\"': '\"'\"'opensoft/openxsoft-hosted-services'\"'\"', '\"'\"'commit'\"'\"': '\"'\"'6b8b7c4542eb48f9c602afe64ecca460978a674b'\"'\"', '\"'\"'path'\"'\"': '\"'\"'.azure/plan.md'\"'\"', '\"'\"'sha256'\"'\"': '\"'\"'3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1'\"'\"'}\nassert \"canonical machine-readable artifact identity\" in review\nassert plan[\"commit\"] in review and \"/.azure/plan.md\" in review\nassert plan[\"repository\"]==\"opensoft/openxsoft-hosted-services\" and plan[\"commit\"]==\"6b8b7c4542eb48f9c602afe64ecca460978a674b\" and plan[\"path\"]==\".azure/plan.md\"\nowner=Path(os.environ[\"PC_HOSTED_SOURCE\"])\nraw=subprocess.check_output([\"git\",\"show\",plan[\"commit\"]+\":\"+plan[\"path\"]],cwd=owner)\nassert hashlib.sha256(raw).hexdigest()==plan[\"sha256\"]==\"3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1\"\nassert permission[\"source_choices\"][\"issuer\"]==\"https://keycloak.opensoft.dev/realms/opensoft\"\nassert permission[\"source_choices\"][\"api_signature_algorithm\"]==\"RS256\"\nassert permission[\"source_choices\"][\"resource_audience\"]==\"openxsoft-headscale-qa\"\nassert permission[\"source_choices\"][\"entitlement\"]==\"independent product-owned SQLite current entitlement/revocation journal\"\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\" and permission[\"custody_process\"][\"live_custody\"]==\"not granted\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert all(permission[\"boundaries\"][name] is False for name in [\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\",\"authorizes_Q1\",\"completes_T013_without_actual_output_authentication\"])\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-hosted-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"actual-provider-platform\":{\"provider\":permission[\"source_choices\"][\"provider\"],\"environment\":\"QA\",\"source_region\":\"westus\",\"approved_plan\":plan,\"actual_choice_at\":permission[\"actual_choice\"][\"at\"],\"raw_record_sha256\":permission[\"actual_choice\"][\"raw_record_sha256\"],\"target_effects\":False,\"actual_resource_configured\":False},\n \"identity-entitlement-custody\":{\"source_choices\":permission[\"source_choices\"],\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False},\n \"product-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":tasks,\"definition_sha256\":permission[\"definition_sha256\"]}\n}\nprint(\"H_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
     "repository": "opensoft/openxfactory",
-    "commit": "29c5ca6cb2b5b1fb56393fefa7b7aa7b157c63b6",
-    "path": "specs/043-private-connectivity-production/evidence/T013.json",
-    "sha256": "8e659674756f93178a2654a5bb60cd17109734ff08ed4bf2c1aa387dec0af4ff"
+    "source_revision": "e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8",
+    "started_at": "2026-11-16T23:39:47.453935+00:00",
+    "ended_at": "2026-11-16T23:39:51.052301+00:00",
+    "exit_code": 0,
+    "stdout": "openspec-cli-pin: @fission-ai/openspec@1.12.0 from pinned artifact (<verified-pinned-cli>); integrity sha512-oFE2Lj7WVSc87nSi… verified\nopenspec-cli-pin: dependency closure openspec-cli-pin.1.12.0.package-lock.json (80 packages); lockfile_integrity sha512-aw5lIN45tQq2WZll… verified; installed with `npm ci --ignore-scripts`\n-> <verified-pinned-cli> validate commission-hosted-headscale-production --strict --json  (in <coordinator-worktree>)\nTotals: 1 passed, 0 failed (1 items)\nOK openspec-cli-pin: @fission-ai/openspec@1.12.0 verified against its content address and every target validated --strict clean\nH_ACCEPTANCE_FACTS={\"actual-provider-platform\": {\"actual_choice_at\": \"2026-11-16T22:16:06.872Z\", \"actual_resource_configured\": false, \"approved_plan\": {\"commit\": \"6b8b7c4542eb48f9c602afe64ecca460978a674b\", \"path\": \".azure/plan.md\", \"repository\": \"opensoft/openxsoft-hosted-services\", \"sha256\": \"3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1\"}, \"environment\": \"QA\", \"provider\": \"Azure AKS through current managing-factory request and governed channel\", \"raw_record_sha256\": \"b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82\", \"source_region\": \"westus\", \"target_effects\": false}, \"identity-entitlement-custody\": {\"later_required_inputs\": [\"Actual task output authentication and default admission\", \"T019 neutral and T023 package releases before their H source consumers\", \"Owning target/operational admission and edge/TLS/relay compatibility\", \"Actual protected custody, target authority, current capacity/cost and finite approved Q1 inputs\", \"Full program/domain/installer/Ops final candidate closure before T050/Q1\"], \"live_authority_granted\": false, \"source_choices\": {\"adopting_caller\": \"openxsoft-connectivity-qa\", \"api_signature_algorithm\": \"RS256\", \"credential_custody\": \"scoped existing QA Key Vault references; actual delivery/access separately gated\", \"entitlement\": \"independent product-owned SQLite current entitlement/revocation journal\", \"environment\": \"QA\", \"issuer\": \"https://keycloak.opensoft.dev/realms/opensoft\", \"provider\": \"Azure AKS through current managing-factory request and governed channel\", \"region\": \"westus\", \"registry\": \"existing QA registry; immutable supported candidate required\", \"resource_audience\": \"openxsoft-headscale-qa\", \"state\": \"dedicated fenced single-writer persistent filesystem\"}, \"source_custody\": {\"authentication\": \"Separate actual output/provenance review with exact Git commits/SHA-256\", \"custodian\": \"Brett Heap\", \"live_custody\": \"not granted\", \"location\": \"Existing coordinator and private owner Git permissions\", \"records\": \"Reviewed/redacted commissioning source facts and genuine human provenance; private plan/source remains in private owner Git\", \"retention\": \"project lifetime\"}, \"source_limits\": {\"cloud_spend_usd\": 0, \"enrollment\": false, \"fault_injection\": false, \"installation\": false, \"runner_dispatch\": false, \"target_effects\": false}}, \"product-owner-scope\": {\"accepted_task_scopes\": {\"T028\": [\"services/network-provisioning/production/provider.py\", \"tests/qualification/test_production_provider.py\", \"release/install-pin.json\", \"evidence/private-connectivity-production/T028.json\"], \"T029\": [\"services/network-provisioning/production/identity.py\", \"services/network-provisioning/production/entitlement.py\", \"services/network-provisioning/production/custody.py\", \"tests/qualification/test_production_authority.py\", \"evidence/private-connectivity-production/T029.json\"], \"T030\": [\"services/network-provisioning/service.py\", \"services/network-provisioning/operations.py\", \"tests/qualification/test_operations.py\", \"tests/qualification/test_production_operations.py\", \"evidence/private-connectivity-production/T030.json\", \"services/network-provisioning/production/app.py\", \"tests/qualification/test_production_api.py\"], \"T031\": [\"services/network-provisioning/service.py\", \"services/network-provisioning/attachments.py\", \"services/network-provisioning/supervisor.py\", \"tests/qualification/test_production_lifecycle.py\", \"evidence/private-connectivity-production/T031.json\"], \"T032\": [\"services/catalog/production.py\", \"services/catalog/qualification.py\", \"tests/qualification/test_production_catalog.py\", \"evidence/private-connectivity-production/T032.json\"], \"T033\": [\"tests/qualification/qualify_production.py\", \"tests/qualification/test_production_runner.py\", \".github/workflows/qualification.yml\", \"release/runtime-inventory.json\", \"release/install-pin.json\", \"docs/production-headscale.md\", \"evidence/private-connectivity-production/T033.json\", \"services/network-provisioning/production/requirements.in\", \"services/network-provisioning/production/requirements.lock\", \"services/network-provisioning/production/Dockerfile\", \"services/network-provisioning/production/__main__.py\"], \"T039\": [\"services/factory-onboarding/production_binder.py\", \"services/factory-onboarding/onboarding.py\", \"tests/qualification/test_production_onboarding.py\", \"release/installer-pin.json\", \"release/domain-profile-pin.json\", \"evidence/private-connectivity-production/T039.json\"], \"T040\": [\"services/catalog/production.py\", \"services/catalog/qualification.py\", \"tests/qualification/test_production_catalog_integration.py\", \"release/domain-inventory.json\", \"evidence/private-connectivity-production/T040.json\"], \"T041\": [\"tests/qualification/qualify_production.py\", \"tests/qualification/test_production_runner.py\", \".github/workflows/qualification.yml\", \"release/runtime-inventory.json\", \"release/installer-pin.json\", \"release/domain-profile-pin.json\", \"evidence/private-connectivity-production/T041.json\"]}, \"definition_sha256\": \"2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796\", \"origin_approved\": true, \"owner\": \"Brett Heap\", \"proposal_sha256\": \"4447456ecc6b38c361aa4411f820c4f9a32ad544e60356960547ac6ea644c3a6\", \"ratified\": true, \"roles\": [\"Brett Heap (Hosted Headscale source/release owner and source-evidence custodian)\"]}}\n",
+    "original_sha256": "70dbcd3cc2490babb187ebca7c3229a35bcdba41646ca2becfe2d8fae7edb287",
+    "export_sha256": "590eda2d4aa197b6068ccb12788143786ebeada1b18c080e6350c8c8ae1fdbcd",
+    "redaction_method": "Replace only the exact coordinator checkout prefix and the machine-local verified pinned CLI executable cache path; preserve original raw SHA-256 and every command/source/exit/timing identity. The CLI content address remains in the immutable tested-source pin artifact."
   },
-  "admission_state": "Pending actual custodian authentication and default verification. Source consent is recorded; no task, release, target or Q0-Q5 acceptance is asserted.",
+  "preparation_history": [
+    {
+      "original": {
+        "command": "python3 -c 'import hashlib,json,os,re,subprocess,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-hosted-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert permission[\"decision\"]==\"accepted\" and permission[\"mode\"]==\"source\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"actual_choice\"][\"at\"]==\"2026-11-16T22:16:06.872Z\"\nassert permission[\"actual_choice\"][\"raw_record_sha256\"]==\"b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82\"\nassert permission[\"actual_choice\"][\"answer\"]==\"Approve the plan and source choices (Recommended)\"\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"definition_sha256\"]==\"2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796\"\nassert json.loads(Path(\"specs/043-private-connectivity-production/evidence/commissioning.json\").read_text())[\"definition\"]==permission[\"definition_sha256\"]\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n m=re.match(r\"- \\[[ xX]\\] (T\\d{3}) \",line)\n if m and m[1] in permission[\"per_task_source_scope\"]:\n  _,_,tail=line.partition(\" — files: \")\n  files,_,_=tail.partition(\" — verify:\")\n  assert \"(Owner=H;\" in line\n  tasks[m[1]]=re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),files)\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n m=re.match(r\"\\| (T\\d{3}) \\| ([^|]+)\\|\",line)\n if m:declared[m[1]]=m[2].strip().split(\"<br>\")\nassert tasks==declared==permission[\"per_task_source_scope\"]\nassert set(tasks)=={\"T028\",\"T029\",\"T030\",\"T031\",\"T032\",\"T033\",\"T039\",\"T040\",\"T041\"}\nreview=(base/\"review/qa-commissioning.md\").read_text()\nfor value in [permission[\"actual_choice\"][\"at\"],permission[\"actual_choice\"][\"raw_record_sha256\"],permission[\"actual_choice\"][\"answer\"]]:\n assert value in review\nplan=permission[\"approved_private_plan\"]\nassert plan[\"repository\"]==\"opensoft/openxsoft-hosted-services\" and plan[\"commit\"]==\"6b8b7c4542eb48f9c602afe64ecca460978a674b\" and plan[\"path\"]==\".azure/plan.md\"\nowner=Path(os.environ[\"PC_HOSTED_SOURCE\"])\nraw=subprocess.check_output([\"git\",\"show\",plan[\"commit\"]+\":\"+plan[\"path\"]],cwd=owner)\nassert hashlib.sha256(raw).hexdigest()==plan[\"sha256\"]==\"3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1\"\nassert permission[\"source_choices\"][\"issuer\"]==\"https://keycloak.opensoft.dev/realms/opensoft\"\nassert permission[\"source_choices\"][\"api_signature_algorithm\"]==\"RS256\"\nassert permission[\"source_choices\"][\"resource_audience\"]==\"openxsoft-headscale-qa\"\nassert permission[\"source_choices\"][\"entitlement\"]==\"independent product-owned SQLite current entitlement/revocation journal\"\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\" and permission[\"custody_process\"][\"live_custody\"]==\"not granted\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert all(permission[\"boundaries\"][name] is False for name in [\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\",\"authorizes_Q1\",\"completes_T013_without_actual_output_authentication\"])\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-hosted-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"actual-provider-platform\":{\"provider\":permission[\"source_choices\"][\"provider\"],\"environment\":\"QA\",\"source_region\":\"westus\",\"approved_plan\":plan,\"actual_choice_at\":permission[\"actual_choice\"][\"at\"],\"raw_record_sha256\":permission[\"actual_choice\"][\"raw_record_sha256\"],\"target_effects\":False,\"actual_resource_configured\":False},\n \"identity-entitlement-custody\":{\"source_choices\":permission[\"source_choices\"],\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False},\n \"product-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":tasks,\"definition_sha256\":permission[\"definition_sha256\"]}\n}\nprint(\"H_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+        "repository": "opensoft/openxfactory",
+        "source_revision": "a8bff63ded4372294196b3cf36625990f07bd97d",
+        "started_at": "2026-11-16T22:38:31.522294+00:00",
+        "ended_at": "2026-11-16T22:38:37.275454+00:00",
+        "exit_code": 0,
+        "stdout": "openspec-cli-pin: @fission-ai/openspec@1.12.0 from pinned artifact (<verified-pinned-cli>); integrity sha512-oFE2Lj7WVSc87nSi… verified\nopenspec-cli-pin: dependency closure openspec-cli-pin.1.12.0.package-lock.json (80 packages); lockfile_integrity sha512-aw5lIN45tQq2WZll… verified; installed with `npm ci --ignore-scripts`\n-> <verified-pinned-cli> validate commission-hosted-headscale-production --strict --json  (in <coordinator-worktree>)\nTotals: 1 passed, 0 failed (1 items)\nOK openspec-cli-pin: @fission-ai/openspec@1.12.0 verified against its content address and every target validated --strict clean\nH_ACCEPTANCE_FACTS={\"actual-provider-platform\": {\"actual_choice_at\": \"2026-11-16T22:16:06.872Z\", \"actual_resource_configured\": false, \"approved_plan\": {\"commit\": \"6b8b7c4542eb48f9c602afe64ecca460978a674b\", \"path\": \".azure/plan.md\", \"repository\": \"opensoft/openxsoft-hosted-services\", \"sha256\": \"3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1\"}, \"environment\": \"QA\", \"provider\": \"Azure AKS through current managing-factory request and governed channel\", \"raw_record_sha256\": \"b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82\", \"source_region\": \"westus\", \"target_effects\": false}, \"identity-entitlement-custody\": {\"later_required_inputs\": [\"Actual task output authentication and default admission\", \"T019 neutral and T023 package releases before their H source consumers\", \"Owning target/operational admission and edge/TLS/relay compatibility\", \"Actual protected custody, target authority, current capacity/cost and finite approved Q1 inputs\", \"Full program/domain/installer/Ops final candidate closure before T050/Q1\"], \"live_authority_granted\": false, \"source_choices\": {\"adopting_caller\": \"openxsoft-connectivity-qa\", \"api_signature_algorithm\": \"RS256\", \"credential_custody\": \"scoped existing QA Key Vault references; actual delivery/access separately gated\", \"entitlement\": \"independent product-owned SQLite current entitlement/revocation journal\", \"environment\": \"QA\", \"issuer\": \"https://keycloak.opensoft.dev/realms/opensoft\", \"provider\": \"Azure AKS through current managing-factory request and governed channel\", \"region\": \"westus\", \"registry\": \"existing QA registry; immutable supported candidate required\", \"resource_audience\": \"openxsoft-headscale-qa\", \"state\": \"dedicated fenced single-writer persistent filesystem\"}, \"source_custody\": {\"authentication\": \"Separate actual output/provenance review with exact Git commits/SHA-256\", \"custodian\": \"Brett Heap\", \"live_custody\": \"not granted\", \"location\": \"Existing coordinator and private owner Git permissions\", \"records\": \"Reviewed/redacted commissioning source facts and genuine human provenance; private plan/source remains in private owner Git\", \"retention\": \"project lifetime\"}, \"source_limits\": {\"cloud_spend_usd\": 0, \"enrollment\": false, \"fault_injection\": false, \"installation\": false, \"runner_dispatch\": false, \"target_effects\": false}}, \"product-owner-scope\": {\"accepted_task_scopes\": {\"T028\": [\"services/network-provisioning/production/provider.py\", \"tests/qualification/test_production_provider.py\", \"release/install-pin.json\", \"evidence/private-connectivity-production/T028.json\"], \"T029\": [\"services/network-provisioning/production/identity.py\", \"services/network-provisioning/production/entitlement.py\", \"services/network-provisioning/production/custody.py\", \"tests/qualification/test_production_authority.py\", \"evidence/private-connectivity-production/T029.json\"], \"T030\": [\"services/network-provisioning/service.py\", \"services/network-provisioning/operations.py\", \"tests/qualification/test_operations.py\", \"tests/qualification/test_production_operations.py\", \"evidence/private-connectivity-production/T030.json\", \"services/network-provisioning/production/app.py\", \"tests/qualification/test_production_api.py\"], \"T031\": [\"services/network-provisioning/service.py\", \"services/network-provisioning/attachments.py\", \"services/network-provisioning/supervisor.py\", \"tests/qualification/test_production_lifecycle.py\", \"evidence/private-connectivity-production/T031.json\"], \"T032\": [\"services/catalog/production.py\", \"services/catalog/qualification.py\", \"tests/qualification/test_production_catalog.py\", \"evidence/private-connectivity-production/T032.json\"], \"T033\": [\"tests/qualification/qualify_production.py\", \"tests/qualification/test_production_runner.py\", \".github/workflows/qualification.yml\", \"release/runtime-inventory.json\", \"release/install-pin.json\", \"docs/production-headscale.md\", \"evidence/private-connectivity-production/T033.json\", \"services/network-provisioning/production/requirements.in\", \"services/network-provisioning/production/requirements.lock\", \"services/network-provisioning/production/Dockerfile\", \"services/network-provisioning/production/__main__.py\"], \"T039\": [\"services/factory-onboarding/production_binder.py\", \"services/factory-onboarding/onboarding.py\", \"tests/qualification/test_production_onboarding.py\", \"release/installer-pin.json\", \"release/domain-profile-pin.json\", \"evidence/private-connectivity-production/T039.json\"], \"T040\": [\"services/catalog/production.py\", \"services/catalog/qualification.py\", \"tests/qualification/test_production_catalog_integration.py\", \"release/domain-inventory.json\", \"evidence/private-connectivity-production/T040.json\"], \"T041\": [\"tests/qualification/qualify_production.py\", \"tests/qualification/test_production_runner.py\", \".github/workflows/qualification.yml\", \"release/runtime-inventory.json\", \"release/installer-pin.json\", \"release/domain-profile-pin.json\", \"evidence/private-connectivity-production/T041.json\"]}, \"definition_sha256\": \"2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796\", \"origin_approved\": true, \"owner\": \"Brett Heap\", \"proposal_sha256\": \"4447456ecc6b38c361aa4411f820c4f9a32ad544e60356960547ac6ea644c3a6\", \"ratified\": true, \"roles\": [\"Brett Heap (Hosted Headscale source/release owner and source-evidence custodian)\"]}}\n",
+        "original_sha256": "70dbcd3cc2490babb187ebca7c3229a35bcdba41646ca2becfe2d8fae7edb287",
+        "export_sha256": "590eda2d4aa197b6068ccb12788143786ebeada1b18c080e6350c8c8ae1fdbcd",
+        "redaction_method": "Replace only the exact coordinator checkout prefix and the machine-local verified pinned CLI executable cache path; preserve original raw SHA-256 and every command/source/exit/timing identity. The CLI content address remains in the immutable tested-source pin artifact."
+      },
+      "disposition": "Successful earlier preparation retained at its original source. New collection follows artifact-pin normalization and fresh independent accepted T010 default preflight; no authentication or gate decision is inferred."
+    },
+    {
+      "original": {
+        "command": "python3 -c 'import hashlib,json,os,re,subprocess,yaml\nfrom pathlib import Path\nbase=Path(\"openspec/changes/commission-hosted-headscale-production\")\npermission=json.loads((base/\"review/source-owner-permission.json\").read_text())\nassert permission[\"decision\"]==\"accepted\" and permission[\"mode\"]==\"source\" and permission[\"owner\"]==\"Brett Heap\"\nassert permission[\"actual_choice\"][\"at\"]==\"2026-11-16T22:16:06.872Z\"\nassert permission[\"actual_choice\"][\"raw_record_sha256\"]==\"b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82\"\nassert permission[\"actual_choice\"][\"answer\"]==\"Approve the plan and source choices (Recommended)\"\norigin=yaml.safe_load((base/\".openspec.yaml\").read_text())[\"origin\"]\nassert origin[\"approved_by\"]==\"Brett Heap in session; see review/ratification.md\" and origin[\"approved_on\"]\nassert \"Status: ratified\" in (base/\"proposal.md\").read_text()\nassert \"Ratified:\" in (base/\"review/ratification.md\").read_text()\nassert permission[\"proposal_sha256\"]==hashlib.sha256((base/\"proposal.md\").read_bytes()).hexdigest()\nassert permission[\"definition_sha256\"]==\"2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796\"\nassert json.loads(Path(\"specs/043-private-connectivity-production/evidence/commissioning.json\").read_text())[\"definition\"]==permission[\"definition_sha256\"]\ntasks={}\nfor line in Path(\"specs/043-private-connectivity-production/tasks.md\").read_text().splitlines():\n m=re.match(r\"- \\[[ xX]\\] (T\\d{3}) \",line)\n if m and m[1] in permission[\"per_task_source_scope\"]:\n  _,_,tail=line.partition(\" — files: \")\n  files,_,_=tail.partition(\" — verify:\")\n  assert \"(Owner=H;\" in line\n  tasks[m[1]]=re.findall(chr(96)+\"([^\"+chr(96)+\"]+)\"+chr(96),files)\ndeclared={}\nfor line in (base/\"design.md\").read_text().splitlines():\n m=re.match(r\"\\| (T\\d{3}) \\| ([^|]+)\\|\",line)\n if m:declared[m[1]]=m[2].strip().split(\"<br>\")\nassert tasks==declared==permission[\"per_task_source_scope\"]\nassert set(tasks)=={\"T028\",\"T029\",\"T030\",\"T031\",\"T032\",\"T033\",\"T039\",\"T040\",\"T041\"}\nreview=(base/\"review/qa-commissioning.md\").read_text()\nfor value in [permission[\"actual_choice\"][\"at\"],permission[\"actual_choice\"][\"raw_record_sha256\"],permission[\"actual_choice\"][\"answer\"]]:\n assert value in review\nplan={'\"'\"'repository'\"'\"': '\"'\"'opensoft/openxsoft-hosted-services'\"'\"', '\"'\"'commit'\"'\"': '\"'\"'6b8b7c4542eb48f9c602afe64ecca460978a674b'\"'\"', '\"'\"'path'\"'\"': '\"'\"'.azure/plan.md'\"'\"', '\"'\"'sha256'\"'\"': '\"'\"'3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1'\"'\"'}\nassert \"canonical machine-readable artifact identity\" in review\nassert plan[\"commit\"] in review and plan[\"sha256\"] in review\nassert plan[\"repository\"]==\"opensoft/openxsoft-hosted-services\" and plan[\"commit\"]==\"6b8b7c4542eb48f9c602afe64ecca460978a674b\" and plan[\"path\"]==\".azure/plan.md\"\nowner=Path(os.environ[\"PC_HOSTED_SOURCE\"])\nraw=subprocess.check_output([\"git\",\"show\",plan[\"commit\"]+\":\"+plan[\"path\"]],cwd=owner)\nassert hashlib.sha256(raw).hexdigest()==plan[\"sha256\"]==\"3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1\"\nassert permission[\"source_choices\"][\"issuer\"]==\"https://keycloak.opensoft.dev/realms/opensoft\"\nassert permission[\"source_choices\"][\"api_signature_algorithm\"]==\"RS256\"\nassert permission[\"source_choices\"][\"resource_audience\"]==\"openxsoft-headscale-qa\"\nassert permission[\"source_choices\"][\"entitlement\"]==\"independent product-owned SQLite current entitlement/revocation journal\"\nassert permission[\"custody_process\"][\"retention\"]==\"project lifetime\" and permission[\"custody_process\"][\"live_custody\"]==\"not granted\"\nassert permission[\"source_limits\"]=={\"target_effects\":False,\"cloud_spend_usd\":0,\"runner_dispatch\":False,\"installation\":False,\"enrollment\":False,\"fault_injection\":False}\nassert all(permission[\"boundaries\"][name] is False for name in [\"allocates_version\",\"advances_pins\",\"authorizes_tag\",\"authorizes_target_effects\",\"authorizes_Q1\",\"completes_T013_without_actual_output_authentication\"])\nsubprocess.run([\"python3\",\"scripts/validate-openspec-cli-pin.py\",\"--change\",\"commission-hosted-headscale-production\",\"--strict\"],check=True)\nfacts={\n \"actual-provider-platform\":{\"provider\":permission[\"source_choices\"][\"provider\"],\"environment\":\"QA\",\"source_region\":\"westus\",\"approved_plan\":plan,\"actual_choice_at\":permission[\"actual_choice\"][\"at\"],\"raw_record_sha256\":permission[\"actual_choice\"][\"raw_record_sha256\"],\"target_effects\":False,\"actual_resource_configured\":False},\n \"identity-entitlement-custody\":{\"source_choices\":permission[\"source_choices\"],\"source_custody\":permission[\"custody_process\"],\"source_limits\":permission[\"source_limits\"],\"later_required_inputs\":permission[\"later_required_inputs\"],\"live_authority_granted\":False},\n \"product-owner-scope\":{\"owner\":permission[\"owner\"],\"roles\":permission[\"roles\"],\"origin_approved\":True,\"ratified\":True,\"proposal_sha256\":permission[\"proposal_sha256\"],\"accepted_task_scopes\":tasks,\"definition_sha256\":permission[\"definition_sha256\"]}\n}\nprint(\"H_ACCEPTANCE_FACTS=\"+json.dumps(facts,sort_keys=True))\n'",
+        "repository": "opensoft/openxfactory",
+        "source_revision": "e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8",
+        "started_at": "2026-11-16T23:39:02.959970+00:00",
+        "ended_at": "2026-11-16T23:39:03.086690+00:00",
+        "exit_code": 1,
+        "stdout": "Traceback (most recent call last):\n  File \"<string>\", line 35, in <module>\nAssertionError\n",
+        "original_sha256": "82945fe907cb39599e9fe64197ecc9b1f1a5f40fa28233238e1fc8207ce56719",
+        "export_sha256": "82945fe907cb39599e9fe64197ecc9b1f1a5f40fa28233238e1fc8207ce56719",
+        "redaction_method": "Replace only the exact coordinator checkout prefix and the machine-local verified pinned CLI executable cache path; preserve original raw SHA-256 and every command/source/exit/timing identity. The CLI content address remains in the immutable tested-source pin artifact."
+      },
+      "disposition": "Source collector initially overrequired a prose copy of the artifact digest. The approval link and original human record identify the plan; the fresh audit verifies its actual Git bytes/digest in the governed T013 graph. No source authority or product behavior changed; this refused preparation is not qualification."
+    }
+  ],
+  "dependency_preflight": {
+    "control": {
+      "repository": "opensoft/openxfactory",
+      "commit": "8ac068510936c97d21ace2b923ad00c0a6238b68",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+      "sha256": "e42735845944bb5c36d46a4648c56ab9bd4b0dfd82d4bc3a5b7128b08c6b89bf"
+    },
+    "dependencies": {
+      "T010": {
+        "repository": "opensoft/openxfactory",
+        "commit": "fd4f23037ab3fd0465cf870d9526e313085f25b6",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "sha256": "8797441f3fc411327c16e71c873a110cdca6c121ec8ebd2903511c5708129ba4"
+      }
+    },
+    "started_at": "2026-11-16T23:39:45.341856+00:00",
+    "ended_at": "2026-11-16T23:39:47.453066+00:00",
+    "result": "Full default verification of the actually authenticated T010 source dependency passed before this unchanged-source commissioning audit."
+  },
+  "acceptance": "Actual source/governance output only. New output authentication/default admission, actual release, target operations and full Q0-Q5 remain pending.",
   "pin_inventory": [
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "29c5ca6cb2b5b1fb56393fefa7b7aa7b157c63b6"
+      "openxfactory_commit": "3ce7dc814f29c780b842fadb3664ce31bef0b5d9"
     },
     {
       "repository": "opensoft/openxsoft-hosted-services",
@@ -130,11 +332,15 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "8ac068510936c97d21ace2b923ad00c0a6238b68"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "a8bff63ded4372294196b3cf36625990f07bd97d"
     },
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "f3d47312da796ba893022dc22b93f352b7bd3e0b"
+      "openxfactory_commit": "e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8"
     },
     {
       "repository": "opensoft/openxfactory",
