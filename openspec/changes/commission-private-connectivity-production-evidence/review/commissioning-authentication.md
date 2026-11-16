@@ -4,52 +4,55 @@ Status: record
 
 ## Exact Hosted source review target
 
-This is a new actual T013 source-output authentication request for Brett Heap as the accepted Hosted Headscale source/release owner and source-evidence custodian. His source-choice approval at 2026-11-16T22:16:06.872Z is recorded separately. It does not authenticate these later actual outputs.
+This requests separate actual T013 source-output authentication from Brett Heap as the accepted Hosted Headscale source/release owner and source-evidence custodian. His source-choice approval at 2026-11-16T22:16:06.872Z remains recorded separately and does not authenticate these later outputs.
 
 | Item | Exact immutable identity |
 | --- | --- |
-| Proposed reviewed manifest | [35b62c73d339fb18f9f3fd3e76c699a7db4ebf03](https://github.com/opensoft/openXfactory/blob/35b62c73d339fb18f9f3fd3e76c699a7db4ebf03/specs/043-private-connectivity-production/evidence/commissioning.json) (whole-file SHA-256 ddb6f1e09d1598f4e01d3b03375407fba017f9b7e3e97849d9b73617f10846e1) |
-| Canonical content SHA-256 | 882449dd9b8dbff18c8adfb7d22306f1f1f558642a868243fee511ef33a9bb4b |
+| Proposed reviewed manifest | Pending immutable control construction |
+| Canonical content SHA-256 | f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6 |
 | Complete unchanged definition SHA-256 | 2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796 |
-| Actual source | a8bff63ded4372294196b3cf36625990f07bd97d; base f3d47312da796ba893022dc22b93f352b7bd3e0b |
-| Original actual output | [29c5ca6cb2b5b1fb56393fefa7b7aa7b157c63b6](https://github.com/opensoft/openXfactory/blob/29c5ca6cb2b5b1fb56393fefa7b7aa7b157c63b6/specs/043-private-connectivity-production/evidence/T013.json), SHA-256 8e659674756f93178a2654a5bb60cd17109734ff08ed4bf2c1aa387dec0af4ff |
-| Distinct receipt | [17a1b1e280b64ed366f7bca5da7de7b01a51644c](https://github.com/opensoft/openXfactory/blob/17a1b1e280b64ed366f7bca5da7de7b01a51644c/specs/043-private-connectivity-production/evidence/T013.json), SHA-256 4f2364845af9d9279c31d261b406507750f2502052bf6fcfc39ad487a47f97f3 |
-| Source permission | [Actual consent and exact scope](https://github.com/opensoft/openXfactory/blob/a8bff63ded4372294196b3cf36625990f07bd97d/openspec/changes/commission-hosted-headscale-production/review/source-owner-permission.json) |
+| Actual source | e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8; base 3ce7dc814f29c780b842fadb3664ce31bef0b5d9 |
+| Original actual output | [d463c2a23a9f4c9f091988c8fad07a642664db18](https://github.com/opensoft/openXfactory/blob/d463c2a23a9f4c9f091988c8fad07a642664db18/specs/043-private-connectivity-production/evidence/T013.json), SHA-256 8ae643229c2fd34e177d4fc21f7864111d8c597e851f30d387ba3c72c3afb93b |
+| Distinct receipt | [37f7eb5868642cb51e4431d57da8d99320e3dc5f](https://github.com/opensoft/openXfactory/blob/37f7eb5868642cb51e4431d57da8d99320e3dc5f/specs/043-private-connectivity-production/evidence/T013.json), SHA-256 0bb10ebf1007e86bfd67b72be9673496d4528b02a2fbf6e9b40fa287a21b821d |
+| Source permission | [Actual consent and exact scope](https://github.com/opensoft/openXfactory/blob/e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8/openspec/changes/commission-hosted-headscale-production/review/source-owner-permission.json) |
 
-## Actual observations
+## Actual observations and predecessor
 
-The read-only owner audit ran from 2026-11-16T22:58:37.001237+00:00 to 2026-11-16T22:58:41.693698+00:00 and exited zero. It verified actual accepted source consent, the ratified proposal, the unchanged complete 043 definition, all nine exact Hosted task/file scopes, the accepted private plan bytes at 6b8b7c4542eb48f9c602afe64ecca460978a674b by SHA-256, and pinned OpenSpec 1.12.0 strict validation. It produced all three frozen T013 cases: actual-provider-platform, identity-entitlement-custody, and product-owner-scope.
+The read-only audit ran from 2026-11-16T23:39:47.453935+00:00 to 2026-11-16T23:39:51.052301+00:00 and exited zero. It verified genuine source consent, ratified proposal identity, the unchanged complete 043 definition, all nine exact Hosted task/file scopes, the accepted private plan bytes at 6b8b7c4542eb48f9c602afe64ecca460978a674b by SHA-256, and verified pinned OpenSpec 1.12.0 strict validation. It produced all three frozen T013 cases: actual-provider-platform, identity-entitlement-custody, and product-owner-scope.
 
-The accepted choices are existing Opensoft QA AKS in West US, the QA Keycloak issuer and RS256 API verification path, independent product-owned SQLite current entitlement/revocation state, scoped QA vault/registry reuse and dedicated fenced single-writer durable state. The private plan remains in the private owner repository; this public packet exports only reviewed/redacted source facts and typed immutable references. API authority remains separate from the MCP Ed25519 requirement. No live compatibility or capacity is inferred.
+Accepted source choices are existing Opensoft QA AKS in West US, QA Keycloak issuer/RS256 API verification, independent product-owned SQLite current entitlement/revocation state, scoped QA vault/registry reuse and dedicated fenced single-writer state. API authority is separate from the MCP Ed25519 requirement. No actual provider, capacity or protocol compatibility is inferred. Raw private source and plan bytes remain private; public facts use the governed T013 typed artifact graph.
 
-The collector first passed full default verification of the actually authenticated T010 predecessor against control 8ac068510936c97d21ace2b923ad00c0a6238b68, whole-file SHA-256 e42735845944bb5c36d46a4648c56ab9bd4b0dfd82d4bc3a5b7128b08c6b89bf. It then repeated the audit against unchanged source. The successful initial audit remains in preparation_history. Initial export preparation refused machine-local paths emitted by the verified CLI; the actual raw output hashes are retained and only the exact checkout/cache prefixes are redacted. No original observation, Git identity, command, result or timestamp was changed.
+Before collecting this output the collector passed full default verification of actually authenticated T010 against control 8ac068510936c97d21ace2b923ad00c0a6238b68, whole-file SHA-256 e42735845944bb5c36d46a4648c56ab9bd4b0dfd82d4bc3a5b7128b08c6b89bf. It consumed no pending T013 preparation as a predecessor.
+
+## Preserved preparations and genuine provenance
+
+Brett's actual source-choice reply, timestamp and raw record SHA-256 b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82 are retained in the source permission and commissioning review. No authority or named source choice changed during preparation.
+
+The first successful audit and distinct output/receipt remain immutable under prior pending control cf055928dac64ad0caedd7c16294ed8394140766. That preparation duplicated the private-plan pin in a consent document outside the closed evidence registration. The normalized source consolidates artifact pins in T013's already governed typed record, preserving explicit repository ownership/reachability without extending a reader, adding an exception or dropping a pin obligation. The original private-plan identity/digest remains present in the current command, case facts and exact inventory.
+
+The new collector initially required a prose copy of the plan digest; that assertion refused despite the exact approval link and genuine human record. The refused command/output remains in preparation_history. The corrected collector verifies the immutable plan bytes and digest in the governed evidence graph. Machine-local CLI/cache paths in successful stdout are narrowly redacted; original raw SHA-256, source/command/result/timing identities remain. No original observation or decision is relabeled.
 
 ## Preserved prior acceptance
 
-The prior actual T010/T021/T022 authentication and source packet remain immutable at [the original review](https://github.com/opensoft/openXfactory/blob/b2670b0d8ecc2b225d4e114ecacb00276c536398/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) and control 8ac068510936c97d21ace2b923ad00c0a6238b68. All prior bindings, outputs, historical readers and contained E objects are preserved unchanged. T013 uses distinct public Git original/receipt references; it is not added to the contained E bootstrap object table. No definition or 68-task registry field changes.
+[Original T010/T021/T022 review](https://github.com/opensoft/openXfactory/blob/b2670b0d8ecc2b225d4e114ecacb00276c536398/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) and control 8ac068510936c97d21ace2b923ad00c0a6238b68 remain immutable. Prior bindings, source outputs, contained E objects and fixed historical readers are unchanged. T013 uses separate public Git original/receipt references and is not added to the contained E bootstrap table. No frozen input or 68-task field changes.
 
 ## Authentication decision
 
-The following decision remains pending until Brett reviews these actual observations. Source-scope approval, preparation checks, unit tests, CI and automated review do not replace actual custodian authentication. Default verification must refuse this new control while pending. T013 stays unchecked until the real decision is recorded and full default verification passes.
+This actual-output decision remains pending. Preparation checks, source choices, tests, CI and automated review do not replace it. Default verification must refuse this new control until the genuine decision is recorded. T013 stays unchecked until then and a full default verification passes.
 
 ```json
 {
   "schema": "043-source-authentication-v1",
   "decision": "pending",
   "custodian": "Brett Heap",
-  "reviewed_manifest": {
-    "repository": "opensoft/openxfactory",
-    "commit": "35b62c73d339fb18f9f3fd3e76c699a7db4ebf03",
-    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "sha256": "ddb6f1e09d1598f4e01d3b03375407fba017f9b7e3e97849d9b73617f10846e1"
-  },
-  "content_sha256": "882449dd9b8dbff18c8adfb7d22306f1f1f558642a868243fee511ef33a9bb4b",
+  "reviewed_manifest": null,
+  "content_sha256": "f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6",
   "reviewed_at": null
 }
 ```
 
 ## Release and rollout boundary
 
-The source-only release-builder PR #1327 is merged. PR #1325 was indirectly marked merged because its head was already an ancestor; neither is presented as an open draft. The package #2, Ops #628, codeXfactory #583 and Hosted Services #2 remain draft. All new preparation PRs remain draft.
+Source-only #1327 is merged. #1325 was indirectly marked merged through its pre-existing ancestry and is not an open draft. Headscale-Install #2, Ops #628, codeXfactory #583, Hosted Services #2 and all new preparation PRs remain draft.
 
-T018/T019 release cut, version/tag/publication and compatibility readback remain incomplete; no version is allocated here. T023 package publication and real-client runner prerequisites remain due before H runtime consumers. Full program Q0 remains incomplete. Target admission, edge/TLS/relay compatibility, protected custody and irreversible retention decisions, provisioning, C-03, Q1-Q5, enrollment and commercial rollout remain separately gated. This packet authenticates no deployment or live qualification.
+T018/T019 actual atomic release cut, version/tag/publication and independent readback remain incomplete. No version is allocated here. T023 package publication/real-client runner remains due before its H runtime consumers. Full Q0 remains incomplete. Target admission, edge/TLS/relay, protected custody/retention lock, provisioning, C-03, Q1-Q5, enrollment and commercial rollout retain separate gates. This packet grants no runtime or release acceptance.
