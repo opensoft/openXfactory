@@ -1175,7 +1175,10 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # add 17 measured sites, including three foreign commit sites and one
     # standing member. Measured from the committed pending control; presence
     # does not supply authentication or replace either private CI proof lane.
-    assert (standing_sites, standing_members) == (1327, 38)
+    # The bounded E definition/source-CI and local T021/T022 pending controls
+    # add 50 measured sites, including preserved superseded preparation refs.
+    # The member set is unchanged; presence supplies no authentication.
+    assert (standing_sites, standing_members) == (1377, 38)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
