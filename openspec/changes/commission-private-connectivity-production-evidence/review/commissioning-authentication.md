@@ -1,6 +1,6 @@
 # Authentication review: Bounded evidence and local Headscale source
 
-Status: draft
+Status: record
 
 ## Exact combined source review target
 
@@ -46,17 +46,32 @@ Hosted Codex cleared the three reported recovery repairs at source 9d1e60dcb1 an
 
 ## Admission and rollout boundary
 
-The original accepted c37/c8 and T020 control/review graphs remain independently usable and unmodified. Initial unauthenticated control core 502ad786b1d3326ba2438b20c43fc5f794e92b065d5e19a0d1a149bc975f14b4 omitted the two local binding class labels. Strict preparation caught this before admission; the new labels are copied from the frozen source-L task definitions and match the unchanged actual receipts. That withdrawn control remains immutable in prior_containers; no actual output or approval is relabeled. This manifest is a new complete content target. Default verification of its new tasks must refuse while the following actual authentication decision remains pending. Preparation checks and exact pin inventories supply no admission. T021/T022 and T018 remain unchecked; the prior 14 task completions retain their original accepted anchors.
+The original accepted c37/c8 and T020 control/review graphs remain independently usable and unmodified. Initial unauthenticated control core 502ad786b1d3326ba2438b20c43fc5f794e92b065d5e19a0d1a149bc975f14b4 omitted the two local binding class labels. Strict preparation caught this before admission; the new labels are copied from the frozen source-L task definitions and match the unchanged actual receipts. That withdrawn control remains immutable in prior_containers; no actual output or approval is relabeled. This manifest is a new complete content target. Your actual authentication is recorded below. Full default verification remains the required admission check before source task completion; preparation checks and exact pin inventories supply no admission. T021/T022 and T018 remain unchecked; the prior 14 task completions retain their original accepted anchors.
 
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "pending",
+  "decision": "accepted",
   "custodian": "Brett Heap",
-  "reviewed_manifest": null,
-  "content_sha256": null,
-  "reviewed_at": null
+  "reviewed_manifest": {
+    "repository": "opensoft/openxfactory",
+    "commit": "736e8f8dbd347e145638a1eb12bfe58d49bbeaf1",
+    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+    "sha256": "13874618554f322c66dc78acdbf953921ceb0e2bff3e550b791b6def4004260c"
+  },
+  "content_sha256": "e49a5a8eb773dadd05ac345baf7eaf9ba5d019f6fb4d128580667a4b617577db",
+  "reviewed_at": "2026-11-16T14:44:51.448Z"
 }
 ```
 
 All source PRs remain draft, including coordinator #1325/#1327, private package #2, Ops #628 and codeXfactory #583. The one-time CI-only #1328 exception is already merged. No release version, inventory cut or tag is allocated. A separate lane published contract-v4.2; the next actual version must be rechecked when a concrete cut is authorized. Full Q0 is unaccepted, Q1-Q5 have not been entered, and deployment, spend, enrollment and commercial rollout retain their separate decisions.
+
+## Actual custodian authentication
+
+Brett Heap authenticated this exact source-only T010/T021/T022 packet in the accepted E and Headscale package source-evidence custodian roles.
+
+> I authenticate the T010/T021/T022 source-only packet, manifest 736e8f8dbd347e145638a1eb12bfe58d49bbeaf1. Record it, run default verification, complete T021–T022, and prepare T018 for review. Keep all five PRs draft and honor Q0–Q5.
+
+Actual decision UTC: 2026-11-16T14:44:51.448Z; America/La_Paz: 2026-11-16T10:44:51.448000-04:00. Native session 01a1c061-ee6e-7e61-9db4-280a724e05c2, user message msg_01a1e4d1-6878-7053-b135-bd80c034e15f, JSONL line 39257. Original record SHA-256: c332ce318f09eb852487c39e7992f8e6b2e7e3aa6ec45d980ab92f4663923a5d. Digest method: UTF-8 JSONL record bytes excluding terminal newline. The native user record supplies this decision; source-scope acceptance is not substituted for output authentication.
+
+The exact manifest and canonical core are unchanged. This authenticates actual source outputs only. All five source PRs remain draft. T018 cut/version/tag/publication authority, full Q0 and Q1-Q5, target execution and commercial admission remain separate.
