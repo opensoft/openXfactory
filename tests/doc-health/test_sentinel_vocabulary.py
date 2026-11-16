@@ -1178,7 +1178,9 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # The bounded E definition/source-CI and local T021/T022 pending controls
     # add 50 measured sites, including preserved superseded preparation refs.
     # The member set is unchanged; presence supplies no authentication.
-    assert (standing_sites, standing_members) == (1377, 38)
+    # The authenticated control and draft T018 source-review record add 13
+    # measured sites. These references grant no publication or rollout acceptance.
+    assert (standing_sites, standing_members) == (1390, 38)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
