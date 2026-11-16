@@ -137,12 +137,12 @@ accepted evidence remain unchanged.
 ## Exact owning scope drafts
 
 - [Ops #637](https://github.com/opensoft/opsXfactory/pull/637):
-  admit-private-connectivity-qa-operations, reviewed draft f187da9c8baf820fd8c60339a82602b2e2b0fb13.
+  admit-private-connectivity-qa-operations, reviewed draft f4a8ec16389fa2b31429a0cd1a485ed6652fb1d0.
   Three separate workload sets preserve cross-boundary refusal. Additional
   T043/T047 files require actual Ops/E review and complete definition refresh
   before implementation.
 - [Tenant #350](https://github.com/opensoft/Opensoft-Tenant/pull/350):
-  prepare-private-connectivity-qa-target, reviewed draft 105c42899725eed912596f28cb40f3929185b062.
+  prepare-private-connectivity-qa-target, reviewed draft c41e75ea4ded5a4504c82d659d13bda5b777626a.
   Exact desired-state/validation/edge source surfaces are proposed only.
   Target admission, source-scope approval and any required frozen owner/file
   refinement precede generation; current C-03/C-07/C-08 and later gates remain due.
