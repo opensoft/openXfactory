@@ -6,6 +6,22 @@ Prepared: 2026-11-14
 
 This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T012, T016 and T020 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required at their consumers. Coordinator #1310 has landed source-only with all actual post-merge checks passed. The actual T020 packet is authenticated and default-verified; Ops #628, codeXfactory #583, Headscale-Install #2 and the new coordinator evidence PR remain draft.
 
+## Hosted source decision and QA preparation, 2026-11-16
+
+Brett's actual source-choice approval at 22:16:06.872Z is recorded in
+[the Hosted commissioning review](../../../openspec/changes/commission-hosted-headscale-production/review/qa-commissioning.md).
+The actual T013 source audit passed all three frozen cases and pinned strict
+validation; [its new authentication review](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md)
+is pending. T013 remains unchecked. The accepted 16 prior source tasks retain
+their immutable controls and actual authentication.
+
+The [QA dossier](qa-q1-approval-packet.md) links draft Ops #637 and Tenant #350
+for exact source/target scope review. These proposals do not change the 68-task
+definition. The [release preflight](release-prerequisites.md) supplies actual
+refreshed tests and preview/readback results, with T018/T019/T023 publication
+and all live gates still incomplete. Existing component and all preparation
+PRs remain draft.
+
 ## Current preparation handoff — 2026-11-16
 
 T001-T012, T016 and T020-T022 are complete as authenticated source tasks

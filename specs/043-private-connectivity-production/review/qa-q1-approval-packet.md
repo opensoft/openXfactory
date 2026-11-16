@@ -34,6 +34,10 @@ raw output or credential is copied here.
 Coordinator source PRs #1327 and #1325 are recorded merged; #1325 was indirectly
 marked merged through pre-existing ancestry. It cannot be reopened. The
 remaining Headscale-Install #2, Ops #628 and codeXfactory #583 stay draft.
+The [Hosted Services #2](https://github.com/opensoft/openXsoft-Hosted-Services/pull/2)
+source-plan PR is also draft. Source choices were accepted at immutable 6b8b7c4;
+[the actual T013 review packet](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md)
+awaits its separate actual-output authentication/default verification.
 No further source merge is authorized by preparing this dossier.
 
 ## Proposed bounded staging envelope
@@ -96,7 +100,9 @@ no monitoring gap or planned failure is silently called healthy.
 - C-06: approve the finite proposed objectives, capacities, sampling and clocks.
 - C-07: exact resource IDs, two boundary identities, data/fault targets, run
   duration, cost/cleanup controls, positive/neighbor observers and current
-  capacity. A local Docker pilot cannot fill the standalone Ubuntu target gap.
+  capacity. The earlier lab fixtures do not fill the standalone Ubuntu target gap.
+  That local-track host may be any separately approved qualifying Ubuntu/Docker
+  machine; Azure placement is required only by the selected hosted QA plan.
 - C-08: named protected custodian, least-privilege writers/readers, immutable
   original output/probe authentication, finite retention and redaction. Proposed
   dedicated QA evidence storage needs an explicit policy decision before any lock.
@@ -127,3 +133,21 @@ landing exception must identify the concrete ready PRs; keeping them draft
 continues to block publication. Record genuine decisions and authenticate actual
 new outputs before completing their tasks. The 68-task definition and current
 accepted evidence remain unchanged.
+
+## Exact owning scope drafts
+
+- [Ops #637](https://github.com/opensoft/opsXfactory/pull/637):
+  admit-private-connectivity-qa-operations, reviewed draft f187da9c8baf820fd8c60339a82602b2e2b0fb13.
+  Three separate workload sets preserve cross-boundary refusal. Additional
+  T043/T047 files require actual Ops/E review and complete definition refresh
+  before implementation.
+- [Tenant #350](https://github.com/opensoft/Opensoft-Tenant/pull/350):
+  prepare-private-connectivity-qa-target, reviewed draft 105c42899725eed912596f28cb40f3929185b062.
+  Exact desired-state/validation/edge source surfaces are proposed only.
+  Target admission, source-scope approval and any required frozen owner/file
+  refinement precede generation; current C-03/C-07/C-08 and later gates remain due.
+
+Both passed verified pinned strict OpenSpec validation. Neither proposal is
+ratified, creates target configuration or grants operational authority. Existing
+shared workflow/edge invariants and active sibling deltas must be preserved at
+the realized union.
