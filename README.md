@@ -11993,3 +11993,5 @@ measurement without treating them as passing acceptance.
 - [Older Sonar reliability/security backlog](specs/044-sonar-quality-remediation/legacy-sonar-backlog.md)
 
 OpenSpec CLI maintenance: [npm legacy checksum compatibility](specs/046-npm-legacy-checksum/plan.md).
+
+Verified supplied CLI maintenance: [feature 047 plan](specs/047-vendored-cli-source/plan.md).
