@@ -6,7 +6,28 @@ Prepared: 2026-11-14
 
 This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T012, T016 and T020 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required at their consumers. Coordinator #1310 has landed source-only with all actual post-merge checks passed. The actual T020 packet is authenticated and default-verified; Ops #628, codeXfactory #583, Headscale-Install #2 and the new coordinator evidence PR remain draft.
 
-## Current source handoff
+## Current preparation handoff — 2026-11-16
+
+T001-T012, T016 and T020-T022 are complete as authenticated source tasks
+(16/68). Coordinator #1327 landed source-only; GitHub recorded #1325 indirectly
+merged through its already-contained head. Headscale-Install #2, Ops #628 and
+codeXfactory #583 remain open drafts.
+
+Brett approved the exact private Hosted plan and Q0-H source choices at
+2026-11-16T22:16:06.872Z. The immutable reviewed private plan is linked from
+the [Hosted decision record](../../../openspec/changes/commission-hosted-headscale-production/review/qa-commissioning.md).
+Actual T013 source-output authentication/default admission remains due; no
+T013 completion or full Q0 pass is inferred from this source decision.
+
+The [release preflight](release-prerequisites.md) and
+[QA Q1 dossier](qa-q1-approval-packet.md) prepare the remaining exact decisions.
+The private Hosted Services planning PR also remains draft. No target,
+resource, identity, DNS, retention or staging operation is authorized.
+The earlier tables and chronology below preserve prior handoff states and
+must not be treated as current release, draft-state or gate acceptance.
+
+## Earlier source handoff (historical)
+
 
 | Item | Current state and next acceptance |
 | --- | --- |
