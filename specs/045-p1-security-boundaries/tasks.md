@@ -44,3 +44,5 @@ Python 3.12 runtime as the binary-only lock. The existing nine named installer
 acceptance cases assert that runtime without changing their count.
 T007 synthetic registry fixtures create their own executable npm path and
 independent operator binding; they do not rely on /usr/bin/npm.
+
+- [ ] T014 [C] Close the three remaining original execution findings through validated subprocess operands, source/consumer publication and exact-main analysis; retain all previous evidence.
