@@ -328,6 +328,10 @@ def _fake_registry(mod, monkeypatch, tmp_path):
             (destination / f"fission-ai-openspec-{VERSION}.tgz").write_bytes(
                 served["payload"])
             return subprocess.CompletedProcess(argv, 0, "", "")
+        if argv[1:3] == ["cache", "add"]:
+            served.setdefault("seeded_payloads", []).append(Path(argv[3]).read_bytes())
+            return subprocess.CompletedProcess(
+                argv, 1 if served.get("seed_failure") else 0, "", "")
         if argv[1:2] == ["ci"]:
             # `npm ci` installs a PROJECT, in a working directory, so the
             # fictional registry reads `cwd` the way the real one does — and the
@@ -3230,3 +3234,111 @@ def test_npm_compatibility_checksum_works_with_security_sha1_disabled(mod, monke
     assert mod.shasum_of(PAYLOAD) == real_sha1(
         PAYLOAD, usedforsecurity=False).hexdigest()
     assert observed == [PAYLOAD]
+
+
+def supplied_fixture(tmp_path):
+    (tmp_path / "openspec").mkdir()
+    artifact = tmp_path / "supplied.tgz"
+    artifact.write_bytes(PAYLOAD)
+    return artifact, write_pin(tmp_path)
+
+
+def test_supplied_bytes_seed_the_cli_before_locked_install(mod, tmp_path, fake_npm):
+    calls, served = fake_npm
+    artifact, pin_path = supplied_fixture(tmp_path)
+    assert mod.main(["--all", "--no-cache", "--repo", str(tmp_path),
+                     "--pin", str(pin_path), "--tarball", str(artifact)]) == 0
+    assert served["seeded_payloads"] == [PAYLOAD]
+    seed = next(i for i, call in enumerate(calls) if call[1:3] == ["cache", "add"])
+    install = next(i for i, call in enumerate(calls) if call[1:2] == ["ci"])
+    assert seed < install
+    assert "--ignore-scripts" in calls[seed]
+    assert not any(call[1:2] == ["pack"] for call in calls)
+
+
+def test_supplied_path_change_cannot_replace_authenticated_bytes(
+        mod, tmp_path, fake_npm, monkeypatch):
+    _, served = fake_npm
+    artifact, pin_path = supplied_fixture(tmp_path)
+    verify = mod.verify_artifact
+
+    def verify_then_replace(*args):
+        payload = verify(*args)
+        artifact.write_bytes(b"changed after authentication")
+        return payload
+
+    monkeypatch.setattr(mod, "verify_artifact", verify_then_replace)
+    assert mod.main(["--all", "--no-cache", "--repo", str(tmp_path),
+                     "--pin", str(pin_path), "--tarball", str(artifact)]) == 0
+    assert served["seeded_payloads"] == [PAYLOAD]
+
+
+def test_supplied_cache_seed_failure_refuses_before_install(mod, tmp_path, fake_npm):
+    calls, served = fake_npm
+    served["seed_failure"] = True
+    artifact, pin_path = supplied_fixture(tmp_path)
+    assert mod.main(["--all", "--no-cache", "--repo", str(tmp_path),
+                     "--pin", str(pin_path), "--tarball", str(artifact)]) == 2
+    assert not any(call[1:2] == ["ci"] for call in calls)
+
+
+def test_real_npm_uses_supplied_cli_with_empty_cache_and_network_disabled(
+        mod, tmp_path, monkeypatch):
+    """A real offline npm install must not need the CLI's registry URL."""
+    import io
+    import os
+    import shutil
+    import tarfile
+
+    real_npm = shutil.which("npm")
+    assert real_npm, "the declared Node/npm test prerequisite must be present"
+    sentinel = tmp_path / "lifecycle-must-not-run"
+    manifest = {
+        "name": PACKAGE, "version": VERSION,
+        "bin": {"openspec": "bin/openspec.js"},
+        "scripts": {"postinstall": "node -e "
+                    + json.dumps("require('fs').writeFileSync("
+                                 + json.dumps(str(sentinel)) + ",'ran')")},
+    }
+    program = (
+        "#!/usr/bin/env node\n"
+        "process.stdout.write(process.argv.includes('--version') ? "
+        + json.dumps(VERSION + "\n") + " : "
+        + json.dumps(report()) + ");\n"
+    ).encode()
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode="w:gz") as archive:
+        for name, body, mode in (
+                ("package/package.json", json.dumps(manifest).encode(), 0o644),
+                ("package/bin/openspec.js", program, 0o755)):
+            member = tarfile.TarInfo(name)
+            member.size, member.mode, member.mtime = len(body), mode, 0
+            archive.addfile(member, io.BytesIO(body))
+    payload = buffer.getvalue()
+    artifact = tmp_path / "supplied.tgz"
+    artifact.write_bytes(payload)
+    integrity, shasum = _address(payload)
+    lock = synthetic_lockfile(integrity, dependencies=0)
+    pin_path = write_pin(tmp_path, lockfile_body=lock,
+                         integrity=json.dumps(integrity), shasum=json.dumps(shasum))
+    (tmp_path / "openspec").mkdir()
+    # Hermetic npm configuration belongs to this test alone, never the operator.
+    for key in list(os.environ):
+        if key.lower().startswith("npm_config_"):
+            monkeypatch.delenv(key)
+    for role in ("user", "global"):
+        config = tmp_path / (role + ".npmrc")
+        config.write_text("")
+        monkeypatch.setenv("npm_config_" + role + "config", str(config))
+    cache = tmp_path / "empty-npm-cache"
+    monkeypatch.setenv("npm_config_cache", str(cache))
+    monkeypatch.setenv("npm_config_offline", "true")
+    monkeypatch.setenv("npm_config_update_notifier", "false")
+    monkeypatch.setenv("XFACTORY_NPM_BINARY", real_npm)
+    monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(pin_path))
+    monkeypatch.setenv("XFACTORY_OPENSPEC_ARTIFACT_ROOT", str(tmp_path))
+    assert not cache.exists()
+    assert mod.main(["--all", "--no-cache", "--repo", str(tmp_path),
+                     "--pin", str(pin_path), "--tarball", str(artifact)]) == 0
+    assert not sentinel.exists()
+    assert artifact.read_bytes() == payload
