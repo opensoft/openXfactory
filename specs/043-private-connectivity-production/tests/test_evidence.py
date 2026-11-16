@@ -1682,8 +1682,9 @@ def test_c37_children_keep_the_original_consumed_ci(kind, task, monkeypatch):
 def test_fixed_c37_control_does_not_accept_reference_substitution(kind, field, value):
     ref = c37_control(kind)
     ref[field] = value
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
     with pytest.raises(v.EvidenceError):
-        v.historical_verifier(v.GitStore({v.COORDINATOR: str(ROOT)}), ref)
+        v.historical_verifier(store, ref)
 
 
 @pytest.mark.parametrize("kind", ["source-ci", "package"])
@@ -1713,12 +1714,14 @@ def test_fixed_c37_history_checks_all_immutable_inputs(kind, mutation, monkeypat
 def test_c37_history_cannot_admit_a_pending_or_live_task(task, monkeypatch):
     world = c37_world("package", monkeypatch)
     world.trust["historical_controls"] = {task: c37_control("package")}
+    anchor = source_anchor(world)
     with pytest.raises(v.EvidenceError, match="unaccepted historical task"):
-        v.Verifier(TASKS, world.store, source_anchor(world), now=NOW)
+        v.Verifier(TASKS, world.store, anchor, now=NOW)
 
 
 def test_t020_history_requires_its_actual_package_control(monkeypatch):
     world = c37_world("source-ci", monkeypatch)
     world.trust["historical_controls"] = {"T020": c37_control("source-ci")}
+    anchor = source_anchor(world)
     with pytest.raises(v.EvidenceError, match="unaccepted historical control"):
-        v.Verifier(TASKS, world.store, source_anchor(world), now=NOW)
+        v.Verifier(TASKS, world.store, anchor, now=NOW)

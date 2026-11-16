@@ -29,6 +29,8 @@ from datetime import datetime, timezone
 
 FEATURE = "043-private-connectivity-production"
 FEATURE_PATH = "specs/" + FEATURE
+COORDINATOR = "opensoft/openxfactory"
+HISTORICAL_CONTROL_ERROR = "unaccepted historical control"
 DEFINITION = "2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796"
 LEGACY_DEFINITION = "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0"
 LEGACY_CONTROL_SHA256 = "0dc18a4053e07fd484534dcd4b572a5f8c6b72718b6901ac1323298d4ec7243e"
@@ -36,7 +38,7 @@ LEGACY_READER_SHA256 = "0ce860921467e94e942274905c45c99295a830a3f14b8a0b66ddb944
 # Closed source history accepted before this exact T018 scope refinement.
 C37_DEFINITION = "c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431"
 C37_READER = {
-    "repository": "opensoft/openxfactory",
+    "repository": COORDINATOR,
     "commit": "98a20eeeb6435f4bcd195fe86d2221e27fb3de5b",
     "path": "specs/043-private-connectivity-production/verify-evidence.py",
     "sha256": "2f7327b038f4ba54e3653b0f0247c18da87713220b2cba9ed11dc515407a597b"
@@ -44,7 +46,7 @@ C37_READER = {
 C37_CONTROLS = {
     "source-ci": {
         "reference": {
-            "repository": "opensoft/openxfactory",
+            "repository": COORDINATOR,
             "commit": "698bf83671be642421fb28987c820fe36b49b0a6",
             "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
             "sha256": "31aa0576d1c9c0ac99ccf6faa14b038b0a74e985568ab5645f543d75de13bb35"
@@ -53,7 +55,7 @@ C37_CONTROLS = {
     },
     "package": {
         "reference": {
-            "repository": "opensoft/openxfactory",
+            "repository": COORDINATOR,
             "commit": "c4e380b43e27093a2a3b99264a3fb52a6cf36c21",
             "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
             "sha256": "902903efb19398d014ef2c84acd6afa227c0cc97ee4df87f5d9cecf56fd29816"
@@ -62,7 +64,6 @@ C37_CONTROLS = {
     }
 }
 
-COORDINATOR = "opensoft/openxfactory"
 FIXED_REPOSITORIES = {"C": COORDINATOR, "L": "opensoft/headscale-install", "I": "opensoft/xfactory-installer",
                       "H": "opensoft/openxsoft-hosted-services"}
 SCOPE_FIELDS = frozenset("run candidate profile customer site network domain environment target region offering phase offer wave".split())
@@ -280,15 +281,15 @@ def historical_verifier(store, ref, now=None, *, prepare=False):
     """Use only the fixed accepted source control and its original frozen reader."""
     reference(ref)
     require(ref["repository"].lower() == COORDINATOR and ref["path"] == COMMISSIONING_PATH,
-            "unaccepted historical control")
+            HISTORICAL_CONTROL_ERROR)
     value = decode(store.blob(ref))
     if ref["sha256"] == LEGACY_CONTROL_SHA256:
         definition = LEGACY_DEFINITION
-        reader_ref = dict(repository=COORDINATOR, commit=ref["commit"],
-                          path=FEATURE_PATH + "/verify-evidence.py", sha256=LEGACY_READER_SHA256)
+        reader_ref = {"repository": COORDINATOR, "commit": ref["commit"],
+                      "path": FEATURE_PATH + "/verify-evidence.py", "sha256": LEGACY_READER_SHA256}
     else:
         selected = fixed_c37_control(ref)
-        require(selected is not None, "unaccepted historical control")
+        require(selected is not None, HISTORICAL_CONTROL_ERROR)
         definition = C37_DEFINITION
         require(commissioning_digest(value) == selected["content_sha256"], "unaccepted historical core")
         reader_ref = C37_READER
@@ -347,7 +348,7 @@ class Verifier:
             selected = fixed_c37_control(ref)
             require((ref["sha256"] == LEGACY_CONTROL_SHA256 and key != "T020")
                     or (selected is not None and (key != "T020" or selected == C37_CONTROLS["package"])),
-                    "unaccepted historical control")
+                    HISTORICAL_CONTROL_ERROR)
 
     def source_container(self, container):
         require(isinstance(container, dict) and set(container) == {"schema", "objects"}
