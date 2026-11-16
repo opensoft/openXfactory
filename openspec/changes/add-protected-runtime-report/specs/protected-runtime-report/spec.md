@@ -68,6 +68,10 @@ or repair an exhausted/corrupt journal.
 - **WHEN** the operation fails or is cancelled and independent cleanup succeeds
 - **THEN** the report preserves failure/cancellation and cannot upgrade to passed
 
+#### Scenario: Privacy is evaluated after cleanup
+- **WHEN** privacy and cleanup-derived case results are finalized from fresh verified cleanup before report issuance
+- **THEN** they are accepted as report-only observations without requiring cleanup to observe a later privacy check or granting further runtime use
+
 #### Scenario: Cleanup is stale or incomplete
 - **WHEN** a cleanup result has the wrong scope, attempt, generation, expired window or preserved-resource mismatch
 - **THEN** protected-machine qualification remains false and reporting cannot perform corrective mutations

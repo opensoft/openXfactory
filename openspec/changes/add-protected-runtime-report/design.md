@@ -80,7 +80,9 @@ replay_refusal_digest audience_barrier_digest environment_barrier_digest
 worker_denial_digest`. Verified requires the actual owning verifier positive,
 exact same-proof replay refusal, valid-signed audience-only and environment-only
 negatives, plus an available worker-denial positive and its excess-permission
-control. An outage or invalid signature is not an equivalent negative. Source counterfactuals
+control. Audience/environment checks remain in the existing factory workload/context
+verification path to that proof; they do not add GitHub-specific semantics or fields
+to neutral wallet proof verification. An outage or invalid signature is not an equivalent negative. Source counterfactuals
 validate the checker separately; they do not become live results. Never widen
 production permissions to manufacture a counterfactual. Missing approved, safe
 negative/disposable capabilities leave the affected live predicate unperformed.
@@ -90,8 +92,11 @@ negative/disposable capabilities leave the affected live predicate unperformed.
 readback_digest readback_identity_digest attempt_digest`, with status `verified`.
 Verified binds the same actual RunScope/RunPlan/generation and fresh independent
 audit attempt, actual run-resource absence/revocation and original retained/shared
-generations. For passed reports, all case observations precede independent cleanup
-and `observed_at <= checked_at <= issued_at < valid_until`.
+generations. For passed reports, cleanup observes after the latest actual operation/proof use
+and `observed_at <= checked_at <= issued_at < valid_until`. Cleanup-derived and
+report-privacy slots may be finalized after cleanup checking and before issuance;
+those report-only observations grant no operation authority. Do not apply the old
+v1 all-case timestamp floor to these later observations or change v1 behavior.
 
 `results` has exactly the eleven existing semantic identifiers I01-I05, G01-G03,
 S01, L01, R01; H01-H12; and live identifiers P01, deployed-G02, deployed-G03,
