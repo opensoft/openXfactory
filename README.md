@@ -560,6 +560,13 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [fix-hosted-qualification-lease-budget](openspec/changes/fix-hosted-qualification-lease-budget/proposal.md)
+  — draft qualification-only private-read amendment; source ratification pending.
+  [Design](openspec/changes/fix-hosted-qualification-lease-budget/design.md) ·
+  [Requirements](openspec/changes/fix-hosted-qualification-lease-budget/specs/hosted-qualification-lease-budget/spec.md) ·
+  [Handoff](openspec/changes/fix-hosted-qualification-lease-budget/tasks.md) ·
+  [Evidence](openspec/changes/fix-hosted-qualification-lease-budget/evidence.md).
+
 - [add-protected-runtime-report](openspec/changes/add-protected-runtime-report/proposal.md)
   — draft T012T report-source decision; not ratified or commissioned for implementation.
   [Design](openspec/changes/add-protected-runtime-report/design.md) ·
