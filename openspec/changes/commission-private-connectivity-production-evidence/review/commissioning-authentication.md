@@ -8,7 +8,7 @@ This requests separate actual T013 source-output authentication from Brett Heap 
 
 | Item | Exact immutable identity |
 | --- | --- |
-| Proposed reviewed manifest | Pending immutable control construction |
+| Proposed reviewed manifest | [53c2b0700e342b77196980a617dea7fc2fa33512](https://github.com/opensoft/openXfactory/blob/53c2b0700e342b77196980a617dea7fc2fa33512/specs/043-private-connectivity-production/evidence/commissioning.json), whole-file SHA-256 e3fce83cce9f9c6597fd82d00e4fabc6934ae30e6e06a49c52bded4ed4b1146f |
 | Canonical content SHA-256 | f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6 |
 | Complete unchanged definition SHA-256 | 2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796 |
 | Actual source | e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8; base 3ce7dc814f29c780b842fadb3664ce31bef0b5d9 |
@@ -45,7 +45,12 @@ This actual-output decision remains pending. Preparation checks, source choices,
   "schema": "043-source-authentication-v1",
   "decision": "pending",
   "custodian": "Brett Heap",
-  "reviewed_manifest": null,
+  "reviewed_manifest": {
+    "repository": "opensoft/openxfactory",
+    "commit": "53c2b0700e342b77196980a617dea7fc2fa33512",
+    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+    "sha256": "e3fce83cce9f9c6597fd82d00e4fabc6934ae30e6e06a49c52bded4ed4b1146f"
+  },
   "content_sha256": "f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6",
   "reviewed_at": null
 }
