@@ -23,7 +23,7 @@ raw output or credential is copied here.
 | Prerequisite | Observed disposition | Entry consequence |
 | --- | --- | --- |
 | E/T010 and L/I/N source commissioning | Previously authenticated source tasks complete | Source only; no operating grant |
-| T013 Hosted Headscale | Source owner accepted; exact consumed integration choices and actual packet pending | H implementation blocked at its declared consumers |
+| T013 Hosted Headscale | Source owner and exact source choices accepted; actual output authentication/default admission pending | H implementation blocked at its declared consumers |
 | T014/T015 and program T017 | Domain/platform/operational choices and actual acceptance pending | Full Q0 remains blocked |
 | T018/T019 neutral | Reviewed embedded source preview; no actual cut/tag/readback | No supported neutral consumer pin |
 | T023 package | Foundation/endpoint/recovery source; guarded runner/publication pending | H provider and installer release consumers blocked |
