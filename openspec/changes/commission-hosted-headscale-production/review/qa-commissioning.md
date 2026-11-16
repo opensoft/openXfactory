@@ -51,3 +51,5 @@ commissioning control, accepted observation or prior authentication is changed.
 ## Genuine decision provenance
 
 The original response_item/message/user record is timestamped 2026-11-16T22:16:06.872Z. SHA-256 b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82 covers its original UTF-8 JSON line excluding the terminator. The actual question named only source choices and explicitly retained the later gates. No missing role, execution grant, publication or actual output authentication is inferred.
+
+Artifact pin custody: T013 is the canonical machine-readable artifact identity, repository ownership and reachability graph. The source permission retains the genuine human consent, exact choices and unchanged bounded authority without duplicating its private-plan pin. The earlier preparation is preserved by immutable references; a fresh source audit is required for the normalized packet.

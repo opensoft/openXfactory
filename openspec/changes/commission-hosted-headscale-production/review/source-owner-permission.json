@@ -37,12 +37,6 @@
     "answer": "Approve the plan and source choices (Recommended)",
     "record": "review/qa-commissioning.md"
   },
-  "approved_private_plan": {
-    "repository": "opensoft/openxsoft-hosted-services",
-    "commit": "6b8b7c4542eb48f9c602afe64ecca460978a674b",
-    "path": ".azure/plan.md",
-    "sha256": "3a9f040d44f36d1613716335fa13c39d1a43c49fb1d240e0c794691c992a9ee1"
-  },
   "source_choices": {
     "provider": "Azure AKS through current managing-factory request and governed channel",
     "environment": "QA",
@@ -161,5 +155,6 @@
     "authorizes_target_effects": false,
     "authorizes_Q1": false,
     "completes_T013_without_actual_output_authentication": false
-  }
+  },
+  "artifact_pin_custody": "The accepted private-plan artifact identity and digest are recorded once in the task-specific T013 evidence graph, with typed repository ownership and reachability checks. This permission records genuine human consent and exact source choices; it is not an additional artifact pin inventory."
 }
