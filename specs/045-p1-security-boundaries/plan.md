@@ -174,3 +174,15 @@ explicitly classify contract-v4.2 on the existing registered side; unknown
 future versions still fail, and the membership/schema-pin assertions remain.
 Rebuild the new inventory after that release-member test changes. The
 supported-domain denominator and PostgreSQL source footprint remain required.
+
+
+## Final execution-boundary verification (2026-11-16)
+
+Published main fefb5ae4ad7227a53469d5f1c711632d993b0dcf passed the unchanged
+six-condition gate, but three original injection findings remain open.
+Retain the original 40-key snapshot and all prior receipts. Complete the existing
+P1 repair by revalidating every target at the execution boundary, reconstructing
+only fixed strict commands and bounded change identifiers, and holding the
+operator-selected npm path separately from the mutable parser namespace.
+Test invalid direct-call target batches before any child process starts.
+No exclusions, issue waivers, baseline changes, dependency or billing changes.

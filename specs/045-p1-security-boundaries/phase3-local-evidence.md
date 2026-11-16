@@ -83,3 +83,17 @@ The broader local correction run passed 325 cases with one unchanged
 30-second realization-mode timeout; its candidate companion passed on retry
 and realization again timed out locally. The original unmeasured 30-second
 CI guard is unchanged and must pass on the hosted candidate before landing.
+
+
+### Final argument-boundary candidate (2026-11-16)
+
+Main fefb5ae4ad7227a53469d5f1c711632d993b0dcf passed the unchanged
+six-condition gate with 37/40 original findings fixed. Remaining keys:
+AaCIimK91WTeVOIYRV0e, AaCIimK91WTeVOIYRV0f, AaCIimK91WTeVOIYRV0g.
+This correction holds trusted npm separately from the mutable parser namespace,
+reconstructs each named target inside its validation loop, and validates the
+whole target batch again before either public execution path starts.
+An invalid later target prevents earlier targets from running.
+Focused execution-boundary and OpenSpec pin suites: 232 passed.
+Exact-head CI/review, consumer publication and all-40 main readback are pending.
+No issue statuses or gate configuration were changed.
