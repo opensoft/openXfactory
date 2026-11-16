@@ -3020,7 +3020,8 @@
         "commit": "6e3ca9c623b5ecc24d57e45e19154f6f04176552",
         "path": "evidence/private-connectivity-production/T021.json",
         "sha256": "55188beac1dd0e74b6658dc7a76b00770f38bf827151ad0ba8807f5a34afc722"
-      }
+      },
+      "class": "source-L"
     },
     "T022": {
       "task": "T022",
@@ -3154,7 +3155,8 @@
         "commit": "394fe5cccfcde1ab97cc20550c1756bc126d0759",
         "path": "evidence/private-connectivity-production/T022.json",
         "sha256": "2e5251e52212a302f2da165e742e248fa05dea1b1f29f1f9941a2aa96c47fb80"
-      }
+      },
+      "class": "source-L"
     }
   },
   "instances": {},
@@ -8633,6 +8635,12 @@
       "commit": "c4e380b43e27093a2a3b99264a3fb52a6cf36c21",
       "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
       "sha256": "902903efb19398d014ef2c84acd6afa227c0cc97ee4df87f5d9cecf56fd29816"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "88e050c0bd32a28d56d5b5d6fb6e8caeabfba27c",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+      "sha256": "5c1e117e7165593315d13d921fdf65dc906c51b029be3278b90f59d5342b47f0"
     }
   ],
   "pin_inventory": [
@@ -8771,6 +8779,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "8464f4b57e125e8391e4dad029bf1161cc8d5838"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "88e050c0bd32a28d56d5b5d6fb6e8caeabfba27c"
     },
     {
       "repository": "opensoft/openxfactory",
