@@ -38,3 +38,12 @@ publication. Before publication it remains unchanged; no fake or inherited PR is
 substituted for provenance. House/pinned strict validation and actual CI/review
 receipts will be recorded at their real source heads, with the pre-existing accepted
 OpenSpec disposition distinguished from a clean-tree verdict.
+
+## Publication provenance
+
+The actual draft factory PR is [#1334](https://github.com/opensoft/openXfactory/pull/1334).
+The unchanged ledger seeder uses `--moved-by '#1334'`; its diff adds exactly the
+new amendment row and preserves every old line. Ledger-diff, house and default
+pinned OpenSpec gates are rerun on the resulting head. Hosted CI and exact-head
+local/connector review receipts are recorded on the PR when available. This draft
+source proposal is not ratified and does not apply private38 to the runtime.

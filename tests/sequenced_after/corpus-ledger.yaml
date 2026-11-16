@@ -267,6 +267,7 @@ rows:
   fix-abandoned-session-cleanup-terminal-states: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   fix-content-resolution-conflation: {state: archived, class: sole, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   fix-hosted-protection-read-budget: {state: active, class: sole, declares: [add-protected-runtime-hosting-issuance], depth: 1, prose: false, moved_by: "#1322", moved_on: "2026-11-15"}
+  fix-hosted-qualification-lease-budget: {state: active, class: sole, declares: [add-protected-runtime-report], depth: 4, prose: false, moved_by: "#1334", moved_on: "2026-11-16"}
   fix-hosted-staging-refresh-budget: {state: active, class: sole, declares: [add-protected-runtime-hosting-issuance, fix-hosted-protection-read-budget], depth: 2, prose: false, moved_by: "#1326", moved_on: "2026-11-15"}
   fix-pin-value-boundary-and-sentinel-split: {state: archived, class: sole, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   fix-protected-runtime-dispatch-bootstrap: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1311", moved_on: "2026-11-13"}
