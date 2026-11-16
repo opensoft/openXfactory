@@ -34,11 +34,11 @@ lease request in ReadBudget.consume. Its independent cleanup still verifies and
 retained/shared resources survive. This is a failed hosted positive, not a passing
 qualification. Do not skip, deselect or relabel that unavailable positive as accepted.
 
-### D2 — A fixed qualification-only private38 allocation
+### D2 — A fixed qualification-only private39 allocation
 
 The existing accepted IPC lifecycle component exercises the same RuntimeBridge and
 RunLifecycle call graph with real owning TLS registry/custody and every lease check.
-It measures34 lease observations and3 private worker-probe calls. It is a component
+It measures34 lease observations and4 private worker-probe calls. It is a component
 transport, never an operational fallback or substitute for the hosted positive.
 
 | Current bounded path | Lease observations |
@@ -52,15 +52,20 @@ transport, never an operational fallback or substitute for the hosted positive.
 | Closing lifecycle check | 1 |
 | Total | 34 |
 
-Worker availability/denial contributes3 further private calls: worker registry
+Worker availability/denial contributes4 further private calls: worker registry
 resolve, allowed gate signature, and explicit worker refusal of the same valid
-preimage. The gate remains sign-only; no resolve permission is added. One optional
-existing operator-origin lookup contributes1. The proposed maximum is38 private
+preimage, followed by a valid signature over that same preimage using the same
+loaded worker credential at a separately selected disposable excess-policy control.
+The control is exercised in the same qualification run; a separate pytest mutation
+or a generic service outage never substitutes for it. If the selected service cannot
+provide attributable denial plus this control, the evidence remains unperformed.
+No production policy is widened. The gate remains sign-only; no resolve permission is added. One optional
+existing operator-origin lookup contributes1. The proposed maximum is39 private
 observations. All capacity is bounded; no configurable limit or unused budget is
 transferable to another run, phase or action.
 
 This measured component count and static call accounting are lower-level evidence.
-They do not prove the accepted hosted client can complete under38 and the unchanged
+They do not prove the accepted hosted client can complete under39 and the unchanged
 real10-second Decision window. Source realization must test that actual positive;
 if it still cannot fit, stop for another governed decision, not an adjustment in a
 fixture, local environment, CI invocation or source default.
@@ -106,7 +111,7 @@ No proposed count of future tests is a committed matrix expectation.
 
 ## Risks / Trade-offs
 
-- A larger private allowance could conceal duplicate work -> fixed38 plus measured
+- A larger private allowance could conceal duplicate work -> fixed39 plus measured
   per-operation accounting; no caching/omission of required checks and no configurable cap.
 - Late mode selection could revive consumed authority -> reject before any prior ledger
   or API/correlation use; use one unchanged Decision with no joining or extension.

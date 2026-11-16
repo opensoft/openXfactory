@@ -7,7 +7,7 @@ per-use lease observation, original authority window and independent cleanup.
 
 ### Requirement: Qualification-only fixed private allocation
 
-A separately source-accepted trusted qualification operation SHALL have at most38
+A separately source-accepted trusted qualification operation SHALL have at most39
 private observations. Every required observation MUST execute and be accounted for.
 Worker, callback, dispatch or environment data MUST NOT select or enlarge that cap.
 
@@ -16,7 +16,7 @@ Worker, callback, dispatch or environment data MUST NOT select or enlarge that c
 - **THEN** every required observation SHALL fit the fixed allocation and original window or qualification SHALL refuse
 
 #### Scenario: Private allocation exhaustion
-- **WHEN** a qualification attempts its39th private observation
+- **WHEN** a qualification attempts its40th private observation
 - **THEN** it SHALL refuse before that I/O and SHALL NOT reset, omit, transfer or renew authority
 
 ### Requirement: Entry precedes all use and retains one original authority

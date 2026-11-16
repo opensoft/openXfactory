@@ -17,7 +17,7 @@ checks, resetting a Decision or silently widening an accepted allocation.
 
 ## What Changes
 
-- Propose one trusted qualification-only private38 allocation, selected before
+- Propose one trusted qualification-only private39 allocation, selected before
   the first read on the same original operation Decision and retained through
   admission, one proof, exact replay refusal and approved negative controls.
 - Preserve ordinary/private12, protected staging/private16, finalization/private12,
