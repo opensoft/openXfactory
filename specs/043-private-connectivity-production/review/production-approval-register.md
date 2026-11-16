@@ -6,6 +6,24 @@ Prepared: 2026-11-14
 
 This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T012, T016 and T020 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required at their consumers. Coordinator #1310 has landed source-only with all actual post-merge checks passed. The actual T020 packet is authenticated and default-verified; Ops #628, codeXfactory #583, Headscale-Install #2 and the new coordinator evidence PR remain draft.
 
+## Current admission after T013 authentication
+
+Brett Heap authenticated the exact T013 packet at 2026-11-16T23:54:13.808Z.
+Manifest 53c2b0700e342b77196980a617dea7fc2fa33512 and canonical content SHA-256
+f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6 are unchanged. The genuine original user-record
+SHA-256 is 91812de62be164256e848d8706226655231e62f8c1b7f47c4b83f62c1a5f9290.
+
+After recording that decision, full default T013/T010 dependency verification
+and both T013/control read-only inventory checks passed from 2026-11-16T23:57:08.543977+00:00 to
+2026-11-16T23:57:15.400535+00:00 against authenticated control 1fb3a6a8188a4b051693ac2cd93920f4e69b0d0b,
+whole-file SHA-256 02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326. T013 is complete: 17/68
+source tasks are checked. All remaining task metadata and frozen inputs are unchanged.
+
+The earlier dated handoffs below retain their historical then-current states.
+T014/T015/T017 and full Q0 remain incomplete. T018/T019/T023 release prerequisites
+still block their consuming runtime work. All seven open source/preparation PRs
+remain draft; no version/tag, deployment, C-03 or Q1-Q5 acceptance is granted.
+
 ## Hosted source decision and QA preparation, 2026-11-16
 
 Brett's actual source-choice approval at 22:16:06.872Z is recorded in

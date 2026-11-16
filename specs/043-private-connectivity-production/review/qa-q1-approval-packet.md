@@ -23,7 +23,7 @@ raw output or credential is copied here.
 | Prerequisite | Observed disposition | Entry consequence |
 | --- | --- | --- |
 | E/T010 and L/I/N source commissioning | Previously authenticated source tasks complete | Source only; no operating grant |
-| T013 Hosted Headscale | Source owner and exact source choices accepted; actual output authentication/default admission pending | H implementation blocked at its declared consumers |
+| T013 Hosted Headscale | Source choices and actual output authenticated; full default verification passed; T013 complete | H implementation still waits for its declared N/L release predecessors |
 | T014/T015 and program T017 | Domain/platform/operational choices and actual acceptance pending | Full Q0 remains blocked |
 | T018/T019 neutral | Reviewed embedded source preview; no actual cut/tag/readback | No supported neutral consumer pin |
 | T023 package | Foundation/endpoint/recovery source; guarded runner/publication pending | H provider and installer release consumers blocked |
@@ -37,7 +37,7 @@ remaining Headscale-Install #2, Ops #628 and codeXfactory #583 stay draft.
 The [Hosted Services #2](https://github.com/opensoft/openXsoft-Hosted-Services/pull/2)
 source-plan PR is also draft. Source choices were accepted at immutable 6b8b7c4;
 [the actual T013 review packet](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md)
-awaits its separate actual-output authentication/default verification.
+now records genuine actual-output authentication; full default verification passed before T013 completion.
 No further source merge is authorized by preparing this dossier.
 
 ## Proposed bounded staging envelope
