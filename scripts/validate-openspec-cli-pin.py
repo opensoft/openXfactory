@@ -1475,7 +1475,11 @@ def fetch_artifact(package: str, version: str, destination: Path,
 def seed_supplied_artifact(directory_fd: int, anchored: Path,
                            payload: bytes, npm: str) -> None:
     """Seed npm from the exact authenticated bytes, never the mutable input path."""
-    _write_new_leaf(directory_fd, "verified-cli.tgz", payload)
+    try:
+        _write_new_leaf(directory_fd, "verified-cli.tgz", payload)
+    except OSError as exc:
+        raise PinRefusal(
+            "pin-unresolvable", "staging the verified supplied artifact failed") from exc
     result = _run(
         [npm, "cache", "add", str(anchored / "verified-cli.tgz"),
          "--ignore-scripts", "--no-audit", "--no-fund"], cwd=str(anchored))

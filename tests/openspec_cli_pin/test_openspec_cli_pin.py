@@ -3282,6 +3282,27 @@ def test_supplied_cache_seed_failure_refuses_before_install(mod, tmp_path, fake_
     assert not any(call[1:2] == ["ci"] for call in calls)
 
 
+
+@pytest.mark.parametrize("number", [28, 122], ids=["disk-full", "quota"])
+def test_supplied_staging_failure_refuses_before_npm(
+        mod, tmp_path, fake_npm, monkeypatch, capsys, number):
+    calls, _ = fake_npm
+    artifact, pin_path = supplied_fixture(tmp_path)
+    write = mod._write_new_leaf
+
+    def fail_artifact(fd, name, payload):
+        if name == "verified-cli.tgz":
+            raise OSError(number, "synthetic storage failure")
+        return write(fd, name, payload)
+
+    monkeypatch.setattr(mod, "_write_new_leaf", fail_artifact)
+    assert mod.main(["--all", "--no-cache", "--repo", str(tmp_path),
+                     "--pin", str(pin_path), "--tarball", str(artifact)]) == 2
+    assert "REFUSE pin-unresolvable:" in capsys.readouterr().err
+    assert not any(call[1:3] == ["cache", "add"] or call[1:2] == ["ci"]
+                   for call in calls)
+
+
 def test_real_npm_uses_supplied_cli_with_empty_cache_and_network_disabled(
         mod, tmp_path, monkeypatch):
     """A real offline npm install must not need the CLI's registry URL."""
