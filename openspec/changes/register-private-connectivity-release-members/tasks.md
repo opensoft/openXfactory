@@ -14,9 +14,13 @@ The sole executable implementation list remains [feature 043 tasks](../../../spe
 ## 2. Exact refinement handoff
 
 - [x] 2.1 Hand the accepted two-file T018 refinement and fixed historical-control/reader identities to the existing T007/T010/T018 owners; verify the sole 68-task registry, all sixteen input bodies and every other task field remain unchanged.
-- [ ] 2.2 Review the existing tasks' actual source regressions, complete freeze, collected two-lane CI and distinct new output authentication/default verification before the refined control is consumed; verify preserved older-tag membership and all current authority/refusal controls.
+- [x] 2.2 Review the existing tasks' actual source regressions, complete freeze, collected two-lane CI and distinct new output authentication/default verification before the refined control is consumed; verify preserved older-tag membership and all current authority/refusal controls.
 
 ## 3. Authorized publication handoff
 
 - [ ] 3.1 Review T018's concrete candidate and current cut authority before late version/inventory allocation; verify atomic builder output, reviewed landing, real annotated publication and independent T019 content/tag readback through the existing release process.
-- [ ] 3.2 Confirm all source PRs remain draft until separately authorized and full Q0/Q1-Q5 remain pending; verify no source, release, CI or scope record is substituted for a live entry or result-dependent acceptance.
+- [x] 3.2 Confirm all source PRs remain draft until separately authorized and full Q0/Q1-Q5 remain pending; verify no source, release, CI or scope record is substituted for a live entry or result-dependent acceptance.
+
+## Current bounded handoff evidence
+
+Brett authenticated the exact T010/T021/T022 source packet on 2026-11-16. The accepted control and review, unchanged canonical core, successful full default predecessor/task/inventory checks, concrete isolated T018 patch and generated inventory preview, and actual older-tag readbacks are recorded in [T018 review candidate](../../../specs/043-private-connectivity-production/evidence/T018.json). T021 and T022 are complete only as source tasks. The candidate is not admitted publication evidence. Historical contract-v4.0/v4.1/v4.2 inventories verify unchanged. All five source PRs are draft; full Q0 and Q1–Q5 remain pending. Handoff 3.1 and feature T018/T019 stay incomplete until separately authorized actual cut, reviewed landing, publication and independent readback.
