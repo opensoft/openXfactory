@@ -38,12 +38,12 @@ The new collector initially required a prose copy of the plan digest; that asser
 
 ## Authentication decision
 
-This actual-output decision remains pending. Preparation checks, source choices, tests, CI and automated review do not replace it. Default verification must refuse this new control until the genuine decision is recorded. T013 stays unchecked until then and a full default verification passes.
+Brett authenticated this exact actual-output packet at the time recorded below. Preparation checks, source choices, tests, CI and automated review do not replace that decision. T013 completes only after this decision is recorded and full default verification passes; that actual result is recorded in the coordinating approval register.
 
 ```json
 {
   "schema": "043-source-authentication-v1",
-  "decision": "pending",
+  "decision": "accepted",
   "custodian": "Brett Heap",
   "reviewed_manifest": {
     "repository": "opensoft/openxfactory",
@@ -52,7 +52,7 @@ This actual-output decision remains pending. Preparation checks, source choices,
     "sha256": "e3fce83cce9f9c6597fd82d00e4fabc6934ae30e6e06a49c52bded4ed4b1146f"
   },
   "content_sha256": "f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6",
-  "reviewed_at": null
+  "reviewed_at": "2026-11-16T23:54:13.808Z"
 }
 ```
 
@@ -61,3 +61,11 @@ This actual-output decision remains pending. Preparation checks, source choices,
 Source-only #1327 is merged. #1325 was indirectly marked merged through its pre-existing ancestry and is not an open draft. Headscale-Install #2, Ops #628, codeXfactory #583, Hosted Services #2 and all new preparation PRs remain draft.
 
 T018/T019 actual atomic release cut, version/tag/publication and independent readback remain incomplete. No version is allocated here. T023 package publication/real-client runner remains due before its H runtime consumers. Full Q0 remains incomplete. Target admission, edge/TLS/relay, protected custody/retention lock, provisioning, C-03, Q1-Q5, enrollment and commercial rollout retain separate gates. This packet grants no runtime or release acceptance.
+
+## Actual custodian authentication
+
+Brett Heap authenticated the exact manifest 53c2b0700e342b77196980a617dea7fc2fa33512 and canonical content SHA-256 f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6, answering:
+
+> Authenticate this T013 source-only packet (Recommended)
+
+Actual user decision UTC: 2026-11-16T23:54:13.808Z. Original response_item/message/user JSON record SHA-256: 91812de62be164256e848d8706226655231e62f8c1b7f47c4b83f62c1a5f9290. Digest method: original UTF-8 JSONL record excluding its line terminator; native session 01a1c061-ee6e-7e61-9db4-280a724e05c2. The genuine user record is retained in the protected task checkpoint. This authenticates source observations only, separately from prior role/source-choice approval. All source/preparation PRs remain draft; publication, deployment and full Q0-Q5 remain gated.
