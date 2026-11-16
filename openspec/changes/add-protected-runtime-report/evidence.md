@@ -48,7 +48,7 @@ neutral contracts, released inventory or runtime defaults. T012T source acceptan
 and implementation remain separate; T012U-V/T001/T013-T015 remain open. Setup and
 protected dispatch remain unauthorized; feedback deferred; blocked writes unreplayed.
 
-## House gates and publication dependency
+## Historical preparation gates and publication dependency
 
 Code-surface grammar/membership, target-release and sequenced-after/archive-date
 checks pass. The existing corpus ledger is deliberately unchanged: ledger-diff
@@ -64,3 +64,15 @@ This is a known publication prerequisite, not a clean ledger or hosted-CI claim.
 Do not weaken the seeder, hand-edit generated rows or change shared tooling to
 manufacture provenance. The current candidate is preparation complete, not
 publication/merge ready or accepted for implementation.
+
+## Publication ledger completion
+
+The owner subsequently commissioned both candidate PRs, CI and local Codex review.
+Factory candidate [#1332](https://github.com/opensoft/openXfactory/pull/1332) was
+opened in draft first, supplying actual provenance for the unmodified seeder:
+`python3 scripts/validate-sequenced-after.py . --seed-ledger --moved-by '#1332'`.
+Only the new `add-protected-runtime-report` ledger row was added; existing rows
+and their provenance remain byte-identical. Ledger-diff and the affected house
+gates are rerun for publication. Exact-head hosted CI and local review receipts
+will be recorded on the PR after completion. No source acceptance, implementation
+commission or operational authorization is inferred from publication.
