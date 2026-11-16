@@ -8,9 +8,9 @@ This packet requests actual source-output authentication by Brett Heap in the ac
 
 | Item | Exact immutable identity |
 | --- | --- |
-| Proposed reviewed manifest | [bf137756698da1a952e8f88ae95c9cf6d14c6128](https://github.com/opensoft/openXfactory/blob/bf137756698da1a952e8f88ae95c9cf6d14c6128/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Whole manifest file SHA-256 | `fa2bae11369d02457a71fd160027372e0231d38675439bad99fc21b953c183f5` |
-| Canonical content SHA-256 | `502ad786b1d3326ba2438b20c43fc5f794e92b065d5e19a0d1a149bc975f14b4` |
+| Proposed reviewed manifest | [736e8f8dbd347e145638a1eb12bfe58d49bbeaf1](https://github.com/opensoft/openXfactory/blob/736e8f8dbd347e145638a1eb12bfe58d49bbeaf1/specs/043-private-connectivity-production/evidence/commissioning.json) |
+| Whole manifest file SHA-256 | `13874618554f322c66dc78acdbf953921ceb0e2bff3e550b791b6def4004260c` |
+| Canonical content SHA-256 | `e49a5a8eb773dadd05ac345baf7eaf9ba5d019f6fb4d128580667a4b617577db` |
 | Complete current definition SHA-256 | `2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796` |
 | Actual E source | `479750c62efad1bf803b6d1bec566c8ac07c5565`; base `fe79bc90783195d088ba8bfad42183631a909597` |
 | Distinct E original/receipt | [original](https://github.com/opensoft/openXfactory/blob/7e05bb7adb190d608f654c4888a4edd4c0552758/specs/043-private-connectivity-production/evidence/T010.json) / [receipt](https://github.com/opensoft/openXfactory/blob/fd4f23037ab3fd0465cf870d9526e313085f25b6/specs/043-private-connectivity-production/evidence/T010.json) |
@@ -46,7 +46,7 @@ Hosted Codex cleared the three reported recovery repairs at source 9d1e60dcb1 an
 
 ## Admission and rollout boundary
 
-The original accepted c37/c8 and T020 control/review graphs remain independently usable and unmodified. This manifest is a new complete content target. Default verification of its new tasks must refuse while the following actual authentication decision remains pending. Preparation checks and exact pin inventories supply no admission. T021/T022 and T018 remain unchecked; the prior 14 task completions retain their original accepted anchors.
+The original accepted c37/c8 and T020 control/review graphs remain independently usable and unmodified. Initial unauthenticated control core 502ad786b1d3326ba2438b20c43fc5f794e92b065d5e19a0d1a149bc975f14b4 omitted the two local binding class labels. Strict preparation caught this before admission; the new labels are copied from the frozen source-L task definitions and match the unchanged actual receipts. That withdrawn control remains immutable in prior_containers; no actual output or approval is relabeled. This manifest is a new complete content target. Default verification of its new tasks must refuse while the following actual authentication decision remains pending. Preparation checks and exact pin inventories supply no admission. T021/T022 and T018 remain unchecked; the prior 14 task completions retain their original accepted anchors.
 
 ```json
 {
