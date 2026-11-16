@@ -3213,3 +3213,20 @@ def test_operator_help_describes_every_fixed_machine_refusal(mod):
         assert code + ":" in help_text
         assert mod.REFUSALS[code] in help_text
     assert "pin-unreadable also exits 2" in help_text
+
+
+def test_npm_compatibility_checksum_works_with_security_sha1_disabled(mod, monkeypatch):
+    """FIPS must allow npm metadata without weakening mandatory SHA-512."""
+    real_sha1 = hashlib.sha1
+    observed = []
+
+    def fips_sha1(payload, *, usedforsecurity=True):
+        if usedforsecurity:
+            raise ValueError("SHA-1 is disabled for security")
+        observed.append(payload)
+        return real_sha1(payload, usedforsecurity=False)
+
+    monkeypatch.setattr(mod.hashlib, "sha1", fips_sha1)
+    assert mod.shasum_of(PAYLOAD) == real_sha1(
+        PAYLOAD, usedforsecurity=False).hexdigest()
+    assert observed == [PAYLOAD]

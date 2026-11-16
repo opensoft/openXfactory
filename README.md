@@ -11983,3 +11983,5 @@ measurement without treating them as passing acceptance.
 
 - [Sonar quality remediation and measured main acceptance](specs/044-sonar-quality-remediation/README.md)
 - [Older Sonar reliability/security backlog](specs/044-sonar-quality-remediation/legacy-sonar-backlog.md)
+
+OpenSpec CLI maintenance: [npm legacy checksum compatibility](specs/046-npm-legacy-checksum/plan.md).

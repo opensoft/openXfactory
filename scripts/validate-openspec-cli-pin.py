@@ -1038,7 +1038,10 @@ def integrity_of(payload: bytes) -> str:
 
 
 def shasum_of(payload: bytes) -> str:
-    return hashlib.sha1(payload).hexdigest()
+    # npm's legacy dist.shasum is corroborating metadata. The mandatory
+    # SHA-512 integrity check authenticates bytes before this checksum is used.
+    # Mark the compatibility digest honestly so FIPS builds allow it too.
+    return hashlib.sha1(payload, usedforsecurity=False).hexdigest()
 
 
 def verify_artifact(tarball: Path, integrity: str, shasum: str) -> None:
