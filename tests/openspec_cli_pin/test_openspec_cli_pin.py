@@ -3458,3 +3458,30 @@ def test_shared_context_refuses_invalid_root_before_package_work(tool, invalid, 
     argv = ["--all", "--no-cache"] if tool == "verifier" else []
     assert target.main(argv, consumer_root=roots[invalid]) == 2
     assert "pin-unresolvable" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("substitution", ["source", "bytecode"])
+def test_trusted_installer_embedding_uses_authenticated_verifier_snapshot(
+        mod, tmp_path, substitution):
+    import os
+    import py_compile
+    from types import ModuleType
+    scripts = tmp_path / "scripts"
+    scripts.mkdir()
+    sibling = scripts / "validate-openspec-cli-pin.py"
+    sentinel = tmp_path / "substitution-executed"
+    payload = "from pathlib import Path; Path(" + repr(str(sentinel)) + ").touch()\n"
+    sibling.write_text(payload)
+    if substitution == "bytecode":
+        py_compile.compile(str(sibling), doraise=True)
+        # Preserve timestamp/size compatibility so a normal filesystem import
+        # would accept this cached malicious code despite clean source bytes.
+        before = sibling.stat()
+        sibling.write_text("pass".ljust(len(payload)-1) + "\n")
+        os.utime(sibling, ns=(before.st_atime_ns, before.st_mtime_ns))
+    embedded = ModuleType("authenticated_installer")
+    embedded.__file__ = str(scripts / "install-pinned-openspec-cli.py")
+    embedded.__dict__["VERIFIED_VERIFIER"] = mod
+    exec(compile(INSTALLER.read_bytes(), embedded.__file__, "exec"), embedded.__dict__)
+    assert embedded.verifier is mod
+    assert not sentinel.exists()
