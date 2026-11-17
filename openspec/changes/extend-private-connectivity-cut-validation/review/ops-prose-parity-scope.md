@@ -1,9 +1,10 @@
 # Additional exact Ops prose-parity handoff
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-16 by Brett Heap; actual four-path decision at 2026-11-17T03:40:50.580Z.
 Kind: feature-amendment
 Prepared: 2026-11-16
-Disposition: proposed; not added to the executable scope or accepted freeze
+Disposition: accepted; exact T043 companion paths and complete source freeze refreshed
 
 ## Approved baseline and measured failure
 

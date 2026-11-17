@@ -100,3 +100,21 @@ Original 2a46 controls/readers retain their exact accepted source-task closures;
 no pending or live task gains acceptance. All PRs stay draft. No merge, final
 version allocation, annotated publication, target effect, spend, enrollment,
 protected retention lock or Q0-Q5 acceptance is granted.
+
+### Accepted companion-prose coupling
+
+At 2026-11-17T03:40:50.580Z Brett accepted the exact additional four active
+Ops requirement-copy paths in the [reviewed N/E amendment](https://github.com/opensoft/openXfactory/blob/0576faced67b015bf07d054814ae0d96147aa320/openspec/changes/extend-private-connectivity-cut-validation/review/ops-prose-parity-scope.md)
+and its [matching Ops amendment](https://github.com/opensoft/opsXfactory/blob/657b02d0e6a4f01d6fcbef8453a1937131331550/openspec/changes/admit-private-connectivity-qa-operations/review/prose-parity-scope.md).
+Only T043 adds these four exact OpenSpec paths, bringing its coupled Ops
+additions to twenty-one. N's four paths, T047's two paths and every other task
+field stay unchanged. Existing MCP placement/fallback/history and all previous
+rules are preserved. Normal single-newline EOF formatting is recorded with the
+actual identical block hash in the owner-local implementation evidence.
+
+The source-only 4f963e0f candidate was never authenticated and supplies no
+accepted historical control. Preserve its actual observations under their
+original source identity; qualify this complete refreshed E source and CI anew.
+The fixed accepted 2a46 controls/readers remain the only added historical
+anchors. Actual new output authentication/default admission and all release,
+operating and Q0-Q5 gates remain separate.

@@ -159,15 +159,20 @@ Task/registry changes after approval require reviewed scope/contract updates and
 
 ### Current accepted source-scope definition
 
+The four-path companion-prose refinement was separately accepted at
+2026-11-17T03:40:50.580Z. The earlier unauthenticated 4f963e0f source candidate
+and its actual passing tests remain observations at their original commits;
+they are not accepted history and are not relabeled as this qualification.
+
 Brett Heap accepted the exact N/E refinement at 2026-11-17T02:55:36.438Z and
 the matching Ops/Tenant owner plans at 2026-11-17T03:01:06.114Z. Only the four
-T018, seventeen T043 and two T047 source paths and matching owner-scopes.md
+T018, twenty-one T043 and two T047 source paths and matching owner-scopes.md
 handoff are refined. All 68 registry rows and all other task fields remain
 unchanged. Fifteen input bodies remain byte-identical; only the accepted owner
 handoff input changes. Original freezes, controls, readers and actual accepted
 observations remain immutable at their exact historical source references.
 
-Review packet SHA-256: 4f963e0f23914b745d895fab7859b6dc18d613814a32cbc82f77535188c081b8
+Review packet SHA-256: 6b4066300249b3c26e9eeb50aa7b1dda60c8ca3c51454d5cf7a8f8dbdd2be570
 
 This digest covers canonical UTF-8 JSON keys inputs, registry and tasks,
 sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal
@@ -181,7 +186,7 @@ body before the T005 heading. No partial task/input freeze is accepted.
 | plan.md | 5fc1550dd8988e2d32288176c9f4b62c22592e4c583c8106b506fbe9fd22bdee |
 | research.md | 295751853b252eafabbcaf64933a577df88370f7c457f01fe69a479c9df7f9d2 |
 | data-model.md | a2201bc094da3a05567194cbbff5622950f3f8aa17b8a9d978d3eb693ea02f05 |
-| owner-scopes.md | c9e4992df3f521567c4c17edd5bbd15330026b601c7d47f5172451c92895efad |
+| owner-scopes.md | 5a10e40116dcb056db91f73c1dde7540607d2211fe3d4220d0565a420d8f3a73 |
 | commissioning.md | 11c05e374c68ee9f8fa0b8e790a47381f56aea63fe37141a4a4a6f17d232ec50 |
 | rollout-gates.md | f667ed2e6f8c5f1b4e75651b1aa5bdb671074fe2dcf74f8f3f722250084d2fc8 |
 | validation-matrix.md | 53688287673d29e5d58604eee0ec27e5f134de241032d514edfa5e41a9472d39 |
