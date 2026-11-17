@@ -1848,3 +1848,26 @@ def test_2a46_children_keep_the_actual_original_ci(kind, monkeypatch):
     world = historical_source_world(control_2a46(kind), monkeypatch)
     world.trust["bindings"]["T010"]["command"] = "synthetic replacement awaiting separate source authentication"
     v.Verifier(TASKS, world.store, source_anchor(world), now=NOW).verify("T012")
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+def test_2a46_identical_bytes_at_a_new_actual_commit_are_not_accepted(kind, tmp_path):
+    # A positive object/read baseline makes this about exact identity, not absence.
+    ref = control_2a46(kind)
+    copied = tmp_path / "synthetic-unaccepted-copy"; copied.mkdir()
+    subprocess.run(["git", "init", "-q", str(copied)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", "https://github.com/" + v.COORDINATOR + ".git"],
+                   cwd=copied, check=True)
+    objects = subprocess.check_output(["git", "rev-parse", "--git-path", "objects"], cwd=ROOT, text=True).strip()
+    (copied / ".git/objects/info/alternates").write_text(str((ROOT / objects).resolve()) + "\n")
+    tree = subprocess.check_output(["git", "rev-parse", ref["commit"] + "^{tree}"], cwd=ROOT, text=True).strip()
+    other = subprocess.check_output(
+        ["git", "-c", "user.name=Synthetic control copy", "-c", "user.email=copy@example.invalid",
+         "commit-tree", tree, "-p", ref["commit"], "-m", "Synthetic identical but unaccepted source control"],
+        cwd=copied, text=True).strip()
+    clone_ref = dict(ref, commit=other)
+    store = v.GitStore({v.COORDINATOR: str(copied)})
+    assert other != ref["commit"]
+    assert store.blob(clone_ref) == v.GitStore({v.COORDINATOR: str(ROOT)}).blob(ref)
+    with pytest.raises(v.EvidenceError, match="unaccepted historical control"):
+        v.make_verifier(TASKS, store, clone_ref)
