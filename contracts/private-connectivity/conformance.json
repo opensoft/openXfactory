@@ -1,0 +1,1884 @@
+{
+  "schema_version": 1,
+  "kind": "xfactory-connectivity-conformance-corpus",
+  "contract_id": "private-connectivity-binding",
+  "contract_schema_version": 1,
+  "now": "2026-11-10T00:00:00Z",
+  "evidence_class": "offline-declaration-conformance",
+  "authorizes_runtime": false,
+  "cases": [
+    {
+      "id": "unbound-legacy",
+      "manifest": {
+        "old_runtime_field": {
+          "old": true
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "optional-null",
+      "manifest": {
+        "private_connectivity": null
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "managed-ready-declaration",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "local-ready-declaration",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "customer_operated",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "requested-representable",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "requested",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": []
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "unready-representable",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "unready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": []
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "revoked-representable",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "revoked",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": []
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "approved-intermediate",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "approved",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "enrolled-intermediate",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "enrolled",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "foreign-installation_id",
+      "manifest": {
+        "installation": {
+          "installation_id": "other",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "binding-context-mismatch"
+      ]
+    },
+    {
+      "id": "foreign-customer_id",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "other",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "binding-context-mismatch"
+      ]
+    },
+    {
+      "id": "foreign-environment",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "other"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "binding-context-mismatch"
+      ]
+    },
+    {
+      "id": "approval-status",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "revoked",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "approval-unavailable"
+      ]
+    },
+    {
+      "id": "approval-expires_at",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-09T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "approval-unavailable"
+      ]
+    },
+    {
+      "id": "approval-network_ref",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "other",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "approval-unavailable"
+      ]
+    },
+    {
+      "id": "endpoint-approval-reuse",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://other.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "approval-unavailable"
+      ]
+    },
+    {
+      "id": "access-exceeds-approval",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              22
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "approval-scope-mismatch"
+      ]
+    },
+    {
+      "id": "unapproved-route",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [
+            "192.0.2.0/24"
+          ],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "route-approval-unavailable"
+      ]
+    },
+    {
+      "id": "separately-approved-route",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [
+            "192.0.2.0/24"
+          ],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "route_approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "routes": [
+              "192.0.2.0/24"
+            ]
+          }
+        }
+      },
+      "expected_findings": []
+    },
+    {
+      "id": "missing-enrollment",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "enrollment-unavailable"
+      ]
+    },
+    {
+      "id": "missing-policy",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "effective-policy-unavailable"
+      ]
+    },
+    {
+      "id": "missing-verification",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "effective-policy-unavailable"
+      ]
+    },
+    {
+      "id": "invalid-endpoint",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "http://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "endpoint-invalid"
+      ]
+    },
+    {
+      "id": "invalid-operator_mode",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "unknown",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      "expected_findings": [
+        "binding-shape-invalid"
+      ]
+    },
+    {
+      "id": "invalid-password",
+      "manifest": {
+        "installation": {
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test"
+        },
+        "private_connectivity": {
+          "schema_version": 1,
+          "kind": "xfactory_connectivity_binding",
+          "installation_id": "factory-a",
+          "customer_id": "tenant-a",
+          "environment": "test",
+          "operator_mode": "managed",
+          "endpoint": "https://control.synthetic.invalid",
+          "network_ref": "network-a",
+          "state": "ready",
+          "access": {
+            "sources": [
+              "workload-a"
+            ],
+            "destinations": [
+              "private-a"
+            ],
+            "ports": [
+              443
+            ],
+            "protocol": "tcp"
+          },
+          "routes": [],
+          "approval": {
+            "installation_id": "factory-a",
+            "customer_id": "tenant-a",
+            "environment": "test",
+            "network_ref": "network-a",
+            "endpoint": "https://control.synthetic.invalid",
+            "status": "active",
+            "expires_at": "2026-11-11T00:00:00Z",
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "enrollment": {
+            "network_ref": "network-a",
+            "authorized": true,
+            "credential_ref": "vault://synthetic/enrollment",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "policy": {
+            "network_ref": "network-a",
+            "revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "verified": true,
+            "scope": {
+              "sources": [
+                "workload-a"
+              ],
+              "destinations": [
+                "private-a"
+              ],
+              "ports": [
+                443
+              ],
+              "protocol": "tcp"
+            },
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "verification": {
+            "allowed": true,
+            "denied": true,
+            "policy_revision": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "password": "synthetic-value"
+        }
+      },
+      "expected_findings": [
+        "binding-shape-invalid"
+      ]
+    }
+  ]
+}

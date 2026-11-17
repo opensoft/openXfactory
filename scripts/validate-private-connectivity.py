@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 from jsonschema import Draft202012Validator, FormatChecker
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = ROOT / "specs/040-private-connectivity/contracts/private-connectivity/binding.schema.json"
+SCHEMA = ROOT / "contracts/private-connectivity/binding.schema.json"
 
 
 def duplicate_guard(pairs):
