@@ -915,18 +915,18 @@ def test_the_optional_arms_citations_split_absent_is_empty_from_the_entry_grain(
     citations now SPLIT, and the split is the reason the optional arm can be a
     CALL at all:
 
-    - `:946` is the ABSENT-IS-EMPTY line, it is the one that reads
+    - `:1021` is the ABSENT-IS-EMPTY line, it is the one that reads
       `pin.get("dispositions")`, and it carries NO guard — there is nothing to
       CALL for an absent member, which is exactly why the equivalence test's
       guard leg ranges over the REQUIRED table (`_tracked_table`) and why THIS
       test is a PARALLEL HELPER for the optional arm rather than a widening of
       that leg;
-    - `:958`, `:963`, `:974`, `:983` and `:994` are the ENTRY-GRAIN conditions,
+    - `:960`, `:965`, `:976`, `:985` and `:996` are the ENTRY-GRAIN conditions,
       they read the ENTRY and NOT `pin.get("dispositions")`, and they DO have
       something to call — `pinned_dispositions` — so each names that guard and
       carries the condition text it was measured at, re-read here.
 
-    The last assertion is task 3.3's own prohibition, encoded: `:958` onwards
+    The last assertion is task 3.3's own prohibition, encoded: The entry-grain sites
     MUST NOT be cited as though it read the member."""
     member = {m.spellings[0]: m for m in ps.SHAPE_C.optional}["dispositions"]
     lines = (REPO_ROOT / _CLI_PIN).read_text(encoding="utf-8").splitlines()
@@ -934,10 +934,10 @@ def test_the_optional_arms_citations_split_absent_is_empty_from_the_entry_grain(
     absent_is_empty = [c for c in member.citations if c.guard is None]
     entry_grain = [c for c in member.citations if c.guard is not None]
 
-    assert [c.line for c in absent_is_empty] == [946]
-    assert 'pin.get("dispositions")' in lines[945]
+    assert [c.line for c in absent_is_empty] == [1021]
+    assert 'pin.get("dispositions")' in lines[1020]
 
-    assert [c.line for c in entry_grain] == [958, 963, 974, 983, 994]
+    assert [c.line for c in entry_grain] == [960, 965, 976, 985, 996]
     assert {c.guard for c in entry_grain} == {"pinned_dispositions"}
     assert callable(cli_verifier.pinned_dispositions)
     for citation in entry_grain:
