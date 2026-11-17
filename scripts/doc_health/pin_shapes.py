@@ -278,7 +278,7 @@ def _disposition_entry_failure(value) -> EntryFailure | None:
 
     - `:958-962` an entry that is NOT A MAPPING, a bare value being unable to
       carry the identity keys a disposition is required to carry;
-    - `:963-959` an entry MISSING any of `DISPOSITION_REQUIRED`, where "missing"
+    - `:963-972` an entry MISSING any of `DISPOSITION_REQUIRED`, where "missing"
       is FALSEY and not merely absent (`not entry.get(key)`), so `cited_to: []`
       and `why: ""` are reported HERE as the missing key and never reach the
       citation-shape reading below;

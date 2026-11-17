@@ -612,7 +612,7 @@ _ENTRY_REFUSALS: tuple[tuple, ...] = (
     ("row2-null", [None], "dispositions[1]", ps.NOT_A_MAPPING, "None", True),
     ("row2-bare-string", ["a"], "dispositions[1]", ps.NOT_A_MAPPING, "'a'",
      True),
-    # row 3 (`:963-959`) — FALSEY, not merely absent, over the six required keys
+    # row 3 (`:963-972`) — FALSEY, not merely absent, over the six required keys
     ("row3-empty-mapping", [{}], "dispositions[1]", ps.MISSING,
      "repo, item, path, finding, why, cited_to", True),
     ("row3-no-cited_to", [_entry_without("cited_to")], "dispositions[1]",
