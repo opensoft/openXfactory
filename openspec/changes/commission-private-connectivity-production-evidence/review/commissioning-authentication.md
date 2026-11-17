@@ -1,52 +1,44 @@
-# Authentication review: Bounded evidence and local Headscale source
+# Authentication review: Hosted Headscale source commissioning
 
 Status: record
 
-## Exact combined source review target
+## Exact Hosted source review target
 
-This packet requests actual source-output authentication by Brett Heap in the accepted E and Headscale package source-evidence custodian roles. Source-scope approval, unit tests, CI and Codex review do not authenticate these new outputs.
+This requests separate actual T013 source-output authentication from Brett Heap as the accepted Hosted Headscale source/release owner and source-evidence custodian. His source-choice approval at 2026-11-16T22:16:06.872Z remains recorded separately and does not authenticate these later outputs.
 
 | Item | Exact immutable identity |
 | --- | --- |
-| Proposed reviewed manifest | [736e8f8dbd347e145638a1eb12bfe58d49bbeaf1](https://github.com/opensoft/openXfactory/blob/736e8f8dbd347e145638a1eb12bfe58d49bbeaf1/specs/043-private-connectivity-production/evidence/commissioning.json) |
-| Whole manifest file SHA-256 | `13874618554f322c66dc78acdbf953921ceb0e2bff3e550b791b6def4004260c` |
-| Canonical content SHA-256 | `e49a5a8eb773dadd05ac345baf7eaf9ba5d019f6fb4d128580667a4b617577db` |
-| Complete current definition SHA-256 | `2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796` |
-| Actual E source | `479750c62efad1bf803b6d1bec566c8ac07c5565`; base `fe79bc90783195d088ba8bfad42183631a909597` |
-| Distinct E original/receipt | [original](https://github.com/opensoft/openXfactory/blob/7e05bb7adb190d608f654c4888a4edd4c0552758/specs/043-private-connectivity-production/evidence/T010.json) / [receipt](https://github.com/opensoft/openXfactory/blob/fd4f23037ab3fd0465cf870d9526e313085f25b6/specs/043-private-connectivity-production/evidence/T010.json) |
-| Root source CI | [actual run/job](https://github.com/opensoft/openXfactory/actions/runs/43775758307/job/133001554391) |
-| Python 3.14 source proof | [actual run](https://github.com/opensoft/openXfactory/actions/runs/43775758027) |
+| Proposed reviewed manifest | [53c2b0700e342b77196980a617dea7fc2fa33512](https://github.com/opensoft/openXfactory/blob/53c2b0700e342b77196980a617dea7fc2fa33512/specs/043-private-connectivity-production/evidence/commissioning.json), whole-file SHA-256 e3fce83cce9f9c6597fd82d00e4fabc6934ae30e6e06a49c52bded4ed4b1146f |
+| Canonical content SHA-256 | f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6 |
+| Complete unchanged definition SHA-256 | 2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796 |
+| Actual source | e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8; base 3ce7dc814f29c780b842fadb3664ce31bef0b5d9 |
+| Original actual output | [d463c2a23a9f4c9f091988c8fad07a642664db18](https://github.com/opensoft/openXfactory/blob/d463c2a23a9f4c9f091988c8fad07a642664db18/specs/043-private-connectivity-production/evidence/T013.json), SHA-256 8ae643229c2fd34e177d4fc21f7864111d8c597e851f30d387ba3c72c3afb93b |
+| Distinct receipt | [37f7eb5868642cb51e4431d57da8d99320e3dc5f](https://github.com/opensoft/openXfactory/blob/37f7eb5868642cb51e4431d57da8d99320e3dc5f/specs/043-private-connectivity-production/evidence/T013.json), SHA-256 0bb10ebf1007e86bfd67b72be9673496d4528b02a2fbf6e9b40fa287a21b821d |
+| Source permission | [Actual consent and exact scope](https://github.com/opensoft/openXfactory/blob/e6d6b6d8f08c71e3f6938b8a93bb6ca678cff7b8/openspec/changes/commission-hosted-headscale-production/review/source-owner-permission.json) |
 
-## Actual E source and CI observations
+## Actual observations and predecessor
 
-The accepted T018 refinement adds only scripts/hermes_runtime_validation/release.py and tests/hermes_runtime_contracts/test_release_inventory.py. All sixteen frozen input files and all other fields of the 68-task registry remain unchanged. The new complete definition is fixed above; the original T005 c37 footer remains historical. The new reader accepts only the fixed c8/c4 whole controls, the original c37 definition/reader and the already accepted historical task closure. Pending/live tasks, changed control/core/reader/freeze and substitutions refuse. Current revocations and completion closures propagate through nested original readers and cache rechecks.
+The read-only audit ran from 2026-11-16T23:39:47.453935+00:00 to 2026-11-16T23:39:51.052301+00:00 and exited zero. It verified genuine source consent, ratified proposal identity, the unchanged complete 043 definition, all nine exact Hosted task/file scopes, the accepted private plan bytes at 6b8b7c4542eb48f9c602afe64ecca460978a674b by SHA-256, and verified pinned OpenSpec 1.12.0 strict validation. It produced all three frozen T013 cases: actual-provider-platform, identity-entitlement-custody, and product-owner-scope.
 
-The actual root lane collected and passed all 694 explicit source cases: 557 evidence, 40 inventory and 97 source-proof cases, with no skips, errors or failures. The existing Python 3.14 lane passed all 97 explicit proof cases. Both used the original authenticated producer 94caf6717ece69af66dfde121bf4b868a6c3abdf through the existing read-only repository-scoped App channel; private commit-only proof succeeded, tokens were revoked before tests and temporary proof stores were removed. No App, token-scope, permission, secret or producer change was made. Exact-revision Sonar passed without threshold/floor/skip waivers.
+Accepted source choices are existing Opensoft QA AKS in West US, QA Keycloak issuer/RS256 API verification, independent product-owned SQLite current entitlement/revocation state, scoped QA vault/registry reuse and dedicated fenced single-writer state. API authority is separate from the MCP Ed25519 requirement. No actual provider, capacity or protocol compatibility is inferred. Raw private source and plan bytes remain private; public facts use the governed T013 typed artifact graph.
 
-The local run preserved eight initial missing-bridge failures. All 694 affected feature cases then passed; two additional documentation tests initially lacked uninitialized pinned dependencies. After initializing those exact gitlinks without changing a gitlink, all 143 source-proof/documentation cases passed. The union covers all 740 affected cases. The original failures and subsequent outputs remain in the E original export by digest. Actual old source observations and failures remain immutable in prior controls; their old test counts are not relabeled as new results.
+Before collecting this output the collector passed full default verification of actually authenticated T010 against control 8ac068510936c97d21ace2b923ad00c0a6238b68, whole-file SHA-256 e42735845944bb5c36d46a4648c56ab9bd4b0dfd82d4bc3a5b7128b08c6b89bf. It consumed no pending T013 preparation as a predecessor.
 
-Brett accepted the exact neutral/E refinement at 2026-11-15T21:17:57.195Z, native session 01a1c061-ee6e-7e61-9db4-280a724e05c2, line 36318, raw JSONL SHA-256 09dea317a799634d504758517731bd500e37aef96881edb51f38813cd7c892ac. The immutable ratification 73d05439931863befb47326e505220f8f057b5b9 preserves that actual decision and exact reviewed design. This scope approval is separate from the requested output authentication.
+## Preserved preparations and genuine provenance
 
-## Actual local source observations
+Brett's actual source-choice reply, timestamp and raw record SHA-256 b95ac26003376eb2e536b74bf16c0a426644168d239cd42144b0b2841d834e82 are retained in the source permission and commissioning review. No authority or named source choice changed during preparation.
 
-T021 and T022 each ran in a separate clean immutable-source worktree. Before either collection the collector passed full default T020 verification against accepted control c4e380b43e27093a2a3b99264a3fb52a6cf36c21, core f9d89883516aa147f3b0054b7132f1f53b66bd948c2c5834b2d9a4cea3dd3332, using the fixed original c37 reader. No pending new E output or unaccepted task was consumed as a predecessor. Original creation provenance remains separate from current operation authority. Initial unadmitted preparations used a different scope.run label; the exact authority check caught that metadata mismatch. Fresh actual collections now preserve the accepted package scope unchanged and check both authority and exact per-task file permission before execution; the old observations remain immutable and are not relabeled.
+The first successful audit and distinct output/receipt remain immutable under prior pending control cf055928dac64ad0caedd7c16294ed8394140766. That preparation duplicated the private-plan pin in a consent document outside the closed evidence registration. The normalized source consolidates artifact pins in T013's already governed typed record, preserving explicit repository ownership/reachability without extending a reader, adding an exception or dropping a pin obligation. The original private-plan identity/digest remains present in the current command, case facts and exact inventory.
 
-| Task | Actual source | Original output | Distinct receipt | Actual result |
-| --- | --- | --- | --- | --- |
-| T021 | `713773698089a2edd0f3ddc1f4044fff62d990e6` | [fdb926547dfa166661d5b57f7fa15ff54331f4b3](https://github.com/opensoft/Headscale-Install/blob/fdb926547dfa166661d5b57f7fa15ff54331f4b3/evidence/private-connectivity-production/T021.json) | [6e3ca9c623b5ecc24d57e45e19154f6f04176552](https://github.com/opensoft/Headscale-Install/blob/6e3ca9c623b5ecc24d57e45e19154f6f04176552/evidence/private-connectivity-production/T021.json) | 64 source tests; 19 task controls; no skips |
-| T022 | `c4b5af5515cf4a5f80c63860fcaa3905a788103f` | [b3c3bd01bc3f50d62b475dda81a58d5538b86fbd](https://github.com/opensoft/Headscale-Install/blob/b3c3bd01bc3f50d62b475dda81a58d5538b86fbd/evidence/private-connectivity-production/T022.json) | [394fe5cccfcde1ab97cc20550c1756bc126d0759](https://github.com/opensoft/Headscale-Install/blob/394fe5cccfcde1ab97cc20550c1756bc126d0759/evidence/private-connectivity-production/T022.json) | 90 source tests; 26 task controls; no skips |
+The new collector initially required a prose copy of the plan digest; that assertion refused despite the exact approval link and genuine human record. The refused command/output remains in preparation_history. The corrected collector verifies the immutable plan bytes and digest in the governed evidence graph. Machine-local CLI/cache paths in successful stdout are narrowly redacted; original raw SHA-256, source/command/result/timing identities remain. No original observation or decision is relabeled.
 
-T021 tests actual Python TLS chain/name/fingerprint validation and bounded Headscale health handling against generated temporary synthetic TLS fixtures, current owner-channel renewal, refusal of invalid or revoked authority, plan-only local operation without a hosted subscription, and candidate-client archive/device-input checks. Its 64-test original run includes 19 endpoint controls. This does not qualify an actual Headscale endpoint or Windows/macOS/Linux client.
+## Preserved prior acceptance
 
-T022 tests protected backup coordination, original-subject single-writer fencing, safe closed archive membership, new-generation import into network-none quarantine, independent current network identity/policy/revocations, removal of restored API/preauth credentials and revoked nodes, retention of legitimate snapshot/current intersection, lost-start containment, explicit unresolved rollback denial and separately qualified sequential upgrades. It returns unqualified/quarantined state and never activates ingress. Its corrected original run passed 90 tests including 26 recovery controls.
+[Original T010/T021/T022 review](https://github.com/opensoft/openXfactory/blob/b2670b0d8ecc2b225d4e114ecacb00276c536398/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) and control 8ac068510936c97d21ace2b923ad00c0a6238b68 remain immutable. Prior bindings, source outputs, contained E objects and fixed historical readers are unchanged. T013 uses separate public Git original/receipt references and is not added to the contained E bootstrap table. No frozen input or 68-task field changes.
 
-Codex found that initial recovery containment ran after the operation context closed. The current-session fixture reproduced 13 failures, including failed containment and an uncertain session exit. The repair handles partials inside the still-open operation/writer-fence context, while entry/exit uncertainty remains unresolved. The original 85-test and 86-test observations and receipts remain immutable as superseded preparation, with the findings and red/green digests in the corrected private originals. A second review found that upgrades rejected older source input provenance and restore refused a definitively absent original. Their red controls and the distinct old-image readback regression were preserved. The current compatibility channel binds source inputs/version/original image separately from target inputs/image; old credentials and current identity controls remain enforced. Confirmed absence is accepted only with empty writer observations under the current fence; unavailable inspection and unexpected writers still refuse. A final local interruption audit reproduced SystemExit bypassing containment; both process interrupts now receive in-session containment, and provider exits are normalized to secret-safe recovery errors. Its red controls and 90-test green output are retained. No acceptance transfers from those earlier observations.
+## Authentication decision
 
-Hosted Codex cleared the three reported recovery repairs at source 9d1e60dcb1 and receipt head 8f8b7b0cec ([actual receipt](https://github.com/opensoft/Headscale-Install/pull/2#issuecomment-6903833755)). Later explicit requests reached the hosted review usage limit; the interruption patch and final receipt changes have local regression/CI validation but no fresh hosted clearance. This remains an explicit review limitation, not an approval or a passing hosted review. The E source 479750c62e has its own exact Codex clearance.\n\nThe private owner repository retains all private source, original stdout and distinct original/receipt commits. Public coordinator Git carries only typed immutable private references and closed source expectations; it does not contain private source objects, commit headers or raw private output. Actual intended-platform, custody/provider and client qualification remain separate.
-
-## Admission and rollout boundary
-
-The original accepted c37/c8 and T020 control/review graphs remain independently usable and unmodified. Initial unauthenticated control core 502ad786b1d3326ba2438b20c43fc5f794e92b065d5e19a0d1a149bc975f14b4 omitted the two local binding class labels. Strict preparation caught this before admission; the new labels are copied from the frozen source-L task definitions and match the unchanged actual receipts. That withdrawn control remains immutable in prior_containers; no actual output or approval is relabeled. This manifest is a new complete content target. Your actual authentication is recorded below. Full default verification remains the required admission check before source task completion; preparation checks and exact pin inventories supply no admission. T021/T022 and T018 remain unchecked; the prior 14 task completions retain their original accepted anchors.
+Brett authenticated this exact actual-output packet at the time recorded below. Preparation checks, source choices, tests, CI and automated review do not replace that decision. T013 completes only after this decision is recorded and full default verification passes; that actual result is recorded in the coordinating approval register.
 
 ```json
 {
@@ -55,23 +47,25 @@ The original accepted c37/c8 and T020 control/review graphs remain independently
   "custodian": "Brett Heap",
   "reviewed_manifest": {
     "repository": "opensoft/openxfactory",
-    "commit": "736e8f8dbd347e145638a1eb12bfe58d49bbeaf1",
+    "commit": "53c2b0700e342b77196980a617dea7fc2fa33512",
     "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "sha256": "13874618554f322c66dc78acdbf953921ceb0e2bff3e550b791b6def4004260c"
+    "sha256": "e3fce83cce9f9c6597fd82d00e4fabc6934ae30e6e06a49c52bded4ed4b1146f"
   },
-  "content_sha256": "e49a5a8eb773dadd05ac345baf7eaf9ba5d019f6fb4d128580667a4b617577db",
-  "reviewed_at": "2026-11-16T14:44:51.448Z"
+  "content_sha256": "f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6",
+  "reviewed_at": "2026-11-16T23:54:13.808Z"
 }
 ```
 
-All source PRs remain draft, including coordinator #1325/#1327, private package #2, Ops #628 and codeXfactory #583. The one-time CI-only #1328 exception is already merged. No release version, inventory cut or tag is allocated. A separate lane published contract-v4.2; the next actual version must be rechecked when a concrete cut is authorized. Full Q0 is unaccepted, Q1-Q5 have not been entered, and deployment, spend, enrollment and commercial rollout retain their separate decisions.
+## Release and rollout boundary
+
+Source-only #1327 is merged. #1325 was indirectly marked merged through its pre-existing ancestry and is not an open draft. Headscale-Install #2, Ops #628, codeXfactory #583, Hosted Services #2 and all new preparation PRs remain draft.
+
+T018/T019 actual atomic release cut, version/tag/publication and independent readback remain incomplete. No version is allocated here. T023 package publication/real-client runner remains due before its H runtime consumers. Full Q0 remains incomplete. Target admission, edge/TLS/relay, protected custody/retention lock, provisioning, C-03, Q1-Q5, enrollment and commercial rollout retain separate gates. This packet grants no runtime or release acceptance.
 
 ## Actual custodian authentication
 
-Brett Heap authenticated this exact source-only T010/T021/T022 packet in the accepted E and Headscale package source-evidence custodian roles.
+Brett Heap authenticated the exact manifest 53c2b0700e342b77196980a617dea7fc2fa33512 and canonical content SHA-256 f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6, answering:
 
-> I authenticate the T010/T021/T022 source-only packet, manifest 736e8f8dbd347e145638a1eb12bfe58d49bbeaf1. Record it, run default verification, complete T021–T022, and prepare T018 for review. Keep all five PRs draft and honor Q0–Q5.
+> Authenticate this T013 source-only packet (Recommended)
 
-Actual decision UTC: 2026-11-16T14:44:51.448Z; America/La_Paz: 2026-11-16T10:44:51.448000-04:00. Native session 01a1c061-ee6e-7e61-9db4-280a724e05c2, user message msg_01a1e4d1-6878-7053-b135-bd80c034e15f, JSONL line 39257. Original record SHA-256: c332ce318f09eb852487c39e7992f8e6b2e7e3aa6ec45d980ab92f4663923a5d. Digest method: UTF-8 JSONL record bytes excluding terminal newline. The native user record supplies this decision; source-scope acceptance is not substituted for output authentication.
-
-The exact manifest and canonical core are unchanged. This authenticates actual source outputs only. All five source PRs remain draft. T018 cut/version/tag/publication authority, full Q0 and Q1-Q5, target execution and commercial admission remain separate.
+Actual user decision UTC: 2026-11-16T23:54:13.808Z. Original response_item/message/user JSON record SHA-256: 91812de62be164256e848d8706226655231e62f8c1b7f47c4b83f62c1a5f9290. Digest method: original UTF-8 JSONL record excluding its line terminator; native session 01a1c061-ee6e-7e61-9db4-280a724e05c2. The genuine user record is retained in the protected task checkpoint. This authenticates source observations only, separately from prior role/source-choice approval. All source/preparation PRs remain draft; publication, deployment and full Q0-Q5 remain gated.
