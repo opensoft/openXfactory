@@ -1769,8 +1769,11 @@ def test_2a46_private_package_bindings_stay_original_without_importing_private_s
 ])
 def test_2a46_whole_reference_substitution_refuses(kind, field, value):
     ref = control_2a46(kind); ref[field] = value
-    with pytest.raises(v.EvidenceError):
-        v.historical_verifier(v.GitStore({v.COORDINATOR: str(ROOT)}), ref)
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    expected = {"commit": "local Git object or repository unavailable",
+                "sha256": "immutable content digest mismatch"}.get(field, v.HISTORICAL_CONTROL_ERROR)
+    with pytest.raises(v.EvidenceError, match=expected):
+        v.historical_verifier(store, ref)
 
 
 @pytest.mark.parametrize("kind", ["source-ci", "hosted"])

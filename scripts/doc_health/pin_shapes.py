@@ -115,16 +115,16 @@ NOT_A_MAPPING = "not-a-mapping"
 # ---------------------------------------------------------------------------
 
 #: The keys a disposition entry must carry, all six, TRUTHY and not merely
-#: present (`validate-openspec-cli-pin.py:360-361`, read by `:950`).
+#: present (`validate-openspec-cli-pin.py:360-361`, read by `:963`).
 DISPOSITION_REQUIRED: tuple[str, ...] = (
     "repo", "item", "path", "finding", "why", "cited_to")
 
 #: Either spelling of the granting authority; exactly one is required
-#: (`validate-openspec-cli-pin.py:368`, read by `:981`).
+#: (`validate-openspec-cli-pin.py:368`, read by `:994`).
 DISPOSITION_AUTHORITY: tuple[str, ...] = ("ratified_by", "recorded_by")
 
 #: The finding levels that verifier RECONCILES, compared UPPER-CASED
-#: (`validate-openspec-cli-pin.py:373`, read by `:970`).
+#: (`validate-openspec-cli-pin.py:373`, read by `:983`).
 BLOCKING_LEVELS: frozenset[str] = frozenset({"ERROR"})
 
 
@@ -262,7 +262,7 @@ class EntryFailure:
     failed. `detail` carries what the refusal turns on and nothing this module
     invents: the missing or malformed KEY where the entry is a mapping, and the
     raw VALUE where it is not — a bare entry has no key to report, that guard's
-    refusal there (`:945-949`) naming only `where` and the value.
+    refusal there (`:958-962`) naming only `where` and the value.
     """
     where: str
     defect: str
@@ -276,9 +276,9 @@ def _disposition_entry_failure(value) -> EntryFailure | None:
     D-1 ROWS 2-6 OF `adopt-entry-grain-dispositions-form`, TRANSCRIBED IN THE
     GUARD'S OWN ORDER — the order decides which reading a finding names:
 
-    - `:945-949` an entry that is NOT A MAPPING, a bare value being unable to
+    - `:958-962` an entry that is NOT A MAPPING, a bare value being unable to
       carry the identity keys a disposition is required to carry;
-    - `:950-959` an entry MISSING any of `DISPOSITION_REQUIRED`, where "missing"
+    - `:963-972` an entry MISSING any of `DISPOSITION_REQUIRED`, where "missing"
       is FALSEY and not merely absent (`not entry.get(key)`), so `cited_to: []`
       and `why: ""` are reported HERE as the missing key and never reach the
       citation-shape reading below;
@@ -287,10 +287,10 @@ def _disposition_entry_failure(value) -> EntryFailure | None:
     - `:844-855` a `level` that is not `None` and, UPPER-CASED, is outside
       `BLOCKING_LEVELS` — so `"error"` is ADMITTED and `""` is REFUSED, an empty
       string not being `None`;
-    - `:981-987` an entry naming NEITHER spelling of the authority.
+    - `:994-1000` an entry naming NEITHER spelling of the authority.
 
     THE MEMBER-GRAIN READINGS ARE NOT HERE. Row 0 (absent or `null` is EMPTY,
-    `:933-935`) and row 1 (present, non-null and not a list, `:936-941`) are
+    `:946-948`) and row 1 (present, non-null and not a list, `:949-954`) are
     `_is_disposition_list`'s, and this function answers `None` for both so the
     member-grain `Failure` keeps its bare spelling.
     """
@@ -323,14 +323,14 @@ def _is_disposition_list(value) -> bool:
     """A list whose every ENTRY that shape's own guard admits, or `None`.
 
     THE MEMBER GRAIN, UNCHANGED. Absent OR NULL is EMPTY
-    (`validate-openspec-cli-pin.py:933-935`: `raw = pin.get("dispositions")`
+    (`validate-openspec-cli-pin.py:946-948`: `raw = pin.get("dispositions")`
     then `if raw is None: return []`), so `dispositions:` is not a required
     member and an explicit `null` is no more malformed than an absent key;
-    present, non-null and not a list is refused (`:936-941`).
+    present, non-null and not a list is refused (`:949-954`).
 
     THE ENTRY GRAIN, ADDED BY `adopt-entry-grain-dispositions-form` (§ 3.1).
     The SAME pure guard also refuses malformed ENTRIES of a present sequence
-    (`:945-987`), reading THE ENTRY ALONE exactly as the member-grain refusal
+    (`:958-1000`), reading THE ENTRY ALONE exactly as the member-grain refusal
     reads the member alone, so an adapter admitting them is NARROWER than the
     guard it tracks on precisely the trees this adapter exists for — and canon's
     own consequence is that such a resolver "would … admit a record the
@@ -540,31 +540,31 @@ SHAPE_C = Shape(
     revision_kinds=CONTENT_ADDRESSED_KINDS,
     required=(
         Member(("revision_kind",), _one_of(CONTENT_ADDRESSED_KINDS),
-               (Citation(_OPENSPEC_CLI, 724, guard="pinned_version"),)),
+               (Citation(_OPENSPEC_CLI, 737, guard="pinned_version"),)),
         Member(("version",), _is_version,
-               (Citation(_OPENSPEC_CLI, 733, guard="pinned_version"),)),
+               (Citation(_OPENSPEC_CLI, 746, guard="pinned_version"),)),
         Member(("integrity",), _is_integrity,
-               (Citation(_OPENSPEC_CLI, 751, guard="pinned_integrity"),)),
+               (Citation(_OPENSPEC_CLI, 764, guard="pinned_integrity"),)),
         Member(("shasum",), _is_shasum,
-               (Citation(_OPENSPEC_CLI, 778, guard="pinned_integrity"),)),
+               (Citation(_OPENSPEC_CLI, 791, guard="pinned_integrity"),)),
         Member(("package",), _is_package,
-               (Citation(_OPENSPEC_CLI, 790, guard="pinned_package"),)),
+               (Citation(_OPENSPEC_CLI, 803, guard="pinned_package"),)),
         Member(("lockfile",), _is_lockfile_name,
-               (Citation(_OPENSPEC_CLI, 830, guard="pinned_lockfile"),)),
+               (Citation(_OPENSPEC_CLI, 843, guard="pinned_lockfile"),)),
         Member(("lockfile_integrity",), _is_integrity,
-               (Citation(_OPENSPEC_CLI, 840, guard="pinned_lockfile"),)),
+               (Citation(_OPENSPEC_CLI, 853, guard="pinned_lockfile"),)),
         Member(("lockfile_packages",), _is_lockfile_packages,
-               (Citation(_OPENSPEC_CLI, 863, guard="pinned_lockfile"),)),
+               (Citation(_OPENSPEC_CLI, 876, guard="pinned_lockfile"),)),
         Member(("binary",), _is_binary,
-               (Citation(_OPENSPEC_CLI, 880, guard="pinned_binary"),)),
+               (Citation(_OPENSPEC_CLI, 893, guard="pinned_binary"),)),
     ),
-    # Absent-is-empty at its guard (`:933-935`), so NOT required and not on the
+    # Absent-is-empty at its guard (`:946-948`), so NOT required and not on the
     # guard leg's REQUIRED table; refused when PRESENT and not a list
-    # (`:936-941`) and — since `adopt-entry-grain-dispositions-form` § 3.3 —
+    # (`:949-954`) and — since `adopt-entry-grain-dispositions-form` § 3.3 —
     # when a PRESENT sequence carries an ENTRY that same pure guard refuses
-    # (`:945-987`, D-1 rows 2-6).
+    # (`:958-1000`, D-1 rows 2-6).
     #
-    # THE CITATIONS SPLIT, AND THE SPLIT IS THE WHOLE POINT. `:933` is the
+    # THE CITATIONS SPLIT, AND THE SPLIT IS THE WHOLE POINT. `:946` is the
     # ABSENT-IS-EMPTY line, it is the one that reads `pin.get("dispositions")`,
     # and it carries NO guard: there is nothing to CALL for an absent member,
     # which is exactly why the equivalence test's guard leg ranges over the
@@ -577,26 +577,26 @@ SHAPE_C = Shape(
     # the CONDITION it was measured at, and the test re-reads that line.
     optional=(
         Member(("dispositions",), _is_disposition_list,
-               (Citation(_OPENSPEC_CLI, 933),
-                Citation(_OPENSPEC_CLI, 945, guard="pinned_dispositions",
+               (Citation(_OPENSPEC_CLI, 946),
+                Citation(_OPENSPEC_CLI, 958, guard="pinned_dispositions",
                          quote="if not isinstance(entry, dict):",
-                         quote_line=945),
-                Citation(_OPENSPEC_CLI, 950, guard="pinned_dispositions",
+                         quote_line=958),
+                Citation(_OPENSPEC_CLI, 963, guard="pinned_dispositions",
                          quote="for key in DISPOSITION_REQUIRED "
                                "if not entry.get(key)",
-                         quote_line=950),
-                Citation(_OPENSPEC_CLI, 961, guard="pinned_dispositions",
+                         quote_line=963),
+                Citation(_OPENSPEC_CLI, 974, guard="pinned_dispositions",
                          quote="if not isinstance(citations, list) "
                                "or not citations:",
-                         quote_line=961),
-                Citation(_OPENSPEC_CLI, 970, guard="pinned_dispositions",
+                         quote_line=974),
+                Citation(_OPENSPEC_CLI, 983, guard="pinned_dispositions",
                          quote="if level is not None and str(level).upper() "
                                "not in BLOCKING_LEVELS:",
-                         quote_line=970),
-                Citation(_OPENSPEC_CLI, 981, guard="pinned_dispositions",
+                         quote_line=983),
+                Citation(_OPENSPEC_CLI, 994, guard="pinned_dispositions",
                          quote="if not any(entry.get(key) "
                                "for key in DISPOSITION_AUTHORITY):",
-                         quote_line=981)),
+                         quote_line=994)),
                entries=_disposition_entry_failure),
     ))
 
