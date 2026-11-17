@@ -560,6 +560,8 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [Authorize internal private-connectivity completion](openspec/changes/authorize-private-connectivity-internal-production/proposal.md) — ratified by Brett at 2026-11-17T08:38:55.473Z for exact policy a66cfe60 and the USD 20/month storage-only option; [PR #1339](https://github.com/opensoft/openXfactory/pull/1339) is not yet landed. [Actual root grant](openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md); conditional source/release/internal rollout, with actual Q0-Q4 predicates and external Q5/macOS holds preserved.
+
 - [Extend private-connectivity cut validation](openspec/changes/extend-private-connectivity-cut-validation/proposal.md) — ratified N/E source scope at 2026-11-17T02:55:36.438Z; matching Ops/Tenant acceptance remains separate; [draft PR #1336](https://github.com/opensoft/openXfactory/pull/1336), not landed; no publication or rollout grant.
 
 - [fix-hosted-qualification-lease-budget](openspec/changes/fix-hosted-qualification-lease-budget/proposal.md)
