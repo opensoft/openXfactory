@@ -59,7 +59,9 @@ scope. Ready/merge/release SHALL require exact-head checks/review and dependency
 order, normal immutable publication and actual readback. Admin override SHALL
 address only missing independent GitHub approval, never failed checks, conflicts
 or unresolved findings. Required checks and original source-proof privacy
-SHALL NOT be weakened.
+SHALL NOT be weakened. The current measured PR and post-merge main Sonar
+conditions, baseline and thresholds SHALL remain; an uncomputed or unevaluated
+required main gate SHALL NOT establish a passing post-merge result.
 
 #### Scenario: Source is ready to land
 - **WHEN** actual required checks/review and all source dependencies pass under the human grant
@@ -76,6 +78,21 @@ Internal completion SHALL require all three offerings actually usable with
 observed controls and operator handoff. External Q5 offers, customer enrollment,
 prices and expansion SHALL remain gated and their unexecuted tasks SHALL NOT
 be marked complete.
+
+T061 SHALL retain each existing canary child's original cases and dependencies.
+The explicitly refined aggregate-only internal-program-handoff case SHALL join
+all three actual passed Q4 children and current release/CI/operator/custody
+handoff. Its one named review/internal-production-handoff.md file SHALL NOT
+satisfy T062-T068, which SHALL remain pending with their existing dependencies.
+No child SHALL require the aggregate or another offering's future result.
+
+#### Scenario: One canary passes before another
+- **WHEN** one offering has actual valid Q4 evidence while another remains pending
+- **THEN** its child acceptance SHALL remain independently eligible and internal-program completion SHALL remain pending
+
+#### Scenario: Internal handoff is joined
+- **WHEN** all three actual Q4 children and current release/CI/support handoff pass
+- **THEN** only internal-program completion SHALL be eligible and T062-T068 SHALL remain pending
 
 #### Scenario: Internal production succeeds
 - **WHEN** all three selected internal delivery tracks pass their actual Q4 acceptance and handoff

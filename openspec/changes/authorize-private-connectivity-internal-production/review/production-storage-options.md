@@ -31,7 +31,7 @@ scratch and shared customer state are not substitutes for qualified durability.
 | Choice | Effect |
 | --- | --- |
 | Keep USD 0 new recurring production spend | Use only actually verified, already funded and specifically owned eligible capacity. Source/QA work can continue; production cannot activate if none is admitted. Do not create a billed production disk, tier, account or plan |
-| Explicit storage-only exception, at most USD 10 per month before tax | Permit only the bounded state/backup quantities below after the final authorization and all operating gates; keep new compute, node pools, IPs, DNS zones, storage accounts, private endpoints and paid logging prohibited |
+| Explicit storage-only exception, at most USD 20 per month before tax | Permit only the bounded state/backup quantities below after the final authorization and all operating gates; keep new compute, node pools, IPs, DNS zones, storage accounts, private endpoints and paid logging prohibited |
 
 The second choice is proposed for review, not accepted by this document.
 It cannot be selected by the agent in place of Brett's existing USD 0 choice.
@@ -65,24 +65,31 @@ are retained in the private preparation audit; no billing credentials were used.
 
 | Meter | Observed retail rate | Conservative 31-day-month maximum |
 | --- | --- | --- |
-| E1 LRS Disk, 4 GiB | USD 0.30 / disk-month | 6 x 0.30 = USD 1.8000 |
-| E4 LRS Disk Operations meter used for small Standard SSD transactions | USD 0.002 / 10,000 | 6 x 6,800 hourly billable transactions x 744 hours = USD 6.0711 |
-| LRS Snapshots | USD 0.05 / used GB-month | 16 x 0.05 = USD 0.8000 |
-| Hot LRS Data Stored, first tier | USD 0.0184 / GB-month | 5 x 0.0184 = USD 0.0920 |
+| E1 LRS Disk, 4 GiB | USD 0.30 / disk-month | 6 x 0.30 x 744/730 = USD 1.8346 |
+| E4 LRS Disk Operations meter used for small Standard SSD transactions | USD 0.002 / 10,000 | 6 x 13,600 hourly billable transactions x 744 hours = USD 12.1421 |
+| LRS Snapshots | USD 0.05 / used GB-month | 16 x 0.05 x 744/730 = USD 0.8154 |
+| Hot LRS Data Stored, first tier | USD 0.0184 / GB-month | 5 x 0.0184 x 744/730 = USD 0.0938 |
 | Hot LRS writes/list allowance | USD 0.05 / 10,000 writes, reserved at that rate | USD 0.5000 |
 | Hot reads/other allowance | USD 0.004 / 10,000 reads, reserved at that rate | USD 0.0400 |
-| Four permanent disks plus the same retained-capacity/operation reservations | | USD 6.6794 |
-| Six disks reserved for the full month plus all listed reservations | | USD 9.3031 |
-| Proposed storage-only ceiling | | USD 10 / month before tax |
+| Four permanent disks plus the same retained-capacity/operation reservations | | USD 10.7669 |
+| Six disks reserved for the full month plus all listed reservations | | USD 15.4258 |
+| Proposed storage-only ceiling | | USD 20 / month before tax |
 
 The [managed-disk pricing page](https://azure.microsoft.com/en-us/pricing/details/managed-disks/)
-documents the E1 size and hourly billable transaction cap. E1 Disk capacity is
+lists the E1 LRS cap as 13,600 paid transactions per hour, also confirmed by
+[Microsoft's billing-cap announcement](https://techcommunity.microsoft.com/blog/azurestorageblog/cost-saving-with-standard-ssd-billing-caps/3758792).
+Its FAQ retains a contradictory 6,800 example; that older figure is not used
+as a conservative provider cap. E1 Disk capacity is
 not the cheaper E1 Disk Mount meter; shared-disk extra mounts are not used.
 The current subscription's meter mapping, tax/discount treatment and actual
 supported SKU/zone must be reconciled before admission. These are retail
 estimates, not an invoice, automatic Azure spending cap or compatibility proof.
 
-The calculation reserves 744 hours for a 31-day month and rounds each displayed maximum upward. The monthly storage envelope, if explicitly approved, supports the ongoing service after agent authority expires; Brett remains accountable for its custody, retention and recurring cost at handoff.
+The calculation reserves 744 hours for a 31-day month and conservatively
+scales the monthly disk/snapshot/object capacity rates by 744/730 as well.
+Totals use unrounded inputs and displayed maxima round upward. The original
+USD 9.3031/6,800-transaction draft estimate and its USD 10 financial question
+are superseded; that estimate cannot justify a spending grant. The monthly storage envelope, if explicitly approved, supports the ongoing service after agent authority expires; Brett remains accountable for its custody, retention and recurring cost at handoff.
 
 The ceiling excludes network transfer, new networking tiers and other services.
 They are not implicitly free: use an actually eligible already funded/included

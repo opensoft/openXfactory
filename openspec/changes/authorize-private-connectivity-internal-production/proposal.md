@@ -37,6 +37,9 @@ needs an explicit bounded delegation rather than invented human sign-offs.
   Use Windows 11 amd64 and Ubuntu 24.04 amd64 for the initial internal client
   matrix; Brett selected deferring macOS support for this rollout. No Mac
   compatibility or GUI qualification is claimed.
+- Provide an explicit T061 aggregate-only internal handoff after all three
+  actual Q4 acceptances, preserving child independence and held T062-T068.
+  Preserve the current evaluated PR/main Sonar gates without a neutral exception.
 - Keep external Q5 commercial offer/expansion, unrelated infrastructure,
   weakened checks, unsafe state reuse and authority escalation outside scope.
 

@@ -16,7 +16,9 @@ Reconcile the exact proposed E source/CI/attestor files and existing input/
 owner handoff, then refresh the complete sixteen-input/68-task definition.
 Implement the opt-in delegated authority/authentication form and its refusal
 regressions in the already owned E files, adding only the named attestor to
-T010 before use. Preserve original accepted historical controls/readers;
+T010 before use. Add only the named internal handoff file and aggregate-only
+case to T061/C-10; preserve original child cases and all task dependencies.
+Preserve original accepted historical controls/readers;
 unauthenticated 4f963e0f/6b406630 source observations are not accepted history.
 Keep the original private-proof producer and credentials boundary unchanged.
 
@@ -42,7 +44,12 @@ Commission Q0, close T049, create fresh exact governed target plans/requests,
 admit current capacity/custody/authority, then execute Q1/Q2 and internal Q3/Q4
 with actual observation, legitimate controls, denials, repairs and readback.
 Internal completion requires usable local Headscale, standalone Hosted
-Headscale and hosted DomainxFactory service plus operator/onboarding handoff.
+Headscale and hosted DomainxFactory service plus the T061 aggregate-only
+operator/onboarding handoff after all three actual Q4 children pass. An
+independent child stays eligible while other canaries are pending; the aggregate
+joins actual Q4 acceptances, released/integrated required CI and support/custody.
+This adjunct cannot satisfy T062-T068, all of which remain pending with their
+existing dependencies. Preserve the current evaluated PR/main Sonar gates.
 
 Leave external Q5 operating tasks open and do not archive 043 as fully
 commercially expanded. Report the actual internal endpoint and deferred Mac/

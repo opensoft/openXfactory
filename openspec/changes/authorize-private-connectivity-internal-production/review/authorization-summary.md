@@ -24,7 +24,7 @@ the existing [single implementation list](../../../../specs/043-private-connecti
 | Prepare/provision bounded QA and internal production | Exact legitimate managing-factory authority, current capacity/custody, selected financial mode and the finite limits in design.md |
 | Enroll and observe the internal canary | Opensoft only, supported Windows/Linux clients, all four paths, real twenty-four-hour staging/canary observation and original controls/objectives |
 | Contain, repair, rerun and resume | Preserve neighbors/revocations/history; actual independent repair review and fresh scoped authority inside the unchanged policy |
-| Hand over usable services | Actual release/URLs/onboarding, monitoring, rollback and owner handoff; leave deferred/external tasks explicitly open |
+| Hand over usable services | T061 aggregate-only handoff after all three real Q4 children pass; actual release/required CI/URLs/onboarding/monitoring/rollback/custody; keep T062-T068 pending |
 
 ## The financial decision still required
 
@@ -36,11 +36,11 @@ The [concrete storage options](production-storage-options.md) give two choices:
 
 1. Keep USD 0. Continue source/QA and use only genuinely admitted already funded
    capacity. Production must stop if no such durable state is available.
-2. Make a narrow **USD 10/month before-tax production-storage-only exception**:
+2. Make a narrow **USD 20/month before-tax production-storage-only exception**:
    four permanent 4-GiB disks, at most two recovery disks, sixteen billed GB of
    snapshots and five billed GB of objects, with bounded operations. Fresh
-   retail estimate is USD 6.6794 for four permanent disks plus the reserved
-   backup/operation envelope, or USD 9.3031 with all six disks for the full month.
+   retail estimate is USD 10.7669 for four permanent disks plus the reserved
+   backup/operation envelope, or USD 15.4258 with all six disks for the full month.
    No new compute/node pools/IPs/DNS zones/accounts/private endpoints/paid logging
    or paid runner/review capacity follows.
 
@@ -70,6 +70,10 @@ unrelated destructive cleanup remain excluded.
 A real unavailable target/credential or an out-of-envelope requirement can
 still require your action. This grant removes routine approval interruptions;
 it cannot manufacture capacity, credentials, observed success or consent.
+
+The internal handoff explicitly refines only T061's aggregate case/file, keeps
+canary children independent and leaves T062-T068 and all Q5 dependencies pending.
+Current evaluated PR/main Sonar gates remain required.
 
 Until you actually approve the final packet, all current PRs remain draft and
 no operating, merge, publication, spending or rollout gate is granted.

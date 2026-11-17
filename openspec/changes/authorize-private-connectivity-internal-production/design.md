@@ -45,7 +45,7 @@ Handoff names Brett for ongoing operations; the agent acquires no indefinite
 right to change the estate.
 
 Default production financial mode is USD 0 new recurring spend. The alternative
-USD 10/month storage-only exception in review/production-storage-options.md is
+USD 20/month storage-only exception in review/production-storage-options.md is
 effective only if Brett selects it explicitly in the final ruling. Neither
 the agent nor a delegated reviewer can change that selection or a numeric cap.
 
@@ -109,9 +109,11 @@ the source App/secret/repository scope, buy review credits or change billing.
 After exact-head CI and independent review pass, the final grant permits
 marking the scoped PR ready and merging in dependency order. Admin override is
 permitted solely for missing independent GitHub approval, with no unresolved
-correctness/security finding, failed required check or merge conflict. Existing
-neutral main-branch Sonar behavior stays unchanged; actual PR requirements must
-pass. The present nine PRs remain draft until this explicit final grant.
+correctness/security finding, failed required check or merge conflict. Preserve the current measured PR and post-merge main Sonar gates, including
+all original evaluated conditions, baseline and thresholds. Report neutral or
+skipped outcomes separately only when genuinely advisory; an uncomputed or
+unevaluated required main gate does not pass. All current PRs remain draft until
+this explicit final grant.
 
 Before landing this branch's inherited work, #1335 lands independently before
 #1336; do not land it indirectly through this packet. Then land the authority
@@ -171,7 +173,7 @@ If that authority cannot actually be obtained, stop that operation.
 | Networks | At most two managed networks plus one isolated customer-operated local network per environment |
 | Peers | At most eight concurrent peers per environment and twelve across the program; no exit node or advertised subnet route |
 | QA spend/window | Existing accepted USD 10 storage envelope, maximum fourteen-day run and its exact quantities; no new compute/network plan |
-| Production spend | Selected USD 0 default or explicit USD 10/month storage-only option; all other new recurring resources prohibited |
+| Production spend | Selected USD 0 default or explicit USD 20/month storage-only option; all other new recurring resources prohibited |
 | Cluster resources | Existing regular capacity only; per-environment aggregate requests at most 2 CPU/4 GiB and limits at most 4 CPU/8 GiB, subject to actual admission |
 | Eagle guests | At most two owned guests, each at most 2 vCPU/4 GiB; at most 160 GiB allocated image/state/backup files; require at least 6 GiB physical host headroom after admission |
 | Observation | At least twenty-four actual observed hours for staging and for each canary; each canary at most seven days |
@@ -205,6 +207,23 @@ qualified staging and canary evidence, Q4 internal acceptance, release/readback,
 monitoring/rollback and owner/operator handoff documentation. Retain actual
 URLs/commands and credential-delivery instructions without raw secrets.
 
+For the internal endpoint, explicitly refine T061/C-10 with the single exact
+file specs/043-private-connectivity-production/review/internal-production-handoff.md
+and the aggregate-only case internal-program-handoff before use and complete
+definition refresh. Keep each existing T061 canary child's original cases and
+dependencies unchanged: one valid child can pass while other canaries remain
+pending. Only after all three offerings' actual Q4 children pass does the
+aggregate-only handoff join them, actual releases/integrated post-merge required
+CI, usable onboarding/URLs, support/on-call, rollback/custody and remaining work.
+The existing reader/contract must implement and test this closed child/aggregate
+distinction; no child is required to depend on the completed aggregate or on
+another offering's future result.
+
+T062-T068 remain pending under this internal-only grant. The new T061 adjunct
+does not satisfy Q5 or T065-T068, whose existing dependencies and full commercial
+handoff/audit semantics stay unchanged. This supplies a reachable truthful
+internal handoff without fabricating final feature or external-wave completion.
+
 External Q5 offers, customer enrollment, prices, marketing claims and expansion
 remain held. Implement their guards/source where already required, but do not
 invent external customers, check their operating tasks complete, declare
@@ -215,7 +234,7 @@ internal endpoint Brett selected, not a claim that pending Q5 work is done.
 
 | Surface | Bounded implementation |
 | --- | --- |
-| Existing sixteen frozen feature inputs, tasks.md and quickstart.md | Only this accepted authority/support/internal endpoint and actual owner/target/limit handoff; preserve the full task graph and every unaffected requirement |
+| Existing sixteen frozen feature inputs, tasks.md and quickstart.md | Only this accepted authority/support/internal endpoint and actual owner/target/limit handoff, including the exact T061 aggregate-only refinement; preserve all task identities/dependencies and every unaffected requirement |
 | specs/043-private-connectivity-production/verify-evidence.py | Closed human-root/delegated decision validation; preserve original accepted controls/readers and read-only behavior |
 | specs/043-private-connectivity-production/tests/test_evidence.py | Genuine grant/actor/time/scope/predicate positives, copy/mutation/missing/expired/revoked/failed-observation and self-expansion refusals |
 | specs/043-private-connectivity-production/attest-delegated-evidence.py | New bounded attestor for actual CI/review/operating evidence; no target probes, credentials or direct operating authority in the verifier |
@@ -225,10 +244,11 @@ internal endpoint Brett selected, not a claim that pending Q5 work is done.
 | .github/workflows/pytest-suite.yml and doc-health-py314.yml | Existing entry points, actual measured required collection/attestation; preserve original proof producer, privacy, floors and checks |
 | scripts/doc_health/pin_class.py and its two existing doc-health regression files | Only actually necessary exact delegated-evidence registration and measured census; no prefix exception or synthetic sentinel waiver |
 | Existing commissioning authentication/owner review records and feature evidence/T010.json, commissioning.json | Genuine final root grant, actual new qualified outputs, separate delegated admission and generated inventories |
+| specs/043-private-connectivity-production/review/internal-production-handoff.md | The one T061 aggregate-only internal handoff described in section 6; separate from each independent canary acceptance and held T065-T068 |
 | Owning component/target packets and their already accepted exact task files | Necessary same-feature realization and exact reviewed amendments under the delegated C-01 procedure; no unrelated owner/repository |
 
-Add only the new attestor path to T010's file envelope before implementation;
-other listed source surfaces use their accepted E scopes or the explicitly
+Add only the new attestor path to T010's file envelope and the named internal
+handoff path/aggregate-only case to T061 before implementation; other listed source surfaces use their accepted E scopes or the explicitly
 reviewed input/handoff refinement. A necessary unlisted exact path requires
 an owning amendment/independent delegated review, never an unrecorded edit.
 Keep the original source-proof producer byte-identical. Root-grant/policy
