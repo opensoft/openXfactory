@@ -41,3 +41,27 @@ Q0 accepts only specifically commissioned implementation/preparation. Managed or
 ## Planning handoff
 
 The [implementation plan](plan.md) and sole [task list](tasks.md) turn the [owner boundaries](owner-scopes.md) and this register into dependency, file-scope and verification obligations, with every missing decision attached to its consumer. Task generation completes only the artifact handoff. It does not accept C-01/C-02 runtime scopes, pass Q0 or any live gate, or reopen the completed feature 040 lab.
+
+## Approved internal execution amendment
+
+The [genuine human root](../../openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md) accepts the bounded authority/support/
+financial choices described below. It does not pass program Q0 or any observed
+gate, and does not supply a current target-specific operating grant.
+
+| Decision | Current accepted boundary and remaining actual input |
+| --- | --- |
+| C-01 | Brett's exact root scope and T010/T061 refinements are accepted; qualified mechanism and actual owner output acceptance remain due |
+| C-02 | Existing QA West US / production Central US, isolated owned Eagle guests and actual codeXfactory MCP discovery are selected; exact admitted subjects/plans remain due |
+| C-03 | Internal customer consent is bounded by the root; each actual managing-factory request, channel-required grant and immediate current-authority recheck remains due |
+| C-04 | Brett is accountable; reuse the reviewed existing services, preserve RS256 product API and EdDSA MCP, and admit exact integrations before use |
+| C-05 | Initial Windows/Linux qualification inputs are selected; actual supported immutable component/neutral releases and T049 compatibility closure remain due |
+| C-06 | The root's exact numeric objectives, limits and USD 20 storage-only ceiling are accepted; actual admission and measurements must satisfy them; QA USD 10 stays separate |
+| C-07 | Only the root's finite internal/synthetic target/data/fault envelope is consented; exact T050 preparation and Q1 run admission remain separate |
+| C-08 | Source custody remains separate from protected live custody; new actual exports require distinct qualified delegated authentication and actual backend/retention/access admission |
+| C-09/C-10 | Each exact canary decision and its actual observation/incident/support/cleanup acceptance remain separate delegated decisions under the active root |
+| C-11/C-12 | External offer and wave admission remain deferred |
+| C-13 | Containment/repair and fresh independently reviewed resume are bounded to the unchanged root; missing or broader authority stops the affected work |
+
+macOS is deferred and unqualified. No initial support claim is inferred from
+the prior three-platform candidate packet. The aggregate-only internal T061
+handoff leaves T062-T068 pending; it does not archive the full feature.

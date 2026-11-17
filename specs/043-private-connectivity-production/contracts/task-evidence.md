@@ -155,24 +155,91 @@ Q0 per-owner acceptance permits only its exact preparation/implementation; T017 
 
 Task/registry changes after approval require reviewed scope/contract updates and affected re-verification. New shared pin classes, census, workflow or protected surfaces need their owning authority. Preserve 040, existing validation floors and current revocations; no silently widened prefix, skip, waiver or customer eligibility flag is allowed.
 
+
+## Opt-in internal delegated authority
+
+The actual human root is immutable policy a66cfe60 and its genuine recorded
+decision d2528306, under the ratified authorize-private-connectivity-internal-production
+packet. These abbreviated references identify the reviewed records; executable
+trust uses their complete exact repository/commit/path/SHA-256 references.
+Human legacy forms and accepted historical readers remain unchanged.
+
+A distinct closed delegated authentication/decision form names Codex as actor,
+Brett as accountable owner, the exact known root, actual review time, immutable
+candidate/core/output references, qualified producer and independent review.
+A separate bounded attestor authenticates actual provider run/job/head/step
+readback and actual protected command/output provenance. Generic receipt-written
+success, quota responses, arbitrary roots/producers or missing evidence cannot
+authenticate a packet. The read-only verifier executes no operator/probe action.
+Keep the original private-proof producer and App boundary byte-identical.
+
+First qualify and land the attestor/reader with acceptance inactive. Activate
+only the independently reviewed exact protected-base producer afterward; no
+caller flag can activate a PR copy. New decisions require the active, unrevoked
+thirty-day human root and stay inside its fixed customer/support/target/
+financial bounds. Current target/channel grants remain independently required.
+Source-only custody never becomes provider/live custody. Actual new E output
+authentication is separate from this source-scope amendment.
+
+### Conditional T061 internal aggregate case
+
+The additional aggregate-only case is internal-program-handoff. It applies
+only to the selected internal-program endpoint under the fixed human root.
+The T061 child registry cases and child dependencies below remain unchanged.
+An independently valid child may pass while other canaries remain pending.
+
+For internal-program completion, the T061 aggregate additionally requires the
+one exact review/internal-production-handoff.md reference, all three actual
+accepted offering children, actual released/integrated required CI and usable
+onboarding/monitoring/support/rollback/custody handoff. A child never depends on
+the completed aggregate or another offering's future result. The closed reader
+must test this child/aggregate distinction. This adjunct cannot satisfy
+T062-T068, whose dependencies and external commercial meaning remain unchanged.
+
+
+### Current T010 attestor regression collection
+
+The independently reviewed source-scope amendment adds only
+tests/test_delegated_evidence.py to T010's exact envelope. Current T010 evidence
+requires four explicitly collected suites: test_evidence.py,
+test_evidence_pins.py, test_source_roots.py and test_delegated_evidence.py.
+Every original suite remains mandatory, all measured identities/counts are
+checked and no failure/error/skip is permitted. Original accepted human
+historical readers retain their original three-suite contract. No task
+dependency, verification command, token scope or workflow identity changes.
+
 ## T005 review freeze
 
-### Current accepted source-scope definition
+### Current directly authorized internal execution definition
 
-The four-path companion-prose refinement was separately accepted at
-2026-11-17T03:40:50.580Z. The earlier unauthenticated 4f963e0f source candidate
-and its actual passing tests remain observations at their original commits;
-they are not accepted history and are not relabeled as this qualification.
+Brett's actual root approval at 2026-11-17T08:38:55.473Z accepts the exact
+T010 attestor and conditional T061 aggregate-only handoff scopes, initial
+Windows/Linux support and finite internal delegation. The complete table below
+binds the necessary input handoff and all 68 task lines. Registry child cases,
+owners, classes, dependencies and verification commands remain unchanged;
+only the two named task file envelopes and the internal aggregate description
+are refined. Actual new output acceptance remains pending qualified activation.
 
-Brett Heap accepted the exact N/E refinement at 2026-11-17T02:55:36.438Z and
-the matching Ops/Tenant owner plans at 2026-11-17T03:01:06.114Z. Only the four
-T018, twenty-one T043 and two T047 source paths and matching owner-scopes.md
-handoff are refined. All 68 registry rows and all other task fields remain
-unchanged. Fifteen input bodies remain byte-identical; only the accepted owner
-handoff input changes. Original freezes, controls, readers and actual accepted
-observations remain immutable at their exact historical source references.
+The prior unauthenticated 6b406630 and 4f963e0f source candidates retain their
+original observations and are not added as accepted historical controls.
+Historical source-scope note, retained without changing its old facts:
 
-Review packet SHA-256: 6b4066300249b3c26e9eeb50aa7b1dda60c8ca3c51454d5cf7a8f8dbdd2be570
+> ### Current accepted source-scope definition
+>
+> The four-path companion-prose refinement was separately accepted at
+> 2026-11-17T03:40:50.580Z. The earlier unauthenticated 4f963e0f source candidate
+> and its actual passing tests remain observations at their original commits;
+> they are not accepted history and are not relabeled as this qualification.
+>
+> Brett Heap accepted the exact N/E refinement at 2026-11-17T02:55:36.438Z and
+> the matching Ops/Tenant owner plans at 2026-11-17T03:01:06.114Z. Only the four
+> T018, twenty-one T043 and two T047 source paths and matching owner-scopes.md
+> handoff are refined. All 68 registry rows and all other task fields remain
+> unchanged. Fifteen input bodies remain byte-identical; only the accepted owner
+> handoff input changes. Original freezes, controls, readers and actual accepted
+> observations remain immutable at their exact historical source references.
+
+Review packet SHA-256: 281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421
 
 This digest covers canonical UTF-8 JSON keys inputs, registry and tasks,
 sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal
@@ -182,14 +249,14 @@ body before the T005 heading. No partial task/input freeze is accepted.
 
 | Input | SHA-256 |
 | --- | --- |
-| spec.md | 901ed9fff1c99c088522db9d66786a3550fd5a55c228bc9eb625e150fb470cae |
-| plan.md | 5fc1550dd8988e2d32288176c9f4b62c22592e4c583c8106b506fbe9fd22bdee |
+| spec.md | c8bebd78c2f1e919874fdf385796557c577d1d55aba2740bc498e906ec274134 |
+| plan.md | 2edb9ad4eb75621218dadbeefedf961cdb64221f51d20c84bd281564cefc9818 |
 | research.md | 295751853b252eafabbcaf64933a577df88370f7c457f01fe69a479c9df7f9d2 |
-| data-model.md | a2201bc094da3a05567194cbbff5622950f3f8aa17b8a9d978d3eb693ea02f05 |
-| owner-scopes.md | 5a10e40116dcb056db91f73c1dde7540607d2211fe3d4220d0565a420d8f3a73 |
-| commissioning.md | 11c05e374c68ee9f8fa0b8e790a47381f56aea63fe37141a4a4a6f17d232ec50 |
-| rollout-gates.md | f667ed2e6f8c5f1b4e75651b1aa5bdb671074fe2dcf74f8f3f722250084d2fc8 |
-| validation-matrix.md | 53688287673d29e5d58604eee0ec27e5f134de241032d514edfa5e41a9472d39 |
+| data-model.md | 16a1351ef27a1924be4ce4e1c77197adfc48a40391b3e4ea20d5f849a72c4391 |
+| owner-scopes.md | aa30347c8b70d2c32456645e03cc3bb21ecee9a8df40b39588759ab2bcd77270 |
+| commissioning.md | 8f5917f9bdbee09a8fd6f93bbe53f34b371213196b6e38611a3a6850373f829c |
+| rollout-gates.md | 0815198f6c67e4eaf02d18efbd9558821747c8560ed338b626de34f993c9b32d |
+| validation-matrix.md | 7ebee6a87bee75ea50ca70d30a64ae50460ef6081a5489dd75d5c83a4f481f53 |
 | policy-coverage.md | e30154c88b29ce5a21b23d235d0ec863a105a433d7ea23e7fb6937cba928f37b |
 | local-headscale.md | aa764a126e7b1d2c12c257e9d2d1ef2416fb49a47dffeddf93de6a901882c481 |
 | standalone-hosted-headscale.md | b25c3d8ab2642912d1dcbe557b51f9820df8986906c3d1ccb950146efd8ee479 |
@@ -197,7 +264,7 @@ body before the T005 heading. No partial task/input freeze is accepted.
 | contracts/owner-handoff.md | d8fec9881a390420c41d6bc1dfef8fb44ab35457054611ae3751a8a98ca9fd78 |
 | contracts/product-interfaces.md | 5643be4adba7bb0ac5413a1ddb74bab863af981c945d92c4fde14d97fd0d94e7 |
 | contracts/qualification-evidence.md | 8d7d4ab79a6bb456a2dabef0d6ec4d5ba40da296e5ba19ceab2c7e907df31e92 |
-| contracts/task-evidence.md | c7734b52520b6ad6ccad75cd32f4e49b395877fb926dffc03c3e85e34c854247 |
+| contracts/task-evidence.md | 4b007efac24b48e0f14fbb9565199408a740f03ccfcfbef6991b0e2c88641e3d |
 
 Source-scope approval does not authenticate new actual E source/CI output.
 That separate review/default admission is required before consuming N changes.

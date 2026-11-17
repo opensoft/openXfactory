@@ -288,21 +288,21 @@ jobs:
           [ "$(git rev-parse HEAD)" = "$PC043_CHECKOUT_REVISION" ]
           git merge-base --is-ancestor "$requested_head" "$PC043_CHECKOUT_REVISION"
           export PC043_SOURCE_MODE=pr-head
-          if git cat-file -e "$requested_head:$feature_path" 2>/dev/null; then
+          if git cat-file -e "$requested_head:$feature_path/tests/test_delegated_evidence.py" 2>/dev/null; then
             [ "$(git cat-file -t "$requested_head:$feature_path")" = tree ]
           else
             git merge-base --is-ancestor "$PC043_BASE_REVISION" "$PC043_CHECKOUT_REVISION"
             ancestor="$(git merge-base "$requested_head" "$PC043_BASE_REVISION")"
             touched="$(git log --full-history -1 --format=%H "$ancestor..$requested_head" -- "$feature_path")"
-            if git cat-file -e "$ancestor:$feature_path" 2>/dev/null || [ -n "$touched" ]; then
-              echo "::error::A head that changed or removed feature 043 requires its own complete source suites."
+            if git cat-file -e "$ancestor:$feature_path/tests/test_delegated_evidence.py" 2>/dev/null || [ -n "$touched" ]; then
+              echo "::error::A head that changed or removed feature 043 requires its own complete four-suite source."
               exit 1
             fi
             export PC043_EXPECTED_REVISION="$PC043_CHECKOUT_REVISION"
             export PC043_SOURCE_MODE=merge-checkout
-            echo "::notice::Unrelated head predates feature 043; testing the merge checkout does not qualify the PR head."
+            echo "::notice::Unrelated head predates the fourth 043 suite; testing the merge checkout does not qualify the PR head."
           fi
-          for module in test_evidence.py test_evidence_pins.py test_source_roots.py; do
+          for module in test_evidence.py test_evidence_pins.py test_source_roots.py test_delegated_evidence.py; do
             [ "$(git cat-file -t "$PC043_EXPECTED_REVISION:$feature_path/tests/$module")" = blob ]
           done
           printf '043 source selection: mode=%s revision=%s requested_head=%s\n' \
@@ -312,7 +312,8 @@ jobs:
           git -c core.hooksPath=/dev/null worktree add --detach "$source_tree" "$PC043_EXPECTED_REVISION"
           cd "$source_tree"
           [ "$(git rev-parse HEAD)" = "$PC043_EXPECTED_REVISION" ]
-          python -m pytest specs/043-private-connectivity-production/tests/test_source_roots.py -q -rs \
+          python -m pytest specs/043-private-connectivity-production/tests/test_source_roots.py \
+            specs/043-private-connectivity-production/tests/test_delegated_evidence.py -q -rs \
             --junitxml="$RUNNER_TEMP/pc043-py314.xml"
           python - <<'PY'
           from collections import Counter
@@ -321,7 +322,8 @@ jobs:
           import xml.etree.ElementTree as ET
           report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "pc043-py314.xml").getroot()
           cases = list(report.iter("testcase"))
-          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 97}
+          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 107,
+                      "specs.043-private-connectivity-production.tests.test_delegated_evidence": 100}
           if dict(Counter(case.get("classname") for case in cases)) != expected:
               raise SystemExit("Python 3.14 proof suite collection mismatch")
           identities = {(case.get("classname"), case.get("name")) for case in cases}
@@ -331,7 +333,12 @@ jobs:
               raise SystemExit("Python 3.14 proof suite must run and pass without skips")
           if any(child.tag in ("skipped", "failure", "error") for case in cases for child in case):
               raise SystemExit("Python 3.14 proof case did not pass")
-          print("043 Python 3.14 proof: collected=97 passed=97 skipped=0 failures=0 errors=0 revision=" + os.environ["PC043_EXPECTED_REVISION"])
+          import json
+          actual = Counter(case.get("classname") for case in cases)
+          suites = {"specs/043-private-connectivity-production/tests/" + name.rsplit(".", 1)[-1] + ".py": count
+                    for name, count in actual.items()}
+          print("PC043-" + "SUITES " + json.dumps({"schema": "043-collected-suites-v1",
+                "source_revision": os.environ["PC043_EXPECTED_REVISION"], "suites": suites}, sort_keys=True))
           PY
           [ -z "$(git status --porcelain)" ]
           cd "$original_tree"

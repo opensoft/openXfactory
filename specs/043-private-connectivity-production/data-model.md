@@ -77,3 +77,19 @@ Containment records affected subjects, preserved authorized neighbors, current r
 - Each actual production profile needs its own protection and qualification; a passed profile does not qualify the directory or another domain.
 - Missing/duplicate/unknown cases, stale authority, non-finite measurements, broken positive controls and wrong-scope references fail acceptance.
 - Raw secrets, customer payloads and real high-cardinality device identifiers do not enter coordination records; protected custody stores sensitive inputs under references.
+
+## Approved internal execution amendment
+
+The [human root](../../openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md) is a fixed immutable Git reference to the genuine
+decision and eight approved policy members. A delegated decision adds its real
+Codex actor, accountable Brett role, exact root, qualified producer, actual
+decision time, exact candidate/output and independent-review/readback evidence.
+Its schema is closed and distinct from the unchanged human forms. The caller
+cannot choose another root or producer. The attestor must refuse new acceptance
+before protected-base activation, after expiry/revocation or outside scope.
+Historical accepted records preserve original times and bindings.
+
+The internal T061 aggregate has an additional conditional handoff reference.
+It joins independently accepted canary children for all three offerings and
+actual released/integrated CI, onboarding, monitoring, support and custody.
+It is not a predecessor of its children and cannot satisfy T062-T068.

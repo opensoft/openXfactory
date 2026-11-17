@@ -422,7 +422,7 @@ def source_selection_fixture(path, scenario):
     """Real Git ancestry; the synthetic merge tree is used only for selection."""
     root = repo(path)
     feature = Path("specs/043-private-connectivity-production")
-    modules = [feature / "tests" / name for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py")]
+    modules = [feature / "tests" / name for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py", "test_delegated_evidence.py")]
 
     def snapshot():
         git(root, "add", "-A")
@@ -436,9 +436,13 @@ def source_selection_fixture(path, scenario):
 
     (root / "README.md").write_text("Before feature 043\n")
     before = snapshot()
-    add_feature()
+    add_feature(modules[:3])
+    pre_attestor = snapshot()
+    add_feature(modules[-1:])
     base = snapshot()
-    git(root, "checkout", "-q", "--detach", base if scenario == "deleted-feature" else before)
+    branch_base = base if scenario in {"deleted-feature", "deleted-attestor"} else (
+        pre_attestor if scenario.startswith("older-three-") else before)
+    git(root, "checkout", "-q", "--detach", branch_base)
     (root / "notes.txt").write_text("Unrelated PR change\n")
     if scenario == "feature-head":
         add_feature()
@@ -451,8 +455,16 @@ def source_selection_fixture(path, scenario):
         add_feature()
         snapshot()
         shutil.rmtree(root / feature)
-    elif scenario == "deleted-feature":
+    elif scenario in {"deleted-feature", "older-three-removed"}:
         shutil.rmtree(root / feature)
+    elif scenario == "deleted-attestor":
+        (root / modules[-1]).unlink()
+    elif scenario == "older-three-touched":
+        (root / modules[0]).write_text("Changed private-connectivity source cannot use merge-only qualification")
+    elif scenario == "older-three-created-removed":
+        add_feature(modules[-1:])
+        snapshot()
+        (root / modules[-1]).unlink()
     head = snapshot()
     git(root, "checkout", "-q", "--detach", base)
     if scenario == "missing-merge-suite":
@@ -481,7 +493,9 @@ def source_selection_fixture(path, scenario):
 @pytest.mark.parametrize("workflow", ["pytest-suite.yml", "doc-health-py314.yml"])
 @pytest.mark.parametrize("scenario", ["feature-head", "older-unrelated", "main-push", "deleted-feature", "partial-head",
                                       "created-then-removed", "unavailable-head", "unavailable-base", "unavailable-checkout",
-                                      "wrong-checkout", "head-not-merged", "missing-merge-suite", "path-is-file", "malformed-head"])
+                                      "wrong-checkout", "head-not-merged", "missing-merge-suite", "path-is-file", "malformed-head",
+                                      "older-three-unrelated", "older-three-touched", "older-three-removed",
+                                      "older-three-created-removed", "deleted-attestor"])
 def test_ci_source_selection_preserves_exact_heads_and_handles_unrelated_older_heads(tmp_path, workflow, scenario):
     import yaml
     root, env, head, checkout = source_selection_fixture(tmp_path / "coordinator", scenario)
@@ -496,14 +510,15 @@ def test_ci_source_selection_preserves_exact_heads_and_handles_unrelated_older_h
     result = subprocess.run(["bash", "-c", script], cwd=root, env=env, text=True, capture_output=True, timeout=20)
     assert git(root, "rev-parse", "HEAD") == checkout
     assert (git(root, "show-ref"), git(root, "status", "--porcelain")) == state
-    if scenario in {"feature-head", "older-unrelated", "main-push"}:
-        expected = checkout if scenario == "older-unrelated" else head
-        mode = "merge-checkout" if scenario == "older-unrelated" else "pr-head"
+    if scenario in {"feature-head", "older-unrelated", "older-three-unrelated", "main-push"}:
+        fallback = scenario in {"older-unrelated", "older-three-unrelated"}
+        expected = checkout if fallback else head
+        mode = "merge-checkout" if fallback else "pr-head"
         assert result.returncode == 0, result.stdout + result.stderr
         assert result.stdout.splitlines()[-1] == expected + "|" + mode
         for variable in ("PC043_BASE_REVISION", "PC043_CHECKOUT_REVISION"):
             assert variable in step["env"]
-        if scenario == "older-unrelated":
+        if fallback:
             assert "does not qualify the PR head" in result.stdout
     else:
         assert result.returncode != 0, "Invalid/missing feature source was silently accepted: " + result.stdout

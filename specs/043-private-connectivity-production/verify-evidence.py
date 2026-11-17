@@ -31,7 +31,7 @@ FEATURE = "043-private-connectivity-production"
 FEATURE_PATH = "specs/" + FEATURE
 COORDINATOR = "opensoft/openxfactory"
 HISTORICAL_CONTROL_ERROR = "unaccepted historical control"
-DEFINITION = "6b4066300249b3c26e9eeb50aa7b1dda60c8ca3c51454d5cf7a8f8dbdd2be570"
+DEFINITION = "281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421"
 LEGACY_DEFINITION = "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0"
 LEGACY_CONTROL_SHA256 = "0dc18a4053e07fd484534dcd4b572a5f8c6b72718b6901ac1323298d4ec7243e"
 LEGACY_READER_SHA256 = "0ce860921467e94e942274905c45c99295a830a3f14b8a0b66ddb944103f697f"
@@ -100,6 +100,21 @@ REF_FIELDS = frozenset(("repository", "commit", "path", "sha256"))
 INSTANCE_TASKS = frozenset(f"T{i:03}" for i in range(57, 65))
 COMMISSIONING_PATH = FEATURE_PATH + "/evidence/commissioning.json"
 AUTHENTICATION_PATH = "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md"
+
+
+DELEGATION_ROOT_REF = {
+    "repository": COORDINATOR,
+    "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
+    "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
+    "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa",
+}
+# Activation is a separate reviewed protected-base act. No environment or
+# receipt field can supply a producer while this is None.
+DELEGATION_PRODUCER_REF = None
+# Only actual outputs independently qualified and landed on the protected base
+# may enter this register. Producer activation alone grants no output authority.
+# Key: canonical subject SHA-256. Value: exact whole immutable output reference.
+DELEGATED_ATTESTATIONS = {}
 
 
 def canonical_json(value):
@@ -301,6 +316,187 @@ def _load_contract(read, definition):
     return tasks
 
 
+
+def _same_reference(actual, expected):
+    reference(actual)
+    return {**actual, "repository": actual["repository"].lower()} == expected
+
+
+def _pinned_blob(store, ref):
+    raw = store.blob(reference(ref))
+    require(isinstance(raw, bytes) and digest(raw) == ref["sha256"],
+            "delegation immutable digest mismatch")
+    return raw
+
+
+def load_delegation_root(store, ref, at, *, revoked=()):
+    require(_same_reference(ref, DELEGATION_ROOT_REF), "unaccepted delegation root")
+    root = decode(_pinned_blob(store, DELEGATION_ROOT_REF))
+    require(root["schema"] == "043-human-delegation-root-v1"
+            and root["decision"] == "accepted" and root["human"] == "Brett Heap"
+            and root["feature"] == FEATURE and root["customer"] == "Opensoft Inc"
+            and root["delegate"]["actor"] == "Codex"
+            and root["delegate"]["chat"] == "01a1c061-ee6e-7e61-9db4-280a724e05c2",
+            "wrong human delegation root")
+    require(isinstance(at, datetime) and at.tzinfo is not None and at.utcoffset() is not None,
+            "aware delegation root decision time required")
+    start, end = timestamp(root["approved_at"]), timestamp(root["expires_at"])
+    require((end - start).total_seconds() == 30 * 24 * 60 * 60 and start <= at < end,
+            "decision outside human-root validity")
+    require(isinstance(revoked, (list, tuple, set, frozenset)) and root["id"] not in revoked,
+            "delegation root revoked")
+    policy = root["policy"]
+    require(policy["repository"] == COORDINATOR
+            and policy["commit"] == "a66cfe601407818dbd04f294bbaf92af15246e22"
+            and len(policy["members"]) == 8, "wrong root policy")
+    for member in policy["members"]:
+        require(member["repository"] == COORDINATOR and member["commit"] == policy["commit"],
+                "foreign root policy")
+        _pinned_blob(store, member)
+    return root
+
+
+def require_delegation_producer(store, ref):
+    require(DELEGATION_PRODUCER_REF is not None, "delegation producer is not activated")
+    require(_same_reference(ref, DELEGATION_PRODUCER_REF)
+            and ref["repository"].lower() == COORDINATOR
+            and ref["path"] == FEATURE_PATH + "/attest-delegated-evidence.py",
+            "unaccepted delegation producer")
+    return _pinned_blob(store, DELEGATION_PRODUCER_REF)
+
+
+
+REVIEW_ROLES = frozenset((
+    "architecture", "performance", "security", "qa", "static", "contracts",
+    "integrity", "reliability", "maintainability",
+))
+
+
+def require_independent_review(store, ref, subject, reviewed_at):
+    review = decode(_pinned_blob(store, ref))
+    require(set(review) == {"schema", "subject", "reviewed_at", "roles"}
+            and review["schema"] == "043-independent-review-v1"
+            and review["subject"] == subject, "independent review subject mismatch")
+    require(timestamp(review["reviewed_at"]) <= reviewed_at, "independent review after decision")
+    roles = review["roles"]
+    require(isinstance(roles, dict) and set(roles) == REVIEW_ROLES, "nine independent review roles required")
+    identities = set()
+    for result in roles.values():
+        require(isinstance(result, dict) and set(result) == {"reviewer", "verdict", "report"}
+                and result["verdict"] == "clear", "unresolved independent review")
+        identities.add(text(result["reviewer"], "independent reviewer"))
+        text(result["report"], "actual independent review report")
+    require(len(identities) == len(REVIEW_ROLES), "distinct independent reviewers required")
+
+
+def ci_identity(repository, run_id, job_id, revision):
+    require(canonical_origin(repository) == repository.lower()
+            and type(run_id) is int and run_id > 0 and type(job_id) is int and job_id > 0
+            and isinstance(revision, str) and re.fullmatch("[0-9a-f]{40}", revision),
+            "invalid actual provider CI identity")
+    return repository.lower(), run_id, job_id, revision
+
+
+def require_provider_observations(observations, expected, source=None, reviewed_at=None):
+    require(isinstance(observations, list), "provider observation list required")
+    found = {}
+    for observation in observations:
+        require(isinstance(observation, dict)
+                and set(observation) == {"run", "job", "log_sha256", "suites"}, "closed provider observation required")
+        run, job = observation["run"], observation["job"]
+        identity = ci_identity(run["repository"]["full_name"], run["id"], job["id"], run["head_sha"])
+        require(identity not in found, "duplicate provider CI observation")
+        require(job["run_id"] == run["id"] and job["head_sha"] == run["head_sha"]
+                and run["run_attempt"] == job["run_attempt"]
+                and run["status"] == job["status"] == "completed"
+                and run["conclusion"] == job["conclusion"] == "success",
+                "failed or mismatched actual provider run/job/head")
+        require(isinstance(reviewed_at, datetime) and reviewed_at.tzinfo is not None
+                and timestamp(run["created_at"]) <= timestamp(job["started_at"])
+                <= timestamp(job["completed_at"]) <= timestamp(run["updated_at"]) <= reviewed_at,
+                "actual provider completion must precede authentication")
+        require(isinstance(job["steps"], list) and job["steps"]
+                and any(step.get("conclusion") == "success" for step in job["steps"])
+                and all(step.get("conclusion") in ("success", "skipped") for step in job["steps"]),
+                "failed or absent actual provider steps")
+        require(isinstance(observation["log_sha256"], str)
+                and re.fullmatch("[0-9a-f]{64}", observation["log_sha256"]), "actual provider log digest required")
+        require(isinstance(observation["suites"], dict) and observation["suites"]
+                and all(type(count) is int and count > 0 for count in observation["suites"].values()),
+                "actual provider collected suite counts required")
+        found[identity] = observation
+    extras = set(found) - set(expected)
+    require(set(expected) <= set(found), "missing actual provider CI observation")
+    if source is None:
+        require(not extras, "unknown actual provider CI observation")
+    else:
+        matching = [item for identity, item in found.items()
+                    if identity[0] == COORDINATOR and identity[3] == source["revision"]]
+        lanes = {}
+        for item in matching:
+            path = item["run"]["path"].split("@", 1)[0]
+            require(path in (".github/workflows/pytest-suite.yml", ".github/workflows/doc-health-py314.yml")
+                    and path not in lanes, "unknown or duplicate actual source lane")
+            lanes[path] = item
+            require_proof_steps(item, path)
+        require(set(lanes) == {".github/workflows/pytest-suite.yml", ".github/workflows/doc-health-py314.yml"},
+                "both actual private-proof source lanes required")
+        primary = lanes[".github/workflows/pytest-suite.yml"]
+        secondary = lanes[".github/workflows/doc-health-py314.yml"]
+        secondary_suites = {FEATURE_PATH + "/tests/" + name: primary["suites"][FEATURE_PATH + "/tests/" + name]
+                            for name in ("test_source_roots.py", "test_delegated_evidence.py")}
+        require(secondary["suites"] == secondary_suites, "Python 3.14 suite collection mismatch")
+        require(len(extras) == 1 and found[next(iter(extras))] is secondary,
+                "unknown provider observation outside required source lanes")
+    for identity, suites in expected.items():
+        require(found[identity]["suites"] == suites, "actual provider collection differs from authenticated output")
+
+
+def require_proof_steps(observation, workflow):
+    test_step = ("Run private-connectivity production source suites (043)"
+                 if workflow.endswith("pytest-suite.yml") else "Exercise source proof under Python 3.14 (043)")
+    names = ["Require the commissioned App identity (043)", "Mint scoped Opensoft source read token (043)",
+             "Prepare commit-only owner roots with the reviewed producer (043)",
+             "Revoke source tokens before any tests (043)", test_step, "Remove ephemeral source proof (043)"]
+    steps = observation["job"]["steps"]
+    selected = []
+    for name in names:
+        actual = [step for step in steps if step.get("name") == name]
+        require(len(actual) == 1 and actual[0]["conclusion"] == "success",
+                "actual source proof/cleanup step missing or failed")
+        selected.append(actual[0]["number"])
+    require(all(type(number) is int and number > 0 for number in selected)
+            and selected == sorted(set(selected)), "source credentials not revoked before candidate tests")
+
+
+def require_delegated_review(store, ref, subject, now, revoked=(), expected_ci=None, source=None):
+    approved = DELEGATED_ATTESTATIONS.get(digest(canonical_json(subject)))
+    require(approved is not None and _same_reference(ref, approved),
+            "delegated output is not independently qualified")
+    attestation = decode(_pinned_blob(store, ref))
+    require(isinstance(attestation, dict) and set(attestation) == {
+        "schema", "actor", "accountable_owner", "root", "producer", "reviewed_at",
+        "subject", "independent_review", "provider_observations", "evidence"},
+        "closed delegated attestation required")
+    require(attestation["schema"] == "043-delegated-attestation-v1"
+            and attestation["actor"] == "Codex" and attestation["accountable_owner"] == "Brett Heap"
+            and attestation["subject"] == subject, "delegated actor/subject mismatch")
+    reviewed_at = timestamp(attestation["reviewed_at"])
+    require(reviewed_at <= now, "future delegated review")
+    load_delegation_root(store, attestation["root"], reviewed_at, revoked=revoked)
+    require_delegation_producer(store, attestation["producer"])
+    require_independent_review(store, attestation["independent_review"], subject, reviewed_at)
+    require_provider_observations(attestation["provider_observations"], expected_ci or {}, source, reviewed_at)
+    evidence = attestation["evidence"]
+    require(isinstance(evidence, list) and evidence, "actual delegated evidence references required")
+    identities = set()
+    for item in evidence:
+        _pinned_blob(store, item)
+        identities.add(canonical_json(reference(item)))
+    require(len(identities) == len(evidence), "duplicate delegated evidence reference")
+    return reviewed_at
+
+
 def fixed_c37_control(ref):
     normalized = {**ref, "repository": ref["repository"].lower()}
     return next((item for item in C37_CONTROLS.values() if normalized == item["reference"]), None)
@@ -387,6 +583,7 @@ class Verifier:
             require(alias not in FIXED_REPOSITORIES or repository.lower() == FIXED_REPOSITORIES[alias], "wrong canonical component owner")
         self.objects = {}
         self.authenticated, self.authenticated_at = True, None
+        self.delegated_root_id = None
         require(trust_reference["path"] != COMMISSIONING_PATH or "source_container" in t,
                 "source commissioning container required")
         if "source_container" in t:
@@ -445,6 +642,9 @@ class Verifier:
         blocks = re.findall(rb"^```json\r?\n(.*?)^```[ \t]*$", self.store.blob(ref), re.M | re.S)
         require(len(blocks) == 1, "one source authentication JSON block required")
         review = decode(blocks[0])
+        if review.get("schema") == "043-delegated-source-authentication-v1":
+            self.delegated_authentication(review)
+            return
         require(set(review) == {"schema", "decision", "custodian", "reviewed_manifest", "content_sha256", "reviewed_at"}
                 and review["schema"] == "043-source-authentication-v1" and review["custodian"] == "Brett Heap",
                 "wrong source authentication record")
@@ -461,6 +661,35 @@ class Verifier:
         self.authenticated_at = timestamp(review["reviewed_at"])
         require(self.authenticated_at <= self.now, "future custodian authentication")
 
+    def delegated_authentication(self, review):
+        require(set(review) == {"schema", "decision", "actor", "accountable_owner",
+                                "reviewed_manifest", "content_sha256", "attestation"}
+                and review["decision"] == "accepted" and review["actor"] == "Codex"
+                and review["accountable_owner"] == "Brett Heap", "wrong delegated source authentication")
+        reviewed = reference(review["reviewed_manifest"])
+        require(reviewed["repository"].lower() == COORDINATOR and reviewed["path"] == COMMISSIONING_PATH,
+                "wrong reviewed source manifest")
+        prior = decode(_pinned_blob(self.store, reviewed))
+        require(review["content_sha256"] == commissioning_digest(prior) == commissioning_digest(self.trust),
+                "delegated source authentication content mismatch")
+        subject = {"kind": "source-authentication", "definition": self.definition,
+                   "reviewed_manifest": reviewed, "content_sha256": review["content_sha256"]}
+        expected = {}
+        for key, binding in self.trust["bindings"].items():
+            if key in self.trust.get("historical_controls", {}):
+                continue
+            output = self.read(self.read(binding["record"], binding)["output"], binding)
+            self.ci(output, binding)
+            for suite, run in output["ci"].items():
+                identity = ci_identity(run["repository"], run["run_id"], run["job_id"], run["revision"])
+                previous = expected.setdefault(identity, {}).setdefault(suite, run["collected"])
+                require(previous == run["collected"], "conflicting actual CI collection")
+        self.authenticated_at = require_delegated_review(
+            self.store, review["attestation"], subject, self.now,
+            self.trust["revoked_authorities"], expected, self.trust["bindings"]["T010"]["source"])
+        self.authenticated = True
+        self.delegated_root_id = "pc043-internal-20261117-e995d2290328"
+
     def blob(self, ref, binding=None):
         if isinstance(ref, dict) and "object" in ref:
             require(set(ref) == {"object"} and isinstance(ref["object"], str) and ref["object"] in self.objects,
@@ -474,6 +703,44 @@ class Verifier:
 
     def read(self, ref, binding=None):
         return decode(self.blob(ref, binding))
+
+    def delegated_decision(self, decision, binding, start=None, end=None, *, post_run=False):
+        if "delegation" not in decision and decision.get("actor") != "Codex" and decision.get("owner") != "Codex":
+            return
+        require(decision.get("actor") == decision.get("owner") == "Codex"
+                and decision.get("accountable_owner") == "Brett Heap" and "delegation" in decision,
+                "distinct delegated decision actor required")
+        require(int(binding["task"][1:]) <= 61 and decision.get("kind") not in ("C-11", "C-12")
+                and binding["scope"]["phase"] in ("source", "staging", "production"),
+                "deferred external Q5/task decision")
+        if binding["scope"]["phase"] != "source":
+            require(binding["scope"]["customer"] == "Opensoft Inc", "delegation is internal-only")
+        subject = {"kind": "decision", "definition": self.definition,
+                   "record_sha256": digest(canonical_json({key: value for key, value in decision.items()
+                                                         if key != "delegation"}))}
+        reviewed = require_delegated_review(self.store, decision["delegation"], subject, self.now,
+                                           self.trust["revoked_authorities"])
+        root = load_delegation_root(self.store, DELEGATION_ROOT_REF, reviewed,
+                                    revoked=self.trust["revoked_authorities"])
+        self.delegated_root_id = root["id"]
+        if post_run:
+            require(end is not None and end <= reviewed
+                    and timestamp(decision["reviewed_at"]) == reviewed,
+                    "delegated admission must follow actual output")
+            return
+        if start is not None:
+            require(timestamp(root["approved_at"]) <= start and reviewed <= start,
+                    "delegated execution before grant/root")
+        if end is not None:
+            require(end < timestamp(root["expires_at"]), "execution after delegation expiry")
+        if binding["scope"]["phase"] in ("staging", "production"):
+            begin, expiry = timestamp(decision["valid_from"]), timestamp(decision["valid_until"])
+            require(timestamp(root["approved_at"]) <= begin < expiry <= timestamp(root["expires_at"]),
+                    "delegated runtime grant exceeds human-root window")
+
+    def current_delegation(self):
+        require(self.delegated_root_id is None or self.delegated_root_id not in self.trust["revoked_authorities"],
+                "delegation root revoked")
 
     def validity(self, decision, expected_scope, start=None, end=None, historical=False, source_lifetime=False, binding=None):
         """Source permissions may persist; execution channels remain time-bounded."""
@@ -505,7 +772,7 @@ class Verifier:
                         "later authority cannot authorize an earlier run")
         return begin, expiry
 
-    def decision(self, ref, binding, kind, start=None, end=None, historical=False, source_lifetime=False):
+    def decision(self, ref, binding, kind, start=None, end=None, historical=False, source_lifetime=False, post_run=False):
         decision = self.read(ref, binding)
         require(decision["kind"] == kind and decision["decision"] == "accepted", "required decision is not accepted")
         expected_scope = binding.get("decision_scopes", {}).get(kind, binding["scope"])
@@ -514,6 +781,7 @@ class Verifier:
                 and kind in ("C-03", "C-08", "C-09", "C-10", "C-11", "C-12", "C-13")):
             require(decision["scope"]["phase"] == binding["scope"]["phase"], "live decision phase mismatch")
         text(decision["owner"], "actual approving owner")
+        self.delegated_decision(decision, binding, start, end, post_run=post_run)
         self.validity(decision, expected_scope, start, end, historical, source_lifetime, binding)
         return decision
 
@@ -527,6 +795,10 @@ class Verifier:
         if binding["scope"]["phase"] in ("staging", "production"):
             require(mode != "source", "source authority cannot authorize live evidence")
         source_lifetime = mode == "source" and binding["scope"]["phase"] == "source"
+        # A source repair reviews completed reruns; the original execution
+        # authority is independently checked before this remediation path.
+        source_review = resume and source_lifetime
+        self.delegated_decision(decision, binding, start, end, post_run=source_review)
         self.validity(decision, binding["scope"], start, end, historical, source_lifetime, binding)
         if mode.startswith("managed-"):
             self.decision(decision["request"], binding, "request", start, end, historical)
@@ -540,7 +812,8 @@ class Verifier:
             require("C-13" in required, "fresh resume decision missing")
         for item in required:
             self.decision(decision["decisions"][item], binding, item, start, end, historical,
-                          source_lifetime=binding["scope"]["phase"] == "source")
+                          source_lifetime=binding["scope"]["phase"] == "source",
+                          post_run=source_review and item == "C-13")
         return decision
 
     def evidence_authority(self, binding, record):
@@ -577,6 +850,7 @@ class Verifier:
             require(isinstance(roles, list) and roles and all(isinstance(role, str) and role.strip() for role in roles)
                     and len(roles) == len(set(roles)) and admission["roles"] == roles, "required admission roles missing")
             text(admission["owner"], "actual admitting owner")
+            self.delegated_decision(admission, binding, start, end, post_run=True)
             begin, expiry = self.validity(admission, binding["scope"],
                                           source_lifetime=binding["scope"]["phase"] == "source", binding=binding)
             reviewed = timestamp(admission["reviewed_at"])
@@ -745,7 +1019,7 @@ class Verifier:
         if self.tasks[binding["task"]]["class"].startswith("CI-"):
             require(required, "required exact-head CI collection missing")
         if binding["task"] == "T010":
-            require({FEATURE_PATH + "/tests/" + name for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py")} == set(required), "feature suites not explicitly collected")
+            require({FEATURE_PATH + "/tests/" + name for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py", "test_delegated_evidence.py")} == set(required), "feature suites not explicitly collected")
         actual = output["ci"]
         require(set(actual) == set(required), "missing/unknown CI suites")
         for suite, count in required.items():
@@ -768,6 +1042,7 @@ class Verifier:
         require(end <= start and accepted_at <= start, message)
 
     def verify(self, key, supplied=None):
+        self.current_delegation()
         require(self.authenticated, "actual custodian authentication pending")
         if key in INSTANCE_TASKS:
             aggregate_ref = reference(self.trust["aggregates"][key])
@@ -892,6 +1167,7 @@ class Verifier:
         self.cache.add(key)
 
     def aggregate(self, task, data):
+        self.current_delegation()
         require(self.authenticated, "actual custodian authentication pending")
         require(task in INSTANCE_TASKS, "task has no aggregate instances")
         record = decode(data)
@@ -907,6 +1183,62 @@ class Verifier:
         require(body == {"schema": "043-instance-aggregate-v1", "task": task, "children": expected}, "missing/foreign/duplicate aggregate child")
         for instance in instances:
             self.verify(task + "@" + instance)
+        if task == "T061" and (self.delegated_root_id is not None or "internal_program" in self.trust):
+            require("internal_program" in self.trust, "internal delegated root requires program handoff")
+            self.internal_handoff(instances, expected)
+
+    def internal_handoff(self, instances, expected):
+        marker = self.trust["internal_program"]
+        require(isinstance(marker, dict) and set(marker) == {"root", "handoff"},
+                "closed internal-program marker required")
+        require(_same_reference(marker["root"], DELEGATION_ROOT_REF), "wrong internal program root")
+        ref = reference(marker["handoff"])
+        require(ref["repository"].lower() == COORDINATOR
+                and ref["path"] == FEATURE_PATH + "/review/internal-production-handoff.md",
+                "wrong internal handoff owner/path")
+        raw = _pinned_blob(self.store, ref)
+        blocks = re.findall(rb"^```json\r?\n(.*?)^```[ \t]*$", raw, re.M | re.S)
+        require(len(blocks) == 1, "one internal handoff JSON block required")
+        handoff = decode(blocks[0])
+        require(isinstance(handoff, dict) and set(handoff) == {
+            "schema", "root", "accepted_at", "offerings", "releases", "operations", "attestation"}
+            and handoff["schema"] == "043-internal-program-handoff-v1"
+            and _same_reference(handoff["root"], DELEGATION_ROOT_REF), "wrong internal handoff")
+        groups = {"local-headscale": {}, "hosted-headscale": {}, "hosted-domain": {}}
+        for instance in instances:
+            binding = self.binding("T061@" + instance)
+            require(binding["scope"]["customer"] == "Opensoft Inc"
+                    and binding["scope"]["phase"] == "production", "internal handoff includes foreign customer/phase")
+            offering = binding["scope"]["offering"]
+            group = "local-headscale" if offering in ("local-local", "local-managed") else offering
+            require(group in groups, "unknown internal offering")
+            groups[group][instance] = expected[instance]
+        require(all(groups.values()) and handoff["offerings"] == groups,
+                "all three actual accepted internal offerings required")
+        accepted = timestamp(handoff["accepted_at"])
+        load_delegation_root(self.store, marker["root"], accepted,
+                             revoked=self.trust["revoked_authorities"])
+        for instance in instances:
+            self.prior_acceptance("T061@" + instance, accepted,
+                                  "actual child acceptance must precede internal handoff")
+        releases = {owner: self.binding(task)["record"] for owner, task in
+                    (("C", "T019"), ("L", "T023"), ("I", "T027"), ("H", "T033"), ("D", "T042"), ("O", "T048"))}
+        require(handoff["releases"] == releases, "current release/readback task references required")
+        for task in ("T019", "T023", "T027", "T033", "T042", "T048"):
+            self.prior_acceptance(task, accepted, "actual release/readback must precede internal handoff")
+        operations = handoff["operations"]
+        require(isinstance(operations, dict) and set(operations) == {
+            "onboarding", "monitoring", "support", "rollback", "custody"}, "complete usable operator handoff required")
+        for item in operations.values():
+            require(reference(item)["repository"].lower() in {
+                value.lower() for value in self.trust["repositories"].values()}, "foreign operator handoff")
+            require(_pinned_blob(self.store, item).strip(), "empty operator handoff")
+        subject = {"kind": "internal-program-handoff", "definition": self.definition,
+                   "content_sha256": digest(canonical_json({key: value for key, value in handoff.items()
+                                                          if key != "attestation"}))}
+        reviewed = require_delegated_review(self.store, handoff["attestation"], subject, self.now,
+                                           self.trust["revoked_authorities"])
+        require(reviewed == accepted, "internal handoff acceptance time mismatch")
 
 
 def main(argv=None):

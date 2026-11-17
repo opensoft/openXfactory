@@ -20,6 +20,8 @@ TASKS = v.load_contract(ROOT)
 NOW = datetime(2030, 1, 2, tzinfo=timezone.utc)
 START = "2030-01-01T00:00:00Z"
 END = "2030-01-01T00:01:00Z"
+AUTHORITY_START = "2029-01-01T00:00:00Z"
+AUTHORITY_END = "2031-01-01T00:00:00Z"
 
 
 def shifted(value, seconds):
@@ -202,7 +204,7 @@ class World:
     def decision(self, kind, scope):
         return self.store.put(dict(id=kind + "-" + v.digest(json.dumps(scope, sort_keys=True).encode()), kind=kind,
                                    decision="accepted", scope=scope, owner="Synthetic Owner",
-                                   valid_from="2029-01-01T00:00:00Z", valid_until="2031-01-01T00:00:00Z"), "decisions/" + kind + ".json")
+                                   valid_from=AUTHORITY_START, valid_until=AUTHORITY_END), "decisions/" + kind + ".json")
 
     def add(self, task, instance=None, scope_changes=None, dependencies=None, decisions=None):
         if task in v.INSTANCE_TASKS and instance is None:
@@ -236,7 +238,7 @@ class World:
         if definition["class"].startswith("CI-"):
             binding["ci"] = {"tests/synthetic.py": 3}
         if task == "T010":
-            binding["ci"] = {v.FEATURE_PATH + "/tests/" + name: 3 for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py")}
+            binding["ci"] = {v.FEATURE_PATH + "/tests/" + name: 3 for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py", "test_delegated_evidence.py")}
         if task == "T050":
             binding["decisions"] = ["C-03", "C-07"]
         if task == "T051":
@@ -251,7 +253,7 @@ class World:
         if instance:
             self.trust["instances"].setdefault(task, []).append(instance)
         decision = dict(id="authority-" + key, owner="Synthetic Owner", roles=binding["roles"], decision="accepted", scope=scope,
-                        valid_from="2029-01-01T00:00:00Z", valid_until="2031-01-01T00:00:00Z", mode="source",
+                        valid_from=AUTHORITY_START, valid_until=AUTHORITY_END, mode="source",
                         decisions={d: self.decision(d, scope) for d in binding["decisions"]})
         if scope["phase"] != "source":
             decision.update(mode="customer", consent=self.decision("consent", scope))
@@ -1600,7 +1602,7 @@ def test_source_decision_scope_override_cannot_satisfy_a_live_gate(world, kind):
 
 
 @pytest.mark.parametrize("mutation", ["missing-proof-suite", "extra-suite"])
-def test_current_t010_requires_exactly_the_commissioned_three_suites(mutation):
+def test_current_t010_requires_exactly_the_commissioned_four_suites(mutation):
     world = World(); world.add("T010")
     binding = world.trust["bindings"]["T010"]
     if mutation == "missing-proof-suite": binding["ci"].pop(v.FEATURE_PATH + "/tests/test_source_roots.py")
@@ -1874,3 +1876,518 @@ def test_2a46_identical_bytes_at_a_new_actual_commit_are_not_accepted(kind, tmp_
     assert store.blob(clone_ref) == v.GitStore({v.COORDINATOR: str(ROOT)}).blob(ref)
     with pytest.raises(v.EvidenceError, match="unaccepted historical control"):
         v.make_verifier(TASKS, store, clone_ref)
+
+
+# The real root supplies immutable authority only; these tests accept no output.
+DELEGATION_ROOT_FIXTURE = {
+    "repository": "opensoft/openxfactory",
+    "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
+    "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
+    "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa",
+}
+DELEGATION_TIME = datetime(2026, 11, 18, tzinfo=timezone.utc)
+
+
+def test_delegation_root_is_the_actual_human_choice():
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    root = v.load_delegation_root(store, deepcopy(DELEGATION_ROOT_FIXTURE), DELEGATION_TIME)
+    assert root["human"] == "Brett Heap" and root["delegate"]["actor"] == "Codex"
+    assert root["production_storage"]["monthly_ceiling"] == 20
+    assert root["support"]["macos"] == "deferred and unqualified"
+    assert len(root["policy"]["members"]) == 8
+
+
+@pytest.mark.parametrize("field,value", [
+    ("repository", "opensoft/other"), ("commit", "a" * 40),
+    ("path", "review/copied-grant.json"), ("sha256", "a" * 64),
+])
+def test_delegation_root_rejects_substituted_whole_reference(field, value):
+    ref = dict(DELEGATION_ROOT_FIXTURE); ref[field] = value
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    with pytest.raises(v.EvidenceError, match="root"):
+        v.load_delegation_root(store, ref, DELEGATION_TIME)
+
+
+@pytest.mark.parametrize("at", [
+    datetime(2026, 11, 17, 8, 38, 55, 472000, tzinfo=timezone.utc),
+    datetime(2026, 12, 17, 8, 38, 55, 473000, tzinfo=timezone.utc),
+    datetime(2027, 1, 1, tzinfo=timezone.utc),
+    datetime(2026, 11, 18),
+])
+def test_delegation_root_rejects_outside_or_naive_decision_time(at):
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    with pytest.raises(v.EvidenceError, match="root"):
+        v.load_delegation_root(store, DELEGATION_ROOT_FIXTURE, at)
+
+
+def test_delegation_root_current_revocation_refuses():
+    with pytest.raises(v.EvidenceError, match="revoked"):
+        v.load_delegation_root(v.GitStore({v.COORDINATOR: str(ROOT)}), DELEGATION_ROOT_FIXTURE,
+                               DELEGATION_TIME, revoked=["pc043-internal-20261117-e995d2290328"])
+
+
+def test_delegation_root_authenticates_each_original_policy_blob():
+    real = v.GitStore({v.COORDINATOR: str(ROOT)})
+    def blob(ref):
+        data = real.blob(ref)
+        return data + b"\nsynthetic corruption" if ref["commit"] == "a66cfe601407818dbd04f294bbaf92af15246e22" else data
+    with pytest.raises(v.EvidenceError, match="digest"):
+        v.load_delegation_root(SimpleNamespace(blob=blob), DELEGATION_ROOT_FIXTURE, DELEGATION_TIME)
+
+
+def test_delegation_producer_is_inactive_before_qualified_activation():
+    assert v.DELEGATION_PRODUCER_REF is None
+    with pytest.raises(v.EvidenceError, match="not activated"):
+        v.require_delegation_producer(SimpleNamespace(blob=lambda ref: b""), {})
+
+
+def test_delegation_producer_accepts_only_the_exact_activated_bytes(monkeypatch):
+    data = b"Synthetic test producer, never an actual qualification"
+    ref = dict(repository=v.COORDINATOR, commit="6" * 40,
+               path=v.FEATURE_PATH + "/attest-delegated-evidence.py", sha256=v.digest(data))
+    monkeypatch.setattr(v, "DELEGATION_PRODUCER_REF", ref)
+    store = SimpleNamespace(blob=lambda value: data)
+    assert v.require_delegation_producer(store, dict(ref)) == data
+    with pytest.raises(v.EvidenceError, match="producer"):
+        v.require_delegation_producer(store, dict(ref, commit="7" * 40))
+    with pytest.raises(v.EvidenceError, match="digest"):
+        v.require_delegation_producer(SimpleNamespace(blob=lambda value: b"tampered"), ref)
+
+
+@pytest.fixture
+def delegated_world(monkeypatch):
+    # Actual root/policy bytes, synthetic producer/review/provider metadata.
+    # No real output is accepted or delegate activated by these unit tests.
+    monkeypatch.setitem(globals(), "START", "2026-11-18T00:00:00Z")
+    monkeypatch.setitem(globals(), "END", "2026-11-18T00:01:00Z")
+    monkeypatch.setitem(globals(), "AUTHORITY_START", "2026-11-17T09:00:00Z")
+    monkeypatch.setitem(globals(), "AUTHORITY_END", "2026-12-17T08:38:55.473Z")
+    world = source_container_world()
+    monkeypatch.setattr(v, "DELEGATED_ATTESTATIONS", {})
+    real = v.GitStore({v.COORDINATOR: str(ROOT)})
+    original = world.store.blob
+    def blob(ref):
+        identity = (ref["repository"], ref["commit"], ref["path"])
+        return original(ref) if identity in world.store.objects else real.blob(ref)
+    monkeypatch.setattr(world.store, "blob", blob)
+    producer = world.store.put(b"Synthetic qualified producer", v.FEATURE_PATH + "/attest-delegated-evidence.py")
+    monkeypatch.setattr(v, "DELEGATION_PRODUCER_REF", producer)
+    pending = source_anchor(world, accepted=False)
+    subject = dict(kind="source-authentication", definition=v.DEFINITION,
+                   reviewed_manifest=pending, content_sha256=v.commissioning_digest(world.trust))
+    panel = dict(schema="043-independent-review-v1", subject=subject,
+                 reviewed_at="2026-11-18T01:00:00Z",
+                 roles={role: dict(reviewer="synthetic-" + role, verdict="clear",
+                                   report="Synthetic focused independent report") for role in v.REVIEW_ROLES})
+    grouped = {}
+    for output in world.outputs.values():
+        for suite, run in output["ci"].items():
+            identity = (run["repository"], run["run_id"], run["job_id"], run["revision"])
+            grouped.setdefault(identity, {})[suite] = run["collected"]
+    observations = [dict(
+        run=dict(id=run_id, head_sha=revision, status="completed", conclusion="success", run_attempt=1,
+                 created_at="2026-11-18T00:00:00Z", updated_at="2026-11-18T00:06:00Z",
+                 repository=dict(full_name=repository)),
+        job=dict(id=job_id, run_id=run_id, head_sha=revision, status="completed", conclusion="success", run_attempt=1,
+                 started_at="2026-11-18T00:01:00Z", completed_at="2026-11-18T00:05:00Z",
+                 steps=[dict(name="Synthetic collected suites", conclusion="success")]),
+        log_sha256=v.digest(b"Synthetic actual provider log"), suites=suites)
+        for (repository, run_id, job_id, revision), suites in grouped.items()]
+    for item in observations:
+        item["run"]["path"] = ".github/workflows/pytest-suite.yml"
+        names = ["Require the commissioned App identity (043)", "Mint scoped Opensoft source read token (043)",
+                 "Prepare commit-only owner roots with the reviewed producer (043)",
+                 "Revoke source tokens before any tests (043)",
+                 "Run private-connectivity production source suites (043)", "Remove ephemeral source proof (043)"]
+        item["job"]["steps"] = [dict(name=name, number=number, conclusion="success") for number, name in enumerate(names, 1)]
+    secondary = deepcopy(observations[0])
+    secondary["run"]["id"] += 1
+    secondary["run"]["path"] = ".github/workflows/doc-health-py314.yml"
+    secondary["job"]["id"] += 1
+    secondary["job"]["run_id"] = secondary["run"]["id"]
+    secondary["job"]["steps"][4]["name"] = "Exercise source proof under Python 3.14 (043)"
+    secondary["suites"] = {path: count for path, count in secondary["suites"].items()
+                          if path.endswith(("test_source_roots.py", "test_delegated_evidence.py"))}
+    observations.append(secondary)
+    attestation = dict(schema="043-delegated-attestation-v1", actor="Codex", accountable_owner="Brett Heap",
+                       root=deepcopy(DELEGATION_ROOT_FIXTURE), producer=producer,
+                       reviewed_at="2026-11-18T01:01:00Z", subject=subject,
+                       independent_review=world.store.put(panel, "reviews/independent.json"),
+                       provider_observations=observations, evidence=[pending])
+    def anchor():
+        ref = world.store.put(attestation, "reviews/delegated-attestation.json")
+        v.DELEGATED_ATTESTATIONS[v.digest(v.canonical_json(attestation["subject"]))] = ref
+        record = dict(schema="043-delegated-source-authentication-v1", decision="accepted", actor="Codex",
+                      accountable_owner="Brett Heap", reviewed_manifest=pending,
+                      content_sha256=subject["content_sha256"], attestation=ref)
+        fence = bytes([96]) * 3
+        world.trust["review"] = world.store.put(
+            b"# SYNTHETIC delegated review\n" + fence + b"json\n" + v.canonical_json(record)
+            + b"\n" + fence + b"\n", v.AUTHENTICATION_PATH)
+        return world.store.put(world.trust, v.COMMISSIONING_PATH)
+    return world, attestation, panel, anchor
+
+
+def test_delegated_source_form_verifies_actual_root_and_all_original_checks(delegated_world):
+    world, _, _, anchor = delegated_world
+    reader = v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+    reader.verify("T010")
+    assert reader.cache == {f"T{i:03}" for i in range(1, 11)}
+
+
+@pytest.mark.parametrize("mutation", [
+    "actor", "owner", "root", "producer", "expired", "future", "subject", "missing-evidence",
+    "extra-field", "missing-ci", "extra-ci", "failed-run", "wrong-job-head", "failed-step",
+    "wrong-count", "missing-log", "duplicate-ci", "duplicate-evidence",
+])
+def test_delegated_authentication_rejects_incomplete_or_substituted_proof(delegated_world, mutation):
+    world, proof, _, anchor = delegated_world
+    if mutation == "actor": proof["actor"] = "Brett Heap"
+    if mutation == "owner": proof["accountable_owner"] = "someone else"
+    if mutation == "root": proof["root"]["commit"] = "a" * 40
+    if mutation == "producer": proof["producer"] = dict(proof["producer"], commit="b" * 40)
+    if mutation == "expired": proof["reviewed_at"] = "2026-12-17T08:38:55.473Z"
+    if mutation == "future": proof["reviewed_at"] = "2026-11-20T00:00:00Z"
+    if mutation == "subject": proof["subject"] = dict(proof["subject"], definition="a" * 64)
+    if mutation == "missing-evidence": proof["evidence"] = []
+    if mutation == "extra-field": proof["waiver"] = True
+    if mutation == "missing-ci": proof["provider_observations"] = []
+    if mutation == "extra-ci": proof["provider_observations"][0]["run"]["id"] += 1
+    if mutation == "failed-run": proof["provider_observations"][0]["run"]["conclusion"] = "failure"
+    if mutation == "wrong-job-head": proof["provider_observations"][0]["job"]["head_sha"] = "a" * 40
+    if mutation == "failed-step": proof["provider_observations"][0]["job"]["steps"][0]["conclusion"] = "failure"
+    if mutation == "wrong-count": proof["provider_observations"][0]["suites"][next(iter(proof["provider_observations"][0]["suites"]))] += 1
+    if mutation == "missing-log": proof["provider_observations"][0]["log_sha256"] = None
+    if mutation == "duplicate-ci": proof["provider_observations"] *= 2
+    if mutation == "duplicate-evidence": proof["evidence"] *= 2
+    with pytest.raises(v.EvidenceError):
+        v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+
+
+@pytest.mark.parametrize("mutation", ["missing-role", "same-reviewer", "unresolved", "missing-report", "subject", "late"])
+def test_delegated_authentication_requires_actual_distinct_independent_review(delegated_world, mutation):
+    world, proof, panel, anchor = delegated_world
+    if mutation == "missing-role": panel["roles"].pop("security")
+    if mutation == "same-reviewer":
+        for result in panel["roles"].values(): result["reviewer"] = "one-reviewer"
+    if mutation == "unresolved": panel["roles"]["security"]["verdict"] = "findings"
+    if mutation == "missing-report": panel["roles"]["security"]["report"] = ""
+    if mutation == "subject": panel["subject"] = {}
+    if mutation == "late": panel["reviewed_at"] = "2026-11-19T00:00:00Z"
+    proof["independent_review"] = world.store.put(panel, "reviews/changed-independent.json")
+    with pytest.raises(v.EvidenceError):
+        v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+
+
+def test_delegated_source_authentication_rechecks_current_root_revocation(delegated_world):
+    world, _, _, anchor = delegated_world
+    world.trust["revoked_authorities"].append("pc043-internal-20261117-e995d2290328")
+    with pytest.raises(v.EvidenceError):
+        v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+
+
+@pytest.mark.parametrize("mutation", ["missing-secondary", "wrong-secondary-head", "skipped-prepare", "late-revocation", "wrong-secondary-count"])
+def test_delegated_source_requires_both_real_proof_lanes(delegated_world, mutation):
+    world, proof, _, anchor = delegated_world
+    observations = proof["provider_observations"]
+    if mutation == "missing-secondary": observations.pop()
+    if mutation == "wrong-secondary-head": observations[-1]["job"]["head_sha"] = "a" * 40
+    if mutation == "skipped-prepare": observations[-1]["job"]["steps"][2]["conclusion"] = "skipped"
+    if mutation == "late-revocation": observations[-1]["job"]["steps"][3]["number"] = 99
+    if mutation == "wrong-secondary-count":
+        key = next(iter(observations[-1]["suites"]))
+        observations[-1]["suites"][key] += 1
+    with pytest.raises(v.EvidenceError):
+        v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+
+
+def test_delegated_root_revocation_is_rechecked_after_cache(delegated_world):
+    world, _, _, anchor = delegated_world
+    reader = v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+    reader.verify("T007")
+    reader.trust["revoked_authorities"].append("pc043-internal-20261117-e995d2290328")
+    with pytest.raises(v.EvidenceError, match="root revoked"):
+        reader.verify("T007")
+
+
+def bind_synthetic_delegated_subject(world, proof, panel, subject):
+    proof["subject"] = subject
+    proof["provider_observations"] = []
+    panel["subject"] = subject
+    proof["independent_review"] = world.store.put(panel, "reviews/subject-panel.json")
+    ref = world.store.put(proof, "reviews/subject-proof.json")
+    v.DELEGATED_ATTESTATIONS[v.digest(v.canonical_json(subject))] = ref
+    return ref
+
+
+@pytest.mark.parametrize("mutation", [None, "human-actor", "external", "Q5", "expiry", "late-decision", "mutated-record"])
+def test_delegated_runtime_decisions_keep_actor_customer_time_and_Q5_limits(delegated_world, mutation):
+    world, proof, panel, anchor = delegated_world
+    reader = v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+    binding = deepcopy(world.trust["bindings"]["T007"])
+    binding["task"] = "T058"
+    binding["scope"].update(phase="production", customer="Opensoft Inc")
+    decision = dict(id="synthetic-runtime-grant", kind="grant", actor="Codex", owner="Codex",
+                    accountable_owner="Brett Heap", decision="accepted", scope=binding["scope"],
+                    valid_from="2026-11-18T01:01:00Z", valid_until="2026-11-19T00:00:00Z")
+    if mutation == "human-actor": decision["owner"] = "Brett Heap"
+    if mutation == "external": binding["scope"]["customer"] = "external customer"
+    if mutation == "Q5": decision["kind"] = "C-11"
+    if mutation == "expiry": decision["valid_until"] = "2027-01-01T00:00:00Z"
+    subject = dict(kind="decision", definition=v.DEFINITION, record_sha256=v.digest(v.canonical_json(decision)))
+    decision["delegation"] = bind_synthetic_delegated_subject(world, proof, panel, subject)
+    if mutation == "mutated-record": decision["id"] = "different"
+    start = v.timestamp("2026-11-18T00:00:00Z" if mutation == "late-decision" else "2026-11-18T01:02:00Z")
+    end = v.timestamp("2026-11-18T01:03:00Z")
+    if mutation:
+        with pytest.raises(v.EvidenceError):
+            reader.delegated_decision(decision, binding, start, end)
+    else:
+        reader.delegated_decision(decision, binding, start, end)
+
+
+@pytest.fixture
+def internal_handoff_world(delegated_world, monkeypatch):
+    world, proof, panel, _ = delegated_world
+    # This tests aggregate admission in isolation. Child verification is tracked,
+    # not replaced in the executable reader; full child/canary cases stay above.
+    expected = {}
+    groups = {}
+    for instance, offering, group in (("local", "local-local", "local-headscale"),
+                                    ("service", "hosted-headscale", "hosted-headscale"),
+                                    ("domain", "hosted-domain", "hosted-domain")):
+        key = world.child("T061", instance, {"customer": "Opensoft Inc", "offering": offering})
+        expected[instance] = world.ref(key)
+        groups[group] = {instance: expected[instance]}
+    releases = {owner: world.ref(task) for owner, task in
+                (("C", "T019"), ("L", "T023"), ("I", "T027"), ("H", "T033"), ("D", "T042"), ("O", "T048"))}
+    operations = {name: world.store.put(b"Synthetic usable operator instructions", "operations/" + name + ".md")
+                  for name in ("onboarding", "monitoring", "support", "rollback", "custody")}
+    proof["reviewed_at"] = "2026-11-18T02:00:00Z"
+    panel["reviewed_at"] = "2026-11-18T01:59:00Z"
+    handoff = dict(schema="043-internal-program-handoff-v1", root=deepcopy(DELEGATION_ROOT_FIXTURE),
+                   accepted_at=proof["reviewed_at"], offerings=groups, releases=releases, operations=operations)
+    subject = dict(kind="internal-program-handoff", definition=v.DEFINITION,
+                   content_sha256=v.digest(v.canonical_json(handoff)))
+    handoff["attestation"] = bind_synthetic_delegated_subject(world, proof, panel, subject)
+    reader = object.__new__(v.Verifier)
+    reader.tasks, reader.store, reader.trust = TASKS, world.store, world.trust
+    reader.definition, reader.now = v.DEFINITION, DELEGATION_TIME.replace(day=19)
+    reader.objects = world.trust["source_container"]["objects"]
+    reader.authenticated, reader.authenticated_at = True, v.timestamp(proof["reviewed_at"])
+    reader.delegated_root_id = "pc043-internal-20261117-e995d2290328"
+    calls = []
+    monkeypatch.setattr(reader, "verify", lambda key: calls.append(key))
+    def publish():
+        fence = bytes([96]) * 3
+        ref = world.store.put(b"# Synthetic handoff\n" + fence + b"json\n" + v.canonical_json(handoff)
+                              + b"\n" + fence + b"\n", v.FEATURE_PATH + "/review/internal-production-handoff.md")
+        reader.trust["internal_program"] = dict(root=deepcopy(DELEGATION_ROOT_FIXTURE), handoff=ref)
+    return world, reader, handoff, expected, calls, publish
+
+
+@pytest.mark.parametrize("mutation", [None, "missing-offering", "foreign-customer", "wrong-release",
+                                      "missing-support", "wrong-path", "wrong-root", "wrong-time", "unreviewed-change"])
+def test_internal_handoff_requires_all_three_actual_offerings_and_operator_packet(internal_handoff_world, mutation):
+    world, reader, handoff, expected, calls, publish = internal_handoff_world
+    if mutation == "missing-offering": handoff["offerings"].pop("hosted-domain")
+    if mutation == "foreign-customer": reader.trust["bindings"]["T061@domain"]["scope"]["customer"] = "someone else"
+    if mutation == "wrong-release": handoff["releases"]["H"] = handoff["releases"]["C"]
+    if mutation == "missing-support": handoff["operations"].pop("support")
+    if mutation == "wrong-root": handoff["root"]["commit"] = "a" * 40
+    if mutation == "wrong-time": handoff["accepted_at"] = "2026-11-18T02:00:01Z"
+    if mutation == "unreviewed-change":
+        handoff["operations"]["support"] = world.store.put(b"Changed after review", "operations/new-support.md")
+    publish()
+    if mutation == "wrong-path":
+        ref = reader.trust["internal_program"]["handoff"]
+        reader.trust["internal_program"]["handoff"] = world.store.put(
+            world.store.blob(ref), v.FEATURE_PATH + "/review/copied-handoff.md")
+    if mutation:
+        with pytest.raises(v.EvidenceError):
+            reader.internal_handoff(list(expected), expected)
+    else:
+        reader.internal_handoff(list(expected), expected)
+        assert calls == ["T061@local", "T061@service", "T061@domain",
+                         "T019", "T023", "T027", "T033", "T042", "T048"]
+
+
+def test_internal_handoff_is_aggregate_only_and_does_not_widen_child_cases():
+    assert TASKS["T061"]["cases"] == ["observed-objectives-met", "incidents-reviewed-closed", "fresh-owner-acceptance"]
+    assert "internal-program-handoff" not in TASKS["T061"]["cases"]
+    assert TASKS["T062"]["dependencies"] == ["T061"]
+
+
+@pytest.mark.parametrize("mutation", ["unregistered", "other-subject", "copied-commit", "fabricated"])
+def test_delegated_output_requires_exact_protected_base_qualification(delegated_world, mutation):
+    world, proof, _, anchor = delegated_world
+    anchor()
+    subject = deepcopy(proof["subject"])
+    approved = v.DELEGATED_ATTESTATIONS[v.digest(v.canonical_json(subject))]
+    ref = approved
+    if mutation == "unregistered": v.DELEGATED_ATTESTATIONS.clear()
+    if mutation == "other-subject": subject["kind"] = "decision"
+    if mutation == "copied-commit":
+        ref = world.store.put(world.store.blob(approved), approved["path"], revision="7" * 40)
+    if mutation == "fabricated":
+        changed = deepcopy(proof); changed["actor"] = "claimed-qualified-producer"
+        ref = world.store.put(changed, approved["path"])
+    with pytest.raises(v.EvidenceError, match="not independently qualified"):
+        v.require_delegated_review(world.store, ref, subject, DELEGATION_TIME.replace(day=19))
+
+
+def test_codex_admission_cannot_use_legacy_human_path():
+    world = World()
+    key = world.child("T058")
+    completed_run(world, key)
+    admit_run(world, key, owner="Codex", actor="Codex", accountable_owner="Brett Heap")
+    with pytest.raises(v.EvidenceError, match="delegated decision actor"):
+        world.check(key)
+
+
+@pytest.mark.parametrize("mutation", [None, "inactive", "missing-attestation", "wrong-root",
+                                      "expired", "revoked", "wrong-subject", "before-run"])
+def test_delegated_admission_is_post_run_and_qualified(delegated_world, monkeypatch, mutation):
+    world, proof, panel, _ = delegated_world
+    key = world.child("T058", scope_changes={"customer": "Opensoft Inc"})
+    completed_run(world, key)
+    reviewed_at = "2026-11-18T00:00:00Z" if mutation == "before-run" else "2026-11-18T02:00:00Z"
+    proof["reviewed_at"] = reviewed_at
+    panel["reviewed_at"] = "2026-11-17T23:59:00Z"
+    if mutation == "expired":
+        proof["reviewed_at"] = reviewed_at = "2026-12-18T00:00:00Z"
+    if mutation == "wrong-root": proof["root"]["commit"] = "a" * 40
+    admission = admit_run(world, key, owner="Codex", actor="Codex", accountable_owner="Brett Heap",
+                          reviewed_at=reviewed_at)
+    subject = dict(kind="decision", definition=v.DEFINITION,
+                   record_sha256=v.digest(v.canonical_json(admission)))
+    admission["delegation"] = bind_synthetic_delegated_subject(world, proof, panel, subject)
+    if mutation == "missing-attestation": admission.pop("delegation")
+    if mutation == "wrong-subject": admission["id"] = "substituted-admission"
+    ref = world.store.put(admission, "reviews/delegated-admission.json")
+    world.trust["bindings"][key]["admission"] = world.records[key]["admission"] = ref
+    world.publish(key)
+    control = source_anchor(world, mutate_review=lambda review: review.update(reviewed_at="2026-11-18T03:00:00Z"))
+    reader = v.Verifier(TASKS, world.store, control, now=v.timestamp("2026-12-19T00:00:00Z")
+                        if mutation == "expired" else DELEGATION_TIME.replace(day=19))
+    if mutation == "inactive": monkeypatch.setattr(v, "DELEGATION_PRODUCER_REF", None)
+    if mutation == "revoked": reader.trust["revoked_authorities"].append("pc043-internal-20261117-e995d2290328")
+    binding = reader.binding(key)
+    record = reader.read(binding["record"], binding)
+    if mutation:
+        with pytest.raises(v.EvidenceError):
+            reader.evidence_authority(binding, record)
+    else:
+        reader.evidence_authority(binding, record)
+
+
+@pytest.mark.parametrize("after_expiry", [False, True])
+def test_delegated_source_permission_cannot_extend_execution_window(delegated_world, after_expiry):
+    world, proof, panel, anchor = delegated_world
+    reader = v.Verifier(TASKS, world.store, anchor(), now=v.timestamp("2026-12-19T00:00:00Z"))
+    binding = deepcopy(world.trust["bindings"]["T007"])
+    decision = dict(id="source-scope", kind="C-01", owner="Codex", actor="Codex",
+                    accountable_owner="Brett Heap", decision="accepted", scope=binding["scope"],
+                    valid_from="2026-11-17T09:00:00Z", valid_until="until-superseded")
+    subject = dict(kind="decision", definition=v.DEFINITION,
+                   record_sha256=v.digest(v.canonical_json(decision)))
+    decision["delegation"] = bind_synthetic_delegated_subject(world, proof, panel, subject)
+    start = v.timestamp("2026-12-18T00:00:00Z" if after_expiry else "2026-11-18T02:00:00Z")
+    end = start + timedelta(minutes=1)
+    if after_expiry:
+        with pytest.raises(v.EvidenceError, match="expiry"):
+            reader.delegated_decision(decision, binding, start, end)
+    else:
+        reader.delegated_decision(decision, binding, start, end)
+        reader.validity(decision, binding["scope"], start, end, source_lifetime=True, binding=binding)
+
+
+def test_internal_root_cannot_omit_aggregate_handoff(internal_handoff_world):
+    world, reader, _, _, _, _ = internal_handoff_world
+    reader.authenticated = True
+    data = world.aggregate("T061")
+    with pytest.raises(v.EvidenceError, match="requires program handoff"):
+        reader.aggregate("T061", data)
+
+
+@pytest.mark.parametrize("later", ["child-output", "child-admission", "release-readback"])
+def test_internal_handoff_follows_actual_dependency_acceptance(internal_handoff_world, monkeypatch, later):
+    world, reader, _, expected, _, publish = internal_handoff_world
+    publish()
+    key = "T019" if later == "release-readback" else "T061@domain"
+    binding = reader.binding(key)
+    record = reader.read(binding["record"], binding)
+    end = v.timestamp("2026-11-18T02:00:01Z")
+    if later == "child-admission":
+        admission = dict(reviewed_at=end.isoformat())
+        binding["admission"] = world.store.put(admission, "reviews/later-child.json")
+        # Isolate prior_acceptance chronology; admission verification itself has
+        # separate full positive/negative coverage above.
+        monkeypatch.setattr(reader, "evidence_authority",
+                            lambda actual, receipt: (None, None, v.timestamp("2026-11-18T01:23:00Z"), None))
+    else:
+        original = reader.evidence_authority
+        def authority(actual, receipt):
+            result = original(actual, receipt)
+            return (*result[:2], end, result[3]) if actual is binding else result
+        monkeypatch.setattr(reader, "evidence_authority", authority)
+    with pytest.raises(v.EvidenceError, match="must precede internal handoff"):
+        reader.internal_handoff(list(expected), expected)
+
+
+def test_internal_handoff_can_be_read_after_root_expiry_with_current_underlying_acceptance(internal_handoff_world, monkeypatch):
+    _, reader, _, expected, _, publish = internal_handoff_world
+    publish()
+    reader.now = v.timestamp("2026-12-18T00:00:00Z")
+    # Existing accepted records still have their own current admission policy;
+    # root expiry must not be substituted for that independent policy.
+    monkeypatch.setattr(reader, "prior_acceptance", lambda *args: None)
+    reader.internal_handoff(list(expected), expected)
+
+
+@pytest.mark.parametrize("mutation", ["late-job", "late-run", "reversed-job", "old-attempt"])
+def test_delegated_review_follows_actual_provider_completion(delegated_world, mutation):
+    world, proof, _, anchor = delegated_world
+    actual = proof["provider_observations"][0]
+    if mutation == "late-job": actual["job"]["completed_at"] = "2026-11-18T02:00:00Z"
+    if mutation == "late-run": actual["run"]["updated_at"] = "2026-11-18T02:00:00Z"
+    if mutation == "reversed-job": actual["job"]["started_at"] = "2026-11-18T00:10:00Z"
+    if mutation == "old-attempt": actual["job"]["run_attempt"] = 2
+    control = anchor()
+    with pytest.raises(v.EvidenceError):
+        v.Verifier(TASKS, world.store, control, now=DELEGATION_TIME.replace(day=19))
+
+
+def test_internal_handoff_accepts_dependency_equality_boundary(internal_handoff_world, monkeypatch):
+    _, reader, handoff, expected, _, publish = internal_handoff_world
+    publish()
+    accepted = v.timestamp(handoff["accepted_at"])
+    monkeypatch.setattr(reader, "evidence_authority", lambda *args: (None, None, accepted, None))
+    reader.internal_handoff(list(expected), expected)
+
+
+@pytest.mark.parametrize("resume", [False, True])
+def test_source_resume_review_is_post_run_but_never_an_execution_grant(delegated_world, resume):
+    world, proof, panel, anchor = delegated_world
+    reader = v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+    binding = deepcopy(world.trust["bindings"]["T007"])
+    binding["decisions"] = ["C-13"]
+    common = dict(decision="accepted", owner="Codex", actor="Codex", accountable_owner="Brett Heap",
+                  scope=binding["scope"], valid_from=AUTHORITY_START, valid_until="until-superseded",
+                  reviewed_at=proof["reviewed_at"])
+    repair = dict(common, id="actual-source-rerun-review", kind="C-13",
+                  reruns=[reader.read(binding["record"], binding)["output"]])
+    subject = dict(kind="decision", definition=v.DEFINITION, record_sha256=v.digest(v.canonical_json(repair)))
+    repair["delegation"] = bind_synthetic_delegated_subject(world, proof, panel, subject)
+    repair_ref = world.store.put(repair, "reviews/source-rerun.json")
+    authority = dict(common, id="source-resume-review", kind="source-authority",
+                     roles=binding["roles"], mode="source", decisions={"C-13": repair_ref})
+    subject = dict(kind="decision", definition=v.DEFINITION, record_sha256=v.digest(v.canonical_json(authority)))
+    authority["delegation"] = bind_synthetic_delegated_subject(world, proof, panel, subject)
+    authority_ref = world.store.put(authority, "reviews/source-resume-authority.json")
+    start, end = v.timestamp(START), v.timestamp(END)
+    if resume:
+        reader.authority(authority_ref, binding, start, end, resume=True)
+    else:
+        with pytest.raises(v.EvidenceError, match="before grant"):
+            reader.authority(authority_ref, binding, start, end)

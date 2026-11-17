@@ -118,3 +118,38 @@ original source identity; qualify this complete refreshed E source and CI anew.
 The fixed accepted 2a46 controls/readers remain the only added historical
 anchors. Actual new output authentication/default admission and all release,
 operating and Q0-Q5 gates remain separate.
+
+## Approved internal execution amendment
+
+Brett directly accepted the exact [root policy and record](../../openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md) at
+2026-11-17T08:38:55.473Z, valid for new agent actions until
+2026-12-17T08:38:55.473Z. He remains accountable for all initial component,
+rollout, release, operational/rollback, identity/DNS/TLS and custody roles.
+Codex is the distinct delegate; it never records a future human sign-off.
+
+The directly reviewed E refinement adds only
+specs/043-private-connectivity-production/attest-delegated-evidence.py to T010.
+The directly reviewed C-10 refinement adds only
+specs/043-private-connectivity-production/review/internal-production-handoff.md
+to T061 and the conditional aggregate-only case internal-program-handoff.
+All existing child cases, task identities, owners, classes, dependencies and
+commands remain. Existing exact E source/CI/test paths support the closed
+root/delegated-form, qualification, measured census and refusal regressions
+listed in the ratified policy. Newly necessary unlisted files still need their
+own exact independently reviewed amendment; the delegate cannot expand the
+root policy or its numeric/financial/target boundary.
+
+The human-root record is authority for qualifying the mechanism and conditional
+landings, not acceptance of the new E outputs. Original accepted controls stay
+immutable and independently usable. New actual source and operating outputs
+remain unaccepted until the qualified mechanism verifies them.
+
+### Reviewed attestor test refinement
+
+Codex recorded the independently reviewed C-01 source-scope decision at 2026-11-17T10:18:51.198109+00:00
+under the genuine human root, as preserved in the owning attestor-test-scope.md
+record at 052ec0d4fd963dbd4f6c4b8e8054b9805f08dded. It adds only the one
+T010 test_delegated_evidence.py path and a fourth mandatory measured current
+source suite. All original suites, historical readers, task dependencies and
+commands remain. This source permission is distinct from pending output
+acceptance and qualified producer activation.
