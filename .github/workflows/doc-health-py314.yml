@@ -323,7 +323,7 @@ jobs:
           report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "pc043-py314.xml").getroot()
           cases = list(report.iter("testcase"))
           expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 107,
-                      "specs.043-private-connectivity-production.tests.test_delegated_evidence": 72}
+                      "specs.043-private-connectivity-production.tests.test_delegated_evidence": 98}
           if dict(Counter(case.get("classname") for case in cases)) != expected:
               raise SystemExit("Python 3.14 proof suite collection mismatch")
           identities = {(case.get("classname"), case.get("name")) for case in cases}

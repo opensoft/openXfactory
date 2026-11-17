@@ -277,7 +277,8 @@ def test_secondary_requires_latest_exact_source_lane_and_one_measured_job(mutati
         assert calls == [(a.COORDINATOR, 11, 20, suites)]
 
 
-def test_main_reads_candidate_only_as_data_and_emits_unregistered_review(source_fixture, tmp_path, monkeypatch, capsys):
+@pytest.mark.parametrize("mode", ["manifest", "source-decision"])
+def test_main_reads_candidate_only_as_data_and_emits_unregistered_review(source_fixture, tmp_path, monkeypatch, capsys, mode):
     world, proof, _, _ = source_fixture
     v = h.v
     primary, secondary = deepcopy(proof["provider_observations"])
@@ -295,12 +296,20 @@ def test_main_reads_candidate_only_as_data_and_emits_unregistered_review(source_
     monkeypatch.setattr(v, "load_contract", lambda root: h.TASKS)
     roots = tmp_path / "roots.json"
     roots.write_text(json.dumps({a.COORDINATOR: str(ROOT)}))
+    if mode == "manifest":
+        selected = ["--manifest", json.dumps(proof["subject"]["reviewed_manifest"]),
+                    "--independent-review", json.dumps(proof["independent_review"])]
+        expected = proof["subject"]
+    else:
+        _, decision, review, evidence, expected = source_decision_fixture(source_fixture)
+        selected = ["--source-decision", json.dumps(decision), "--independent-review", json.dumps(review)]
+        for ref in evidence:
+            selected.extend(("--evidence", json.dumps(ref)))
     monkeypatch.setattr(sys, "argv", [str(PRODUCER), "--base", "a" * 40, "--root", str(ROOT),
-                                     "--roots", str(roots), "--manifest", json.dumps(proof["subject"]["reviewed_manifest"]),
-                                     "--independent-review", json.dumps(proof["independent_review"])])
+                                     "--roots", str(roots), *selected])
     a.main()
     result = json.loads(capsys.readouterr().out)
-    assert result["subject"] == proof["subject"]
+    assert result["subject"] == expected
     assert result["actor"] == "Codex"
     assert v.DELEGATED_ATTESTATIONS == {}
 
@@ -349,3 +358,71 @@ def test_actual_ci_formatter_emits_only_fully_measured_unique_passing_suites(tmp
         assert marker == dict(schema="043-collected-suites-v1", source_revision="a" * 40,
                               suites={a.FEATURE + "/tests/" + name.rsplit(".", 1)[-1] + ".py": count
                                       for name, count in expected.items()})
+
+
+def source_decision_fixture(source_fixture, kind="C-02", mutation=None):
+    world, _, panel, _ = source_fixture
+    v = h.v
+    scope = deepcopy(world.trust["bindings"]["T007"]["scope"])
+    body = dict(schema="043-delegated-source-decision-v1", id="synthetic-source-choice", kind=kind,
+                decision="accepted", owner="Codex", actor="Codex", accountable_owner="Brett Heap",
+                scope=scope, valid_from="2026-11-17T09:00:00Z", valid_until="until-superseded",
+                reviewed_at="2026-11-18T01:01:00Z")
+    output = world.store.put(dict(scope=scope, exit_code=0, ended_at="2026-11-18T00:01:00Z"),
+                             "exports/completed-source-output.json")
+    evidence = [output]
+    if kind == "source-authority":
+        body.update(mode="source", roles=["synthetic-source-owner"], decisions={})
+    elif kind == "evidence-admission":
+        authority = world.store.put(dict(scope=scope, mode="source", decision="accepted"), "source/authority.json")
+        body.update(roles=["synthetic-source-custodian"], authority=authority, reviewed_output_sha256=output["sha256"])
+    else:
+        body["details"] = {"source_only": True}
+        if kind == "C-13": body["reruns"] = [output]
+    if mutation == "runtime": body["scope"]["phase"] = "production"
+    if mutation == "external": body["scope"]["customer"] = "external customer"
+    if mutation == "human-actor": body["owner"] = "Brett Heap"
+    if mutation == "extra-field": body["waiver"] = True
+    if mutation == "bad-time": body["reviewed_at"] = "2026-11-17T08:00:00Z"
+    if mutation == "future": body["reviewed_at"] = "2026-11-20T00:00:00Z"
+    if mutation == "bad-validity": body["valid_until"] = body["valid_from"]
+    if mutation == "missing-evidence": evidence = []
+    if mutation == "duplicate-evidence": evidence *= 2
+    if mutation == "foreign-evidence":
+        evidence = [world.store.put(b"Synthetic unknown owner", "source/plan.md", repository="foreign/source")]
+    if mutation == "effect-channel": body["mode"] = "managed-push"
+    if mutation == "unreviewed-output": body["reviewed_output_sha256"] = "a" * 64
+    if mutation == "missing-rerun": body["reruns"] = []
+    if mutation == "late-rerun":
+        late = world.store.put(dict(scope=scope, exit_code=0, ended_at="2026-11-18T02:00:00Z"), "exports/late-output.json")
+        evidence = body["reruns"] = [late]
+    subject = dict(kind="decision", definition=v.DEFINITION, record_sha256=v.digest(v.canonical_json(body)))
+    panel = deepcopy(panel)
+    panel["subject"] = subject
+    panel["reviewed_at"] = "2026-11-18T01:00:00Z"
+    review = world.store.put(panel, "reviews/source-choice-panel.json")
+    ref = world.store.put(body, "reviews/source-choice.json")
+    return world, ref, review, evidence, subject
+
+
+@pytest.mark.parametrize("kind", ["C-01", "C-02", "C-08", "C-13", "source-authority", "evidence-admission"])
+def test_source_decisions_are_reviewed_data_and_remain_unregistered(source_fixture, kind):
+    world, ref, review, evidence, subject = source_decision_fixture(source_fixture, kind)
+    result = a.attest_source_decision(h.v, world.store, ref, review, evidence, h.DELEGATION_TIME.replace(day=19))
+    assert result["subject"] == subject
+    assert result["provider_observations"] == []
+    assert result["evidence"] == [ref, *evidence]
+    assert h.v.DELEGATED_ATTESTATIONS == {}
+
+
+@pytest.mark.parametrize("kind,mutation", [
+    ("C-02", "runtime"), ("C-02", "external"), ("C-02", "human-actor"), ("C-02", "extra-field"),
+    ("C-02", "bad-time"), ("C-02", "future"), ("C-02", "bad-validity"), ("C-02", "missing-evidence"),
+    ("C-02", "duplicate-evidence"), ("C-02", "foreign-evidence"), ("source-authority", "effect-channel"),
+    ("evidence-admission", "unreviewed-output"), ("C-13", "missing-rerun"), ("C-13", "late-rerun"),
+    ("C-09", None), ("C-10", None), ("C-11", None), ("C-12", None), ("grant", None),
+])
+def test_source_decision_entry_point_cannot_supply_runtime_or_unreviewed_authority(source_fixture, kind, mutation):
+    world, ref, review, evidence, _ = source_decision_fixture(source_fixture, kind, mutation)
+    with pytest.raises((a.AttestationError, h.v.EvidenceError)):
+        a.attest_source_decision(h.v, world.store, ref, review, evidence, h.DELEGATION_TIME.replace(day=19))

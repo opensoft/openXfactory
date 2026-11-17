@@ -207,12 +207,92 @@ def attest(module, tasks, store, manifest_ref, review_ref, provider, now):
                 provider_observations=observations, evidence=evidence)
 
 
+
+def attest_source_decision(module, store, decision_ref, review_ref, evidence_refs, now):
+    """Qualify source scope/choices only; this entry point cannot grant effects."""
+    root = module.load_delegation_root(store, module.DELEGATION_ROOT_REF, now)
+    module.require_delegation_producer(store, module.DELEGATION_PRODUCER_REF)
+    decision = module.decode(module._pinned_blob(store, decision_ref))
+    common = {"schema", "id", "kind", "decision", "owner", "actor", "accountable_owner",
+              "scope", "valid_from", "valid_until", "reviewed_at"}
+    kind = decision.get("kind")
+    kinds = {f"C-{index:02}" for index in range(1, 9)} | {"C-13"}
+    extra = ({"mode", "roles", "decisions"} if kind == "source-authority" else
+             {"roles", "authority", "reviewed_output_sha256"} if kind == "evidence-admission" else
+             {"details", "reruns"} if kind == "C-13" else {"details"})
+    need(kind in kinds | {"source-authority", "evidence-admission"} and set(decision) == (common | extra)
+         and decision["schema"] == "043-delegated-source-decision-v1"
+         and decision["decision"] == "accepted" and decision["owner"] == decision["actor"] == "Codex"
+         and decision["accountable_owner"] == "Brett Heap", "closed source decision required")
+    scope = module.scope(decision["scope"])
+    need(scope["phase"] == "source" and scope["customer"] in ("not-applicable", "Opensoft Inc"),
+         "source decision cannot authorize runtime or external use")
+    reviewed = module.timestamp(decision["reviewed_at"])
+    module.load_delegation_root(store, module.DELEGATION_ROOT_REF, reviewed)
+    need(reviewed <= now and module.timestamp(root["approved_at"]) <= module.timestamp(decision["valid_from"]) <= reviewed,
+         "source decision time outside actual grant")
+    if decision["valid_until"] != "until-superseded":
+        need(module.timestamp(decision["valid_from"]) < module.timestamp(decision["valid_until"]),
+             "source decision has invalid validity")
+    allowed = set(module.FIXED_REPOSITORIES.values()) | {"opensoft/opsxfactory", "codexfactory/codexfactory"}
+    if kind == "source-authority":
+        need(decision["mode"] == "source" and isinstance(decision["roles"], list) and decision["roles"]
+             and all(isinstance(role, str) and role.strip() for role in decision["roles"])
+             and len(decision["roles"]) == len(set(decision["roles"]))
+             and isinstance(decision["decisions"], dict) and set(decision["decisions"]) <= kinds,
+             "source authority cannot be an execution channel")
+        for ref in decision["decisions"].values():
+            need(module.reference(ref)["repository"].lower() in allowed, "foreign source choice authority")
+            module._pinned_blob(store, ref)
+    elif kind in kinds:
+        need(isinstance(decision["details"], dict), "source choice details required")
+    need(isinstance(evidence_refs, list) and evidence_refs, "actual source review evidence required")
+    evidence = [decision_ref]
+    outputs = []
+    for ref in evidence_refs:
+        need(module.reference(ref)["repository"].lower() in allowed, "source evidence outside accepted component owners")
+        raw = module._pinned_blob(store, ref)
+        need(raw.strip(), "empty actual source evidence")
+        evidence.append(ref)
+        if kind == "evidence-admission" and ref["sha256"] == decision["reviewed_output_sha256"]:
+            outputs.append(module.decode(raw))
+    need(len({module.canonical_json(ref) for ref in evidence}) == len(evidence), "duplicate source review evidence")
+    if kind == "C-13":
+        need(isinstance(decision["reruns"], list) and decision["reruns"]
+             and all(ref in evidence_refs for ref in decision["reruns"]), "actual reviewed source reruns required")
+        for ref in decision["reruns"]:
+            output = module.decode(module._pinned_blob(store, ref))
+            need(output["scope"] == scope and type(output["exit_code"]) is int and output["exit_code"] == 0
+                 and module.timestamp(output["ended_at"]) <= reviewed, "source repair review precedes actual rerun")
+    if kind == "evidence-admission":
+        need(module.reference(decision["authority"])["repository"].lower() in allowed,
+             "foreign source execution authority")
+        authority = module.decode(module._pinned_blob(store, decision["authority"]))
+        need(authority["scope"] == scope and authority["mode"] == "source" and authority["decision"] == "accepted",
+             "actual matching source execution authority required")
+        need(isinstance(decision["roles"], list) and decision["roles"]
+             and all(isinstance(role, str) and role.strip() for role in decision["roles"]) and len(outputs) == 1
+             and outputs[0]["scope"] == scope and type(outputs[0]["exit_code"]) is int
+             and outputs[0]["exit_code"] == 0 and module.timestamp(outputs[0]["ended_at"]) <= reviewed,
+             "source admission must review the actual matching completed output")
+    subject = dict(kind="decision", definition=module.DEFINITION,
+                   record_sha256=module.digest(module.canonical_json(decision)))
+    module.require_independent_review(store, review_ref, subject, reviewed)
+    return dict(schema="043-delegated-attestation-v1", actor="Codex", accountable_owner="Brett Heap",
+                root=module.DELEGATION_ROOT_REF, producer=module.DELEGATION_PRODUCER_REF,
+                reviewed_at=decision["reviewed_at"], subject=subject, independent_review=review_ref,
+                provider_observations=[], evidence=evidence)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", required=True, help="independently selected, fully qualified protected main commit")
     parser.add_argument("--root", required=True, type=Path, help="coordinator data tree; never imported")
     parser.add_argument("--roots", required=True, type=Path, help="operator-supplied canonical local owner-root map")
-    parser.add_argument("--manifest", required=True, help="immutable manifest reference as JSON")
+    subject = parser.add_mutually_exclusive_group(required=True)
+    subject.add_argument("--manifest", help="immutable source manifest reference as JSON")
+    subject.add_argument("--source-decision", help="immutable source-only decision reference as JSON")
+    parser.add_argument("--evidence", action="append", default=[], help="immutable source evidence reference as JSON")
     parser.add_argument("--independent-review", required=True, help="immutable nine-role review reference as JSON")
     args = parser.parse_args()
     provider = GitHub()
@@ -222,8 +302,14 @@ def main():
          "independently selected coordinator root required")
     store = module.GitStore(roots)
     tasks = module.load_contract(args.root)
-    result = attest(module, tasks, store, module.reference(decode(args.manifest)),
-                    module.reference(decode(args.independent_review)), provider, datetime.now(timezone.utc))
+    now = datetime.now(timezone.utc)
+    review = module.reference(decode(args.independent_review))
+    if args.manifest:
+        need(not args.evidence, "manifest authentication derives its evidence from the reviewed manifest")
+        result = attest(module, tasks, store, module.reference(decode(args.manifest)), review, provider, now)
+    else:
+        result = attest_source_decision(module, store, module.reference(decode(args.source_decision)), review,
+                                        [module.reference(decode(ref)) for ref in args.evidence], now)
     print(json.dumps(result, sort_keys=True, indent=2))
 
 
