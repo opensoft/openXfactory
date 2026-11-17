@@ -2364,3 +2364,30 @@ def test_internal_handoff_accepts_dependency_equality_boundary(internal_handoff_
     accepted = v.timestamp(handoff["accepted_at"])
     monkeypatch.setattr(reader, "evidence_authority", lambda *args: (None, None, accepted, None))
     reader.internal_handoff(list(expected), expected)
+
+
+@pytest.mark.parametrize("resume", [False, True])
+def test_source_resume_review_is_post_run_but_never_an_execution_grant(delegated_world, resume):
+    world, proof, panel, anchor = delegated_world
+    reader = v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
+    binding = deepcopy(world.trust["bindings"]["T007"])
+    binding["decisions"] = ["C-13"]
+    common = dict(decision="accepted", owner="Codex", actor="Codex", accountable_owner="Brett Heap",
+                  scope=binding["scope"], valid_from=AUTHORITY_START, valid_until="until-superseded",
+                  reviewed_at=proof["reviewed_at"])
+    repair = dict(common, id="actual-source-rerun-review", kind="C-13",
+                  reruns=[reader.read(binding["record"], binding)["output"]])
+    subject = dict(kind="decision", definition=v.DEFINITION, record_sha256=v.digest(v.canonical_json(repair)))
+    repair["delegation"] = bind_synthetic_delegated_subject(world, proof, panel, subject)
+    repair_ref = world.store.put(repair, "reviews/source-rerun.json")
+    authority = dict(common, id="source-resume-review", kind="source-authority",
+                     roles=binding["roles"], mode="source", decisions={"C-13": repair_ref})
+    subject = dict(kind="decision", definition=v.DEFINITION, record_sha256=v.digest(v.canonical_json(authority)))
+    authority["delegation"] = bind_synthetic_delegated_subject(world, proof, panel, subject)
+    authority_ref = world.store.put(authority, "reviews/source-resume-authority.json")
+    start, end = v.timestamp(START), v.timestamp(END)
+    if resume:
+        reader.authority(authority_ref, binding, start, end, resume=True)
+    else:
+        with pytest.raises(v.EvidenceError, match="before grant"):
+            reader.authority(authority_ref, binding, start, end)

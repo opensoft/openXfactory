@@ -772,7 +772,7 @@ class Verifier:
                         "later authority cannot authorize an earlier run")
         return begin, expiry
 
-    def decision(self, ref, binding, kind, start=None, end=None, historical=False, source_lifetime=False):
+    def decision(self, ref, binding, kind, start=None, end=None, historical=False, source_lifetime=False, post_run=False):
         decision = self.read(ref, binding)
         require(decision["kind"] == kind and decision["decision"] == "accepted", "required decision is not accepted")
         expected_scope = binding.get("decision_scopes", {}).get(kind, binding["scope"])
@@ -781,7 +781,7 @@ class Verifier:
                 and kind in ("C-03", "C-08", "C-09", "C-10", "C-11", "C-12", "C-13")):
             require(decision["scope"]["phase"] == binding["scope"]["phase"], "live decision phase mismatch")
         text(decision["owner"], "actual approving owner")
-        self.delegated_decision(decision, binding, start, end)
+        self.delegated_decision(decision, binding, start, end, post_run=post_run)
         self.validity(decision, expected_scope, start, end, historical, source_lifetime, binding)
         return decision
 
@@ -789,13 +789,16 @@ class Verifier:
         decision = self.read(ref, binding)
         require(decision["decision"] == "accepted" and decision["scope"] == binding["scope"], "authority scope/status mismatch")
         text(decision["owner"], "actual decision owner")
-        self.delegated_decision(decision, binding, start, end)
         require(decision["roles"] == binding["roles"] and bool(decision["roles"]), "required named roles missing")
         mode = decision["mode"]
         require(mode in ("source", "managed-pull", "managed-push", "customer"), "unknown authority channel")
         if binding["scope"]["phase"] in ("staging", "production"):
             require(mode != "source", "source authority cannot authorize live evidence")
         source_lifetime = mode == "source" and binding["scope"]["phase"] == "source"
+        # A source repair reviews completed reruns; the original execution
+        # authority is independently checked before this remediation path.
+        source_review = resume and source_lifetime
+        self.delegated_decision(decision, binding, start, end, post_run=source_review)
         self.validity(decision, binding["scope"], start, end, historical, source_lifetime, binding)
         if mode.startswith("managed-"):
             self.decision(decision["request"], binding, "request", start, end, historical)
@@ -809,7 +812,8 @@ class Verifier:
             require("C-13" in required, "fresh resume decision missing")
         for item in required:
             self.decision(decision["decisions"][item], binding, item, start, end, historical,
-                          source_lifetime=binding["scope"]["phase"] == "source")
+                          source_lifetime=binding["scope"]["phase"] == "source",
+                          post_run=source_review and item == "C-13")
         return decision
 
     def evidence_authority(self, binding, record):
