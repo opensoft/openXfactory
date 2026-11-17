@@ -111,6 +111,10 @@ DELEGATION_ROOT_REF = {
 # Activation is a separate reviewed protected-base act. No environment or
 # receipt field can supply a producer while this is None.
 DELEGATION_PRODUCER_REF = None
+# Only actual outputs independently qualified and landed on the protected base
+# may enter this register. Producer activation alone grants no output authority.
+# Key: canonical subject SHA-256. Value: exact whole immutable output reference.
+DELEGATED_ATTESTATIONS = {}
 
 
 def canonical_json(value):
@@ -393,7 +397,7 @@ def ci_identity(repository, run_id, job_id, revision):
     return repository.lower(), run_id, job_id, revision
 
 
-def require_provider_observations(observations, expected, source=None):
+def require_provider_observations(observations, expected, source=None, reviewed_at=None):
     require(isinstance(observations, list), "provider observation list required")
     found = {}
     for observation in observations:
@@ -403,9 +407,14 @@ def require_provider_observations(observations, expected, source=None):
         identity = ci_identity(run["repository"]["full_name"], run["id"], job["id"], run["head_sha"])
         require(identity not in found, "duplicate provider CI observation")
         require(job["run_id"] == run["id"] and job["head_sha"] == run["head_sha"]
+                and run["run_attempt"] == job["run_attempt"]
                 and run["status"] == job["status"] == "completed"
                 and run["conclusion"] == job["conclusion"] == "success",
                 "failed or mismatched actual provider run/job/head")
+        require(isinstance(reviewed_at, datetime) and reviewed_at.tzinfo is not None
+                and timestamp(run["created_at"]) <= timestamp(job["started_at"])
+                <= timestamp(job["completed_at"]) <= timestamp(run["updated_at"]) <= reviewed_at,
+                "actual provider completion must precede authentication")
         require(isinstance(job["steps"], list) and job["steps"]
                 and any(step.get("conclusion") == "success" for step in job["steps"])
                 and all(step.get("conclusion") in ("success", "skipped") for step in job["steps"]),
@@ -461,6 +470,9 @@ def require_proof_steps(observation, workflow):
 
 
 def require_delegated_review(store, ref, subject, now, revoked=(), expected_ci=None, source=None):
+    approved = DELEGATED_ATTESTATIONS.get(digest(canonical_json(subject)))
+    require(approved is not None and _same_reference(ref, approved),
+            "delegated output is not independently qualified")
     attestation = decode(_pinned_blob(store, ref))
     require(isinstance(attestation, dict) and set(attestation) == {
         "schema", "actor", "accountable_owner", "root", "producer", "reviewed_at",
@@ -474,7 +486,7 @@ def require_delegated_review(store, ref, subject, now, revoked=(), expected_ci=N
     load_delegation_root(store, attestation["root"], reviewed_at, revoked=revoked)
     require_delegation_producer(store, attestation["producer"])
     require_independent_review(store, attestation["independent_review"], subject, reviewed_at)
-    require_provider_observations(attestation["provider_observations"], expected_ci or {}, source)
+    require_provider_observations(attestation["provider_observations"], expected_ci or {}, source, reviewed_at)
     evidence = attestation["evidence"]
     require(isinstance(evidence, list) and evidence, "actual delegated evidence references required")
     identities = set()
@@ -692,7 +704,7 @@ class Verifier:
     def read(self, ref, binding=None):
         return decode(self.blob(ref, binding))
 
-    def delegated_decision(self, decision, binding, start=None, end=None):
+    def delegated_decision(self, decision, binding, start=None, end=None, *, post_run=False):
         if "delegation" not in decision and decision.get("actor") != "Codex" and decision.get("owner") != "Codex":
             return
         require(decision.get("actor") == decision.get("owner") == "Codex"
@@ -708,16 +720,23 @@ class Verifier:
                                                          if key != "delegation"}))}
         reviewed = require_delegated_review(self.store, decision["delegation"], subject, self.now,
                                            self.trust["revoked_authorities"])
+        root = load_delegation_root(self.store, DELEGATION_ROOT_REF, reviewed,
+                                    revoked=self.trust["revoked_authorities"])
+        self.delegated_root_id = root["id"]
+        if post_run:
+            require(end is not None and end <= reviewed
+                    and timestamp(decision["reviewed_at"]) == reviewed,
+                    "delegated admission must follow actual output")
+            return
+        if start is not None:
+            require(timestamp(root["approved_at"]) <= start and reviewed <= start,
+                    "delegated execution before grant/root")
+        if end is not None:
+            require(end < timestamp(root["expires_at"]), "execution after delegation expiry")
         if binding["scope"]["phase"] in ("staging", "production"):
-            root = load_delegation_root(self.store, DELEGATION_ROOT_REF, reviewed,
-                                        revoked=self.trust["revoked_authorities"])
             begin, expiry = timestamp(decision["valid_from"]), timestamp(decision["valid_until"])
             require(timestamp(root["approved_at"]) <= begin < expiry <= timestamp(root["expires_at"]),
                     "delegated runtime grant exceeds human-root window")
-            if start is not None:
-                require(reviewed <= start, "delegated runtime decision after actual execution")
-            if end is not None:
-                require(end < timestamp(root["expires_at"]), "runtime execution after delegation expiry")
 
     def current_delegation(self):
         require(self.delegated_root_id is None or self.delegated_root_id not in self.trust["revoked_authorities"],
@@ -827,6 +846,7 @@ class Verifier:
             require(isinstance(roles, list) and roles and all(isinstance(role, str) and role.strip() for role in roles)
                     and len(roles) == len(set(roles)) and admission["roles"] == roles, "required admission roles missing")
             text(admission["owner"], "actual admitting owner")
+            self.delegated_decision(admission, binding, start, end, post_run=True)
             begin, expiry = self.validity(admission, binding["scope"],
                                           source_lifetime=binding["scope"]["phase"] == "source", binding=binding)
             reviewed = timestamp(admission["reviewed_at"])
@@ -1159,15 +1179,15 @@ class Verifier:
         require(body == {"schema": "043-instance-aggregate-v1", "task": task, "children": expected}, "missing/foreign/duplicate aggregate child")
         for instance in instances:
             self.verify(task + "@" + instance)
-        if task == "T061" and "internal_program" in self.trust:
+        if task == "T061" and (self.delegated_root_id is not None or "internal_program" in self.trust):
+            require("internal_program" in self.trust, "internal delegated root requires program handoff")
             self.internal_handoff(instances, expected)
 
     def internal_handoff(self, instances, expected):
         marker = self.trust["internal_program"]
         require(isinstance(marker, dict) and set(marker) == {"root", "handoff"},
                 "closed internal-program marker required")
-        load_delegation_root(self.store, marker["root"], self.now,
-                             revoked=self.trust["revoked_authorities"])
+        require(_same_reference(marker["root"], DELEGATION_ROOT_REF), "wrong internal program root")
         ref = reference(marker["handoff"])
         require(ref["repository"].lower() == COORDINATOR
                 and ref["path"] == FEATURE_PATH + "/review/internal-production-handoff.md",
@@ -1191,11 +1211,17 @@ class Verifier:
             groups[group][instance] = expected[instance]
         require(all(groups.values()) and handoff["offerings"] == groups,
                 "all three actual accepted internal offerings required")
+        accepted = timestamp(handoff["accepted_at"])
+        load_delegation_root(self.store, marker["root"], accepted,
+                             revoked=self.trust["revoked_authorities"])
+        for instance in instances:
+            self.prior_acceptance("T061@" + instance, accepted,
+                                  "actual child acceptance must precede internal handoff")
         releases = {owner: self.binding(task)["record"] for owner, task in
                     (("C", "T019"), ("L", "T023"), ("I", "T027"), ("H", "T033"), ("D", "T042"), ("O", "T048"))}
         require(handoff["releases"] == releases, "current release/readback task references required")
         for task in ("T019", "T023", "T027", "T033", "T042", "T048"):
-            self.verify(task)
+            self.prior_acceptance(task, accepted, "actual release/readback must precede internal handoff")
         operations = handoff["operations"]
         require(isinstance(operations, dict) and set(operations) == {
             "onboarding", "monitoring", "support", "rollback", "custody"}, "complete usable operator handoff required")
@@ -1206,7 +1232,6 @@ class Verifier:
         subject = {"kind": "internal-program-handoff", "definition": self.definition,
                    "content_sha256": digest(canonical_json({key: value for key, value in handoff.items()
                                                           if key != "attestation"}))}
-        accepted = timestamp(handoff["accepted_at"])
         reviewed = require_delegated_review(self.store, handoff["attestation"], subject, self.now,
                                            self.trust["revoked_authorities"])
         require(reviewed == accepted, "internal handoff acceptance time mismatch")
