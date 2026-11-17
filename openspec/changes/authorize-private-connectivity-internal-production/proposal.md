@@ -9,7 +9,7 @@ sequenced_after:
 
 # Authorize autonomous internal private-connectivity completion
 
-Status: draft
+Status: ratified
 Kind: governance
 Authored: 2026-11-17
 
@@ -66,3 +66,11 @@ complete, and the feature is not archived as fully commercially rolled out.
 Drafting this packet grants no operating authority. Existing PRs remain draft
 until an actual human ruling ratifies the final packet and explicitly permits
 its conditional ready/merge/release/deployment steps.
+
+## Actual ratification
+
+Brett ratified the exact policy at a66cfe601407818dbd04f294bbaf92af15246e22 and selected the
+USD 20/month before-tax storage-only option at 2026-11-17T08:38:55.473Z.
+See [the genuine root grant](review/ratification.md). Conditional execution
+and each actual gate still require the qualified implementation and all policy
+predicates; macOS and external Q5 remain deferred.

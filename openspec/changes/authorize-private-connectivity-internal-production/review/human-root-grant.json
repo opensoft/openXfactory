@@ -1,0 +1,118 @@
+{
+  "schema": "043-human-delegation-root-v1",
+  "id": "pc043-internal-20261117-e995d2290328",
+  "decision": "accepted",
+  "feature": "043-private-connectivity-production",
+  "human": "Brett Heap",
+  "delegate": {
+    "actor": "Codex",
+    "chat": "01a1c061-ee6e-7e61-9db4-280a724e05c2",
+    "role": "bounded internal-production executor and distinct delegated decision actor"
+  },
+  "approved_at": "2026-11-17T08:38:55.473Z",
+  "expires_at": "2026-12-17T08:38:55.473Z",
+  "provenance": {
+    "kind": "original-human-message",
+    "original_user_record_sha256": "e995d2290328f1658fbd0f1bcd3aba50b8a03e9a8b2dbfaa5527e4dcce48c273",
+    "text": "Approve the 30-day delegation and USD 20/month storage-only ceiling in PR #1339 at a66cfe60. Resume 043 and deploy all three offerings for internal use, honoring Q0–Q5. Keep macOS and external Q5 deferred.",
+    "record_hash_semantics": "original user response_item record; whole UTF-8 record SHA-256 excludes line terminator"
+  },
+  "policy": {
+    "repository": "opensoft/openxfactory",
+    "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+    "members": [
+      {
+        "repository": "opensoft/openxfactory",
+        "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/.openspec.yaml",
+        "sha256": "b75d296d3b54880b00a14fd17257d690f593cd5d3db17201d597c19528a9f905"
+      },
+      {
+        "repository": "opensoft/openxfactory",
+        "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/design.md",
+        "sha256": "6684ccaa021b31502b92055ee74a43df63f79dd91543c2912cabd18db7e2c78b"
+      },
+      {
+        "repository": "opensoft/openxfactory",
+        "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/proposal.md",
+        "sha256": "2e91cad8cc55e2c835d9e0388f779b419d879bd2dd0b05c7ac483891cfe2b0cf"
+      },
+      {
+        "repository": "opensoft/openxfactory",
+        "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/review/authorization-summary.md",
+        "sha256": "ac296d0cd87b65c87bd37c62adb650ec3f3ee7dd003e906dc329265383cf704f"
+      },
+      {
+        "repository": "opensoft/openxfactory",
+        "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/review/preparation-choices.md",
+        "sha256": "cbee5e28bc58cd1c558b4e8649e2f2e27488339ffe14dc2c89bdf233fab1f4de"
+      },
+      {
+        "repository": "opensoft/openxfactory",
+        "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/review/production-storage-options.md",
+        "sha256": "c4681f9d4229311a9008010b68333c930ca00d9813f8845bc0858be4aaa649a1"
+      },
+      {
+        "repository": "opensoft/openxfactory",
+        "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/specs/private-connectivity-internal-autonomy/spec.md",
+        "sha256": "2850957b6204451ac23e63af03e0813f8769e439976bc2e5fc837b9ee0539df5"
+      },
+      {
+        "repository": "opensoft/openxfactory",
+        "commit": "a66cfe601407818dbd04f294bbaf92af15246e22",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/tasks.md",
+        "sha256": "c79d1764bb386fbdceba9d707359b885de45cbe6861209583c7ebf8e41416fef"
+      }
+    ]
+  },
+  "customer": "Opensoft Inc",
+  "production_storage": {
+    "currency": "USD",
+    "monthly_ceiling": 20,
+    "before_tax": true,
+    "scope": "storage-only",
+    "maximum_disks": 6,
+    "permanent_disks": 4,
+    "disk_size_gib": 4,
+    "snapshot_billed_gb": 16,
+    "object_billed_gb": 5,
+    "object_writes_list_create_per_month": 100000,
+    "object_reads_other_per_month": 100000,
+    "new_compute_networking_accounts_paid_runners_reviews": false,
+    "recurring_after_agent_expiry": "Brett remains accountable at operator handoff"
+  },
+  "qa_storage": "Previously accepted USD10 bounded fourteen-day envelope remains separate; actual admission must stay inside it",
+  "support": {
+    "server": "Ubuntu24.04amd64/Docker29.9.3",
+    "clients": [
+      "Windows11amd64",
+      "Ubuntu24.04amd64"
+    ],
+    "macos": "deferred and unqualified"
+  },
+  "preserved": {
+    "all_actual_Q0_Q4_predicates": true,
+    "current_target_channel_authority": true,
+    "actual_evidence_and_independent_review": true,
+    "current_required_PR_and_main_checks": true,
+    "immutable_release_and_readback": true,
+    "financial_resource_and_data_limits": "exact reviewed policy"
+  },
+  "held": [
+    "external Q5",
+    "macOS",
+    "T062-T068 operating/final-completion tasks"
+  ],
+  "activation": "The root permits qualification/landing in dependency order. Delegated evidence acceptance uses the qualified anchored implementation only after its reviewed protected-base activation; no Q0-Q5 result is granted by this root.",
+  "revocable": true,
+  "recorded_by": {
+    "actor": "Codex",
+    "at": "2026-11-17T08:44:36.348863+00:00"
+  }
+}
