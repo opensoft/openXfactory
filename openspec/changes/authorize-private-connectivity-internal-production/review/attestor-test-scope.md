@@ -1,6 +1,6 @@
 # Exact attestor regression scope refinement
 
-Status: draft
+Status: accepted (source scope only)
 Kind: source-scope-amendment
 Accountable-owner: Brett Heap
 Proposed-delegate: Codex
@@ -45,3 +45,19 @@ The human root, its eight immutable policy members, functional/target/financial
 bounds, original private-proof producer, App scope, global human-only authority,
 Sonar gates, supported artifact obligations and macOS/external-Q5 holds remain
 unchanged. There is no new workflow, token permission or source publication.
+
+## Actual delegated C-01 source-scope decision
+
+Decision-by: Codex, distinct delegate under the actual human root
+Accountable-owner: Brett Heap
+Decision-at: 2026-11-17T10:18:51.198109+00:00
+Reviewed-proposal: 7ed90134af760b0a68ca12601fc2f0fe098ee8ed
+Decision: accepted for the exact one-file/four-suite refinement above
+
+All nine independent Codex expert roles reviewed the exact proposal:
+architecture, performance, security, QA, static/CI quality, contracts, integrity,
+reliability and maintainability. Each returned no actionable finding. The
+actual source record is made before the new test file is written. This is no
+new human sign-off and no source-output authentication. The genuine human root
+already delegates this bounded source-amendment procedure; the qualified
+evidence producer must still be implemented/activated before evidence admission.
