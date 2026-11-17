@@ -560,6 +560,8 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [Extend private-connectivity cut validation](openspec/changes/extend-private-connectivity-cut-validation/proposal.md) — draft N/E scope, exact historical source controls and matching Ops/target handoff; no implementation or rollout grant.
+
 - [fix-hosted-qualification-lease-budget](openspec/changes/fix-hosted-qualification-lease-budget/proposal.md)
   — draft qualification-only private-read amendment; source ratification pending.
   [Design](openspec/changes/fix-hosted-qualification-lease-budget/design.md) ·
