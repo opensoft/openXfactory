@@ -2655,10 +2655,13 @@ def test_connectivity_publication_includes_exact_four_raw_members(tmp_path):
     _connectivity_preview(repo)
     commit = _commit_all(repo, "synthetic connectivity candidate")
     inventory = release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert release.inventory_schema_findings(
+        inventory, path="contracts/releases/contract-v4.3.digests.yaml"
+    ) == []
     by_path = {entry["path"]: entry for entry in inventory["entries"]}
     for identity, path, kind in CONNECTIVITY_ROWS:
         assert by_path[path]["artifact_id"] == identity
-        assert by_path[path]["type"] == kind
+        assert by_path[path]["type"] == ({"tool": "validator"}.get(kind, kind))
         assert by_path[path]["digest"] == "sha256:" + hashlib.sha256(
             subprocess.check_output(["git", "show", commit + ":" + path], cwd=repo)).hexdigest()
     schema = by_path[CONNECTIVITY_ROWS[0][1]]

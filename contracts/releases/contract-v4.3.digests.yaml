@@ -1470,7 +1470,7 @@ entries:
   path: scripts/hermes_runtime_validation/release.py
   type: validator
   git_mode: '100644'
-  digest: sha256:b3c9497f10f0a055ad8fa6e6623d9456df0b5c425cb260d64b43009db2744282
+  digest: sha256:9ab3c1f56998c0d353e21cc4d1ef213c8516ac5ffa121a10a670842cb86eec40
 - artifact_id: scripts-hermes_runtime_validation-schema_registry.py
   path: scripts/hermes_runtime_validation/schema_registry.py
   type: validator
@@ -1678,7 +1678,7 @@ entries:
   digest: sha256:97cc9ee1dd851bda813fc4d402edf80edb227c5f1864e32d5d101be0c27c4d80
 - artifact_id: private-connectivity-conformance-validator
   path: scripts/validate-private-connectivity.py
-  type: tool
+  type: validator
   git_mode: '100644'
   digest: sha256:b258ba7e316b98eec16715dbcc06b9abf6d1849793141f704f1ca6649422cbf8
 - artifact_id: tests-clearing-conftest.py

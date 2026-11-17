@@ -813,7 +813,9 @@ def _add_private_connectivity_members(source, manifest, release_version, members
             raise ReleaseDependencyError("connectivity registration digest differs: " + path,
                                          code="HGR-RELEASE-CONNECTIVITY-DIGEST")
         members.add(path)
-        catalog_map[path] = {"contract_id": identifier, "type": artifact_type,
+        # Manifest tool registrations use the inventory schema's validator type.
+        inventory_type = "validator" if artifact_type == "tool" else artifact_type
+        catalog_map[path] = {"contract_id": identifier, "type": inventory_type,
                              "contract_schema_version": PRIVATE_CONNECTIVITY_SCHEMA_VERSION}
     _validate_private_connectivity_schema(source)
 
