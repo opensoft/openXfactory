@@ -143,3 +143,13 @@ The human-root record is authority for qualifying the mechanism and conditional
 landings, not acceptance of the new E outputs. Original accepted controls stay
 immutable and independently usable. New actual source and operating outputs
 remain unaccepted until the qualified mechanism verifies them.
+
+### Reviewed attestor test refinement
+
+Codex recorded the independently reviewed C-01 source-scope decision at 2026-11-17T10:18:51.198109+00:00
+under the genuine human root, as preserved in the owning attestor-test-scope.md
+record at 052ec0d4fd963dbd4f6c4b8e8054b9805f08dded. It adds only the one
+T010 test_delegated_evidence.py path and a fourth mandatory measured current
+source suite. All original suites, historical readers, task dependencies and
+commands remain. This source permission is distinct from pending output
+acceptance and qualified producer activation.

@@ -196,6 +196,18 @@ the completed aggregate or another offering's future result. The closed reader
 must test this child/aggregate distinction. This adjunct cannot satisfy
 T062-T068, whose dependencies and external commercial meaning remain unchanged.
 
+
+### Current T010 attestor regression collection
+
+The independently reviewed source-scope amendment adds only
+tests/test_delegated_evidence.py to T010's exact envelope. Current T010 evidence
+requires four explicitly collected suites: test_evidence.py,
+test_evidence_pins.py, test_source_roots.py and test_delegated_evidence.py.
+Every original suite remains mandatory, all measured identities/counts are
+checked and no failure/error/skip is permitted. Original accepted human
+historical readers retain their original three-suite contract. No task
+dependency, verification command, token scope or workflow identity changes.
+
 ## T005 review freeze
 
 ### Current directly authorized internal execution definition
@@ -227,7 +239,7 @@ Historical source-scope note, retained without changing its old facts:
 > handoff input changes. Original freezes, controls, readers and actual accepted
 > observations remain immutable at their exact historical source references.
 
-Review packet SHA-256: 2629973a07155bce17f25ed1f8efe386ce3b12d8768483f72a7aebe700ac4f05
+Review packet SHA-256: 281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421
 
 This digest covers canonical UTF-8 JSON keys inputs, registry and tasks,
 sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal
@@ -241,7 +253,7 @@ body before the T005 heading. No partial task/input freeze is accepted.
 | plan.md | 2edb9ad4eb75621218dadbeefedf961cdb64221f51d20c84bd281564cefc9818 |
 | research.md | 295751853b252eafabbcaf64933a577df88370f7c457f01fe69a479c9df7f9d2 |
 | data-model.md | 16a1351ef27a1924be4ce4e1c77197adfc48a40391b3e4ea20d5f849a72c4391 |
-| owner-scopes.md | c8a7f291ef3f8d39072a1c0754a733a25fff55cae45754c39f03bb90e4282e64 |
+| owner-scopes.md | aa30347c8b70d2c32456645e03cc3bb21ecee9a8df40b39588759ab2bcd77270 |
 | commissioning.md | 8f5917f9bdbee09a8fd6f93bbe53f34b371213196b6e38611a3a6850373f829c |
 | rollout-gates.md | 0815198f6c67e4eaf02d18efbd9558821747c8560ed338b626de34f993c9b32d |
 | validation-matrix.md | 7ebee6a87bee75ea50ca70d30a64ae50460ef6081a5489dd75d5c83a4f481f53 |
@@ -252,7 +264,7 @@ body before the T005 heading. No partial task/input freeze is accepted.
 | contracts/owner-handoff.md | d8fec9881a390420c41d6bc1dfef8fb44ab35457054611ae3751a8a98ca9fd78 |
 | contracts/product-interfaces.md | 5643be4adba7bb0ac5413a1ddb74bab863af981c945d92c4fde14d97fd0d94e7 |
 | contracts/qualification-evidence.md | 8d7d4ab79a6bb456a2dabef0d6ec4d5ba40da296e5ba19ceab2c7e907df31e92 |
-| contracts/task-evidence.md | d25a357806c25ad7793b61a35bd56b4a0e5ebe24f17605eb4526f06bc6c434bb |
+| contracts/task-evidence.md | 4b007efac24b48e0f14fbb9565199408a740f03ccfcfbef6991b0e2c88641e3d |
 
 Source-scope approval does not authenticate new actual E source/CI output.
 That separate review/default admission is required before consuming N changes.
