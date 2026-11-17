@@ -6,10 +6,10 @@
   "task_complete": false,
   "gate_satisfied": false,
   "prepared_at": "2026-11-16T16:03:10.208889+00:00",
-  "purpose": "Concrete source-only review candidate; not a successful publication receipt or release allocation.",
+  "purpose": "Owner-authorized draft source-cut preparation only; T018 publication and release qualification remain incomplete.",
   "authority": {
     "accepted_scope": "register-private-connectivity-release-members and publish-private-connectivity-production-contract",
-    "actual_cut": "pending owner review and explicit decision",
+    "actual_cut": "Candidate source preparation authorized by the actual recorded version decision; landing, final allocation and tag/publication remain pending.",
     "version_allocated": false,
     "canonical_inventory_created": false,
     "release_tag_created": false,
@@ -17,7 +17,7 @@
     "T019_independent_readback": "pending actual publication",
     "full_Q0": "pending",
     "Q1_through_Q5": "pending",
-    "source_PRs": "all five remain draft"
+    "source_PRs": "All existing source/preparation PRs and the new cut PR remain draft."
   },
   "prerequisite_authentication": {
     "control": {
@@ -3108,6 +3108,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "89974846b847e1c31761792677155cc9779d400d"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "8ac068510936c97d21ace2b923ad00c0a6238b68"
     },
     {
@@ -3121,6 +3125,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "b27ae7a25705e52147f59e05f30a17533d7af367"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "b4d9f545a65fb4849f734d4f8d0b8a25b7f0b5e9"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -3140,6 +3148,12 @@
       "patch_sha256": "94efefbdc5f3012152f7826044891e4e046f7df1928c05b7f72cc04ca68f8278",
       "disposition": "superseded review candidate; retained unchanged in Git",
       "reason": "Two confirmed source-review findings: dependency startup promise and release-helper cognitive complexity. This is not revoked live evidence or a failed actual release."
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "89974846b847e1c31761792677155cc9779d400d",
+      "path": "specs/043-private-connectivity-production/evidence/T018.json",
+      "sha256": "edefa6d5ce9b7f8dd1a321d51b21d88f76fb1ee3a5c3178b48dfb663edb3ea7a"
     }
   ],
   "source_review": {
@@ -3200,5 +3214,27 @@
       }
     ],
     "authority": "Source review only. No authentication of new T018 outputs, successful publication receipt, cut/version/tag authority, independent T019 readback or Q0-Q5 acceptance."
+  },
+  "candidate_preparation_decision": {
+    "owner": "Brett Heap",
+    "decision": "accepted",
+    "version": "contract-v4.3",
+    "at": "2026-11-17T00:30:45.368Z",
+    "answer": "Approve contract-v4.3 draft cut preparation (Recommended)",
+    "original_user_record_sha256": "6173401c794ae06cb260c859b00a1663742599c12ce7d1c4c7c621554d0a56d9",
+    "digest_method": "Original UTF-8 response_item/message/user JSONL bytes excluding line terminator",
+    "reviewed_preflight": {
+      "repository": "opensoft/openxfactory",
+      "commit": "b4d9f545a65fb4849f734d4f8d0b8a25b7f0b5e9",
+      "path": "specs/043-private-connectivity-production/review/release-prerequisites.md",
+      "sha256": "0daeafef01b9dfd48b120d3987e0c3b63310f3b695a13450a967f29b9dcd876b"
+    },
+    "reviewed_patch_sha256": "6ef8608caa8e19c01b22f3abb06d69b9868c903c5057375345ba7f12b4510172",
+    "permits_source_candidate": true,
+    "reserves_final_version": false,
+    "permits_merge": false,
+    "permits_tag_publication": false,
+    "permits_target_effects": false,
+    "permits_Q0_Q5_acceptance": false
   }
 }
