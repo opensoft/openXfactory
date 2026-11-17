@@ -2730,3 +2730,45 @@ def test_production_connectivity_registration_refuses_unowned_or_unlisted_paths(
     _commit(repo, "synthetic uncovered evidence")
     assert not [site for site in pc.member_sites(repo, "HEAD") if site.path == path]
     assert any(site.path == path for site in pc.uncovered_sites(repo, "HEAD"))
+
+
+# Synthetic pin coverage only: these fixtures never authenticate a human grant.
+def test_internal_connectivity_root_policy_refs_are_exact_local_pins(tmp_path):
+    import json
+    repo, old, orphan = orphaned_pin_repo(tmp_path)
+    path = "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json"
+    _write(repo, path, json.dumps({"policy": {"repository": "opensoft/openxfactory", "commit": old,
+                                            "members": [{"repository": "opensoft/foreign-owner", "commit": orphan}]}}, indent=2))
+    _commit(repo, "synthetic human root pin coverage")
+    sites = pc.member_sites(repo, "HEAD", paths=[path])
+    assert len(sites) == 2
+    assert {site.member_id for site in sites} == {"private-connectivity-internal-human-root"}
+    assert all(site.locality == pc.REPO_LOCAL for site in sites)
+    assert not pc.uncovered_sites(repo, "HEAD", paths=[path])
+    report = _verify(repo)
+    assert any(item.site.path == path and item.site.pin == orphan for item in report.orphans)
+
+
+@pytest.mark.parametrize("relative", [
+    "review/copied-grant.json",
+    "review/nested/human-root-grant.json",
+    "other/human-root-grant.json",
+])
+def test_internal_connectivity_root_registration_does_not_cover_neighbors(tmp_path, relative):
+    import json
+    repo, old = reachable_pin_repo(tmp_path)
+    path = "openspec/changes/authorize-private-connectivity-internal-production/" + relative
+    _write(repo, path, json.dumps({"commit": old}, indent=2))
+    _commit(repo, "synthetic unregistered neighboring root")
+    assert not pc.member_sites(repo, "HEAD", paths=[path])
+    assert any(site.path == path for site in pc.uncovered_sites(repo, "HEAD", paths=[path]))
+
+
+def test_internal_connectivity_root_registration_does_not_cover_other_fields(tmp_path):
+    import json
+    repo, old = reachable_pin_repo(tmp_path)
+    path = "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json"
+    _write(repo, path, json.dumps({"revision": old}, indent=2))
+    _commit(repo, "synthetic unexpected authority pin field")
+    assert not pc.member_sites(repo, "HEAD", paths=[path])
+    assert any(site.path == path for site in pc.uncovered_sites(repo, "HEAD", paths=[path]))
