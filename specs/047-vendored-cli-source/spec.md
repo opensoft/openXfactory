@@ -21,3 +21,8 @@ must verify their declared shared implementation and test actual transports in
 addition to every existing provider assertion. This is implementation maintenance
 under Brett Heap's authorized openXwallet #73 full-main gate repair, whose bounded
 OpenSpec amendment is in the consumer's restore-wallet-sonar-main change.
+
+Trusted Python embedding may initialize the installer with VERIFIED_VERIFIER,
+a verifier ModuleType compiled from authenticated source. This selector is never
+a CLI flag or environment setting. The embedded installer must not reopen source
+or cached bytecode; invalid bindings refuse before filesystem loading.

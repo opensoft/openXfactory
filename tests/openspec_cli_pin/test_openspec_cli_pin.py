@@ -3422,7 +3422,8 @@ def test_shared_context_preserves_separately_selected_operator_pin(tool, mod, in
     monkeypatch.setattr(source, "read_pin", read)
     argv = ["--all", "--no-cache"] if tool == "verifier" else []
     assert target.main(argv, consumer_root=consumer) == 0
-    assert observed == [selected] and calls
+    assert observed == [selected]
+    assert calls
 
 
 @pytest.mark.parametrize("tool", ["verifier", "installer"])
@@ -3485,3 +3486,25 @@ def test_trusted_installer_embedding_uses_authenticated_verifier_snapshot(
     exec(compile(INSTALLER.read_bytes(), embedded.__file__, "exec"), embedded.__dict__)
     assert embedded.verifier is mod
     assert not sentinel.exists()
+
+
+@pytest.mark.parametrize("binding", ["module", "none", "object"])
+def test_canonical_installer_embedding_never_reopens_the_verifier(
+        mod, monkeypatch, binding):
+    from types import ModuleType
+    def forbidden(*args, **kwargs):
+        raise AssertionError("authenticated embedding attempted filesystem loading")
+    monkeypatch.setattr(importlib.util, "spec_from_file_location", forbidden)
+    embedded = ModuleType("canonical_installer_embedding")
+    embedded.__file__ = str(INSTALLER)
+    embedded.__dict__["VERIFIED_VERIFIER"] = {
+        "module": mod, "none": None, "object": object()}[binding]
+    # Compile the actual canonical file under its actual filename. The earlier
+    # source/bytecode attack regressions intentionally keep their scratch paths.
+    program = compile(INSTALLER.read_bytes(), str(INSTALLER), "exec")
+    if binding == "module":
+        exec(program, embedded.__dict__)
+        assert embedded.verifier is mod
+    else:
+        with pytest.raises(TypeError, match="authenticated module"):
+            exec(program, embedded.__dict__)

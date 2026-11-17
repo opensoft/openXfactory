@@ -10,3 +10,6 @@
 - [x] T005 Add explicit consumer-root context without changing standalone or operator precedence.
 - [x] T006 Regress both entrypoints, pin/corpus selection and invalid context before package work.
 - [ ] T007 Review and qualify the exact published provider before consumer admission.
+
+- [x] T008 Bind authenticated verifier bytes before installer initialization and regress source/bytecode substitution.
+- [x] T009 Cover actual canonical embedding and preserve validation/reporting semantics during complexity repair.
