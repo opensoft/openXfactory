@@ -426,3 +426,35 @@ def test_source_decision_entry_point_cannot_supply_runtime_or_unreviewed_authori
     world, ref, review, evidence, _ = source_decision_fixture(source_fixture, kind, mutation)
     with pytest.raises((a.AttestationError, h.v.EvidenceError)):
         a.attest_source_decision(h.v, world.store, ref, review, evidence, h.DELEGATION_TIME.replace(day=19))
+
+
+def test_verified_reader_snapshot_wins_over_ordinary_stale_cache(tmp_path):
+    import os
+    import py_compile
+    script = tmp_path / "attest-delegated-evidence.py"
+    script.write_bytes(b"# Synthetic selected attestor\n")
+    ref = dict(repository=a.COORDINATOR, commit="6" * 40, path=a.FEATURE + "/attest-delegated-evidence.py",
+               sha256=a.sha(script.read_bytes()))
+    companion = script.with_name("verify-evidence.py")
+    prefix = "DELEGATION_PRODUCER_REF = " + repr(ref) + "\n"
+    companion.write_text(prefix + 'SOURCE_VERSION = "old"\n')
+    metadata = companion.stat()
+    py_compile.compile(str(companion), doraise=True, invalidation_mode=py_compile.PycInvalidationMode.TIMESTAMP)
+    companion.write_text(prefix + 'SOURCE_VERSION = "new"\n')
+    os.utime(companion, ns=(metadata.st_atime_ns, metadata.st_mtime_ns))
+    selected_source = companion.read_bytes()
+    class Provider:
+        def qualified_base(self, base): assert base == "a" * 40
+        def content(self, path, base):
+            return selected_source if path.endswith("/verify-evidence.py") else script.read_bytes()
+        def get(self, path):
+            return dict(status="ahead", merge_base_commit=dict(sha="6" * 40))
+    reader = a.load_protected_reader(Provider(), "a" * 40, script)
+    assert reader.SOURCE_VERSION == "new"
+
+
+def test_primary_decision_reference_requires_an_accepted_source_owner(source_fixture):
+    world, ref, review, evidence, _ = source_decision_fixture(source_fixture)
+    foreign = world.store.put(world.store.blob(ref), ref["path"], repository="foreign/source")
+    with pytest.raises(a.AttestationError, match="owner"):
+        a.attest_source_decision(h.v, world.store, foreign, review, evidence, h.DELEGATION_TIME.replace(day=19))

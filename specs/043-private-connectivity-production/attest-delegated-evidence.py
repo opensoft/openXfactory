@@ -10,7 +10,7 @@ import argparse
 import base64
 from datetime import datetime, timezone
 import hashlib
-import importlib.util
+import types
 import json
 import os
 from pathlib import Path
@@ -144,11 +144,12 @@ def load_protected_reader(provider, base, script_path):
     companion = Path(script_path).with_name("verify-evidence.py")
     need(provider.content(FEATURE + "/attest-delegated-evidence.py", base) == own,
          "attestor is not the selected protected-base bytes")
-    need(provider.content(FEATURE + "/verify-evidence.py", base) == companion.read_bytes(),
+    source = companion.read_bytes()
+    need(provider.content(FEATURE + "/verify-evidence.py", base) == source,
          "reader is not the selected protected-base bytes")
-    spec = importlib.util.spec_from_file_location("qualified_043_reader", companion)
-    reader = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(reader)
+    reader = types.ModuleType("qualified_043_reader")
+    reader.__file__ = str(companion)
+    exec(compile(source, str(companion), "exec"), reader.__dict__)
     need(reader.DELEGATION_PRODUCER_REF is not None, "qualified producer activation pending")
     ref = reader.DELEGATION_PRODUCER_REF
     need(ref["repository"] == COORDINATOR and ref["path"] == FEATURE + "/attest-delegated-evidence.py"
@@ -212,6 +213,8 @@ def attest_source_decision(module, store, decision_ref, review_ref, evidence_ref
     """Qualify source scope/choices only; this entry point cannot grant effects."""
     root = module.load_delegation_root(store, module.DELEGATION_ROOT_REF, now)
     module.require_delegation_producer(store, module.DELEGATION_PRODUCER_REF)
+    allowed = set(module.FIXED_REPOSITORIES.values()) | {"opensoft/opsxfactory", "codexfactory/codexfactory"}
+    need(module.reference(decision_ref)["repository"].lower() in allowed, "source decision owner is not accepted")
     decision = module.decode(module._pinned_blob(store, decision_ref))
     common = {"schema", "id", "kind", "decision", "owner", "actor", "accountable_owner",
               "scope", "valid_from", "valid_until", "reviewed_at"}
@@ -234,7 +237,6 @@ def attest_source_decision(module, store, decision_ref, review_ref, evidence_ref
     if decision["valid_until"] != "until-superseded":
         need(module.timestamp(decision["valid_from"]) < module.timestamp(decision["valid_until"]),
              "source decision has invalid validity")
-    allowed = set(module.FIXED_REPOSITORIES.values()) | {"opensoft/opsxfactory", "codexfactory/codexfactory"}
     if kind == "source-authority":
         need(decision["mode"] == "source" and isinstance(decision["roles"], list) and decision["roles"]
              and all(isinstance(role, str) and role.strip() for role in decision["roles"])
