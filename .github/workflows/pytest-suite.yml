@@ -1212,7 +1212,7 @@ jobs:
           import xml.etree.ElementTree as ET
 
           expected = {
-              "specs.043-private-connectivity-production.tests.test_evidence": 557,
+              "specs.043-private-connectivity-production.tests.test_evidence": 620,
               "specs.043-private-connectivity-production.tests.test_evidence_pins": 40,
               "specs.043-private-connectivity-production.tests.test_source_roots": 97,
           }
