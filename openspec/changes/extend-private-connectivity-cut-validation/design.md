@@ -1,6 +1,7 @@
 # Design: close the private-connectivity cut validation gap
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-16 by Brett Heap; actual N/E source-scope decision at 2026-11-17T02:55:36.438Z.
 Kind: design
 
 ## Context
