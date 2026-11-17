@@ -257,6 +257,105 @@ def test_workflow_bootstrap_never_executes_candidate_code(tmp_path, workflow, pr
         assert result.returncode == 0, result.stderr
         assert ("required=true" if private else "required=false") in out.read_text()
         if private: assert (runner / "pc043-reviewed-producer.py").read_bytes() == HELPER.read_bytes()
+        if private and history == "present":
+            # Exercise a second event after the protected base adopted delegated evidence.
+            cases = (None, "pending", "wrong-subject", "changed-producer", "changed-original",
+                     "unrelated-base", "missing-checkpoint", "changed-checkpoint", "malformed-attestation-ref")
+            for case in cases:
+                later = tmp_path / ("delegated-" + (case or "accepted"))
+                later.mkdir()
+                assert_delegated_bootstrap(later, script, case)
+
+
+def assert_delegated_bootstrap(tmp_path, script, mutation):
+    root = repo(tmp_path / "coordinator")
+    producer = write_commit(root, s.SELF, HELPER.read_bytes())
+    receipt_path = s.FEATURE + "/evidence/T010.json"
+    original = write_commit(root, receipt_path, b'{"pin_inventory": []}')
+    legacy = {
+        "schema": "043-reviewed-trust-v1", "feature": "043-private-connectivity-production",
+        "definition": "synthetic-definition", "source_ci_producer": producer,
+        "source_ci_original_reference": original, "review": {},
+    }
+
+    def write_review(value):
+        return write_commit(
+            root, s.AUTHENTICATION,
+            (chr(96) * 3 + "json\n" + json.dumps(value) + "\n" + chr(96) * 3 + "\n").encode(),
+        )
+
+    target = write_commit(root, s.COMMISSIONING, json.dumps(legacy).encode())
+    legacy["review"] = write_review({
+        "schema": "043-source-authentication-v1", "decision": "accepted", "custodian": "Brett Heap",
+        "reviewed_manifest": target, "content_sha256": s._core(legacy), "reviewed_at": "2026-01-01T00:00:00Z",
+    })
+    legacy_bytes = json.dumps(legacy).encode()
+    checkpoint = write_commit(root, s.COMMISSIONING, legacy_bytes)["commit"]
+    unreviewed = write_commit(
+        root, s.SELF, b"from pathlib import Path\nPath('CANDIDATE_EXECUTED').touch()\nraise SystemExit(99)\n",
+    )
+    delegated = {
+        **legacy, "source": {"repository": FOREIGN, "revision": "a" * 40},
+        "transition": "synthetic delegated source control",
+    }
+    if mutation == "changed-producer":
+        delegated["source_ci_producer"] = unreviewed
+    if mutation == "changed-original":
+        delegated["source_ci_original_reference"] = unreviewed
+    target = write_commit(root, s.COMMISSIONING, json.dumps(delegated).encode())
+    digest = s._core(delegated)
+    attestation = write_commit(root, receipt_path, json.dumps({
+        "schema": "043-delegated-attestation-v1", "actor": "Codex", "accountable_owner": "Brett Heap",
+        "subject": {"kind": "source-authentication", "definition": delegated["definition"],
+                    "reviewed_manifest": target, "content_sha256": "0" * 64 if mutation == "wrong-subject" else digest},
+    }).encode())
+    if mutation == "malformed-attestation-ref":
+        attestation["path"] = "README.md"
+    delegated["review"] = write_review({
+        "schema": "043-delegated-source-authentication-v1",
+        "decision": "pending" if mutation == "pending" else "accepted", "actor": "Codex",
+        "accountable_owner": "Brett Heap", "reviewed_manifest": target,
+        "content_sha256": digest, "attestation": attestation,
+    })
+    # Move the historical attestation off the active receipt path before the event checkout.
+    write_commit(root, receipt_path, b'{"pin_inventory": []}')
+    delegated["pin_inventory"] = [
+        {"repository": LOCAL, "openxfactory_commit": pin}
+        for pin in sorted(set(s.TOKEN.findall(json.dumps(delegated))) - {"a" * 40})
+    ] + [{"repository": FOREIGN, "foreign_commit": "a" * 40}]
+    event_base = write_commit(root, s.COMMISSIONING, json.dumps(delegated).encode())["commit"]
+    if mutation == "unrelated-base":
+        event_base = git(root, "commit-tree", event_base + "^{tree}", "-m", "Unrelated synthetic event")
+    real_checkpoint = "59c4931fd89811f07f1a02046424a0fa78a2c92a"
+    real_digest = "02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326"
+    assert script.count(real_checkpoint) == script.count(real_digest) == 1
+    legacy_digest = hashlib.sha256(legacy_bytes).hexdigest()
+    if mutation == "missing-checkpoint":
+        checkpoint = "0" * 40
+    script = script.replace(real_checkpoint, checkpoint).replace(
+        real_digest, "0" * 64 if mutation == "changed-checkpoint" else legacy_digest,
+    )
+    runs = [("successor", event_base)] if mutation else [("transition", checkpoint), ("successor", event_base)]
+    for phase, base in runs:
+        if phase == "successor":
+            write_commit(root, "later-event.txt", b"next protected push or PR\n")
+        runner = tmp_path / phase
+        runner.mkdir()
+        output = runner / "output"
+        env = {"PATH": os.environ["PATH"], "RUNNER_TEMP": str(runner), "GITHUB_OUTPUT": str(output),
+               "GITHUB_ENV": str(runner / "env"), "PC_SOURCE_BASE": base}
+        result = subprocess.run(["bash", "-eu", "-c", script], cwd=root, env=env,
+                                capture_output=True, text=True, timeout=25)
+        assert not (root / "CANDIDATE_EXECUTED").exists()
+        if mutation:
+            assert result.returncode != 0 and not output.exists(), result.stderr
+        else:
+            assert result.returncode == 0, result.stderr
+            plan = dict(line.split("=", 1) for line in output.read_text().splitlines())
+            selected = runner / "pc043-reviewed-producer.py"
+            assert plan == {"required": "true", "producer": str(selected),
+                            "opensoft": "headscale-install", "codexfactory": ""}
+            assert selected.read_bytes() == HELPER.read_bytes()
 
 
 def test_real_filtered_commit_store_contains_no_source_or_credentials(tmp_path):
