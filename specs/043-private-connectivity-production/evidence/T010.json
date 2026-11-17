@@ -1,81 +1,62 @@
 {
-  "schema": "043-task-evidence-v1",
-  "task": "T010",
-  "instance": null,
-  "owner": "C",
-  "evidence_class": "CI-E",
-  "scope": {
-    "profile": "not-applicable",
-    "candidate": "043-source-only",
-    "offering": "source-evidence",
-    "run": "043-e-source-ci-refinement",
-    "network": "not-applicable",
-    "region": "not-applicable",
-    "wave": "not-applicable",
-    "site": "not-applicable",
-    "phase": "source",
-    "domain": "not-applicable",
-    "target": "not-applicable",
-    "offer": "not-applicable",
-    "environment": "source",
-    "customer": "not-applicable"
-  },
-  "attempt": "delegation-source-ci-44086456452",
-  "verdict": "pass",
-  "source": {
-    "repository": "opensoft/openxfactory",
-    "base": "2f2d343691a980bbda12aa9157362a1abfb4f9f7",
-    "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df"
-  },
-  "command": "set -euo pipefail\nrequested_head=\"$PC043_EXPECTED_REVISION\"\nfeature_path=\"specs/043-private-connectivity-production\"\nfor revision in \"$requested_head\" \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"; do\n  [[ \"$revision\" =~ ^[0-9a-f]{40}$ ]]\n  git cat-file -e \"$revision^{commit}\"\ndone\n[ \"$(git rev-parse HEAD)\" = \"$PC043_CHECKOUT_REVISION\" ]\ngit merge-base --is-ancestor \"$requested_head\" \"$PC043_CHECKOUT_REVISION\"\nexport PC043_SOURCE_MODE=pr-head\nif git cat-file -e \"$requested_head:$feature_path/tests/test_delegated_evidence.py\" 2>/dev/null; then\n  [ \"$(git cat-file -t \"$requested_head:$feature_path\")\" = tree ]\nelse\n  git merge-base --is-ancestor \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"\n  ancestor=\"$(git merge-base \"$requested_head\" \"$PC043_BASE_REVISION\")\"\n  touched=\"$(git log --full-history -1 --format=%H \"$ancestor..$requested_head\" -- \"$feature_path\")\"\n  if git cat-file -e \"$ancestor:$feature_path/tests/test_delegated_evidence.py\" 2>/dev/null || [ -n \"$touched\" ]; then\n    echo \"::error::A head that changed or removed feature 043 requires its own complete four-suite source.\"\n    exit 1\n  fi\n  export PC043_EXPECTED_REVISION=\"$PC043_CHECKOUT_REVISION\"\n  export PC043_SOURCE_MODE=merge-checkout\n  echo \"::notice::Unrelated head predates the fourth 043 suite; testing the merge checkout does not qualify the PR head.\"\nfi\nfor module in test_evidence.py test_evidence_pins.py test_source_roots.py test_delegated_evidence.py; do\n  [ \"$(git cat-file -t \"$PC043_EXPECTED_REVISION:$feature_path/tests/$module\")\" = blob ]\ndone\nprintf '043 source selection: mode=%s revision=%s requested_head=%s\\n' \\\n  \"$PC043_SOURCE_MODE\" \"$PC043_EXPECTED_REVISION\" \"$requested_head\"\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  specs/043-private-connectivity-production/tests/test_source_roots.py \\\n  specs/043-private-connectivity-production/tests/test_delegated_evidence.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 711,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n    \"specs.043-private-connectivity-production.tests.test_source_roots\": 107,\n    \"specs.043-private-connectivity-production.tests.test_delegated_evidence\": 100,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nimport json\nsuites = {\"specs/043-private-connectivity-production/tests/\" + name.rsplit(\".\", 1)[-1] + \".py\": count\n          for name, count in actual.items()}\nprint(\"PC043-\" + \"SUITES \" + json.dumps({\"schema\": \"043-collected-suites-v1\",\n      \"source_revision\": os.environ[\"PC043_EXPECTED_REVISION\"], \"suites\": suites}, sort_keys=True))\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
-  "authority": {
-    "object": "T010-finite-original-human-source-authority-preview"
-  },
-  "artifacts": [
-    {
-      "repository": "opensoft/openxfactory",
-      "path": ".github/workflows/doc-health-py314.yml",
-      "commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-      "sha256": "61f4513fa7bccf6ef4b1eda6b775182b4fe6d054cfe71e192272109dc44b2061"
+  "reviewed_at": "2026-11-17T23:24:17.371961+00:00",
+  "roles": {
+    "architecture": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Verified original T013 through the fixed historical reader and exact original T010 predecessor, and verified unchanged expanded T010 source container/scope.",
+      "reviewer": "/root/bootstrap_architecture",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "path": ".github/workflows/pytest-suite.yml",
-      "commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-      "sha256": "6d6b362a1c7ea1db6cf8d8f768a8b8201e854c92769032cd02fca0861e3b9f5d"
+    "contracts": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Verified exact v2-to-v3 delta is fixed historical T013 plus derived metadata, preserved original receipt and dependencies and authentic T010 cases and output.",
+      "reviewer": "/root/bootstrap_contracts",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "path": "specs/043-private-connectivity-production/attest-delegated-evidence.py",
-      "commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-      "sha256": "da4ab3aca3759eb4b9c2b97bfffb621351201d0b969305125d62f78097a1e5f5"
+    "integrity": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Verified fixed historical T013 raw/core and original T010 receipt, exact scope, receipt, reviewed raw logs/marker and both deterministic inventories.",
+      "reviewer": "/root/bootstrap_integrity",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "path": "specs/043-private-connectivity-production/tests/test_delegated_evidence.py",
-      "commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-      "sha256": "d7c69b193b04770dc8d3a9ebecae0fc0b5725f0b4348649bd02079d9f5c302c6"
-    }
-  ],
-  "incidents": [],
-  "history": [],
-  "dependencies": {
-    "T009": {
-      "object": "T009-import"
+    "maintainability": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Verified end-to-end traceability of unchanged expanded T010 and its scope, original immutable T013 predecessor, and exact default refusal before admission.",
+      "reviewer": "/root/bootstrap_maintainability",
+      "verdict": "clear"
+    },
+    "performance": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Verified the fixed T013 route locally and one unchanged measured primary and one Python 3.14 job with no additional provider calls.",
+      "reviewer": "/root/bootstrap_performance",
+      "verdict": "clear"
+    },
+    "qa": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Verified unchanged T010 receipt, source, and exact CI, expected default refusal, and actual T013 verification using its own historical T010.",
+      "reviewer": "/root/bootstrap_qa",
+      "verdict": "clear"
+    },
+    "reliability": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Verified exact historical T013 and unchanged v2 evidence. Independently checked emitter feb4d8314c61e7f4784321a54d3cac708579591d8e0d4b28fdf54e9bb87b16fa and its refusals of five substituted job/attempt/log/timing cases.",
+      "reviewer": "/root/bootstrap_reliability",
+      "verdict": "clear"
+    },
+    "security": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Verified byte-identical source authority, C-08 custody and redacted outputs, preserved production=false and validated existing closed immutable T013 without relaxing the reader.",
+      "reviewer": "/root/bootstrap_security",
+      "verdict": "clear"
+    },
+    "static": {
+      "report": "Exact manifest eaedb5ce459260b0033fabc5aaeed2abe41eb6a8, core c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. Recomputed the exact core and both inventories, verified fixed T013, unchanged actual output and primary job/suites and correct unauthenticated prepare/default behavior.",
+      "reviewer": "/root/bootstrap_static",
+      "verdict": "clear"
     }
   },
-  "output": {
-    "object": "T010-new-actual-source-output-preview"
-  },
-  "acceptance": "Actual expanded T010 source CI passed. The commissioning authentication record determines admission of this receipt.",
-  "pin_inventory": [
-    {
+  "schema": "043-independent-review-v1",
+  "subject": {
+    "content_sha256": "c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516",
+    "definition": "281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421",
+    "kind": "source-authentication",
+    "reviewed_manifest": {
+      "commit": "eaedb5ce459260b0033fabc5aaeed2abe41eb6a8",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "2f2d343691a980bbda12aa9157362a1abfb4f9f7"
+      "sha256": "49518e60c523b500f5b01bdadf10368979063eae4b437e382c798382f346fffc"
     }
-  ]
+  }
 }
