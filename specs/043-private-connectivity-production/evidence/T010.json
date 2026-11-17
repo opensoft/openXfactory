@@ -1,208 +1,56 @@
 {
-  "schema": "043-task-evidence-v1",
-  "task": "T010",
-  "instance": null,
-  "owner": "C",
-  "evidence_class": "CI-E",
-  "scope": {
-    "profile": "not-applicable",
-    "candidate": "043-source-only",
-    "offering": "source-evidence",
-    "run": "043-e-source-ci-refinement",
-    "network": "not-applicable",
-    "region": "not-applicable",
-    "wave": "not-applicable",
-    "site": "not-applicable",
-    "phase": "source",
-    "domain": "not-applicable",
-    "target": "not-applicable",
-    "offer": "not-applicable",
-    "environment": "source",
-    "customer": "not-applicable"
-  },
-  "attempt": "bounded-definition-source-ci-43775758307",
-  "verdict": "pass",
-  "source": {
-    "repository": "opensoft/openxfactory",
-    "base": "fe79bc90783195d088ba8bfad42183631a909597",
-    "revision": "479750c62efad1bf803b6d1bec566c8ac07c5565"
-  },
-  "command": "set -euo pipefail\nrequested_head=\"$PC043_EXPECTED_REVISION\"\nfeature_path=\"specs/043-private-connectivity-production\"\nfor revision in \"$requested_head\" \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"; do\n  [[ \"$revision\" =~ ^[0-9a-f]{40}$ ]]\n  git cat-file -e \"$revision^{commit}\"\ndone\n[ \"$(git rev-parse HEAD)\" = \"$PC043_CHECKOUT_REVISION\" ]\ngit merge-base --is-ancestor \"$requested_head\" \"$PC043_CHECKOUT_REVISION\"\nexport PC043_SOURCE_MODE=pr-head\nif git cat-file -e \"$requested_head:$feature_path\" 2>/dev/null; then\n  [ \"$(git cat-file -t \"$requested_head:$feature_path\")\" = tree ]\nelse\n  git merge-base --is-ancestor \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"\n  ancestor=\"$(git merge-base \"$requested_head\" \"$PC043_BASE_REVISION\")\"\n  touched=\"$(git log --full-history -1 --format=%H \"$ancestor..$requested_head\" -- \"$feature_path\")\"\n  if git cat-file -e \"$ancestor:$feature_path\" 2>/dev/null || [ -n \"$touched\" ]; then\n    echo \"::error::A head that changed or removed feature 043 requires its own complete source suites.\"\n    exit 1\n  fi\n  export PC043_EXPECTED_REVISION=\"$PC043_CHECKOUT_REVISION\"\n  export PC043_SOURCE_MODE=merge-checkout\n  echo \"::notice::Unrelated head predates feature 043; testing the merge checkout does not qualify the PR head.\"\nfi\nfor module in test_evidence.py test_evidence_pins.py test_source_roots.py; do\n  [ \"$(git cat-file -t \"$PC043_EXPECTED_REVISION:$feature_path/tests/$module\")\" = blob ]\ndone\nprintf '043 source selection: mode=%s revision=%s requested_head=%s\\n' \\\n  \"$PC043_SOURCE_MODE\" \"$PC043_EXPECTED_REVISION\" \"$requested_head\"\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  specs/043-private-connectivity-production/tests/test_source_roots.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 557,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n    \"specs.043-private-connectivity-production.tests.test_source_roots\": 97,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
-  "authority": {
-    "object": "T010-release-refinement-authority"
-  },
-  "artifacts": [
+  "accountable_owner": "Brett Heap",
+  "actor": "Codex",
+  "evidence": [
     {
+      "commit": "2220772494240dbdc791f9e8e9dd9dbeaf9ccf96",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
       "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": ".github/workflows/pytest-suite.yml",
-      "sha256": "7e38a1870e5bb5e24c2f813d099f1f4658a884afa313827cdfb5ec04e2940bd3"
+      "sha256": "8577511773064391e5aa29cf3e66a54722f0df24db7de5dfb76f57ed82a0f18a"
     },
     {
+      "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
+      "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
       "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": ".github/workflows/doc-health-py314.yml",
-      "sha256": "1cd00507ce7fd2bcd868f2d3822bd5b64404b291f34c3c398016191b8da83695"
+      "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa"
     },
     {
+      "commit": "7ed90134af760b0a68ca12601fc2f0fe098ee8ed",
+      "path": "openspec/changes/authorize-private-connectivity-internal-production/review/attestor-test-scope.md",
       "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/prepare-source-roots.py",
-      "sha256": "64df95a3906112e088c026cc2e99d9ad97d93b8dc5e48987f38248784869181e"
+      "sha256": "45085e399816c5ebbdd91fea53d94abe72f0d8680962f0e48a06c3130b781f16"
     },
     {
+      "commit": "052ec0d4fd963dbd4f6c4b8e8054b9805f08dded",
+      "path": "openspec/changes/authorize-private-connectivity-internal-production/review/attestor-test-scope.md",
       "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/tests/test_source_roots.py",
-      "sha256": "5c7eaa1d6aaeae749fd1d5561c2d5c0ca20523e86ce4ac4d0ead2cb9500ded00"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/verify-evidence.py",
-      "sha256": "e2aae8286af91d0ae04b99498da52ace1da69e3adfd0adc8df45437d8079ac6f"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/tests/test_evidence.py",
-      "sha256": "04193df94faf6d08834820a0fdb81fca3f5129db1d9a6d5a467b455c153f4864"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/register-evidence-pins.py",
-      "sha256": "3b20c928d6c6a639c186b30f4c171acbd62db9a7a21e395ef6996acb9813d9db"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/tests/test_evidence_pins.py",
-      "sha256": "b6363610d64803a378ecef0994651895cbf7726544dbe3574b18f6191e7f5828"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
-      "sha256": "b6592371c7987f040a44d6ecc9783979be786c11a0e9cfaefd46ae3628b31640"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/tasks.md",
-      "sha256": "d745ce645746c388dcc3ff9004f0712aad116a88eae6c75c5e7d5fa81d6333fe"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-      "sha256": "902903efb19398d014ef2c84acd6afa227c0cc97ee4df87f5d9cecf56fd29816"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-      "sha256": "57e2570d1f48f506dfca978e27784e1b39d643f1ae2bf6939247ee2956d8b942"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/extend-private-connectivity-source-ci/proposal.md",
-      "sha256": "e0385105d14c6b99a01e5d71f82647d995a11dcc977944c1c25ec29dcd43242d"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/extend-private-connectivity-source-ci/design.md",
-      "sha256": "64621cc3003093328ddbed1f0b8b6bbf0ccee1096ea02c0803bd78add7d75e3c"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/extend-private-connectivity-source-ci/review/ratification.md",
-      "sha256": "e3fcd4f2321a3b0684b71754c83dffcc929f9be1503ea15b6a7f22e0483bbb93"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "tests/doc-health/test_pin_reachability.py",
-      "sha256": "a274e6de0588a4d9d5e9f5ccb0198afd134e0b643d504c28b430589a8dcc749f"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "tests/doc-health/test_sentinel_vocabulary.py",
-      "sha256": "09fe36ce2e84cb4db064e6eda1de58fd22d53d3a85431840f9fbd3448dadb1fb"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "scripts/doc_health/pin_class.py",
-      "sha256": "c6c8325037001cac7c0d72c111c9939becb3730276ba3bf54fd07837e6c18024"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "scripts/validate-sonar-coverage.py",
-      "sha256": "98badb9de8c9b72a8fc3707158ad52d0fa937967d6643cb2213265cd8ce0d240"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "sonar-project.properties",
-      "sha256": "7c28d8771db41ad9606f56831c2a9a796c734af597037fdad8a6cc39fd8644fd"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "tests/sonar_quality/test_coverage_evidence.py",
-      "sha256": "4e4a6b8293ea1ddab256e826ef4bf5c3ab6deb7559ac423df5851927d6c0a79f"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/classify-private-connectivity-source-tests/proposal.md",
-      "sha256": "2a93ea089315bb061579db3498dff2cba952779f4df09b8ee7d1aec16501e632"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/classify-private-connectivity-source-tests/design.md",
-      "sha256": "f3f2cc8e5e1c60b527a0bcd39629592420e47bebceea8503e652f33224f4b544"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/classify-private-connectivity-source-tests/review/ratification.md",
-      "sha256": "03868d26318faf5e010a199e2971d84d3ae958ca9e90271caeb6d8ec568fe78d"
+      "sha256": "d4adcc77220a3e7d81a448ded2cb4bb401b9dd24d1a212976ce9d5cda2291339"
     }
   ],
-  "incidents": [],
-  "history": [],
-  "dependencies": {
-    "T009": {
-      "object": "T009-import"
-    }
-  },
-  "output": {
-    "repository": "opensoft/openxfactory",
-    "commit": "7e05bb7adb190d608f654c4888a4edd4c0552758",
+  "independent_review": {
+    "commit": "a7b1191df88b549fba1c65771f124285b4ed787c",
     "path": "specs/043-private-connectivity-production/evidence/T010.json",
-    "sha256": "a330ac4d8be4a1d49cfc4c6a8260c2a5e1f6066f2a3b18ebdd7e5c913e77355f"
+    "repository": "opensoft/openxfactory",
+    "sha256": "ba9bcb1ca7216e5e4b906f7f2c7013a0cda1ad232341882482cb1d600642b35b"
   },
-  "acceptance": "Actual two-lane source CI only. New actual custodian authentication/default admission remains pending.",
-  "pin_inventory": [
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "479750c62efad1bf803b6d1bec566c8ac07c5565"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "7e05bb7adb190d608f654c4888a4edd4c0552758"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "fe79bc90783195d088ba8bfad42183631a909597"
-    }
-  ]
+  "producer": {
+    "commit": "ba911daab0ed791641e19d7954f5b625a9b3c81c",
+    "path": "specs/043-private-connectivity-production/attest-delegated-evidence.py",
+    "repository": "opensoft/openxfactory",
+    "sha256": "da4ab3aca3759eb4b9c2b97bfffb621351201d0b969305125d62f78097a1e5f5"
+  },
+  "provider_observations": [],
+  "reviewed_at": "2026-11-17T10:18:51.198109+00:00",
+  "root": {
+    "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
+    "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa"
+  },
+  "schema": "043-delegated-attestation-v1",
+  "subject": {
+    "definition": "281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421",
+    "kind": "decision",
+    "record_sha256": "4f7060b31899c5b1a04452bd8b968edc42e9de04d47d6204287792c9c1e0cbcb"
+  }
 }
