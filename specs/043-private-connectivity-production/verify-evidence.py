@@ -110,7 +110,7 @@ DELEGATION_ROOT_REF = {
 }
 # Activation is a separate reviewed protected-base act. No environment or
 # receipt field can supply a producer while this is None.
-DELEGATION_PRODUCER_REF = None
+DELEGATION_PRODUCER_REF = {'repository': 'opensoft/openxfactory', 'commit': 'ba911daab0ed791641e19d7954f5b625a9b3c81c', 'path': 'specs/043-private-connectivity-production/attest-delegated-evidence.py', 'sha256': 'da4ab3aca3759eb4b9c2b97bfffb621351201d0b969305125d62f78097a1e5f5'}
 # Only actual outputs independently qualified and landed on the protected base
 # may enter this register. Producer activation alone grants no output authority.
 # Key: canonical subject SHA-256. Value: exact whole immutable output reference.
