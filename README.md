@@ -12005,3 +12005,5 @@ measurement without treating them as passing acceptance.
 OpenSpec CLI maintenance: [npm legacy checksum compatibility](specs/046-npm-legacy-checksum/plan.md).
 
 Verified supplied CLI maintenance: [feature 047 plan](specs/047-vendored-cli-source/plan.md).
+
+Private-connectivity QA preparation: [Q1 dossier](specs/043-private-connectivity-production/review/qa-q1-approval-packet.md) and [release prerequisites](specs/043-private-connectivity-production/review/release-prerequisites.md). These are draft approval packets; no rollout gate is advanced.
