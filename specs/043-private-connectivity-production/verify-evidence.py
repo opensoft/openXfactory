@@ -114,7 +114,20 @@ DELEGATION_PRODUCER_REF = {'repository': 'opensoft/openxfactory', 'commit': 'ba9
 # Only actual outputs independently qualified and landed on the protected base
 # may enter this register. Producer activation alone grants no output authority.
 # Key: canonical subject SHA-256. Value: exact whole immutable output reference.
-DELEGATED_ATTESTATIONS = {}
+DELEGATED_ATTESTATIONS = {
+    "a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f": {
+        "commit": "5d82621d28fe94a9f0bef663015dcc8cd2f6d10f",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "8060207aca399a81340fb992271e1358b605f4d38bd6842721c154ef779f8619"
+    },
+    "ed53795c4d54152860abd38a15338449a24e3069dff3ec0483d66f741fbb2acd": {
+        "commit": "169d16217150264ce7a5cc9a21ff055172376499",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "97a01cdd2bc56897aee1e9e9898218aa5d260bc0562af3444de47dab7ac9b348"
+    }
+}
 
 
 def canonical_json(value):

@@ -1944,7 +1944,16 @@ def test_delegation_producer_uses_qualified_pin_and_refuses_inactive_state(monke
     raw = store.blob(ref)
     assert v.digest(raw) == ref["sha256"]
     assert v.require_delegation_producer(store, dict(ref)) == raw
-    assert v.DELEGATED_ATTESTATIONS == {}
+    assert sorted(v.DELEGATED_ATTESTATIONS) == ["a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f", "ed53795c4d54152860abd38a15338449a24e3069dff3ec0483d66f741fbb2acd"]
+    kinds = set()
+    for subject_sha256, evidence_ref in v.DELEGATED_ATTESTATIONS.items():
+        record = v.decode(store.blob(evidence_ref))
+        assert evidence_ref['path'] == v.FEATURE_PATH + '/evidence/T010.json'
+        assert record['schema'] == '043-delegated-attestation-v1'
+        assert record['producer'] == ref
+        assert v.digest(v.canonical_json(record['subject'])) == subject_sha256
+        kinds.add(record['subject']['kind'])
+    assert kinds == {'decision', 'source-authentication'}
     monkeypatch.setattr(v, "DELEGATION_PRODUCER_REF", None)
     with pytest.raises(v.EvidenceError, match="not activated"):
         v.require_delegation_producer(SimpleNamespace(blob=lambda value: b""), {})
