@@ -1900,9 +1900,9 @@ def test_a_malformed_lockfile_address_is_a_named_refusal_and_not_a_traceback(
     `base64.b64decode(..., validate=True)` raises `binascii.Error` on impossible
     padding, and every value above matches `INTEGRITY_RE` and reaches it.
     `binascii.Error` IS a `ValueError` subclass, so the guard already caught it
-    and already produced the named refusal; the type is now written out at the
-    catch site as well, and this test is what keeps the property from depending
-    on anybody rediscovering that relation.
+    and produced the named refusal. Both catches handle ValueError. This
+    test checks the exception hierarchy and each observed refusal for every
+    supplied malformed address.
     """
     assert issubclass(binascii.Error, ValueError)
     path = write_pin(tmp_path, lockfile_integrity=f'"{integrity}"')
