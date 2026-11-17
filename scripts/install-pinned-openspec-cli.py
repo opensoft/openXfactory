@@ -148,11 +148,11 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: list[str] | None = None, *, consumer_root=None) -> int:
     args = build_parser().parse_args(argv)
 
     try:
-        verifier.authorize_cli_sources(args)
+        verifier.authorize_cli_sources(args, consumer_root=consumer_root)
         args.npm = verifier.trusted_npm_executable(args.npm)
         pin_path = Path(args.pin)
         pin = verifier.read_pin(pin_path)

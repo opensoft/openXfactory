@@ -3363,3 +3363,98 @@ def test_real_npm_uses_supplied_cli_with_empty_cache_and_network_disabled(
                      "--pin", str(pin_path), "--tarball", str(artifact)]) == 0
     assert not sentinel.exists()
     assert artifact.read_bytes() == payload
+
+
+# ----------------------------------------- shared consumer context contract
+
+def test_explicit_consumer_context_selects_its_real_pin_and_corpus(mod, tmp_path, fake_npm, monkeypatch):
+    consumer = tmp_path / "consumer"
+    contracts = consumer / "contracts"
+    contracts.mkdir(parents=True)
+    (consumer / "openspec").mkdir()
+    write_pin(contracts).rename(contracts / "openspec-cli-pin.yaml")
+    monkeypatch.delenv("XFACTORY_OPENSPEC_PIN_PATH", raising=False)
+    observed = []
+    original = mod.run_validation
+    def validate(executable, repo, targets):
+        observed.append(repo)
+        return original(executable, repo, targets)
+    monkeypatch.setattr(mod, "run_validation", validate)
+    original_root, original_pin = mod.ROOT, mod.PIN_PATH
+    assert mod.main(["--all", "--no-cache"], consumer_root=consumer) == 0
+    assert observed == [consumer]
+    assert (mod.ROOT, mod.PIN_PATH) == (original_root, original_pin)
+
+
+def test_installer_explicit_context_reads_its_consumer_pin(installer, tmp_path, installer_npm, monkeypatch):
+    consumer = tmp_path / "consumer"
+    contracts = consumer / "contracts"
+    contracts.mkdir(parents=True)
+    selected = contracts / "openspec-cli-pin.yaml"
+    write_pin(contracts).rename(selected)
+    monkeypatch.delenv("XFACTORY_OPENSPEC_PIN_PATH", raising=False)
+    observed = []
+    original = installer.verifier.read_pin
+    def read(path):
+        observed.append(path)
+        return original(path)
+    monkeypatch.setattr(installer.verifier, "read_pin", read)
+    assert installer.main([], consumer_root=consumer) == 0
+    assert observed == [selected]
+
+
+@pytest.mark.parametrize("tool", ["verifier", "installer"])
+def test_shared_context_preserves_separately_selected_operator_pin(tool, mod, installer, tmp_path, monkeypatch):
+    consumer = tmp_path / "consumer"
+    consumer.mkdir()
+    (consumer / "openspec").mkdir()
+    selected = write_pin(tmp_path)
+    monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(selected))
+    monkeypatch.setenv("OPENSPEC_CLI_PIN_CACHE", str(tmp_path / "cache"))
+    target = mod if tool == "verifier" else installer
+    source = mod if tool == "verifier" else installer.verifier
+    calls, _ = _fake_registry(source, monkeypatch, tmp_path)
+    observed = []
+    original = source.read_pin
+    def read(path):
+        observed.append(path)
+        return original(path)
+    monkeypatch.setattr(source, "read_pin", read)
+    argv = ["--all", "--no-cache"] if tool == "verifier" else []
+    assert target.main(argv, consumer_root=consumer) == 0
+    assert observed == [selected] and calls
+
+
+@pytest.mark.parametrize("tool", ["verifier", "installer"])
+def test_shared_context_still_refuses_a_forged_pin_before_package_work(tool, mod, installer, tmp_path, monkeypatch):
+    consumer = tmp_path / "consumer"
+    consumer.mkdir()
+    selected = write_pin(tmp_path)
+    forged = tmp_path / "forged.yaml"
+    forged.write_bytes(selected.read_bytes())
+    monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(selected))
+    target = mod if tool == "verifier" else installer
+    source = mod if tool == "verifier" else installer.verifier
+    calls, _ = _fake_registry(source, monkeypatch, tmp_path)
+    argv = (["--all", "--no-cache"] if tool == "verifier" else []) + ["--pin", str(forged)]
+    assert target.main(argv, consumer_root=consumer) == 2
+    assert calls == []
+
+
+@pytest.mark.parametrize("tool", ["verifier", "installer"])
+@pytest.mark.parametrize("invalid", ["empty", "filesystem-root", "missing", "file", "linked"])
+def test_shared_context_refuses_invalid_root_before_package_work(tool, invalid, mod, installer, tmp_path, monkeypatch, capsys):
+    roots = {"empty": "", "filesystem-root": "/", "missing": tmp_path / "missing",
+             "file": tmp_path / "file", "linked": tmp_path / "linked"}
+    (tmp_path / "file").write_text("not a directory")
+    actual = tmp_path / "actual"
+    actual.mkdir()
+    (tmp_path / "linked").symlink_to(actual, target_is_directory=True)
+    target = mod if tool == "verifier" else installer
+    source = mod if tool == "verifier" else installer.verifier
+    def forbidden(*args, **kwargs):
+        raise AssertionError("invalid consumer context reached package work")
+    monkeypatch.setattr(source, "resolve_pinned", forbidden)
+    argv = ["--all", "--no-cache"] if tool == "verifier" else []
+    assert target.main(argv, consumer_root=roots[invalid]) == 2
+    assert "pin-unresolvable" in capsys.readouterr().err
