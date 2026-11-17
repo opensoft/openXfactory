@@ -10,11 +10,14 @@ See proposal.md. Brett authorized contract-v4.3 candidate preparation only at
 6173401c794ae06cb260c859b00a1663742599c12ce7d1c4c7c621554d0a56d9).
 Independent candidate source 535272c7c60ec42d7dbd6088b85f3ed5903b59e0
 contains the normal atomic manifest/changelog/generated inventory.
-Its exact inventory and pre-merge tag obligation verify; 189 manifest digests
-match. Actual regression: 141 passed, 52 subtests passed, two failures in the
+Its raw Git-member inventory and pre-merge tag obligation verify; 189 manifest
+digests match. Subsequent actual CI exposed an inventory tool/validator type
+mismatch in the existing builder scope, plus undeclared synthetic revision
+values in the newly published conformance path. Actual regression: 141 passed, 52 subtests passed, two failures in the
 closed intent-compliance release-state enum. T018 remains incomplete.
 
-The additional test is not in T018's frozen allowlist. The existing coordinating
+The additional release test and exact shared-reader declaration/regression
+surfaces are not in T018's frozen allowlist. The existing coordinating
 definition is 2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796.
 Refreshing it also requires preserving the actually authenticated original
 controls through their exact original reader, rather than relabeling old outputs.
@@ -27,14 +30,39 @@ publication, target-operation, identity, spend, protected-lock or Q0-Q5 grant.
 
 ## Decisions
 
-### N: one normal closed-version test advance
+### N: exact release and conformance-validation refinement
 
-Add only tests/intent-compliance/test_release_boundary.py to T018. Advance
-its explicit enum/match arms for contract-v4.3 using measured cut membership;
-retain existing intent membership/schema-pin checks and unknown-future refusal.
-Do not replace the closed states with an open-ended version comparison or skip.
-This release member and the regenerated contract-v4.3 inventory stay in the
-actual atomic cut. Historical inventories/tags remain byte-identical.
+Add only these four files to T018's accepted source envelope:
+
+| Additional T018 path | Bounded purpose |
+| --- | --- |
+| tests/intent-compliance/test_release_boundary.py | Explicit contract-v4.3 state/match arm, preserving atomic membership/schema assertions and unknown-future refusal |
+| scripts/doc_health/pin_class.py | One exact NonMember declaration for contracts/private-connectivity/conformance.json, a deterministic synthetic test-vector corpus whose raw bytes are release-digest pinned |
+| tests/doc-health/test_pin_reachability.py | Real-corpus classification and neighboring/wrong-path refusal regression for only that declaration; preserve all existing source/evidence reachability obligations |
+| tests/doc-health/test_sentinel_vocabulary.py | Directly affected corpus classification regression and actual measured census only; do not declare synthetic revision digests to be source sentinels |
+
+These are neutral publication/conformance surfaces, not a new E source-evidence
+registration or broad shared-reader exemption. T007-T010 remain responsible for
+their existing evidence/CI scopes. The T018 corpus is synthetic input to the
+published offline reader: it makes no derivation, custody, deployment or
+runtime-acceptance claim. Preserve every existing pin member and declaration;
+no directory glob, synthetic-value vocabulary waiver, reader discovery change
+or widened allowed sentinel is granted. Test a changed neighboring path and
+ordinary source evidence explicitly, so this classification cannot spread.
+
+The existing closed ReleaseState enum and match arms advance only their
+explicit known contract-v4.3 state. Keep all intent membership/schema assertions
+and unknown-future refusal. Do not replace closed states with an open-ended
+version comparison or skip. Release members and the builder-generated
+contract-v4.3 inventory stay in the actual atomic cut; shared-reader declarations
+are source-validation members of this same accepted T018 candidate. Historical
+inventories/tags remain byte-identical.
+
+The observed HGR-RELEASE-INVENTORY-SHAPE defect is a distinct already scoped
+builder/test repair: retain the exact manifest registration tuple type tool,
+and emit the inventory schema's existing validator type for that one executable.
+Qualify actual generated inventory shape through the existing membership test
+and real bounded CLI checks. No inventory schema widening is proposed.
 
 ### Exact E source surfaces
 
@@ -155,7 +183,7 @@ return for concrete owning source/task review.
    prerequisite E qualification. Preserve accepted T013 and every original anchor.
 3. Present the actual new E source/CI packet for separate custodian authentication;
    admit expanded T010 only after its genuine decision/default pass.
-4. Only then apply the one N test advance with the cut and regenerate its
+4. Only then apply the bounded N conformance/classification changes with the cut and regenerate its
    inventory. Requalify exact source/CI and independently review the actual
    candidate. Recheck merge order, version/floor and source ancestry before landing.
 5. Keep all PRs draft. Landing, final version allocation, annotated publication,

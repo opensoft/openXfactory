@@ -15,7 +15,8 @@ Preserve original controls, source outputs, failures and current authority.
 
 Present the actual new E source/CI packet for its separate required
 authentication/default admission before consuming implementation. Then perform
-the one approved N test advance with its atomic cut and generated inventory;
+the four-path bounded N conformance/classification refinement with its atomic
+cut and generated inventory;
 qualify exact source, inventory, required CI and review. Ops T043/T047 keep their
 declared release dependencies. Tenant remains a later bounded operating target.
 

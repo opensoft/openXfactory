@@ -15,10 +15,13 @@ Authored: 2026-11-16
 
 ## Why
 
-The authorized contract-v4.3 draft cut verifies its generated inventory but
+The authorized contract-v4.3 draft cut passes raw Git-member verification but
 hits two intentional closed-version assertions in an intent-compliance test
-outside T018's frozen file scope. The required narrow scope refresh must also
-preserve the actual accepted 2a46 source controls, and precisely map the pending
+outside T018's frozen file scope. Actual CI also exposes unclassified synthetic
+revision values in its newly published conformance corpus. A separate inventory
+type mapping defect is being repaired within the already accepted builder/test
+scope, with schema validation added to its existing membership regression.
+The required narrow scope refresh must also preserve the actual accepted 2a46 source controls, and precisely map the pending
 Ops/target owner handoff before production implementation.
 
 ## What Changes
@@ -26,8 +29,12 @@ Ops/target owner handoff before production implementation.
 - Propose only the normal contract-v4.3 advance in the existing closed
   intent-compliance boundary test, retaining membership/schema assertions and
   refusal of unknown future releases.
-- Add that one file to T018 and the exact reviewed Ops additions to T043/T047;
+- Add exactly the release-boundary test and three narrowly scoped shared-reader
+  declaration/regression paths to T018, plus the reviewed Ops additions to T043/T047;
   refresh the complete 16-input/68-task definition after affected-owner review.
+- Classify only contracts/private-connectivity/conformance.json as deterministic
+  test-vector data; assert that neighboring paths and real source-evidence
+  declarations retain ordinary classification and refusal behavior.
 - Extend the existing read-only E compatibility mechanism only to the two
   exact authenticated 2a46 controls and their original pinned reader. Preserve
   genuine original output/authentication and all current revocations.

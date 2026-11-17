@@ -19,6 +19,21 @@ a release or satisfy its independent readback.
 - **WHEN** an unapproved later release state is supplied
 - **THEN** the closed release boundary SHALL refuse it
 
+### Requirement: Published conformance data has an exact test-vector declaration
+The neutral publication SHALL classify only its exact synthetic conformance
+corpus path as test-vector data, with raw bytes pinned by its release inventory.
+It SHALL retain ordinary classification and refusal for neighboring paths and
+actual source-evidence records. Synthetic revision values SHALL NOT become
+source sentinels, real commit claims or a general directory exemption.
+
+#### Scenario: Published synthetic corpus
+- **WHEN** contracts/private-connectivity/conformance.json is scanned
+- **THEN** only that exact deterministic test corpus SHALL receive the reviewed non-member declaration
+
+#### Scenario: Unreviewed neighbor or source record
+- **WHEN** the same revision value appears at another path or in source evidence
+- **THEN** ordinary member coverage, classification and refusal SHALL remain enforced
+
 ### Requirement: Prior evidence admission is exact and source-only
 The read-only verifier SHALL preserve only the fixed accepted historical source
 controls, original pinned readers and complete original definitions approved
