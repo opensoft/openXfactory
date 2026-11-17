@@ -1935,10 +1935,19 @@ def test_delegation_root_authenticates_each_original_policy_blob():
         v.load_delegation_root(SimpleNamespace(blob=blob), DELEGATION_ROOT_FIXTURE, DELEGATION_TIME)
 
 
-def test_delegation_producer_is_inactive_before_qualified_activation():
-    assert v.DELEGATION_PRODUCER_REF is None
+def test_delegation_producer_uses_qualified_pin_and_refuses_inactive_state(monkeypatch):
+    ref = v.DELEGATION_PRODUCER_REF
+    assert ref["repository"] == v.COORDINATOR
+    assert ref["commit"] == "ba911daab0ed791641e19d7954f5b625a9b3c81c"
+    assert ref["path"] == v.FEATURE_PATH + "/attest-delegated-evidence.py"
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    raw = store.blob(ref)
+    assert v.digest(raw) == ref["sha256"]
+    assert v.require_delegation_producer(store, dict(ref)) == raw
+    assert v.DELEGATED_ATTESTATIONS == {}
+    monkeypatch.setattr(v, "DELEGATION_PRODUCER_REF", None)
     with pytest.raises(v.EvidenceError, match="not activated"):
-        v.require_delegation_producer(SimpleNamespace(blob=lambda ref: b""), {})
+        v.require_delegation_producer(SimpleNamespace(blob=lambda value: b""), {})
 
 
 def test_delegation_producer_accepts_only_the_exact_activated_bytes(monkeypatch):
