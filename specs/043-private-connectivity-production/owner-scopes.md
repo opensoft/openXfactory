@@ -68,3 +68,35 @@ These are inspected source anchors and proposed new areas for C-01 review, not a
 | Actual domain | Selection and exact production paths are blocked on C-02. Historical codeXfactory anchors are profiles/hosted/private-connectivity.yaml, schemas/hosted-connectivity-profile.schema.json, tests/private_connectivity, scripts/merge_master/council_clearance.py and required doc/CI wiring | The historical profile is test/synthetic/customer-ineligible and its protection is exact to that file. A selected production owner must accept actual workload/profile/schema, exact definition-time protection and fail-closed required validation/dependencies. Equivalent owner mechanisms are acceptable; copying a directory prefix or another profile's evidence is not |
 
 The plan's E/N/L/H/I/D/O workstreams and [validation matrix](validation-matrix.md) use these boundaries. This source-anchor table does not enlarge the exact ratified per-task scopes above. Ops uses the accepted separate private-connectivity-validation workflow; scripts/run_test_shards.py and the existing opsx-validation workflow are excluded from that source grant.
+## Accepted cut-validation and QA handoff refinements
+
+Brett Heap accepted the exact N/E design at 2026-11-17T02:55:36.438Z and the
+matching Ops and Tenant owner plans at 2026-11-17T03:01:06.114Z. The actual
+owner decisions and source-only limits are recorded in their immutable review
+packets:
+
+- [N/E four-path T018 refinement, bounded 2a46 compatibility and complete freeze](https://github.com/opensoft/openXfactory/blob/55e3cafd3c2d44a9933de20708fad6d46e9d7573/openspec/changes/extend-private-connectivity-cut-validation/design.md).
+- [Ops seventeen coupled T043 paths and two T047 timing/manifest paths](https://github.com/opensoft/opsXfactory/blob/91c080220fd1acbd6b602883c93e177fb92a5218/openspec/changes/admit-private-connectivity-qa-operations/design.md).
+- [Tenant declarative target-data/runbook handoff](https://github.com/opensoft/Opensoft-Tenant/blob/71475785c0ef838e4c04c989a232f1a8f7d2b49a/openspec/changes/prepare-private-connectivity-qa-target/design.md).
+
+Only the accepted T018/T043/T047 file lists change. All 68 task identities,
+owners, classes, required cases, dependencies and verification commands remain
+unchanged. The T043 shard manifest/timing paths are coupled discovery/census
+metadata, not permission to change the generic shard runner or its required
+workflow. T047 may settle only their actual later CI measurement metadata.
+Three exact isolated workload sets remain behind their reviewed managing-factory
+channel, full release dependencies and current operating authority.
+
+Tenant is a later declarative operating target, not a seventh executable source
+component. Feature-specific validation remains Ops-owned and existing Tenant
+validation stays in place. No new Tenant validator, test or workflow is granted.
+Actual target writes/reconciliation remain a separately accepted T050/C-03
+operation after released dependencies, full Q0 and T049.
+
+Qualify the E compatibility/freeze/CI changes against the independent published
+contract-v4.2 tree before consuming N conformance/classification changes. Actual
+new E output requires separate custodian authentication and default admission.
+Original 2a46 controls/readers retain their exact accepted source-task closures;
+no pending or live task gains acceptance. All PRs stay draft. No merge, final
+version allocation, annotated publication, target effect, spend, enrollment,
+protected retention lock or Q0-Q5 acceptance is granted.

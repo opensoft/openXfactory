@@ -26,3 +26,13 @@ Implementation uses the actual existing 043 verification commands and measured
 required source suites/counters, without discovery, floor, skip or threshold
 waivers. A necessary unlisted path returns for review. Keep all PRs draft;
 actual landing/publication, target operations and Q0-Q5 remain separately gated.
+
+The matching Ops/Tenant source/plan acceptances were actually recorded at
+2026-11-17T03:01:06.114Z; see review/owner-scope-acceptance.md. Qualification is
+still independent. The source worktree includes the already authenticated
+T013 commissioning branch only to preserve its accepted seventeen-task state.
+Before any future authorized landing, #1335 must land independently before
+#1336; do not use #1336 to land #1335 indirectly. The unpublished N cut #1338 is
+not an ancestor of this E source tree. Its final integration/version/floor and
+inventory must be rechecked after the prerequisite source landings. This is
+a landing dependency, not permission to ready, merge or publish any PR.

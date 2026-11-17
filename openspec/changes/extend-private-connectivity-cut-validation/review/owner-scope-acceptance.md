@@ -15,3 +15,14 @@ This ratifies the four-path N refinement, exact E historical-control/reader scop
 First qualify the E compatibility/freeze/source-CI changes against the independent published contract-v4.2 tree. Present their actual new source/CI packet for separate custodian authentication and pass default verification before consuming N implementation. The actual source outputs are not authenticated by this scope decision. Accepted original controls/readers/frozen definitions and current revocations remain enforced.
 
 All PRs remain draft. This grants no final version allocation, merge, annotated tag, publication, target operation, deployment, spend, enrollment, protected-retention lock or Q0-Q5 acceptance. There is one executable task list: feature 043.
+
+## Matching affected-owner decisions
+
+Brett separately accepted the exact Ops and Tenant scopes at
+2026-11-17T03:01:06.114Z, original user response record SHA-256
+2102a544a5c871b24969d855a225f63e2680e2dc8639c6fe207b691e26e726ec.
+These later decisions close the separate pending source/plan owner acceptances
+described above; they do not authenticate unseen outputs or grant operations.
+
+- [Actual Ops acceptance record](https://github.com/opensoft/opsXfactory/blob/c5e7ae1ade9e88d01b429ba394bd2bfe91604114/openspec/changes/admit-private-connectivity-qa-operations/review/owner-scope-acceptance.md).
+- [Actual Tenant acceptance record](https://github.com/opensoft/Opensoft-Tenant/blob/7126c555d8389fe688f5b84bb0063938fa1f0fe7/openspec/changes/prepare-private-connectivity-qa-target/review/owner-scope-acceptance.md).
