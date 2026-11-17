@@ -137,7 +137,7 @@ accepted evidence remain unchanged.
 ## Exact owning scope drafts
 
 - [Ops #637](https://github.com/opensoft/opsXfactory/pull/637):
-  admit-private-connectivity-qa-operations, reviewed draft f4a8ec16389fa2b31429a0cd1a485ed6652fb1d0.
+  admit-private-connectivity-qa-operations, reviewed draft efc94e47fbabfac798ae763a70c8d90736b29fc5.
   Three separate workload sets preserve cross-boundary refusal. Additional
   T043/T047 files require actual Ops/E review and complete definition refresh
   before implementation.
