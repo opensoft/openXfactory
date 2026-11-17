@@ -420,6 +420,11 @@ _OPENDOX = "scripts/verify-opendox-pin.py"
 _OPENXDOX = "scripts/verify-openxdox-pin.py"
 _OPENSPEC_CLI = "scripts/validate-openspec-cli-pin.py"
 
+# Feature048 preserves historical line citations in the explanatory record above.
+# The live Citation table below records the current, re-measured guard locations.
+# Entry conditions now live in a helper reached by the same public pure guard.
+
+
 #: The refusal the two shape-(a) verifiers reach only inside `verify()`. Quoted
 #: here and re-read at the cited line by the equivalence test's citation route.
 _FILES_REFUSAL = "the pin lists no `files:` members, so it pins no bytes"
@@ -540,23 +545,23 @@ SHAPE_C = Shape(
     revision_kinds=CONTENT_ADDRESSED_KINDS,
     required=(
         Member(("revision_kind",), _one_of(CONTENT_ADDRESSED_KINDS),
-               (Citation(_OPENSPEC_CLI, 737, guard="pinned_version"),)),
+               (Citation(_OPENSPEC_CLI, 762, guard="pinned_version"),)),
         Member(("version",), _is_version,
-               (Citation(_OPENSPEC_CLI, 746, guard="pinned_version"),)),
+               (Citation(_OPENSPEC_CLI, 771, guard="pinned_version"),)),
         Member(("integrity",), _is_integrity,
-               (Citation(_OPENSPEC_CLI, 764, guard="pinned_integrity"),)),
+               (Citation(_OPENSPEC_CLI, 789, guard="pinned_integrity"),)),
         Member(("shasum",), _is_shasum,
-               (Citation(_OPENSPEC_CLI, 791, guard="pinned_integrity"),)),
+               (Citation(_OPENSPEC_CLI, 817, guard="pinned_integrity"),)),
         Member(("package",), _is_package,
-               (Citation(_OPENSPEC_CLI, 803, guard="pinned_package"),)),
+               (Citation(_OPENSPEC_CLI, 829, guard="pinned_package"),)),
         Member(("lockfile",), _is_lockfile_name,
-               (Citation(_OPENSPEC_CLI, 843, guard="pinned_lockfile"),)),
+               (Citation(_OPENSPEC_CLI, 869, guard="pinned_lockfile"),)),
         Member(("lockfile_integrity",), _is_integrity,
-               (Citation(_OPENSPEC_CLI, 853, guard="pinned_lockfile"),)),
+               (Citation(_OPENSPEC_CLI, 879, guard="pinned_lockfile"),)),
         Member(("lockfile_packages",), _is_lockfile_packages,
-               (Citation(_OPENSPEC_CLI, 876, guard="pinned_lockfile"),)),
+               (Citation(_OPENSPEC_CLI, 903, guard="pinned_lockfile"),)),
         Member(("binary",), _is_binary,
-               (Citation(_OPENSPEC_CLI, 893, guard="pinned_binary"),)),
+               (Citation(_OPENSPEC_CLI, 920, guard="pinned_binary"),)),
     ),
     # Absent-is-empty at its guard (`:946-948`), so NOT required and not on the
     # guard leg's REQUIRED table; refused when PRESENT and not a list
@@ -577,26 +582,26 @@ SHAPE_C = Shape(
     # the CONDITION it was measured at, and the test re-reads that line.
     optional=(
         Member(("dispositions",), _is_disposition_list,
-               (Citation(_OPENSPEC_CLI, 946),
-                Citation(_OPENSPEC_CLI, 958, guard="pinned_dispositions",
+               (Citation(_OPENSPEC_CLI, 1021),
+                Citation(_OPENSPEC_CLI, 960, guard="pinned_dispositions",
                          quote="if not isinstance(entry, dict):",
-                         quote_line=958),
-                Citation(_OPENSPEC_CLI, 963, guard="pinned_dispositions",
+                         quote_line=960),
+                Citation(_OPENSPEC_CLI, 965, guard="pinned_dispositions",
                          quote="for key in DISPOSITION_REQUIRED "
                                "if not entry.get(key)",
-                         quote_line=963),
-                Citation(_OPENSPEC_CLI, 974, guard="pinned_dispositions",
+                         quote_line=965),
+                Citation(_OPENSPEC_CLI, 976, guard="pinned_dispositions",
                          quote="if not isinstance(citations, list) "
                                "or not citations:",
-                         quote_line=974),
-                Citation(_OPENSPEC_CLI, 983, guard="pinned_dispositions",
+                         quote_line=976),
+                Citation(_OPENSPEC_CLI, 985, guard="pinned_dispositions",
                          quote="if level is not None and str(level).upper() "
                                "not in BLOCKING_LEVELS:",
-                         quote_line=983),
-                Citation(_OPENSPEC_CLI, 994, guard="pinned_dispositions",
+                         quote_line=985),
+                Citation(_OPENSPEC_CLI, 996, guard="pinned_dispositions",
                          quote="if not any(entry.get(key) "
                                "for key in DISPOSITION_AUTHORITY):",
-                         quote_line=994)),
+                         quote_line=996)),
                entries=_disposition_entry_failure),
     ))
 
