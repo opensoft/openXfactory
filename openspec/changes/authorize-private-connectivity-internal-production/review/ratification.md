@@ -35,3 +35,21 @@ is not complete or commercially expanded merely because this root exists.
 The thirty-day agent authority expires at the time above. Ongoing accepted
 service custody and the monthly storage envelope remain Brett's responsibility
 at handoff. Revocation or an unmet policy boundary stops new agent effects.
+
+## Necessary exact root-pin registration
+
+The first full census of the committed human-root record reported nine uncovered
+policy commit sites. The reviewed policy already authorizes the necessary
+exact shared-reader registration and directly affected tests. The repair uses
+only scripts/doc_health/pin_class.py, tests/doc-health/test_pin_reachability.py
+and tests/doc-health/test_sentinel_vocabulary.py, all within accepted T009 scope.
+It adds one exact-path repo-local member for this authority record, separate
+from task receipts and their inventories. Other paths/fields remain uncovered;
+a declared foreign repository cannot waive local reachability.
+
+Actual source validation preserved the initial missing-leg failure, materialized
+the existing pinned validation dependencies and then demonstrated the missing
+registration failure before repair. The five new local/orphan/neighbor/field
+regressions pass, and all 46 sentinel tests pass without skips. The measured
+standing census is 1,446 sites / 39 members. These are pending source validation
+observations, not a new human authentication, T010 completion or rollout gate.
