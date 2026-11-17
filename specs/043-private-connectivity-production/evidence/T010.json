@@ -1,208 +1,56 @@
 {
-  "schema": "043-task-evidence-v1",
-  "task": "T010",
-  "instance": null,
-  "owner": "C",
-  "evidence_class": "CI-E",
-  "scope": {
-    "profile": "not-applicable",
-    "candidate": "043-source-only",
-    "offering": "source-evidence",
-    "run": "043-e-source-ci-refinement",
-    "network": "not-applicable",
-    "region": "not-applicable",
-    "wave": "not-applicable",
-    "site": "not-applicable",
-    "phase": "source",
-    "domain": "not-applicable",
-    "target": "not-applicable",
-    "offer": "not-applicable",
-    "environment": "source",
-    "customer": "not-applicable"
+  "schema": "043-independent-review-v1",
+  "subject": {
+    "kind": "decision",
+    "definition": "281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421",
+    "record_sha256": "4f7060b31899c5b1a04452bd8b968edc42e9de04d47d6204287792c9c1e0cbcb"
   },
-  "attempt": "bounded-definition-source-ci-43775758307",
-  "verdict": "pass",
-  "source": {
-    "repository": "opensoft/openxfactory",
-    "base": "fe79bc90783195d088ba8bfad42183631a909597",
-    "revision": "479750c62efad1bf803b6d1bec566c8ac07c5565"
-  },
-  "command": "set -euo pipefail\nrequested_head=\"$PC043_EXPECTED_REVISION\"\nfeature_path=\"specs/043-private-connectivity-production\"\nfor revision in \"$requested_head\" \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"; do\n  [[ \"$revision\" =~ ^[0-9a-f]{40}$ ]]\n  git cat-file -e \"$revision^{commit}\"\ndone\n[ \"$(git rev-parse HEAD)\" = \"$PC043_CHECKOUT_REVISION\" ]\ngit merge-base --is-ancestor \"$requested_head\" \"$PC043_CHECKOUT_REVISION\"\nexport PC043_SOURCE_MODE=pr-head\nif git cat-file -e \"$requested_head:$feature_path\" 2>/dev/null; then\n  [ \"$(git cat-file -t \"$requested_head:$feature_path\")\" = tree ]\nelse\n  git merge-base --is-ancestor \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"\n  ancestor=\"$(git merge-base \"$requested_head\" \"$PC043_BASE_REVISION\")\"\n  touched=\"$(git log --full-history -1 --format=%H \"$ancestor..$requested_head\" -- \"$feature_path\")\"\n  if git cat-file -e \"$ancestor:$feature_path\" 2>/dev/null || [ -n \"$touched\" ]; then\n    echo \"::error::A head that changed or removed feature 043 requires its own complete source suites.\"\n    exit 1\n  fi\n  export PC043_EXPECTED_REVISION=\"$PC043_CHECKOUT_REVISION\"\n  export PC043_SOURCE_MODE=merge-checkout\n  echo \"::notice::Unrelated head predates feature 043; testing the merge checkout does not qualify the PR head.\"\nfi\nfor module in test_evidence.py test_evidence_pins.py test_source_roots.py; do\n  [ \"$(git cat-file -t \"$PC043_EXPECTED_REVISION:$feature_path/tests/$module\")\" = blob ]\ndone\nprintf '043 source selection: mode=%s revision=%s requested_head=%s\\n' \\\n  \"$PC043_SOURCE_MODE\" \"$PC043_EXPECTED_REVISION\" \"$requested_head\"\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  specs/043-private-connectivity-production/tests/test_source_roots.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 557,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n    \"specs.043-private-connectivity-production.tests.test_source_roots\": 97,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
-  "authority": {
-    "object": "T010-release-refinement-authority"
-  },
-  "artifacts": [
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": ".github/workflows/pytest-suite.yml",
-      "sha256": "7e38a1870e5bb5e24c2f813d099f1f4658a884afa313827cdfb5ec04e2940bd3"
+  "reviewed_at": "2026-11-17T10:17:15.806Z",
+  "roles": {
+    "security": {
+      "reviewer": "/root/autonomy_security",
+      "verdict": "clear",
+      "report": "No actionable security findings in the proposed scope amendment at head `7ed90134af760b0a68ca12601fc2f0fe098ee8ed`. Original final review event amsg_01a1e8fc-fc19-7621-ac50-0eb5015de60b at 2026-11-17T10:10:56.153Z; original event SHA-256 6dda512da9a5051ad7f43e12f662ed0cf52a036d06169816b974152eb763ce42."
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": ".github/workflows/doc-health-py314.yml",
-      "sha256": "1cd00507ce7fd2bcd868f2d3822bd5b64404b291f34c3c398016191b8da83695"
+    "qa": {
+      "reviewer": "/root/autonomy_qa",
+      "verdict": "clear",
+      "report": "No actionable QA or dependency findings in the proposed scope amendment at head `7ed90134af760b0a68ca12601fc2f0fe098ee8ed`. Original final review event amsg_01a1e8fc-fc30-7351-929a-cdf22e6f1131 at 2026-11-17T10:10:56.177Z; original event SHA-256 b1565db7f69f55a0d2f301e8a698e0885bfb1508fb99600a5e0a54fd9ab0f5ca."
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/prepare-source-roots.py",
-      "sha256": "64df95a3906112e088c026cc2e99d9ad97d93b8dc5e48987f38248784869181e"
+    "contracts": {
+      "reviewer": "/root/autonomy_contracts",
+      "verdict": "clear",
+      "report": "No actionable contract finding in the scope amendment at **7ed90134af760b0a68ca12601fc2f0fe098ee8ed**. Original final review event amsg_01a1e8fd-6b3e-7d42-be03-69fb88b7c0c9 at 2026-11-17T10:11:24.607Z; original event SHA-256 43a8db05df45367c51e39be07088ff992bbd5058f17d45117135b407da97b255."
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/tests/test_source_roots.py",
-      "sha256": "5c7eaa1d6aaeae749fd1d5561c2d5c0ca20523e86ce4ac4d0ead2cb9500ded00"
+    "architecture": {
+      "reviewer": "/root/autonomy_architecture",
+      "verdict": "clear",
+      "report": "No actionable architecture findings in the proposed amendment at `7ed90134af760b0a68ca12601fc2f0fe098ee8ed`. Original final review event amsg_01a1e900-d582-7cd0-a3d4-8e65df9962b7 at 2026-11-17T10:15:08.418Z; original event SHA-256 0557e93678068ece931b910e267f471ad70cff7ae13f953bfa0d94ccd2b0ea52."
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/verify-evidence.py",
-      "sha256": "e2aae8286af91d0ae04b99498da52ace1da69e3adfd0adc8df45437d8079ac6f"
+    "performance": {
+      "reviewer": "/root/autonomy_performance",
+      "verdict": "clear",
+      "report": "Clear at exact head `7ed90134af760b0a68ca12601fc2f0fe098ee8ed`. No actionable performance, cost or maintenance findings in the proposed amendment. Original final review event amsg_01a1e901-46e6-7001-87d2-e4c5a2b40cf7 at 2026-11-17T10:15:37.446Z; original event SHA-256 c8047113beb2c030d20651f3d287c9007887abe586190cee1d32cc2d3e021392."
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/tests/test_evidence.py",
-      "sha256": "04193df94faf6d08834820a0fdb81fca3f5129db1d9a6d5a467b455c153f4864"
+    "integrity": {
+      "reviewer": "/root/autonomy_integrity",
+      "verdict": "clear",
+      "report": "No actionable integrity or authority-boundary findings in proposed amendment head `7ed90134af760b0a68ca12601fc2f0fe098ee8ed`. Original final review event amsg_01a1e901-46fd-7432-af3d-df76d4a71567 at 2026-11-17T10:15:37.469Z; original event SHA-256 cb017e6bdd32b46a29de5a77363ca1c6785eaeb76f05e6249a4844692e64d82a."
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/register-evidence-pins.py",
-      "sha256": "3b20c928d6c6a639c186b30f4c171acbd62db9a7a21e395ef6996acb9813d9db"
+    "reliability": {
+      "reviewer": "/root/autonomy_reliability",
+      "verdict": "clear",
+      "report": "No actionable reliability findings in the scope amendment at exact head `7ed90134af760b0a68ca12601fc2f0fe098ee8ed`. Original final review event amsg_01a1e902-663b-7ea3-8914-7ea03d165562 at 2026-11-17T10:16:51.003Z; original event SHA-256 d374b62504ca1990298d7526abc76772240fd4326a666ed0e18b86a5bee73135."
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/tests/test_evidence_pins.py",
-      "sha256": "b6363610d64803a378ecef0994651895cbf7726544dbe3574b18f6191e7f5828"
+    "maintainability": {
+      "reviewer": "/root/autonomy_maintainability",
+      "verdict": "clear",
+      "report": "No actionable maintainability findings in the scope amendment at exact head `7ed90134af760b0a68ca12601fc2f0fe098ee8ed`. Original final review event amsg_01a1e902-c70c-7e02-85b7-34f98d0acdd9 at 2026-11-17T10:17:15.788Z; original event SHA-256 5691bd221575f7a667e655f9feb58ee4c5bab09cb5247514ae5c946c7f21bc4f."
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
-      "sha256": "b6592371c7987f040a44d6ecc9783979be786c11a0e9cfaefd46ae3628b31640"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/tasks.md",
-      "sha256": "d745ce645746c388dcc3ff9004f0712aad116a88eae6c75c5e7d5fa81d6333fe"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-      "sha256": "902903efb19398d014ef2c84acd6afa227c0cc97ee4df87f5d9cecf56fd29816"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-      "sha256": "57e2570d1f48f506dfca978e27784e1b39d643f1ae2bf6939247ee2956d8b942"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/extend-private-connectivity-source-ci/proposal.md",
-      "sha256": "e0385105d14c6b99a01e5d71f82647d995a11dcc977944c1c25ec29dcd43242d"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/extend-private-connectivity-source-ci/design.md",
-      "sha256": "64621cc3003093328ddbed1f0b8b6bbf0ccee1096ea02c0803bd78add7d75e3c"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/extend-private-connectivity-source-ci/review/ratification.md",
-      "sha256": "e3fcd4f2321a3b0684b71754c83dffcc929f9be1503ea15b6a7f22e0483bbb93"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "tests/doc-health/test_pin_reachability.py",
-      "sha256": "a274e6de0588a4d9d5e9f5ccb0198afd134e0b643d504c28b430589a8dcc749f"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "tests/doc-health/test_sentinel_vocabulary.py",
-      "sha256": "09fe36ce2e84cb4db064e6eda1de58fd22d53d3a85431840f9fbd3448dadb1fb"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "scripts/doc_health/pin_class.py",
-      "sha256": "c6c8325037001cac7c0d72c111c9939becb3730276ba3bf54fd07837e6c18024"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "scripts/validate-sonar-coverage.py",
-      "sha256": "98badb9de8c9b72a8fc3707158ad52d0fa937967d6643cb2213265cd8ce0d240"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "sonar-project.properties",
-      "sha256": "7c28d8771db41ad9606f56831c2a9a796c734af597037fdad8a6cc39fd8644fd"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "tests/sonar_quality/test_coverage_evidence.py",
-      "sha256": "4e4a6b8293ea1ddab256e826ef4bf5c3ab6deb7559ac423df5851927d6c0a79f"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/classify-private-connectivity-source-tests/proposal.md",
-      "sha256": "2a93ea089315bb061579db3498dff2cba952779f4df09b8ee7d1aec16501e632"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/classify-private-connectivity-source-tests/design.md",
-      "sha256": "f3f2cc8e5e1c60b527a0bcd39629592420e47bebceea8503e652f33224f4b544"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-      "path": "openspec/changes/classify-private-connectivity-source-tests/review/ratification.md",
-      "sha256": "03868d26318faf5e010a199e2971d84d3ae958ca9e90271caeb6d8ec568fe78d"
+    "static": {
+      "reviewer": "/root/autonomy_static",
+      "verdict": "clear",
+      "report": "No actionable static-analysis or CI-quality findings at exact head `7ed90134af760b0a68ca12601fc2f0fe098ee8ed`. Original final review event amsg_01a1e902-c71e-7b00-a8cc-3af7c8aa42c7 at 2026-11-17T10:17:15.806Z; original event SHA-256 7dee9ec36ee50f4ff93ac5b31f7e81e09181c1511d263d55805e2c3302501a02."
     }
-  ],
-  "incidents": [],
-  "history": [],
-  "dependencies": {
-    "T009": {
-      "object": "T009-import"
-    }
-  },
-  "output": {
-    "repository": "opensoft/openxfactory",
-    "commit": "7e05bb7adb190d608f654c4888a4edd4c0552758",
-    "path": "specs/043-private-connectivity-production/evidence/T010.json",
-    "sha256": "a330ac4d8be4a1d49cfc4c6a8260c2a5e1f6066f2a3b18ebdd7e5c913e77355f"
-  },
-  "acceptance": "Actual two-lane source CI only. New actual custodian authentication/default admission remains pending.",
-  "pin_inventory": [
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "479750c62efad1bf803b6d1bec566c8ac07c5565"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "7e05bb7adb190d608f654c4888a4edd4c0552758"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "fe79bc90783195d088ba8bfad42183631a909597"
-    }
-  ]
+  }
 }
