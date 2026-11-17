@@ -12,3 +12,8 @@ entrypoints and source authorization, retaining standalone default behavior.
 Prove real consumer pin/corpus selection, unchanged operator precedence, forged
 pin refusal and invalid consumer-root refusal before package work. Preserve all
 193 existing assertions; consuming wrappers get separate real transport tests.
+
+The source insertion shifts current doc-health guard citations by13 lines.
+Re-measure their unchanged source/condition text and update the live citation
+metadata and its exact-position assertions together; retain the failing CI log.
+No guard, optional-arm distinction, assertion or skip discipline is removed.
