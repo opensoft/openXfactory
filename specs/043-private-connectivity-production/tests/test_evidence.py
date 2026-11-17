@@ -1624,6 +1624,10 @@ def test_fixed_c37_reader_retains_actual_source_closures(kind, task):
 
 
 def c37_world(kind, monkeypatch):
+    return historical_source_world(c37_control(kind), monkeypatch)
+
+
+def historical_source_world(prior, monkeypatch):
     git_store = v.GitStore({v.COORDINATOR: str(ROOT)})
     world = World()
     original_blob = world.store.blob
@@ -1634,7 +1638,6 @@ def c37_world(kind, monkeypatch):
     monkeypatch.setattr(world.store, "changed", git_store.changed)
     monkeypatch.setattr(world.store, "git", git_store.git, raising=False)
     monkeypatch.setattr(world.store, "root", git_store.root, raising=False)
-    prior = c37_control(kind)
     world.trust = v.decode(git_store.blob(prior))
     world.trust["definition"] = v.DEFINITION
     world.trust["historical_controls"] = {task: prior for task in ("T011", "T012", "T016")}
@@ -1725,3 +1728,149 @@ def test_t020_history_requires_its_actual_package_control(monkeypatch):
     anchor = source_anchor(world)
     with pytest.raises(v.EvidenceError, match="unaccepted historical control"):
         v.Verifier(TASKS, world.store, anchor, now=NOW)
+
+
+# Actual accepted 2a46 controls, exercised as history under the new source freeze.
+# Synthetic current reviews below authenticate no project qualification output.
+def control_2a46(kind):
+    return deepcopy(v.CONTROLS_2A46[kind]["reference"])
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+@pytest.mark.parametrize("task", ["T010", "T011", "T012", "T016"])
+def test_2a46_accepted_controls_verify_original_public_source_closures(kind, task):
+    reader = v.make_verifier(TASKS, v.GitStore({v.COORDINATOR: str(ROOT)}), control_2a46(kind))
+    assert reader.definition == v.DEFINITION_2A46
+    reader.verify(task)
+
+
+def test_2a46_hosted_control_preserves_actual_t013_authentication():
+    reader = v.make_verifier(TASKS, v.GitStore({v.COORDINATOR: str(ROOT)}), control_2a46("hosted"))
+    reader.verify("T013")
+    assert reader.authenticated is True
+    assert reader.trust["bindings"]["T013"]["scope"]["phase"] == "source"
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+@pytest.mark.parametrize("task", ["T020", "T021", "T022"])
+def test_2a46_private_package_bindings_stay_original_without_importing_private_source(kind, task):
+    # Full private-owner qualification stays in the actual read-only proof lane.
+    reader = v.make_verifier(TASKS, v.GitStore({v.COORDINATOR: str(ROOT)}), control_2a46(kind))
+    binding = reader.binding(task)
+    assert binding == reader.trust["bindings"][task]
+    assert binding["owner"] == "L" and binding["scope"]["phase"] == "source"
+    assert reader.authenticated is True
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+@pytest.mark.parametrize("field,value", [
+    ("repository", "opensoft/unaccepted-owner"), ("commit", "a" * 40),
+    ("path", "evidence/copied-control.json"), ("sha256", "a" * 64),
+])
+def test_2a46_whole_reference_substitution_refuses(kind, field, value):
+    ref = control_2a46(kind); ref[field] = value
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    expected = {"commit": "local Git object or repository unavailable",
+                "sha256": "immutable content digest mismatch"}.get(field, v.HISTORICAL_CONTROL_ERROR)
+    with pytest.raises(v.EvidenceError, match=expected):
+        v.historical_verifier(store, ref)
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+@pytest.mark.parametrize("mutation", ["core", "reader", "definition", "frozen-input"])
+def test_2a46_original_core_reader_and_complete_freeze_are_required(kind, mutation, monkeypatch):
+    ref = control_2a46(kind)
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    if mutation == "core":
+        controls = deepcopy(v.CONTROLS_2A46); controls[kind]["content_sha256"] = "a" * 64
+        monkeypatch.setattr(v, "CONTROLS_2A46", controls)
+    elif mutation == "reader":
+        monkeypatch.setattr(v, "READER_2A46", dict(v.READER_2A46, sha256="a" * 64))
+    elif mutation == "definition":
+        monkeypatch.setattr(v, "DEFINITION_2A46", "a" * 64)
+    else:
+        original = store.git
+        def changed(root, *args):
+            raw = original(root, *args)
+            return raw + b"\nsynthetic drift" if args[0] == "show" and args[1].endswith("/owner-scopes.md") else raw
+        monkeypatch.setattr(store, "git", changed)
+    with pytest.raises(v.EvidenceError):
+        v.historical_verifier(store, ref)
+
+
+def test_2a46_pending_reviewed_manifest_is_not_an_accepted_control():
+    pending = dict(repository=v.COORDINATOR, commit="53c2b0700e342b77196980a617dea7fc2fa33512",
+                   path=v.COMMISSIONING_PATH, sha256="e3fce83cce9f9c6597fd82d00e4fabc6934ae30e6e06a49c52bded4ed4b1146f")
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    assert v.commissioning_digest(v.decode(store.blob(pending))) == v.CONTROLS_2A46["hosted"]["content_sha256"]
+    with pytest.raises(v.EvidenceError, match="unaccepted historical control"):
+        v.historical_verifier(store, pending)
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+@pytest.mark.parametrize("state", ["revoked-authority", "revoked-decision", "closed-authority"])
+@pytest.mark.parametrize("cached", [False, True])
+def test_2a46_nested_and_cached_reads_apply_current_authority(kind, state, cached, monkeypatch):
+    world = historical_source_world(control_2a46(kind), monkeypatch)
+    binding = world.trust["bindings"]["T007"]
+    authority = world.trust["source_container"]["objects"][binding["authority"]["object"]]["value"]
+    reader = v.Verifier(TASKS, world.store, source_anchor(world), now=NOW)
+    if cached: reader.verify("T012")
+    identity = authority["id"]
+    if state == "revoked-decision":
+        ref = authority["decisions"]["C-01"]
+        identity = world.trust["source_container"]["objects"][ref["object"]]["value"]["id"]
+    if state == "closed-authority":
+        reader.trust["completed_authorities"] = {identity: world.store.put(
+            dict(kind="authority-closure", authority_id=identity, scope=binding["scope"],
+                 disposition="completed", closed_at=START, owner="Synthetic Owner"), "closures/2a46-current.json")}
+    else:
+        reader.trust["revoked_authorities"].append(identity)
+    with pytest.raises(v.EvidenceError, match="revoked|closed"):
+        reader.verify("T012")
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+@pytest.mark.parametrize("task", ["T014", "T015", "T017", "T018", "T019", "T023", "T028", "T051"])
+def test_2a46_source_anchor_cannot_admit_pending_or_live_tasks(kind, task, monkeypatch):
+    world = historical_source_world(control_2a46(kind), monkeypatch)
+    world.trust["historical_controls"] = {task: control_2a46(kind)}
+    with pytest.raises(v.EvidenceError, match="unaccepted historical task"):
+        v.Verifier(TASKS, world.store, source_anchor(world), now=NOW)
+
+
+def test_2a46_earlier_control_does_not_acquire_later_t013(monkeypatch):
+    world = historical_source_world(control_2a46("source-ci"), monkeypatch)
+    world.trust["historical_controls"] = {"T013": control_2a46("source-ci")}
+    with pytest.raises(v.EvidenceError, match="unaccepted historical task"):
+        v.Verifier(TASKS, world.store, source_anchor(world), now=NOW)
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+def test_2a46_children_keep_the_actual_original_ci(kind, monkeypatch):
+    world = historical_source_world(control_2a46(kind), monkeypatch)
+    world.trust["bindings"]["T010"]["command"] = "synthetic replacement awaiting separate source authentication"
+    v.Verifier(TASKS, world.store, source_anchor(world), now=NOW).verify("T012")
+
+
+@pytest.mark.parametrize("kind", ["source-ci", "hosted"])
+def test_2a46_identical_bytes_at_a_new_actual_commit_are_not_accepted(kind, tmp_path):
+    # A positive object/read baseline makes this about exact identity, not absence.
+    ref = control_2a46(kind)
+    copied = tmp_path / "synthetic-unaccepted-copy"; copied.mkdir()
+    subprocess.run(["git", "init", "-q", str(copied)], check=True)
+    subprocess.run(["git", "remote", "add", "origin", "https://github.com/" + v.COORDINATOR + ".git"],
+                   cwd=copied, check=True)
+    objects = subprocess.check_output(["git", "rev-parse", "--git-path", "objects"], cwd=ROOT, text=True).strip()
+    (copied / ".git/objects/info/alternates").write_text(str((ROOT / objects).resolve()) + "\n")
+    tree = subprocess.check_output(["git", "rev-parse", ref["commit"] + "^{tree}"], cwd=ROOT, text=True).strip()
+    other = subprocess.check_output(
+        ["git", "-c", "user.name=Synthetic control copy", "-c", "user.email=copy@example.invalid",
+         "commit-tree", tree, "-p", ref["commit"], "-m", "Synthetic identical but unaccepted source control"],
+        cwd=copied, text=True).strip()
+    clone_ref = dict(ref, commit=other)
+    store = v.GitStore({v.COORDINATOR: str(copied)})
+    assert other != ref["commit"]
+    assert store.blob(clone_ref) == v.GitStore({v.COORDINATOR: str(ROOT)}).blob(ref)
+    with pytest.raises(v.EvidenceError, match="unaccepted historical control"):
+        v.make_verifier(TASKS, store, clone_ref)

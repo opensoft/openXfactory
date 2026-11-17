@@ -157,13 +157,28 @@ Task/registry changes after approval require reviewed scope/contract updates and
 
 ## T005 review freeze
 
-Brett Heap ratified classify-private-connectivity-source-tests at 2026-11-15T01:34:50.899Z. This refinement adds only its three exact shared paths to T010. All 16 frozen input bodies, all 68 registry rows and every other task field retain their previous bytes. The earlier source-CI definition e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298 remains historical; its withdrawn control receives no new authentication. The refreshed definition below permits the accepted source work only. Actual new CI outputs, full Q0 and Q1-Q5 remain separately gated; all four PRs stay draft.
+### Current accepted source-scope definition
 
-The initial definitions and later T006 acceptance-state freeze remain historical decisions. Original accepted identity: 547e398b615d08186719674774f379038740292e2472488010151a5f03bbba6d. On 2026-11-14 Brett ratified the exact bootstrap amendment, all five component source scopes/native packets and neutral publication scope. The prior source-scope definition 66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0 remains historical. Brett subsequently ratified extend-private-connectivity-source-ci at 2026-11-14T22:31:50.896Z. This refreshed freeze adds only its T009/T010 files and source-CI custody clarification. All 68 identities, owners, classes, required cases, dependencies and verification commands are preserved. T001–T012 and T016 are complete under their historical authenticated anchors; the additional source-CI refinement is now accepted. Full Q0 remains incomplete.
+The four-path companion-prose refinement was separately accepted at
+2026-11-17T03:40:50.580Z. The earlier unauthenticated 4f963e0f source candidate
+and its actual passing tests remain observations at their original commits;
+they are not accepted history and are not relabeled as this qualification.
 
-Review packet SHA-256: c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431
+Brett Heap accepted the exact N/E refinement at 2026-11-17T02:55:36.438Z and
+the matching Ops/Tenant owner plans at 2026-11-17T03:01:06.114Z. Only the four
+T018, twenty-one T043 and two T047 source paths and matching owner-scopes.md
+handoff are refined. All 68 registry rows and all other task fields remain
+unchanged. Fifteen input bodies remain byte-identical; only the accepted owner
+handoff input changes. Original freezes, controls, readers and actual accepted
+observations remain immutable at their exact historical source references.
 
-The digest covers canonical UTF-8 JSON keys inputs, registry and tasks, sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal newline. Tasks are all 68 literal task lines with only checkboxes normalized to unchecked; registry is all 68 literal rows. Inputs contains each SHA-256 below. This file's input is only its complete body before this freeze heading. Footer status and task completion checkboxes do not alter the definition.
+Review packet SHA-256: 6b4066300249b3c26e9eeb50aa7b1dda60c8ca3c51454d5cf7a8f8dbdd2be570
+
+This digest covers canonical UTF-8 JSON keys inputs, registry and tasks,
+sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal
+newline. All 68 task lines are included with only checkboxes normalized.
+Inputs include all sixteen hashes below; this file contributes only its complete
+body before the T005 heading. No partial task/input freeze is accepted.
 
 | Input | SHA-256 |
 | --- | --- |
@@ -171,7 +186,7 @@ The digest covers canonical UTF-8 JSON keys inputs, registry and tasks, sorted k
 | plan.md | 5fc1550dd8988e2d32288176c9f4b62c22592e4c583c8106b506fbe9fd22bdee |
 | research.md | 295751853b252eafabbcaf64933a577df88370f7c457f01fe69a479c9df7f9d2 |
 | data-model.md | a2201bc094da3a05567194cbbff5622950f3f8aa17b8a9d978d3eb693ea02f05 |
-| owner-scopes.md | 2cae7c370e4afe5801e5ff5fc7206f03c2193c1c5cc050eacf35d4a477efe6c0 |
+| owner-scopes.md | 5a10e40116dcb056db91f73c1dde7540607d2211fe3d4220d0565a420d8f3a73 |
 | commissioning.md | 11c05e374c68ee9f8fa0b8e790a47381f56aea63fe37141a4a4a6f17d232ec50 |
 | rollout-gates.md | f667ed2e6f8c5f1b4e75651b1aa5bdb671074fe2dcf74f8f3f722250084d2fc8 |
 | validation-matrix.md | 53688287673d29e5d58604eee0ec27e5f134de241032d514edfa5e41a9472d39 |
@@ -184,4 +199,41 @@ The digest covers canonical UTF-8 JSON keys inputs, registry and tasks, sorted k
 | contracts/qualification-evidence.md | 8d7d4ab79a6bb456a2dabef0d6ec4d5ba40da296e5ba19ceab2c7e907df31e92 |
 | contracts/task-evidence.md | c7734b52520b6ad6ccad75cd32f4e49b395877fb926dffc03c3e85e34c854247 |
 
-Further task/owner/class/case/dependency/file/command or frozen-input changes still require affected owner review and a new freeze before use. Source consent supplies no actual output authentication, target authority or rollout acceptance. The exact generated neutral inventory filename remains allocated and closed at the actual authorized cut; no version is reserved here. Corrected source/CI exports are qualified at source 94caf6717e, with 584 feature cases and exact-head measured CI/Python 3.14/Codex clearance. Brett authenticated the c8be9c1d source packet at 2026-11-15T11:47:39.004Z; expanded T010 default verification passes against accepted control 698bf8367. This is actual source-output review, separate from source-scope consent; full Q0/Q1-Q5 and private trusted-base activation remain pending. All four PRs stay draft and Q1-Q5 remain unentered.
+Source-scope approval does not authenticate new actual E source/CI output.
+That separate review/default admission is required before consuming N changes.
+T018 remains incomplete; all PRs stay draft and Q0-Q5 remain unentered.
+
+### Historical freeze discussion
+
+The quotation below preserves the prior discussion for context. Its original
+bytes and frozen definitions remain governed by the fixed historical controls
+and readers; quoted input rows are not the current input table.
+
+> Brett Heap ratified classify-private-connectivity-source-tests at 2026-11-15T01:34:50.899Z. This refinement adds only its three exact shared paths to T010. All 16 frozen input bodies, all 68 registry rows and every other task field retain their previous bytes. The earlier source-CI definition e912507dfe7a136879f786e1ca5ccbdf62556b3f3fc179398af0bd8e730fd298 remains historical; its withdrawn control receives no new authentication. The refreshed definition below permits the accepted source work only. Actual new CI outputs, full Q0 and Q1-Q5 remain separately gated; all four PRs stay draft.
+>
+> The initial definitions and later T006 acceptance-state freeze remain historical decisions. Original accepted identity: 547e398b615d08186719674774f379038740292e2472488010151a5f03bbba6d. On 2026-11-14 Brett ratified the exact bootstrap amendment, all five component source scopes/native packets and neutral publication scope. The prior source-scope definition 66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0 remains historical. Brett subsequently ratified extend-private-connectivity-source-ci at 2026-11-14T22:31:50.896Z. This refreshed freeze adds only its T009/T010 files and source-CI custody clarification. All 68 identities, owners, classes, required cases, dependencies and verification commands are preserved. T001–T012 and T016 are complete under their historical authenticated anchors; the additional source-CI refinement is now accepted. Full Q0 remains incomplete.
+>
+> Review packet SHA-256: c37f19af3ebe6340ce417286d54875f40a201f86e41d22077b676044f7f44431
+>
+> The digest covers canonical UTF-8 JSON keys inputs, registry and tasks, sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal newline. Tasks are all 68 literal task lines with only checkboxes normalized to unchecked; registry is all 68 literal rows. Inputs contains each SHA-256 below. This file's input is only its complete body before this freeze heading. Footer status and task completion checkboxes do not alter the definition.
+>
+> | Input | SHA-256 |
+> | --- | --- |
+> | spec.md | 901ed9fff1c99c088522db9d66786a3550fd5a55c228bc9eb625e150fb470cae |
+> | plan.md | 5fc1550dd8988e2d32288176c9f4b62c22592e4c583c8106b506fbe9fd22bdee |
+> | research.md | 295751853b252eafabbcaf64933a577df88370f7c457f01fe69a479c9df7f9d2 |
+> | data-model.md | a2201bc094da3a05567194cbbff5622950f3f8aa17b8a9d978d3eb693ea02f05 |
+> | owner-scopes.md | 2cae7c370e4afe5801e5ff5fc7206f03c2193c1c5cc050eacf35d4a477efe6c0 |
+> | commissioning.md | 11c05e374c68ee9f8fa0b8e790a47381f56aea63fe37141a4a4a6f17d232ec50 |
+> | rollout-gates.md | f667ed2e6f8c5f1b4e75651b1aa5bdb671074fe2dcf74f8f3f722250084d2fc8 |
+> | validation-matrix.md | 53688287673d29e5d58604eee0ec27e5f134de241032d514edfa5e41a9472d39 |
+> | policy-coverage.md | e30154c88b29ce5a21b23d235d0ec863a105a433d7ea23e7fb6937cba928f37b |
+> | local-headscale.md | aa764a126e7b1d2c12c257e9d2d1ef2416fb49a47dffeddf93de6a901882c481 |
+> | standalone-hosted-headscale.md | b25c3d8ab2642912d1dcbe557b51f9820df8986906c3d1ccb950146efd8ee479 |
+> | hosted-domainxfactories.md | c0b94352f89013a28dbc1008d988e7aca94c58b05511a14f52c9cf81cf2b9cc6 |
+> | contracts/owner-handoff.md | d8fec9881a390420c41d6bc1dfef8fb44ab35457054611ae3751a8a98ca9fd78 |
+> | contracts/product-interfaces.md | 5643be4adba7bb0ac5413a1ddb74bab863af981c945d92c4fde14d97fd0d94e7 |
+> | contracts/qualification-evidence.md | 8d7d4ab79a6bb456a2dabef0d6ec4d5ba40da296e5ba19ceab2c7e907df31e92 |
+> | contracts/task-evidence.md | c7734b52520b6ad6ccad75cd32f4e49b395877fb926dffc03c3e85e34c854247 |
+>
+> Further task/owner/class/case/dependency/file/command or frozen-input changes still require affected owner review and a new freeze before use. Source consent supplies no actual output authentication, target authority or rollout acceptance. The exact generated neutral inventory filename remains allocated and closed at the actual authorized cut; no version is reserved here. Corrected source/CI exports are qualified at source 94caf6717e, with 584 feature cases and exact-head measured CI/Python 3.14/Codex clearance. Brett authenticated the c8be9c1d source packet at 2026-11-15T11:47:39.004Z; expanded T010 default verification passes against accepted control 698bf8367. This is actual source-output review, separate from source-scope consent; full Q0/Q1-Q5 and private trusted-base activation remain pending. All four PRs stay draft and Q1-Q5 remain unentered.
