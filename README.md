@@ -560,7 +560,7 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
-- [Authorize internal private-connectivity completion](openspec/changes/authorize-private-connectivity-internal-production/proposal.md) — draft finite autonomy/owner-evidence policy for all three internal offerings; final human authorization and financial selection pending. [Review summary](openspec/changes/authorize-private-connectivity-internal-production/review/authorization-summary.md); no execution, publication or rollout authority.
+- [Authorize internal private-connectivity completion](openspec/changes/authorize-private-connectivity-internal-production/proposal.md) — [draft PR #1339](https://github.com/opensoft/openXfactory/pull/1339), finite autonomy/owner-evidence policy for all three internal offerings; final human authorization and financial selection pending. [Review summary](openspec/changes/authorize-private-connectivity-internal-production/review/authorization-summary.md); no execution, publication or rollout authority.
 
 - [Extend private-connectivity cut validation](openspec/changes/extend-private-connectivity-cut-validation/proposal.md) — ratified N/E source scope at 2026-11-17T02:55:36.438Z; matching Ops/Tenant acceptance remains separate; [draft PR #1336](https://github.com/opensoft/openXfactory/pull/1336), not landed; no publication or rollout grant.
 
