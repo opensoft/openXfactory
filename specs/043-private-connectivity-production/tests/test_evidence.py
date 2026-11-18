@@ -2048,9 +2048,16 @@ def delegated_world(monkeypatch):
 
 def test_delegated_source_form_verifies_actual_root_and_all_original_checks(delegated_world):
     world, _, _, anchor = delegated_world
-    reader = v.Verifier(TASKS, world.store, anchor(), now=DELEGATION_TIME.replace(day=19))
-    reader.verify("T010")
-    assert reader.cache == {f"T{i:03}" for i in range(1, 11)}
+    trust = anchor()
+    expiry = v.timestamp(AUTHORITY_END)
+    for now in (expiry - timedelta(seconds=1), expiry + timedelta(seconds=1)):
+        reader = v.Verifier(TASKS, world.store, trust, now=now)
+        reader.verify("T010")
+        assert reader.cache == {f"T{i:03}" for i in range(1, 11)}
+
+    binding = reader.binding("T010")
+    with pytest.raises(v.EvidenceError, match="authority expired or not current"):
+        reader.authority(binding["authority"], binding)
 
 
 @pytest.mark.parametrize("mutation", [

@@ -596,6 +596,7 @@ class Verifier:
             require(alias not in FIXED_REPOSITORIES or repository.lower() == FIXED_REPOSITORIES[alias], "wrong canonical component owner")
         self.objects = {}
         self.authenticated, self.authenticated_at = True, None
+        self.delegated_source_authenticated = False
         self.delegated_root_id = None
         require(trust_reference["path"] != COMMISSIONING_PATH or "source_container" in t,
                 "source commissioning container required")
@@ -701,6 +702,7 @@ class Verifier:
             self.store, review["attestation"], subject, self.now,
             self.trust["revoked_authorities"], expected, self.trust["bindings"]["T010"]["source"])
         self.authenticated = True
+        self.delegated_source_authenticated = True
         self.delegated_root_id = "pc043-internal-20261117-e995d2290328"
 
     def blob(self, ref, binding=None):
@@ -836,7 +838,8 @@ class Verifier:
         output = self.read(record["output"], binding)
         start, end = timestamp(output["started_at"]), timestamp(output["ended_at"])
         require(start <= end <= self.now, "invalid/future actual run")
-        if self.objects and binding["task"] in {f"T{i:03}" for i in range(1, 11)}:
+        commissioned_source = bool(self.objects) and binding["task"] in {f"T{i:03}" for i in range(1, 11)}
+        if commissioned_source:
             require(self.authenticated and end <= self.authenticated_at, "output not authenticated after actual run")
             original = output["original"]
             require(isinstance(original, dict) and set(original) == {
@@ -872,6 +875,11 @@ class Verifier:
             require(admission["authority"] == binding["authority"]
                     and admission["reviewed_output_sha256"] == digest(self.blob(record["output"], binding)),
                     "admission is not for original authority/output")
+        elif (commissioned_source and self.delegated_source_authenticated
+              and binding["scope"]["phase"] == "source"
+              and binding["task"] not in self.trust.get("historical_controls", {})):
+            # Registered authentication admits these exact completed source outputs.
+            historical = True
         self.authority(binding["authority"], binding, start, end, historical=historical)
         return output, start, end, historical
 
