@@ -18,7 +18,7 @@ The private package's actual main analysis cannot complete within the existing o
 
 - Classify exactly the seven genuine package test modules listed in design.md as TEST while retaining every other analyzed file as MAIN, including both executable qualification helpers.
 - Add exactly sonar-project.properties and requirements/sonar-analysis.lock to T023. Use the existing qualification workflow to measure real coverage and submit it from a separate scanner job. The existing release inventory and runbook record the classified source and qualification procedure.
-- Obtain a distinct delegated L/E C-01 decision after independent exact-scope review, then refresh the complete sixteen-input/68-task definition before using the new path. Preserve historical definitions, original accepted evidence and every other task field.
+- Obtain the delegated L/E C-01 decision after independent exact-scope review. Qualify the complete sixteen-input/68-task definition refresh and verify the same approved scope bound to the refreshed definition before using either new path. Preserve historical definitions, original accepted evidence and every other task field.
 - Qualify actual source, CI and protected-main Sonar results before source-output authentication or release use.
 
 ## Capabilities
