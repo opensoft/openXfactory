@@ -756,6 +756,17 @@ def _artifact_id(path: str) -> str:
     return path.lower().replace("/", "-")
 
 
+def _is_private_connectivity_registration_path(value):
+    if not isinstance(value, str):
+        return False
+    path = value.replace("\\", "/").casefold()
+    return any(
+        candidate.startswith(PRIVATE_CONNECTIVITY_PREFIX + "/")
+        or candidate == "scripts/validate-private-connectivity.py"
+        for candidate in (path, posixpath.normpath(path))
+    )
+
+
 def _private_connectivity_registrations(manifest):
     """Resolve only the exact canonical tuples, with no duplicates or extras."""
     registrations = []
@@ -763,9 +774,9 @@ def _private_connectivity_registrations(manifest):
         if not isinstance(row, Mapping):
             continue
         identity, path = row.get("id"), row.get("path")
-        if ((isinstance(identity, str) and identity.startswith("private-connectivity-")) or
-                (isinstance(path, str) and (path.startswith(PRIVATE_CONNECTIVITY_PREFIX + "/") or
-                 path == "scripts/validate-private-connectivity.py"))):
+        if (
+            isinstance(identity, str) and identity.casefold().startswith("private-connectivity-")
+        ) or _is_private_connectivity_registration_path(path):
             registrations.append(row)
     identities = [(row.get("id"), row.get("path"), row.get("type")) for row in registrations]
     if (not all(all(isinstance(value, str) for value in identity) for identity in identities) or
@@ -783,13 +794,23 @@ def _unique_connectivity_schema_fields(pairs):
     return fields
 
 
+def _reject_connectivity_schema_constant(value):
+    raise ValueError(f"nonstandard JSON constant in connectivity schema: {value}")
+
+
 def _validate_private_connectivity_schema(data: bytes):
     """Check the JSON schema from the same bytes used for the registered digest."""
+    from jsonschema import Draft202012Validator
+    from jsonschema.exceptions import SchemaError
+
     try:
         schema = json.loads(
-            data.decode("utf-8"), object_pairs_hook=_unique_connectivity_schema_fields,
+            data.decode("utf-8"),
+            object_pairs_hook=_unique_connectivity_schema_fields,
+            parse_constant=_reject_connectivity_schema_constant,
         )
-    except ValueError as exc:
+        Draft202012Validator.check_schema(schema)
+    except (ValueError, SchemaError) as exc:
         raise ReleaseDependencyError("connectivity schema metadata is unreadable",
                                      code="HGR-RELEASE-CONNECTIVITY-SCHEMA") from exc
     if (not isinstance(schema, Mapping) or schema.get("$id") != PRIVATE_CONNECTIVITY_SCHEMA_ID or
@@ -798,6 +819,25 @@ def _validate_private_connectivity_schema(data: bytes):
             schema["schema_version"] != PRIVATE_CONNECTIVITY_SCHEMA_VERSION):
         raise ReleaseDependencyError("connectivity schema identity/version differs",
                                      code="HGR-RELEASE-CONNECTIVITY-SCHEMA")
+
+
+def _read_private_connectivity_member(source, path, registration):
+    if isinstance(source, _WorkingTreeSource) and any(
+        (source.root / parent).is_symlink()
+        for parent in Path(path).parents if parent != Path(".")
+    ):
+        raise ReleaseDependencyError(
+            "connectivity member has a symlinked parent: " + path,
+            code="HGR-RELEASE-CONNECTIVITY-MEMBER",
+        )
+    if not source.exists(path):
+        raise ReleaseDependencyError("connectivity required member is unavailable: " + path,
+                                     code="HGR-RELEASE-CONNECTIVITY-MEMBER")
+    data, _, _ = source.read_member(path)
+    if registration.get("sha256") != hashlib.sha256(data).hexdigest():
+        raise ReleaseDependencyError("connectivity registration digest differs: " + path,
+                                     code="HGR-RELEASE-CONNECTIVITY-DIGEST")
+    return data
 
 
 def _add_private_connectivity_members(source, manifest, release_version, members, catalog_map):
@@ -815,13 +855,7 @@ def _add_private_connectivity_members(source, manifest, release_version, members
         if path in catalog_map:
             raise ReleaseDependencyError("connectivity member has a conflicting catalog registration: " + path,
                                          code="HGR-RELEASE-CONNECTIVITY-COLLISION")
-        if not source.exists(path):
-            raise ReleaseDependencyError("connectivity required member is unavailable: " + path,
-                                         code="HGR-RELEASE-CONNECTIVITY-MEMBER")
-        data, _, _ = source.read_member(path)
-        if registration.get("sha256") != hashlib.sha256(data).hexdigest():
-            raise ReleaseDependencyError("connectivity registration digest differs: " + path,
-                                         code="HGR-RELEASE-CONNECTIVITY-DIGEST")
+        data = _read_private_connectivity_member(source, path, registration)
         if artifact_type == "schema":
             _validate_private_connectivity_schema(data)
         members.add(path)

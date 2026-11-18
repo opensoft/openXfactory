@@ -2,6 +2,7 @@
 import importlib.util
 import json
 from pathlib import Path
+import runpy
 import shutil
 import subprocess
 import sys
@@ -56,8 +57,9 @@ def test_four_member_consumer_replays_corpus_without_pilot_or_provider_code(tmp_
 
     ready = next(case for case in corpus["cases"] if case["id"] == "managed-ready-declaration")
     manifest.write_text(json.dumps(ready["manifest"]))
+    repository_reader = runpy.run_path(str(ROOT / MEMBERS[3]))
     with monkeypatch.context() as isolated:
         isolated.chdir(consumer)
-        isolated.delitem(reader.FormatChecker.checkers, "date-time")
-        assert reader.main(["manifest.json", "--now", corpus["now"]]) == 2
-        assert reader.validate({}, now) == []
+        isolated.delitem(repository_reader["FormatChecker"].checkers, "date-time")
+        assert repository_reader["main"](["manifest.json", "--now", corpus["now"]]) == 2
+        assert repository_reader["validate"]({}, now) == []

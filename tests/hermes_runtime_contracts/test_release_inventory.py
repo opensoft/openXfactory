@@ -2714,6 +2714,27 @@ def test_connectivity_publication_refuses_registration_substitution(tmp_path, mu
         release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
 
 
+@pytest.mark.parametrize("row", [CONNECTIVITY_ROWS[0], CONNECTIVITY_ROWS[3]])
+def test_connectivity_publication_refuses_aliased_extra_registration(tmp_path, row):
+    import yaml
+
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    manifest = repo / "contracts/manifest.yaml"
+    content = yaml.safe_load(manifest.read_text())
+    canonical = next(entry for entry in content["contracts"] if entry["id"] == row[0])
+    content["contracts"].append({
+        **canonical,
+        "id": "connectivity-unofficial-alias",
+        "path": "./" + canonical["path"],
+    })
+    manifest.write_text(yaml.safe_dump(content, sort_keys=False))
+
+    with pytest.raises(release.ReleaseDependencyError) as error:
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert error.value.code == "HGR-RELEASE-CONNECTIVITY-REGISTRATION"
+
+
 @pytest.mark.parametrize("relative", [row[1] for row in CONNECTIVITY_ROWS])
 def test_connectivity_publication_refuses_missing_or_unsafe_member(tmp_path, relative):
     repo, _ = _synthetic_repo(tmp_path)
@@ -2727,6 +2748,19 @@ def test_connectivity_publication_refuses_missing_or_unsafe_member(tmp_path, rel
     path.symlink_to(outside)
     with pytest.raises(release.ReleaseDependencyError):
         release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+
+
+def test_connectivity_publication_refuses_in_tree_symlinked_parent(tmp_path):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    family = repo / "contracts/private-connectivity"
+    alternate = repo / "contracts/alternate-connectivity"
+    family.rename(alternate)
+    family.symlink_to(alternate.name, target_is_directory=True)
+
+    with pytest.raises(release.ReleaseDependencyError) as error:
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert error.value.code == "HGR-RELEASE-CONNECTIVITY-MEMBER"
 
 
 @pytest.mark.parametrize("field,value", [("$id", "https://wrong.invalid/schema"), ("schema_version", 2), ("schema_version", True)])
@@ -2744,19 +2778,25 @@ def test_connectivity_publication_refuses_schema_identity_substitution(tmp_path,
         release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
 
 
-@pytest.mark.parametrize("syntax", ["yaml-only", "duplicate-field"])
-def test_connectivity_publication_rejects_schema_syntax_even_with_matching_digest(tmp_path, syntax):
+@pytest.mark.parametrize("defect", ["yaml-only", "duplicate-field", "nonfinite", "invalid-schema"])
+def test_connectivity_publication_rejects_bad_schema_even_with_matching_digest(tmp_path, defect):
     import yaml
 
     repo, _ = _synthetic_repo(tmp_path)
     _connectivity_preview(repo)
     schema_path = repo / CONNECTIVITY_ROWS[0][1]
     schema = json.loads(schema_path.read_text())
-    if syntax == "yaml-only":
+    if defect == "yaml-only":
         schema_path.write_text(yaml.safe_dump(schema))
-    else:
+    elif defect == "duplicate-field":
         encoded = json.dumps(schema)
         schema_path.write_text('{"schema_version": 1, ' + encoded[1:])
+    elif defect == "nonfinite":
+        schema["format"] = float("nan")
+        schema_path.write_text(json.dumps(schema))
+    else:
+        schema["type"] = "not-a-schema-type"
+        schema_path.write_text(json.dumps(schema))
 
     manifest = repo / "contracts/manifest.yaml"
     content = yaml.safe_load(manifest.read_text())
