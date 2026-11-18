@@ -3790,7 +3790,7 @@ contracts:
     path: contracts/private-connectivity/README.md
     type: documentation
     schema_version: 1
-    sha256: 4326a43ac5d7b713829c7dc3a1502e3d789b9172e3858dac3eebd8d2c2594099
+    sha256: 9ad9be8b943a096bef73bff4d6cbd467ce7fd4b3c4e69d719e1f153ab4f33be7
     compatibility: canonical_openxfactory_contract
     adapter_owner: openxFactory
 
@@ -3806,6 +3806,6 @@ contracts:
     path: scripts/validate-private-connectivity.py
     type: tool
     schema_version: 1
-    sha256: b258ba7e316b98eec16715dbcc06b9abf6d1849793141f704f1ca6649422cbf8
+    sha256: b47b2b3e0354fdb3a4b7c35a27aebf8db07def0b99e9ab746b4ec1274e9dc5e3
     compatibility: canonical_openxfactory_contract
     adapter_owner: openxFactory

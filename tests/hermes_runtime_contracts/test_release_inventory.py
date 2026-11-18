@@ -2667,6 +2667,14 @@ def test_connectivity_publication_includes_exact_four_raw_members(tmp_path):
     schema = by_path[CONNECTIVITY_ROWS[0][1]]
     assert (schema["schema_id"], schema["schema_version"]) == ("private-connectivity-binding", 1)
     assert release.verify_inventory_against_commit(repo, commit, inventory) == []
+    for identity, path, _ in CONNECTIVITY_ROWS:
+        by_path[path]["artifact_id"] = "substitute-" + identity
+    findings = release.verify_inventory_against_commit(repo, commit, inventory)
+    assert {(row["code"], row["path"]) for row in findings} == {
+        ("HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID", path)
+        for _, path, _ in CONNECTIVITY_ROWS
+    }
+
     # An unregistered neighboring file does not broaden this closed family.
     (repo / "contracts/private-connectivity/unregistered.json").write_text("{}")
     later = release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
@@ -2734,3 +2742,28 @@ def test_connectivity_publication_refuses_schema_identity_substitution(tmp_path,
     manifest.write_text(yaml.safe_dump(data, sort_keys=False))
     with pytest.raises(release.ReleaseDependencyError):
         release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+
+
+@pytest.mark.parametrize("syntax", ["yaml-only", "duplicate-field"])
+def test_connectivity_publication_rejects_schema_syntax_even_with_matching_digest(tmp_path, syntax):
+    import yaml
+
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    schema_path = repo / CONNECTIVITY_ROWS[0][1]
+    schema = json.loads(schema_path.read_text())
+    if syntax == "yaml-only":
+        schema_path.write_text(yaml.safe_dump(schema))
+    else:
+        encoded = json.dumps(schema)
+        schema_path.write_text('{"schema_version": 1, ' + encoded[1:])
+
+    manifest = repo / "contracts/manifest.yaml"
+    content = yaml.safe_load(manifest.read_text())
+    registration = next(row for row in content["contracts"] if row["id"] == CONNECTIVITY_ROWS[0][0])
+    registration["sha256"] = hashlib.sha256(schema_path.read_bytes()).hexdigest()
+    manifest.write_text(yaml.safe_dump(content, sort_keys=False))
+
+    with pytest.raises(release.ReleaseDependencyError) as error:
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert error.value.code == "HGR-RELEASE-CONNECTIVITY-SCHEMA"

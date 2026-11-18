@@ -14,6 +14,7 @@ unavailable or unsafe dependency raises :class:`ReleaseDependencyError`
 from __future__ import annotations
 
 import hashlib
+import json
 import posixpath
 import re
 import subprocess
@@ -775,11 +776,20 @@ def _private_connectivity_registrations(manifest):
     return dict(zip(identities, registrations, strict=True))
 
 
-def _validate_private_connectivity_schema(source):
-    """Check supported schema identity separately from raw member digests."""
+def _unique_connectivity_schema_fields(pairs):
+    fields = dict(pairs)
+    if len(fields) != len(pairs):
+        raise ValueError("duplicate connectivity schema field")
+    return fields
+
+
+def _validate_private_connectivity_schema(data: bytes):
+    """Check the JSON schema from the same bytes used for the registered digest."""
     try:
-        schema = source.load_yaml("contracts/private-connectivity/binding.schema.json")
-    except (yaml.YAMLError, UnicodeError) as exc:
+        schema = json.loads(
+            data.decode("utf-8"), object_pairs_hook=_unique_connectivity_schema_fields,
+        )
+    except ValueError as exc:
         raise ReleaseDependencyError("connectivity schema metadata is unreadable",
                                      code="HGR-RELEASE-CONNECTIVITY-SCHEMA") from exc
     if (not isinstance(schema, Mapping) or schema.get("$id") != PRIVATE_CONNECTIVITY_SCHEMA_ID or
@@ -812,12 +822,13 @@ def _add_private_connectivity_members(source, manifest, release_version, members
         if registration.get("sha256") != hashlib.sha256(data).hexdigest():
             raise ReleaseDependencyError("connectivity registration digest differs: " + path,
                                          code="HGR-RELEASE-CONNECTIVITY-DIGEST")
+        if artifact_type == "schema":
+            _validate_private_connectivity_schema(data)
         members.add(path)
         # Manifest tool registrations use the inventory schema's validator type.
         inventory_type = "validator" if artifact_type == "tool" else artifact_type
         catalog_map[path] = {"contract_id": identifier, "type": inventory_type,
                              "contract_schema_version": PRIVATE_CONNECTIVITY_SCHEMA_VERSION}
-    _validate_private_connectivity_schema(source)
 
 
 def _collect_members(
@@ -1164,6 +1175,7 @@ def verify_inventory_against_commit(
         source, bundle_tag=bundle_tag if isinstance(bundle_tag, str) else ""
     )
     canonical_by_path = {str(entry["path"]): entry for entry in canonical["entries"]}
+    connectivity_paths = {path for _, path, _ in PRIVATE_CONNECTIVITY_REQUIRED_REGISTRATIONS}
 
     findings: list[dict[str, str]] = []
     if "commit" in inventory:
@@ -1257,6 +1269,14 @@ def verify_inventory_against_commit(
                     "HGR-RELEASE-TYPE-MISMATCH",
                     path,
                     "artifact type does not match the canonical registration",
+                )
+            )
+        if path in connectivity_paths and entry.get("artifact_id") != canonical_entry["artifact_id"]:
+            findings.append(
+                _finding(
+                    "HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID",
+                    path,
+                    "artifact ID does not match the canonical connectivity registration",
                 )
             )
         canonical_schema_id = canonical_entry.get("schema_id")

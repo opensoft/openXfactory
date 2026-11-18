@@ -29,7 +29,10 @@ def validate(manifest, now):
     binding = manifest.get("private_connectivity")
     if binding is None:
         return []
-    validator = Draft202012Validator(json.loads(SCHEMA.read_text()), format_checker=FormatChecker())
+    if "date-time" not in FormatChecker.checkers:
+        raise ValueError("rfc3339-validator is required for connectivity bindings")
+    schema = json.loads(SCHEMA.read_text(encoding="utf-8"), object_pairs_hook=duplicate_guard)
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
     if any(validator.iter_errors(binding)):
         return ["binding-shape-invalid"]
     context = manifest.get("installation", {})

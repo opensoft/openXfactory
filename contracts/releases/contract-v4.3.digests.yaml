@@ -10,7 +10,7 @@ entries:
   path: contracts/CHANGELOG.md
   type: changelog
   git_mode: '100644'
-  digest: sha256:5452519361637d5114bba2ad0703687a832d3ad91a0b6e95448399d0c4da7e08
+  digest: sha256:4d2f31dca5f71090d5a7c77e5527f0689b21abca17d289cf6a93d96f27c108a7
 - artifact_id: contracts-readme.md
   path: contracts/README.md
   type: documentation
@@ -1204,12 +1204,12 @@ entries:
   path: contracts/manifest.yaml
   type: manifest
   git_mode: '100644'
-  digest: sha256:485970a970f3b318b160e1a2b7c39ce4278e0214f3d3c4e89045eb6be7238ffa
+  digest: sha256:961bd78f1eea83e604801ec4e246aa06cdfcba48f22a63515eb76229e2c7f553
 - artifact_id: private-connectivity-contract
   path: contracts/private-connectivity/README.md
   type: documentation
   git_mode: '100644'
-  digest: sha256:4326a43ac5d7b713829c7dc3a1502e3d789b9172e3858dac3eebd8d2c2594099
+  digest: sha256:9ad9be8b943a096bef73bff4d6cbd467ce7fd4b3c4e69d719e1f153ab4f33be7
 - artifact_id: private-connectivity-binding
   path: contracts/private-connectivity/binding.schema.json
   type: schema
@@ -1470,7 +1470,7 @@ entries:
   path: scripts/hermes_runtime_validation/release.py
   type: validator
   git_mode: '100644'
-  digest: sha256:9ab3c1f56998c0d353e21cc4d1ef213c8516ac5ffa121a10a670842cb86eec40
+  digest: sha256:e6aa45fc060c33baff811eea1429c9b214ff5a9c0b5f6ae042f960ef86274585
 - artifact_id: scripts-hermes_runtime_validation-schema_registry.py
   path: scripts/hermes_runtime_validation/schema_registry.py
   type: validator
@@ -1680,7 +1680,7 @@ entries:
   path: scripts/validate-private-connectivity.py
   type: validator
   git_mode: '100644'
-  digest: sha256:b258ba7e316b98eec16715dbcc06b9abf6d1849793141f704f1ca6649422cbf8
+  digest: sha256:b47b2b3e0354fdb3a4b7c35a27aebf8db07def0b99e9ab746b4ec1274e9dc5e3
 - artifact_id: tests-clearing-conftest.py
   path: tests/clearing/conftest.py
   type: documentation

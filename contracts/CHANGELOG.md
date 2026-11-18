@@ -24,17 +24,13 @@ semantics; there is no schema-integer or authorization/lifecycle widening.
 Local operation requires no hosted subscription. Network readiness does not
 supply application or operating permission.
 
-The proposed inventory has the existing 342 members plus these four neutral
-members. Historical inventories remain unchanged. Manifest/changelog,
-registrations, reader, owned release-builder conformance and generated
-inventory are prepared atomically. Full source qualification remains pending,
-including the explicitly closed intent-compliance version boundary: its
-additional file scope must be reviewed before that test is advanced.
-
-The latest main at preparation is 89974846b847e1c31761792677155cc9779d400d,
-declaring published contract-v4.2. No number is reserved against another
-authorized cut. A reviewed landing and actual annotated publication remain
-separate decisions, followed by independent T019 readback. T018 stays open.
+The generated candidate inventory contains 346 members. The four neutral
+registrations, the closed intent-compliance version boundary and the conformance
+regressions are included in the same cut. Historical inventories remain intact.
+Full source qualification and independent review of the integrated candidate
+are pending. Recheck the version and release floor against protected main at
+landing. Annotated publication and independent T019 readback follow the
+reviewed landing. T018 stays open through publication.
 
 ## contract-v4.2 — 2026-11-15 (nonbreaking conformance maintenance)
 

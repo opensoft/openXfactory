@@ -26,7 +26,7 @@ def test_publication_preserves_schema_v1_semantics():
     assert set(supported["properties"]["state"]["enum"]) == {"requested","approved","enrolled","ready","unready","revoked"}
 
 
-def test_four_member_consumer_replays_corpus_without_pilot_or_provider_code(tmp_path):
+def test_four_member_consumer_replays_corpus_without_pilot_or_provider_code(tmp_path, monkeypatch):
     consumer = tmp_path / "neutral-consumer";consumer.mkdir()
     for member in MEMBERS:
         destination = consumer / member;destination.parent.mkdir(parents=True,exist_ok=True)
@@ -53,3 +53,11 @@ def test_four_member_consumer_replays_corpus_without_pilot_or_provider_code(tmp_
     assert subprocess.run([sys.executable,str(consumer/"scripts/validate-private-connectivity.py"),"manifest.json"],cwd=consumer,capture_output=True).returncode==2
     (consumer/"alias.json").symlink_to(manifest)
     assert subprocess.run([sys.executable,str(consumer/"scripts/validate-private-connectivity.py"),"alias.json"],cwd=consumer,capture_output=True).returncode==2
+
+    ready = next(case for case in corpus["cases"] if case["id"] == "managed-ready-declaration")
+    manifest.write_text(json.dumps(ready["manifest"]))
+    with monkeypatch.context() as isolated:
+        isolated.chdir(consumer)
+        isolated.delitem(reader.FormatChecker.checkers, "date-time")
+        assert reader.main(["manifest.json", "--now", corpus["now"]]) == 2
+        assert reader.validate({}, now) == []

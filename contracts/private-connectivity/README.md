@@ -26,16 +26,18 @@ separately approved routes and declaration verification remain separate.
 Ready-shaped JSON is declaration conformance only. It proves no actual TLS
 identity, reachability, enrollment, provider behavior or rollout acceptance.
 
-The validator is offline and returns redacted finding codes. Install CPython
-and jsonschema through the existing hash-locked contract dependency environment
-before invoking it. Missing Python dependencies fail at startup, before manifest
-validation; a startup failure is not a declaration finding.
+The offline validator returns redacted finding codes. Use CPython with the
+[hash-locked contract dependencies](../../requirements/hermes-runtime-contracts.lock),
+including `jsonschema` and `rfc3339-validator` for binding timestamps.
 Run it from a working directory containing the manifest:
+
     python3 scripts/validate-private-connectivity.py manifest.json
-The --now UTC option is for deterministic conformance checks. With dependencies
-installed, exit 0 means declaration conformance; exit 1 means findings; exit 2
-means invalid/unreadable input. Input must be an ordinary contained file;
-duplicate fields, outside paths and symlinks are refused.
+
+The `--now` UTC option supports deterministic conformance checks. Exit 0 means
+declaration conformance. Exit 1 reports declaration findings. Exit 2 reports
+invalid or unreadable input or unavailable RFC 3339 checking for a binding.
+The CLI refuses duplicate fields, a symlink at the manifest path, and any path
+that resolves outside the working directory.
 
 Consumers select the actual published annotated bundle tag only after independent
 tag/commit/inventory/schema/validator/corpus content verification. Copying these
