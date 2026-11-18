@@ -132,3 +132,86 @@ def test_openxfactory_keeps_its_laxer_admission(tmp_path):
 
 def test_an_aggregation_with_nothing_in_it_enumerates_nothing(tmp_path):
     assert corpus.discover_repos(tmp_path) == []
+
+
+@pytest.mark.parametrize("mount", ["openXfactory", "openxFactory"])
+def test_neutral_checkout_mount_preserves_the_corpus_identity(tmp_path, mount):
+    checkout = tmp_path / mount
+    checkout.mkdir()
+    assert corpus.discover_repos(tmp_path) == [("openxFactory", checkout)]
+
+
+@pytest.mark.parametrize("mount", ["codeXfactory", "codexFactory"])
+def test_engineering_checkout_keeps_the_catalog_repository_id(tmp_path, mount):
+    checkout = _repo(tmp_path / "xFactories" / mount)
+    assert corpus.discover_repos(tmp_path) == [("codexFactory", checkout)]
+
+
+@pytest.mark.parametrize("mount", ["openXfactory", "openxFactory"])
+def test_notebook_dry_run_opens_the_selected_mount(tmp_path, monkeypatch, mount):
+    from types import SimpleNamespace
+
+    from doc_health import runner
+
+    checkout = tmp_path / mount
+    script = checkout / runner.SYNC_SCRIPT
+    script.parent.mkdir(parents=True)
+    script.touch()
+    calls = []
+
+    def run(argv, **kwargs):
+        calls.append((argv, kwargs.get("cwd")))
+        return SimpleNamespace(returncode=0, stdout="fixture plan")
+
+    monkeypatch.setattr(runner.subprocess, "run", run)
+    assert runner._real_notebook_dryrun(tmp_path)() == "fixture plan"
+    assert calls == [
+        (["nlm", "notebook", "list"], None),
+        (["python3", str(script), "."], tmp_path),
+    ]
+
+
+def test_empty_canonical_alias_does_not_hide_a_legacy_checkout(tmp_path):
+    for path in ("openXfactory", "xFactories/codeXfactory"):
+        (tmp_path / path).mkdir(parents=True)
+    neutral = _repo(tmp_path / "openxFactory")
+    engineering = _repo(tmp_path / "xFactories/codexFactory")
+    assert corpus.discover_repos(tmp_path) == [
+        ("openxFactory", neutral), ("codexFactory", engineering)]
+
+
+@pytest.mark.parametrize("recorded", ["openxFactory", "openXfactory"])
+def test_two_materialized_mounts_use_the_recorded_checkout(tmp_path, recorded):
+    import subprocess
+
+    from doc_health.factory_checkout_paths import checkout_name
+
+    for mount in ("openxFactory", "openXfactory"):
+        _repo(tmp_path / mount)
+
+    def git(*args):
+        return subprocess.run(["git", "-C", str(tmp_path), *args],
+                              capture_output=True, text=True, check=True)
+
+    git("init", "-q")
+    (tmp_path / ".gitmodules").write_text(
+        f'[submodule "openxFactory"]\n\tpath = {recorded}\n'
+        "\turl = git@github.com:opensoft/openXfactory.git\n",
+        encoding="utf-8")
+    git("add", ".gitmodules")
+    git("update-index", "--add", "--cacheinfo", f"160000,{'a' * 40},{recorded}")
+    git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test",
+        "-c", "commit.gpgsign=false", "commit", "-qm", "record neutral provider")
+    assert corpus.discover_repos(tmp_path) == [("openxFactory", tmp_path / recorded)]
+    assert checkout_name(tmp_path / recorded) == "openxFactory"
+    standalone = tmp_path.parent / "standalone" / "openXfactory"
+    assert checkout_name(standalone) == "openXfactory"
+
+
+def test_dashboard_refresh_default_follows_the_neutral_mount(tmp_path):
+    from ideation_dashboard.dashboard_refresh_lane import _corpus_checkout
+
+    canonical = tmp_path / "openXfactory"
+    canonical.mkdir()
+    assert _corpus_checkout(tmp_path, None) == canonical
+    assert _corpus_checkout(tmp_path, "explicit") == tmp_path / "explicit"

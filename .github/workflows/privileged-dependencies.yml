@@ -21,15 +21,17 @@ jobs:
           python-version: "3.12"
       - name: Read immutable privileged installer artifacts
         id: installer-support
+        env:
+          OPENXFACTORY_MOUNT: openxFactory
         run: |
           set -euo pipefail
           ref=2cd4050a220a9c46e1d6cdd8eff59fe41817d174
           # Keep the caller's provider checkout and selected pins intact.
-          if ! git -C openxFactory cat-file -e "$ref^{commit}" 2>/dev/null; then
-            git -C openxFactory fetch --no-tags origin "$ref"
+          if ! git -C "$OPENXFACTORY_MOUNT" cat-file -e "$ref^{commit}" 2>/dev/null; then
+            git -C "$OPENXFACTORY_MOUNT" fetch --no-tags origin "$ref"
           fi
           support="$(mktemp -d "$RUNNER_TEMP/openxfactory-install-support.XXXXXX")"
-          git -C openxFactory archive "$ref" -- .github/requirements .github/worker-cli |
+          git -C "$OPENXFACTORY_MOUNT" archive "$ref" -- .github/requirements .github/worker-cli |
             tar --extract --directory "$support" --no-same-owner --no-same-permissions
           printf 'root=%s\n' "$support" >> "$GITHUB_OUTPUT"
       - name: Verify immutable support bytes match this candidate

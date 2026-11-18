@@ -4810,6 +4810,12 @@ def run_refresh_lane(
 # a copy of the pinned product validator.
 # --------------------------------------------------------------------------
 
+def _corpus_checkout(repo_root: Path, explicit: str | None) -> Path:
+    from doc_health.factory_checkout_paths import checkout_path
+
+    return repo_root / explicit if explicit is not None else checkout_path(repo_root, "openxFactory")
+
+
 def main(argv: list[str] | None = None) -> int | None:
     """CLI entry. Void by contract, like the snapshot lane's, but only for a
     VALID phase: every path through the lane's own logic for `decide`, `seal`,
@@ -4860,7 +4866,7 @@ def main(argv: list[str] | None = None) -> int | None:
                          "only materialization here is the parent's seal.")
     ap.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
     ap.add_argument("--image", default=DEFAULT_IMAGE)
-    ap.add_argument("--corpus-checkout", default="openxFactory",
+    ap.add_argument("--corpus-checkout", default=None,
                     help="local corpus checkout, relative to --repo-root")
     ap.add_argument("--corpus-repo", default=DEFAULT_CORPUS_REPO)
     ap.add_argument("--corpus-ref", default=DEFAULT_CORPUS_REF)
@@ -5028,7 +5034,7 @@ def main(argv: list[str] | None = None) -> int | None:
         else:
             try:
                 manifest = seal_source(
-                    corpus_checkout=repo_root / args.corpus_checkout,
+                    corpus_checkout=_corpus_checkout(repo_root, args.corpus_checkout),
                     seal_dir=seal_dir, seal_within=repo_root,
                     correlation_id=args.correlation_id or "",
                     decision=decision,
@@ -5104,7 +5110,7 @@ def main(argv: list[str] | None = None) -> int | None:
 
     def _read() -> CurrentInputs:
         return read_current_inputs(
-            corpus_checkout=repo_root / args.corpus_checkout,
+            corpus_checkout=_corpus_checkout(repo_root, args.corpus_checkout),
             corpus_ref=args.corpus_ref, recipe_repo=args.recipe_repo,
             recipe_ref=args.recipe_ref, overlay_path=args.overlay_path,
             image=args.image)

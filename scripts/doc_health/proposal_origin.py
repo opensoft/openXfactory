@@ -453,7 +453,8 @@ def fam_proposal_origin(ctx):
     if openx_root is None and ctx.agg_root is None:
         openx_root = Path(next(iter(ctx.repo_paths.values())))
     elif openx_root is None:
-        openx_root = Path(ctx.agg_root) / "openxFactory"
+        agg_root = Path(ctx.agg_root)
+        openx_root = corpus.find_neutral_checkout(agg_root) or agg_root / "openxFactory"
     migrated = migration_records(openx_root)
 
     findings = []

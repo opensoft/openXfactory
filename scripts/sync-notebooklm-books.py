@@ -73,6 +73,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Sequence
 
+# This CLI is also loaded directly by file path in a clean interpreter.
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+
+from doc_health.factory_checkout_paths import checkout_path, logical_path
+
 STATIC_BOOKS = {
     "drafts": {"alias": "xf-drafts", "title": "xFactory — Working Drafts",
                "statuses": {"draft"}},
@@ -288,10 +295,10 @@ def parse_export_title(title: str, default_repo: str = "openxFactory") -> Export
 
 
 def repo_path(root: Path, repo: str) -> Path:
-    direct = root / repo
+    direct = checkout_path(root, repo)
     if direct.exists() or repo == "openxFactory":
         return direct
-    nested = root / "xFactories" / repo
+    nested = checkout_path(root, Path("xFactories") / repo)
     return nested
 
 
@@ -313,13 +320,14 @@ def session_repository_of(parts: tuple[str, ...]) -> str | None:
 
 def target_from_path(root: Path, target_path: str) -> ImportTarget:
     raw = Path(target_path)
-    path = raw if raw.is_absolute() else root / raw
+    path = raw if raw.is_absolute() else checkout_path(root, raw)
     try:
         rel = path.resolve().relative_to(root.resolve())
     except ValueError as exc:
         raise ValueError("--target-path must stay inside the workspace") from exc
     parts = rel.parts
-    repo = parts[0] if parts[0] != "xFactories" else parts[1]
+    logical = logical_path(rel).parts
+    repo = logical[1] if logical[0] == "xFactories" else logical[0]
     # A branch-session worktree target keeps the SESSION's repository name
     # (FR-041): the header contract is applied verbatim, which means its
     # `Repository context:` must name a real repository, not a container.
@@ -373,7 +381,7 @@ def imported_source_ids(root: Path, extra_roots: Sequence[Path] = ()) -> set[str
     nor `xFactories` contains, so without the target's own directory in scope the
     dedupe would silently stop working exactly where a session re-syncs most."""
     ids: set[str] = set()
-    bases = [root / rel for rel in ("openxFactory", "xFactories")]
+    bases = [checkout_path(root, "openxFactory"), root / "xFactories"]
     bases.extend(Path(extra) for extra in extra_roots)
     for base in bases:
         if not base.exists():
@@ -839,9 +847,9 @@ def scan(root: Path) -> tuple[dict[str, dict[str, str]], dict[str, BookSpec]]:
     specs: dict[str, BookSpec] = {b: static_spec(b) for b in STATIC_BOOKS}
     found: list[tuple[str, str, str, tuple[str, ...]]] = []
     for base in ["openxFactory", *governed_repo_paths(root)]:
-        basep = root / base
+        basep = checkout_path(root, base)
         for f in sorted(basep.rglob("*.md")):
-            rel = f.relative_to(root)
+            rel = logical_path(f.relative_to(root))
             if SKIP_PARTS.intersection(rel.parts) or "openspec" in rel.parts:
                 continue
             if in_nested_checkout(f, basep):
@@ -865,8 +873,9 @@ def scan(root: Path) -> tuple[dict[str, dict[str, str]], dict[str, BookSpec]]:
             if status in cfg["statuses"]:
                 desired[book][rel] = title
     # promoted specs -> canon
-    for f in sorted((root / "openxFactory/openspec/specs").glob("*/spec.md")):
-        rel = f.relative_to(root)
+    promoted = checkout_path(root, "openxFactory/openspec/specs")
+    for f in sorted(promoted.glob("*/spec.md")):
+        rel = logical_path(f.relative_to(root))
         desired["canon"][str(rel)] = f"[spec] openxFactory: {f.parent.name}"
     # grounding set -> every book that exists by membership
     for g in GROUNDING:
@@ -963,7 +972,7 @@ def ensure_workspace_record(root: Path, spec: BookSpec, notebook_id: str,
     field, `created_at` included, is the record's own history and is preserved
     (the 2026-08-24 migration kept the legacy→new mapping in a file comment,
     not in a record field; the schema has none)."""
-    path = root / "openxFactory/examples/lifecycle-notebook-workspaces.yaml"
+    path = checkout_path(root, "openxFactory/examples/lifecycle-notebook-workspaces.yaml")
     record_id = f"workspace-xfactory-lifecycle-{spec.key}"
     if not path.is_file():
         print(f"[{spec.key}] NOTICE workspace registry missing at {path}; "
@@ -1607,7 +1616,7 @@ def sync_book(root: Path, spec: BookSpec, desired: dict[str, str],
 
     # adds and content updates
     for rel, title in sorted(desired.items()):
-        text = (root / rel).read_text(errors="replace")
+        text = checkout_path(root, rel).read_text(errors="replace")
         # Raw hash, not `_content_digest`, deliberately: this is REPO text read
         # from disk and compared against the manifest's stored value. There is no
         # provider response here and so nothing to unwrap — the digest FORM is
@@ -1652,6 +1661,10 @@ def _out_of_scope_workbench_dirs(root: Path) -> list[Path]:
     that holds nothing costs one `is_dir()`.
     """
     dirs = [root / "ideation" / "workbench"]
+    selected = checkout_path(root, V1_WORKBENCH_DIR)
+    for alternate in (root / V1_WORKBENCH_DIR, root / "openXfactory/ideation/workbench"):
+        if alternate.resolve() != selected.resolve():
+            dirs.append(alternate)
     for rel in governed_repo_paths(root):
         dirs.append(root / rel / "ideation" / "workbench")
     return [d for d in dirs if d.is_dir()]
@@ -1705,8 +1718,9 @@ def workbench_orphan_sweep(root: Path, apply: bool, adapter=None) -> None:
               f"openxFactory scope: {rels}; extend the sweep scope before "
               "enabling)")
         return
+    workbench_dir = str(checkout_path(root, V1_WORKBENCH_DIR).relative_to(root)) + "/"
     if not apply:
-        live = wb.live_notebook_aliases(root, workbench_dir=V1_WORKBENCH_DIR)
+        live = wb.live_notebook_aliases(root, workbench_dir=workbench_dir)
         pending = 0
         # AN ERRORED LISTING IS NOT AN EMPTY ONE (PR #49 review finding 13's
         # residual, wave 2). `list_scratch()` collapses a failed `nlm notebook
@@ -1735,7 +1749,7 @@ def workbench_orphan_sweep(root: Path, apply: bool, adapter=None) -> None:
             print(f"[workbench] dry-run: {pending} orphan(s) pending; "
                   "re-run with --apply to sweep")
         return
-    result = wb.orphan_sweep(root, adapter, workbench_dir=V1_WORKBENCH_DIR)
+    result = wb.orphan_sweep(root, adapter, workbench_dir=workbench_dir)
     if result.skipped:
         print(f"[workbench] orphan sweep SKIPPED ({result.detail})")
         return
@@ -1858,9 +1872,9 @@ def session_repositories(root: Path) -> list[tuple[str, Path]]:
     one). That agreement is why this reads `governed_repo_paths` and not
     `pinned_factory_paths`: the docstring's claim was load-bearing and widening
     `scan()` alone would have quietly falsified it."""
-    pairs = [("openxFactory", root / "openxFactory")]
+    pairs = [("openxFactory", checkout_path(root, "openxFactory"))]
     for rel in governed_repo_paths(root):
-        pairs.append((Path(rel).name, root / rel))
+        pairs.append((logical_path(Path(rel)).name, root / rel))
     return [(name, path) for name, path in pairs if path.is_dir()]
 
 

@@ -28,10 +28,11 @@ except ImportError:
 
 from . import DEFAULT_THRESHOLDS, ERROR, CRITICAL, Finding, RunResult, Skip
 from . import corpus, fs_probe, promotion_fidelity, report
+from .factory_checkout_paths import checkout_name
 from .families import FAMILIES, FAMILY_NOTES
 from .preflight import run_preflight
 
-SYNC_SCRIPT = "openxFactory/scripts/sync-notebooklm-books.py"
+SYNC_SCRIPT = "scripts/sync-notebooklm-books.py"
 
 
 @dataclass
@@ -76,7 +77,10 @@ class Context:
 
 def _real_notebook_dryrun(agg_root: Path | None):
     def run():
-        if agg_root is None or not (agg_root / SYNC_SCRIPT).is_file():
+        if agg_root is None:
+            return None
+        neutral = corpus.find_neutral_checkout(agg_root)
+        if neutral is None or not (neutral / SYNC_SCRIPT).is_file():
             return None
         try:
             probe = subprocess.run(["nlm", "notebook", "list"],
@@ -84,7 +88,7 @@ def _real_notebook_dryrun(agg_root: Path | None):
             if probe.returncode != 0:
                 return None
             proc = subprocess.run(
-                ["python3", SYNC_SCRIPT, "."], cwd=agg_root,
+                ["python3", str(neutral / SYNC_SCRIPT), "."], cwd=agg_root,
                 capture_output=True, text=True, timeout=600)
             return proc.stdout if proc.returncode == 0 else None
         except (OSError, subprocess.TimeoutExpired):
@@ -95,7 +99,7 @@ def _real_notebook_dryrun(agg_root: Path | None):
 def build_context(args) -> Context:
     if args.single_repo:
         root = Path(args.single_repo).resolve()
-        repos = [(root.name, root)]
+        repos = [(checkout_name(root), root)]
         agg_root = None
     else:
         agg_root = Path(args.repo_root).resolve()
@@ -217,7 +221,8 @@ def _neutrality_scope(ctx, args):
         return {}, Path(args.single_repo).resolve(), None
     scope = {name: path for name, path in ctx.repo_paths.items()
              if Path(path).parent.name == "xFactories"}
-    return (scope, ctx.agg_root / "openxFactory",
+    neutral = corpus.find_neutral_checkout(ctx.agg_root)
+    return (scope, neutral or ctx.agg_root / "openxFactory",
             ctx.agg_root / "health" / "dispositions.yaml")
 
 

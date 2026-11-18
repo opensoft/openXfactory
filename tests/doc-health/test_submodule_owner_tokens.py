@@ -58,9 +58,11 @@ property of git and not of this file."""
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
+import pytest
 import yaml
 
 WORKFLOW = (Path(__file__).resolve().parents[2]
@@ -217,8 +219,8 @@ def test_the_detection_and_the_init_share_one_governed_filter():
     for job in JOBS:
         detect = step(job, DETECT)["run"]
         init = step(job, "Init governed submodules only")["run"]
-        assert "GOVERNED='^(openxFactory|xFactories/)'" in detect
-        assert "grep -E '^(openxFactory|xFactories/)'" in init
+        assert "GOVERNED='^(openXfactory$|openxFactory$|xFactories/)'" in detect
+        assert "grep -E '^(openXfactory$|openxFactory$|xFactories/)'" in init
 
 
 def test_the_two_jobs_carry_the_identical_owner_token_block():
@@ -648,3 +650,82 @@ def test_the_fallback_never_captures_the_repositorys_own_origin(tmp_path):
 def test_an_empty_owner_list_is_a_no_op_not_a_failure(tmp_path):
     done, _ = run_fallback(tmp_path, [], "fallback-pat")
     assert done.returncode == 0, done.stdout + done.stderr
+
+
+@pytest.mark.parametrize("mount", ["openXfactory", "openxFactory"])
+@pytest.mark.parametrize("job", JOBS)
+def test_init_exports_the_actual_pinned_neutral_checkout(tmp_path, mount, job):
+    root = tmp_path / "aggregation"
+    root.mkdir()
+    child = root / mount
+    child.mkdir()
+    real_git = shutil.which("git")
+
+    def git(cwd, *args):
+        return subprocess.check_output(
+            [real_git, "-C", str(cwd), *args], text=True).strip()
+
+    def commit(cwd):
+        return git(cwd, "-c", "user.name=Fixture",
+                   "-c", "user.email=fixture@example.test",
+                   "-c", "commit.gpgsign=false", "commit", "-qm", "fixture")
+
+    git(child, "init", "-q")
+    git(child, "add", "-A")
+    git(child, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.test",
+        "-c", "commit.gpgsign=false", "commit", "--allow-empty", "-qm", "neutral")
+    pin = git(child, "rev-parse", "HEAD")
+    git(root, "init", "-q")
+    gitmodules(root, [(mount, "git@github.com:opensoft/openXfactory.git")])
+    git(root, "add", ".gitmodules")
+    git(root, "update-index", "--add", "--cacheinfo", f"160000,{pin},{mount}")
+    commit(root)
+
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    stub = bin_dir / "git"
+    stub.write_text(
+        "#!/bin/bash\n"
+        'if [ "$1" = "submodule" ]; then\n'
+        '  printf "%s\\n" "$@" >> "$TEST_CHECKOUTS"\n'
+        '  exit 0\n'
+        'fi\n'
+        'exec "$TEST_GIT" "$@"\n', encoding="utf-8")
+    stub.chmod(0o755)
+    outputs = tmp_path / "github-env"
+    clone_log = tmp_path / "clone-log"
+    test_env = dict(os.environ, PATH=f"{bin_dir}:{os.environ['PATH']}",
+                    TEST_GIT=real_git, TEST_CHECKOUTS=str(clone_log),
+                    GITHUB_ENV=str(outputs))
+    program = step(job, "Init governed submodules only")["run"]
+    proc = subprocess.run(["bash", "-e", "-c", program], cwd=root,
+                          env=test_env, capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stderr + proc.stdout
+    assert outputs.read_text() == f"OPENXFACTORY_MOUNT={mount}\n"
+    assert clone_log.read_text().splitlines() == [
+        "submodule", "update", "--init", mount]
+
+
+def test_neutral_writebacks_refuse_an_unset_mount():
+    writers = [s["run"] for s in steps("finalize")
+               if 'cd -- "' in s.get("run", "") and
+               "neutral mount unavailable" in s.get("run", "")]
+    assert len(writers) == 2
+    for script in writers:
+        checkout = next(line for line in script.splitlines() if "cd -- " in line)
+        proc = subprocess.run(
+            ["bash", "-c", "unset OPENXFACTORY_MOUNT\n" + checkout],
+            capture_output=True, text=True)
+        assert proc.returncode != 0
+        assert "neutral mount unavailable" in proc.stderr
+
+
+def test_doc_health_suite_requires_a_verified_mount_before_running():
+    run = step("finalize", "Run doc-health suite")["run"].splitlines()
+    guard = run[0]
+    assert "neutral mount unavailable" in guard
+    proc = subprocess.run(
+        ["bash", "-c", "unset OPENXFACTORY_MOUNT\n" + guard],
+        capture_output=True, text=True)
+    assert proc.returncode != 0
+    assert "neutral mount unavailable" in proc.stderr
