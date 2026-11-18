@@ -66,3 +66,31 @@ def test_orphan_sweep_reads_the_canonical_workbench(tmp_path, monkeypatch, sync)
     monkeypatch.setattr(sync, "_dashboard_module", lambda name: workbench)
     sync.workbench_orphan_sweep(tmp_path, True, adapter)
     assert seen == [manifest]
+
+
+@pytest.mark.parametrize(("legacy", "canonical", "repository"), [
+    ("openxFactory", "openXfactory", "openxFactory"),
+    ("xFactories/codexFactory", "xFactories/codeXfactory", "codexFactory"),
+])
+def test_import_paths_preserve_the_checkout_and_repository_context(
+        tmp_path, sync, legacy, canonical, repository):
+    (tmp_path / canonical).mkdir(parents=True)
+    for name in (legacy, canonical):
+        selected = sync.target_from_path(tmp_path, f"{name}/ideation/staging/topic")
+        assert selected.path == tmp_path / canonical / "ideation/staging/topic"
+        assert selected.repo == repository
+    assert not (tmp_path / legacy).exists()
+    with pytest.raises(ValueError, match="inside the workspace"):
+        sync.target_from_path(tmp_path, "../openxFactory/ideation/staging/topic")
+
+
+def test_alternate_workbench_manifest_blocks_orphan_cleanup(tmp_path, monkeypatch, sync):
+    (tmp_path / "openxFactory/.git").mkdir(parents=True)
+    alternate = tmp_path / "openXfactory/ideation/workbench"
+    alternate.mkdir(parents=True)
+    (alternate / "active.workbench.yaml").touch()
+    adapter = SimpleNamespace(available=lambda: True)
+    workbench = SimpleNamespace(
+        orphan_sweep=lambda *args, **kwargs: pytest.fail("live manifest outside sweep scope"))
+    monkeypatch.setattr(sync, "_dashboard_module", lambda name: workbench)
+    sync.workbench_orphan_sweep(tmp_path, True, adapter)

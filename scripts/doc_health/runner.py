@@ -28,6 +28,7 @@ except ImportError:
 
 from . import DEFAULT_THRESHOLDS, ERROR, CRITICAL, Finding, RunResult, Skip
 from . import corpus, fs_probe, promotion_fidelity, report
+from .factory_checkout_paths import checkout_name
 from .families import FAMILIES, FAMILY_NOTES
 from .preflight import run_preflight
 
@@ -98,7 +99,7 @@ def _real_notebook_dryrun(agg_root: Path | None):
 def build_context(args) -> Context:
     if args.single_repo:
         root = Path(args.single_repo).resolve()
-        repos = [(root.name, root)]
+        repos = [(checkout_name(root), root)]
         agg_root = None
     else:
         agg_root = Path(args.repo_root).resolve()

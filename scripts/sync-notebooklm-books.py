@@ -315,13 +315,14 @@ def session_repository_of(parts: tuple[str, ...]) -> str | None:
 
 def target_from_path(root: Path, target_path: str) -> ImportTarget:
     raw = Path(target_path)
-    path = raw if raw.is_absolute() else root / raw
+    path = raw if raw.is_absolute() else checkout_path(root, raw)
     try:
         rel = path.resolve().relative_to(root.resolve())
     except ValueError as exc:
         raise ValueError("--target-path must stay inside the workspace") from exc
     parts = rel.parts
-    repo = parts[0] if parts[0] != "xFactories" else parts[1]
+    logical = logical_path(rel).parts
+    repo = logical[1] if logical[0] == "xFactories" else logical[0]
     # A branch-session worktree target keeps the SESSION's repository name
     # (FR-041): the header contract is applied verbatim, which means its
     # `Repository context:` must name a real repository, not a container.
@@ -1656,9 +1657,9 @@ def _out_of_scope_workbench_dirs(root: Path) -> list[Path]:
     """
     dirs = [root / "ideation" / "workbench"]
     selected = checkout_path(root, V1_WORKBENCH_DIR)
-    legacy = root / V1_WORKBENCH_DIR
-    if legacy.resolve() != selected.resolve():
-        dirs.append(legacy)
+    for alternate in (root / V1_WORKBENCH_DIR, root / "openXfactory/ideation/workbench"):
+        if alternate.resolve() != selected.resolve():
+            dirs.append(alternate)
     for rel in governed_repo_paths(root):
         dirs.append(root / rel / "ideation" / "workbench")
     return [d for d in dirs if d.is_dir()]
