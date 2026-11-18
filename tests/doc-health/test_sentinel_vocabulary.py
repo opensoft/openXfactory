@@ -1182,15 +1182,28 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # measured sites. These references grant no publication or rollout acceptance.
     # The revised T018 review retains its prior candidate and exact review
     # head: four additional measured sites, with the member set unchanged.
+    # T013 source consent/original/receipt/pending-control preparation adds
+    # 41 measured sites; the normalized artifact graph and retained prior
+    # preparation add two more, for 43 total. All 38 member identities and
+    # reachability obligations remain; presence supplies no authentication.
+    # The exact internal-human-root record adds nine repo-local policy pins
+    # and one standing member. Neighboring paths and foreign waivers stay refused.
+    # The authenticated T010 receipt and commissioning record replace
+    # 62 prior pin sites with 56 current sites. The exact historical
+    # controls and all 39 standing members retain their reachability checks.
     # The independently prepared T018 source-cut decision, exact cut and
     # preserved qualification add nine measured sites, with no new member.
     # Source references supply no publication or rollout acceptance.
-    assert (standing_sites, standing_members) == (1403, 38)
+    assert (standing_sites, standing_members) == (1449, 39)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
     assert len(report.lost) == 1
     assert len(report.lost_awaiting_record) == 0
+    corpus = "contracts/private-connectivity/conformance.json"
+    assert pc.non_member_reason(corpus)
+    assert not any(result.site.path == corpus for result in report.results)
+    assert not any(result.site.path == corpus for result in report.non_pins)
     assert report.uncovered == ()
     assert report.vanished == ()
     assert report.arrived == ()

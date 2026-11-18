@@ -236,7 +236,6 @@ from __future__ import annotations
 import argparse
 from contextlib import contextmanager
 import base64
-import binascii
 import hashlib
 import json
 import os
@@ -388,10 +387,12 @@ class PinRefusal(Exception):
 # reading the pin — the exact subset this pin is written in, and nothing else
 # --------------------------------------------------------------------------
 
-_SCALAR = re.compile(r"^(?P<key>[A-Za-z_][A-Za-z0-9_]*): (?P<value>.+)$")
-_SEQ_STR = re.compile(r"^  - (?P<value>\S.*)$")
-_SEQ_MAP_HEAD = re.compile(r"^  - (?P<key>[A-Za-z_][A-Za-z0-9_]*): (?P<value>.+)$")
-_SEQ_MAP_TAIL = re.compile(r"^    (?P<key>[A-Za-z_][A-Za-z0-9_]*): (?P<value>.+)$")
+_PACKAGE_JSON_NAME = "package.json"
+
+_SCALAR = re.compile(r"^(?P<key>[A-Za-z_](?a:\w*)): (?P<value>.+)$")
+_SEQ_STR = re.compile(r"^ {2}- (?P<value>\S.*)$")
+_SEQ_MAP_HEAD = re.compile(r"^ {2}- (?P<key>[A-Za-z_](?a:\w*)): (?P<value>.+)$")
+_SEQ_MAP_TAIL = re.compile(r"^ {4}(?P<key>[A-Za-z_](?a:\w*)): (?P<value>.+)$")
 
 # ONE nested level, and exactly one, admitted for `cited_to:`. A disposition's
 # citations are a LIST because an exception rests on more than one act — a
@@ -401,8 +402,8 @@ _SEQ_MAP_TAIL = re.compile(r"^    (?P<key>[A-Za-z_][A-Za-z0-9_]*): (?P<value>.+)
 # here on the same argument the flat grammar was written on: this reader parses
 # the pin's own language and refuses everything else, so each level admitted is a
 # deliberate widening rather than a general YAML parser arriving by accident.
-_SEQ_MAP_LIST_HEAD = re.compile(r"^    (?P<key>[A-Za-z_][A-Za-z0-9_]*):$")
-_SEQ_MAP_LIST_ITEM = re.compile(r"^      - (?P<value>\S.*)$")
+_SEQ_MAP_LIST_HEAD = re.compile(r"^ {4}(?P<key>[A-Za-z_](?a:\w*)):$")
+_SEQ_MAP_LIST_ITEM = re.compile(r"^ {6}- (?P<value>\S.*)$")
 
 # `>-`, the FOLDED scalar, and only that one. A disposition says in a sentence
 # why an exception is lawful, and a sentence forced onto one physical line is a
@@ -548,6 +549,22 @@ def _authority_root(value) -> Path:
     return root.parent.resolve() / root.name
 
 
+def _assert_operand_components(chosen, directory):
+    # Existing components, including a missing leaf's existing parents,
+    # must not conceal a link. Creation belongs to the later writer.
+    parts = chosen.parts
+    for index in range(1, len(parts) + 1):
+        component = Path(*parts[:index])
+        try:
+            info = component.lstat()
+        except FileNotFoundError:
+            break
+        if stat.S_ISLNK(info.st_mode):
+            raise PinRefusal("pin-unresolvable", "linked operand locations are not authorized")
+        if (index < len(parts) or directory) and not stat.S_ISDIR(info.st_mode):
+            raise PinRefusal("pin-unresolvable", "operand parent is not a directory")
+
+
 def _within_roots(value, roots, *, directory=False) -> Path:
     selected = _operand_path(value)
     for declared in roots:
@@ -560,28 +577,28 @@ def _within_roots(value, roots, *, directory=False) -> Path:
             if not same_root:
                 continue
             chosen = root / selected.relative_to(ancestor)
-            # Existing components, including a missing leaf's existing parents,
-            # must not conceal a link. Creation belongs to the later writer.
-            parts = chosen.parts
-            for index in range(1, len(parts) + 1):
-                component = Path(*parts[:index])
-                try:
-                    info = component.lstat()
-                except FileNotFoundError:
-                    break
-                if stat.S_ISLNK(info.st_mode):
-                    raise PinRefusal("pin-unresolvable", "linked operand locations are not authorized")
-                if index < len(parts) or directory:
-                    if not stat.S_ISDIR(info.st_mode):
-                        raise PinRefusal("pin-unresolvable", "operand parent is not a directory")
+            _assert_operand_components(chosen, directory)
             return chosen
     raise PinRefusal("pin-unresolvable", "operand is outside operator-selected roots")
 
 
-def authorize_cli_sources(args):
+def consumer_context_root(value) -> Path:
+    """An explicitly trusted embedding context, never a model-selected flag."""
+    try:
+        root = _authority_root(value)
+        if root.is_symlink() or not root.is_dir():
+            raise PinRefusal("pin-unresolvable", "consumer root must be an existing unlinked directory")
+        return root
+    except (OSError, RuntimeError, TypeError, ValueError):
+        raise PinRefusal("pin-unresolvable", "consumer root must be a bounded existing directory") from None
+
+
+def authorize_cli_sources(args, *, consumer_root=None):
     """Bind model selectors to separately supplied operator authority."""
+    default_pin = (PIN_PATH if consumer_root is None else
+                   consumer_context_root(consumer_root) / "contracts" / "openspec-cli-pin.yaml")
     configured = os.environ.get("XFACTORY_OPENSPEC_PIN_PATH")
-    expected = _authority_root(PIN_PATH if configured is None else configured)
+    expected = _authority_root(default_pin if configured is None else configured)
     supplied = _operand_path(args.pin) if args.pin is not None else expected
     if supplied.resolve() != expected.resolve():
         raise PinRefusal("pin-unresolvable", "--pin differs from operator-selected XFACTORY_OPENSPEC_PIN_PATH")
@@ -599,6 +616,93 @@ def authorize_cli_sources(args):
             roots.append(scratch)
         args.cache_dir = str(_within_roots(args.cache_dir or default_cache_root(),
                                            roots, directory=True))
+
+
+def _read_pin_root_line(pin, line, stripped, pin_path, number):
+    if stripped.endswith(":") and " " not in stripped[:-1]:
+        section = stripped[:-1]
+        pin[section] = []
+        return section
+    match = _SCALAR.match(line)
+    if not match:
+        raise PinRefusal(
+            "pin-unreadable",
+            f"{pin_path}:{number}: this reader parses only the pin's own "
+            f"grammar and does not understand {line!r}")
+    pin[match.group("key")] = _unquote(match.group("value"))
+    return None
+
+
+def _append_pin_nested_item(pin, section, nested, nested_item, line, pin_path, number):
+    if nested is None or not pin[section] or not isinstance(
+            pin[section][-1], dict):
+        raise PinRefusal(
+            "pin-unreadable",
+            f"{pin_path}:{number}: nested list item with no key open: "
+            f"{line!r}")
+    pin[section][-1][nested].append(_unquote(nested_item.group("value")))
+
+
+def _read_pin_map_tail(pin, section, tail, line, pin_path, number):
+    if not pin[section] or not isinstance(pin[section][-1], dict):
+        raise PinRefusal(
+            "pin-unreadable",
+            f"{pin_path}:{number}: continuation with no mapping entry "
+            f"open: {line!r}")
+    key, value = tail.group("key"), tail.group("value").strip()
+    if value == _FOLD_OPENER:
+        pin[section][-1][key] = ""
+        return key
+    pin[section][-1][key] = _unquote(value)
+    return None
+
+
+def _read_pin_nested_head(pin, section, nested_head, line, pin_path, number):
+    if not pin[section] or not isinstance(pin[section][-1], dict):
+        raise PinRefusal(
+            "pin-unreadable",
+            f"{pin_path}:{number}: nested block with no mapping entry "
+            f"open: {line!r}")
+    nested = nested_head.group("key")
+    pin[section][-1][nested] = []
+    return nested
+
+
+def _read_pin_block_line(pin, section, nested, line, pin_path, number):
+    if section is None:
+        raise PinRefusal(
+            "pin-unreadable",
+            f"{pin_path}:{number}: indented line outside any block: {line!r}")
+    nested_item = _SEQ_MAP_LIST_ITEM.match(line)
+    if nested_item:
+        _append_pin_nested_item(pin, section, nested, nested_item, line, pin_path, number)
+        return nested, None
+    head = _SEQ_MAP_HEAD.match(line)
+    if head:
+        pin[section].append({head.group("key"): _unquote(head.group("value"))})
+        return None, None
+    tail = _SEQ_MAP_TAIL.match(line)
+    if tail:
+        return None, _read_pin_map_tail(pin, section, tail, line, pin_path, number)
+    nested_head = _SEQ_MAP_LIST_HEAD.match(line)
+    if nested_head:
+        return _read_pin_nested_head(pin, section, nested_head, line, pin_path, number), None
+    item = _SEQ_STR.match(line)
+    if item:
+        pin[section].append(_unquote(item.group("value")))
+        return None, None
+    raise PinRefusal(
+        "pin-unreadable",
+        f"{pin_path}:{number}: this reader parses only the pin's own grammar "
+        f"and does not understand {line!r}")
+
+
+def _append_pin_fold(pin, section, folding, line, stripped):
+    if folding is None or not line.startswith(_FOLD_CONTINUATION):
+        return False
+    held = pin[section][-1][folding]
+    pin[section][-1][folding] = (held + " " + stripped).strip()
+    return True
 
 
 def read_pin(pin_path: Path = PIN_PATH) -> dict:
@@ -632,80 +736,14 @@ def read_pin(pin_path: Path = PIN_PATH) -> dict:
         if not stripped or stripped.startswith("#"):
             folding = None if not stripped else folding
             continue
-        if folding is not None:
-            if line.startswith(_FOLD_CONTINUATION):
-                held = pin[section][-1][folding]
-                pin[section][-1][folding] = (held + " " + stripped).strip()
-                continue
-            folding = None
+        if _append_pin_fold(pin, section, folding, line, stripped):
+            continue
+        folding = None
         if not line.startswith(" "):
-            section = None
             nested = None
-            if stripped.endswith(":") and " " not in stripped[:-1]:
-                section = stripped[:-1]
-                pin[section] = []
-                continue
-            match = _SCALAR.match(line)
-            if not match:
-                raise PinRefusal(
-                    "pin-unreadable",
-                    f"{pin_path}:{number}: this reader parses only the pin's own "
-                    f"grammar and does not understand {line!r}")
-            pin[match.group("key")] = _unquote(match.group("value"))
+            section = _read_pin_root_line(pin, line, stripped, pin_path, number)
             continue
-        if section is None:
-            raise PinRefusal(
-                "pin-unreadable",
-                f"{pin_path}:{number}: indented line outside any block: {line!r}")
-        nested_item = _SEQ_MAP_LIST_ITEM.match(line)
-        if nested_item:
-            if nested is None or not pin[section] or not isinstance(
-                    pin[section][-1], dict):
-                raise PinRefusal(
-                    "pin-unreadable",
-                    f"{pin_path}:{number}: nested list item with no key open: "
-                    f"{line!r}")
-            pin[section][-1][nested].append(_unquote(nested_item.group("value")))
-            continue
-        head = _SEQ_MAP_HEAD.match(line)
-        if head:
-            nested = None
-            pin[section].append({head.group("key"): _unquote(head.group("value"))})
-            continue
-        tail = _SEQ_MAP_TAIL.match(line)
-        if tail:
-            nested = None
-            if not pin[section] or not isinstance(pin[section][-1], dict):
-                raise PinRefusal(
-                    "pin-unreadable",
-                    f"{pin_path}:{number}: continuation with no mapping entry "
-                    f"open: {line!r}")
-            key, value = tail.group("key"), tail.group("value").strip()
-            if value == _FOLD_OPENER:
-                folding = key
-                pin[section][-1][key] = ""
-                continue
-            pin[section][-1][key] = _unquote(value)
-            continue
-        nested_head = _SEQ_MAP_LIST_HEAD.match(line)
-        if nested_head:
-            if not pin[section] or not isinstance(pin[section][-1], dict):
-                raise PinRefusal(
-                    "pin-unreadable",
-                    f"{pin_path}:{number}: nested block with no mapping entry "
-                    f"open: {line!r}")
-            nested = nested_head.group("key")
-            pin[section][-1][nested] = []
-            continue
-        item = _SEQ_STR.match(line)
-        if item:
-            nested = None
-            pin[section].append(_unquote(item.group("value")))
-            continue
-        raise PinRefusal(
-            "pin-unreadable",
-            f"{pin_path}:{number}: this reader parses only the pin's own grammar "
-            f"and does not understand {line!r}")
+        nested, folding = _read_pin_block_line(pin, section, nested, line, pin_path, number)
     return pin
 
 
@@ -758,14 +796,15 @@ def pinned_integrity(pin: dict) -> tuple[str, str]:
             "trusted")
     try:
         raw = base64.b64decode(integrity.strip()[len("sha512-"):], validate=True)
-    except (binascii.Error, ValueError, TypeError) as exc:
-        # `binascii.Error` IS a `ValueError` subclass, so the pair alone already
-        # closed this path — a value matching `INTEGRITY_RE` with impossible
-        # padding refuses `pin-tag-only` rather than raising. It is NAMED anyway,
-        # because the guard a reader has to derive from the exception hierarchy
-        # is a guard the next reader will ask about (as review of PR #813 did),
-        # and because `base64.b64decode`'s own documented exception should be
-        # legible at the site that catches it.
+    except (ValueError, TypeError) as exc:
+        # Review of PR #813 traced impossible padding in an address that
+        # matches INTEGRITY_RE. base64.b64decode raises binascii.Error there.
+        # Python defines binascii.Error as a subclass of ValueError, and the
+        # catch above turns the decoder failure into the named pin refusal.
+        # test_a_malformed_lockfile_address_is_a_named_refusal_and_not_a_traceback
+        # checks both the exception relationship and the observed result.
+        # The same rule applies to the lockfile address below.
+        # TypeError also converts to the same named refusal.
         raise PinRefusal(
             "pin-tag-only",
             f"the pin's integrity {integrity!r} is not decodable base64: "
@@ -847,10 +886,11 @@ def pinned_lockfile(pin: dict, pin_path: Path) -> tuple[Path, str, int]:
             "closure is not a pinned one")
     try:
         raw = base64.b64decode(integrity.strip()[len("sha512-"):], validate=True)
-    except (binascii.Error, ValueError, TypeError) as exc:
-        # Named for the reason given at the referent's own decode above: the
-        # subclass relation already closed this path, and a guard nobody can read
-        # without the exception hierarchy in hand is one nobody can review.
+    except (ValueError, TypeError) as exc:
+        # Both address checks handle malformed base64 through ValueError.
+        # The lockfile uses the same decoder and named refusal as the package,
+        # so each address can fail closed independently when padding is invalid.
+        # TypeError also converts to the same named refusal.
         raise PinRefusal(
             "pin-tag-only",
             f"the pin's lockfile_integrity {integrity!r} is not decodable "
@@ -916,6 +956,54 @@ def normalized_finding(text: str) -> str:
     return " ".join(text.split())
 
 
+def _checked_disposition(entry, where):
+    if not isinstance(entry, dict):
+        raise PinRefusal(
+            "pin-disposition-malformed",
+            f"{where} is a bare value ({entry!r}) rather than a mapping; a "
+            "disposition is a claim with a citation and an author, not a name")
+    missing = [key for key in DISPOSITION_REQUIRED if not entry.get(key)]
+    if missing:
+        raise PinRefusal(
+            "pin-disposition-malformed",
+            f"{where} ({entry.get('item') or 'unnamed'}) is missing "
+            f"{', '.join(missing)}. A disposition names the repository, the "
+            "item, the delta path and the finding text it accepts, says WHY "
+            "in one line, and CITES the canon that makes the acceptance "
+            "lawful; a disposition without `cited_to:` is an uncited "
+            "exception, which is the thing this estate refuses")
+    citations = entry.get("cited_to")
+    if not isinstance(citations, list) or not citations:
+        raise PinRefusal(
+            "pin-disposition-malformed",
+            f"{where} ({entry.get('item')}) records `cited_to: "
+            f"{citations!r}`, which is not a NON-EMPTY list. The citation is "
+            "the whole difference between an accepted exception and a "
+            "suppression, so an empty one is refused rather than read as "
+            "'none needed'")
+    level = entry.get("level")
+    if level is not None and str(level).upper() not in BLOCKING_LEVELS:
+        # `level:` is human-facing — the matcher reconciles ERROR findings
+        # and nothing else — but a declared level that could never match is
+        # a false statement standing in a file whose whole job is true ones,
+        # and it reads to a reviewer as an exception granted over a warning.
+        raise PinRefusal(
+            "pin-disposition-malformed",
+            f"{where} ({entry.get('item')}) declares level {level!r}. Only "
+            f"{'/'.join(sorted(BLOCKING_LEVELS))} findings are reconciled, "
+            "so a disposition declaring anything else describes a finding "
+            "this tool would never have matched")
+    if not any(entry.get(key) for key in DISPOSITION_AUTHORITY):
+        raise PinRefusal(
+            "pin-disposition-malformed",
+            f"{where} ({entry.get('item')}) names no authority: exactly one "
+            f"of {' or '.join(DISPOSITION_AUTHORITY)} is required. An "
+            "exception nobody is recorded as having granted is an exception "
+            "nobody granted")
+
+    return dict(entry)
+
+
 def pinned_dispositions(pin: dict) -> list[dict]:
     """The declared exceptions, checked for shape, or `pin-disposition-malformed`.
 
@@ -941,51 +1029,8 @@ def pinned_dispositions(pin: dict) -> list[dict]:
             "can review")
     entries: list[dict] = []
     for index, entry in enumerate(raw, start=1):
-        where = f"dispositions[{index}]"
-        if not isinstance(entry, dict):
-            raise PinRefusal(
-                "pin-disposition-malformed",
-                f"{where} is a bare value ({entry!r}) rather than a mapping; a "
-                "disposition is a claim with a citation and an author, not a name")
-        missing = [key for key in DISPOSITION_REQUIRED if not entry.get(key)]
-        if missing:
-            raise PinRefusal(
-                "pin-disposition-malformed",
-                f"{where} ({entry.get('item') or 'unnamed'}) is missing "
-                f"{', '.join(missing)}. A disposition names the repository, the "
-                "item, the delta path and the finding text it accepts, says WHY "
-                "in one line, and CITES the canon that makes the acceptance "
-                "lawful; a disposition without `cited_to:` is an uncited "
-                "exception, which is the thing this estate refuses")
-        citations = entry.get("cited_to")
-        if not isinstance(citations, list) or not citations:
-            raise PinRefusal(
-                "pin-disposition-malformed",
-                f"{where} ({entry.get('item')}) records `cited_to: "
-                f"{citations!r}`, which is not a NON-EMPTY list. The citation is "
-                "the whole difference between an accepted exception and a "
-                "suppression, so an empty one is refused rather than read as "
-                "'none needed'")
-        level = entry.get("level")
-        if level is not None and str(level).upper() not in BLOCKING_LEVELS:
-            # `level:` is human-facing — the matcher reconciles ERROR findings
-            # and nothing else — but a declared level that could never match is
-            # a false statement standing in a file whose whole job is true ones,
-            # and it reads to a reviewer as an exception granted over a warning.
-            raise PinRefusal(
-                "pin-disposition-malformed",
-                f"{where} ({entry.get('item')}) declares level {level!r}. Only "
-                f"{'/'.join(sorted(BLOCKING_LEVELS))} findings are reconciled, "
-                "so a disposition declaring anything else describes a finding "
-                "this tool would never have matched")
-        if not any(entry.get(key) for key in DISPOSITION_AUTHORITY):
-            raise PinRefusal(
-                "pin-disposition-malformed",
-                f"{where} ({entry.get('item')}) names no authority: exactly one "
-                f"of {' or '.join(DISPOSITION_AUTHORITY)} is required. An "
-                "exception nobody is recorded as having granted is an exception "
-                "nobody granted")
-        entries.append(dict(entry))
+        entries.append(_checked_disposition(entry, f"dispositions[{index}]"))
+
     return entries
 
 
@@ -1105,7 +1150,7 @@ def read_lockfile(payload: bytes) -> dict:
     """
     try:
         document = json.loads(payload.decode("utf-8"))
-    except (ValueError, UnicodeDecodeError) as exc:
+    except ValueError as exc:
         raise PinRefusal(
             "pin-unreadable",
             f"the committed lockfile is not readable JSON ({exc}); the pin's "
@@ -1537,7 +1582,7 @@ def install_locked(prefix: Path, lockfile_bytes: bytes, package: str,
             raise PinRefusal("pin-unresolvable", "install generation is not empty; existing evidence is retained")
         _write_new_leaf(fd, "package-lock.json", lockfile_bytes)
         manifest = staging_manifest(read_lockfile(lockfile_bytes), package)
-        _write_new_leaf(fd, "package.json",
+        _write_new_leaf(fd, _PACKAGE_JSON_NAME,
                         (json.dumps(manifest, indent=2) + "\n").encode("utf-8"))
         anchored = _descriptor_directory(fd)
         if artifact_bytes is not None:
@@ -1564,7 +1609,7 @@ def assert_installed_package(prefix: Path, package: str, version: str, *,
     BEFORE `assert_reported_version`, so a vacuous or substituted install is
     named as such instead of arriving as a confusing verdict about a binary.
     """
-    manifest = prefix / "node_modules" / Path(package) / "package.json"
+    manifest = prefix / "node_modules" / Path(package) / _PACKAGE_JSON_NAME
     try:
         if directory_fd is None:
             raw = controlled_file_bytes(manifest)
@@ -1579,7 +1624,7 @@ def assert_installed_package(prefix: Path, package: str, version: str, *,
                                     dir_fd=parent)
                     os.close(parent)
                     parent = child
-                raw = _read_leaf_bytes(parent, "package.json", limit=1024 * 1024)
+                raw = _read_leaf_bytes(parent, _PACKAGE_JSON_NAME, limit=1024 * 1024)
             finally:
                 os.close(parent)
         installed = json.loads(raw.decode("utf-8"))
@@ -1770,6 +1815,21 @@ def run_validation(executable: Path, repo: Path,
 # check 5, reported — the same run, read as data so findings can be reconciled
 # --------------------------------------------------------------------------
 
+def _report_document(payload):
+    document = None
+    try:
+        document = json.loads(payload)
+    except ValueError:
+        start, end = payload.find("{"), payload.rfind("}")
+        if start != -1 and end > start:
+            try:
+                document = json.loads(payload[start:end + 1])
+            except ValueError:
+                document = None
+
+    return document
+
+
 def parse_report(payload: str, argv: list[str]) -> tuple[list[dict], dict]:
     """The CLI's `--json` verdict as `(items, totals)`, or `pin-report-unreadable`.
 
@@ -1786,16 +1846,7 @@ def parse_report(payload: str, argv: list[str]) -> tuple[list[dict], dict]:
     retried — enough to survive a wrapper that prints a line before the document,
     and not enough to make an unparseable verdict into a soft one.
     """
-    document = None
-    try:
-        document = json.loads(payload)
-    except ValueError:
-        start, end = payload.find("{"), payload.rfind("}")
-        if start != -1 and end > start:
-            try:
-                document = json.loads(payload[start:end + 1])
-            except ValueError:
-                document = None
+    document = _report_document(payload)
     if not isinstance(document, dict):
         excerpt = " ".join(payload.split())[:200] or "no output"
         raise PinRefusal(
@@ -1821,6 +1872,45 @@ def parse_report(payload: str, argv: list[str]) -> tuple[list[dict], dict]:
     return items, totals
 
 
+def _collect_item_findings(item, target):
+    findings = []
+    if not isinstance(item, dict):
+        return []
+    identifier = str(item.get("id") or "")
+    issues = item.get("issues") or []
+    levels = set()
+    for issue in issues:
+        if not isinstance(issue, dict):
+            continue
+        level = str(issue.get("level") or "").upper()
+        levels.add(level)
+        findings.append({
+            "target": target,
+            "item": identifier,
+            "type": str(item.get("type") or ""),
+            "level": level,
+            "path": str(issue.get("path") or ""),
+            "message": str(issue.get("message") or ""),
+            "normalized": normalized_finding(str(issue.get("message") or "")),
+            "blocking": level in BLOCKING_LEVELS,
+        })
+    if item.get("valid") is False and not (levels & BLOCKING_LEVELS):
+        message = (f"{identifier}: the report marks this item INVALID and "
+                   "names no ERROR-level issue for it")
+        findings.append({
+            "target": target,
+            "item": identifier,
+            "type": str(item.get("type") or ""),
+            "level": "ERROR",
+            "path": "",
+            "message": message,
+            "normalized": normalized_finding(message),
+            "blocking": True,
+        })
+
+    return findings
+
+
 def collect_findings(items: list, target: str) -> list[dict]:
     """Flatten the report into one row per finding, blocking or not.
 
@@ -1832,39 +1922,7 @@ def collect_findings(items: list, target: str) -> list[dict]:
     """
     findings: list[dict] = []
     for item in items:
-        if not isinstance(item, dict):
-            continue
-        identifier = str(item.get("id") or "")
-        issues = item.get("issues") or []
-        levels = set()
-        for issue in issues:
-            if not isinstance(issue, dict):
-                continue
-            level = str(issue.get("level") or "").upper()
-            levels.add(level)
-            findings.append({
-                "target": target,
-                "item": identifier,
-                "type": str(item.get("type") or ""),
-                "level": level,
-                "path": str(issue.get("path") or ""),
-                "message": str(issue.get("message") or ""),
-                "normalized": normalized_finding(str(issue.get("message") or "")),
-                "blocking": level in BLOCKING_LEVELS,
-            })
-        if item.get("valid") is False and not (levels & BLOCKING_LEVELS):
-            message = (f"{identifier}: the report marks this item INVALID and "
-                       "names no ERROR-level issue for it")
-            findings.append({
-                "target": target,
-                "item": identifier,
-                "type": str(item.get("type") or ""),
-                "level": "ERROR",
-                "path": "",
-                "message": message,
-                "normalized": normalized_finding(message),
-                "blocking": True,
-            })
+        findings.extend(_collect_item_findings(item, target))
     return findings
 
 
@@ -2015,7 +2073,7 @@ def reconcile(findings: list[dict], dispositions: list[dict], identity: str,
 
 
 def report_dispositions(identity: str, applied: list[tuple[dict, dict]],
-                        stale: list[dict], corpus_wide: bool) -> None:
+                        corpus_wide: bool) -> None:
     """Print every applied exception BY NAME, before any verdict is announced.
 
     THIS IS NOT DECORATION AND IT IS NOT OPTIONAL. A run that suppresses two
@@ -2093,6 +2151,43 @@ def _checked_cached_executable(prefix, binary):
     return executable
 
 
+def _reusable_cached_executable(root, root_fd, key, stamped, package, version, binary):
+    names = [key] + sorted(name for name in os.listdir(root_fd)
+                           if name.startswith(key + ".install-"))
+    for name in names:
+        try:
+            fd = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                         dir_fd=root_fd)
+        except FileNotFoundError:
+            continue
+        except OSError as error:
+            raise PinRefusal("pin-unresolvable", "cache generation is linked or non-directory") from error
+        try:
+            _cache_directory_info(fd)
+            try:
+                recorded = _read_leaf_bytes(fd, ".pin-verified", limit=4096).decode("utf-8").strip()
+            except (FileNotFoundError, UnicodeError):
+                continue
+            if recorded != stamped:
+                continue
+            anchored = _descriptor_directory(fd)
+            try:
+                assert_installed_package(anchored, package, version,
+                                         directory_fd=fd, cache_generation=True)
+                _checked_cached_executable(anchored, binary)
+            except FileNotFoundError:
+                # Preserve an evicted/incomplete tree and inspect later
+                # generations before allocating a new exclusive install.
+                continue
+            _directory_still_named(root / name, fd)
+            _directory_still_named(root, root_fd)
+            return root / name / "node_modules" / ".bin" / binary
+        finally:
+            os.close(fd)
+
+    return None
+
+
 def resolve_pinned(package: str, version: str, integrity: str, shasum: str,
                    binary: str, workspace: Path, cache_root: Path | None,
                    lockfile_bytes: bytes, lockfile_integrity: str,
@@ -2128,38 +2223,9 @@ def resolve_pinned(package: str, version: str, integrity: str, shasum: str,
     stamped = f"{integrity}\n{lockfile_integrity}"
     with controlled_directory(root, create=True) as root_fd:
         _cache_directory_info(root_fd)
-        names = [key] + sorted(name for name in os.listdir(root_fd)
-                               if name.startswith(key + ".install-"))
-        for name in names:
-            try:
-                fd = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
-                             dir_fd=root_fd)
-            except FileNotFoundError:
-                continue
-            except OSError as error:
-                raise PinRefusal("pin-unresolvable", "cache generation is linked or non-directory") from error
-            try:
-                _cache_directory_info(fd)
-                try:
-                    recorded = _read_leaf_bytes(fd, ".pin-verified", limit=4096).decode("utf-8").strip()
-                except (FileNotFoundError, UnicodeError):
-                    continue
-                if recorded != stamped:
-                    continue
-                anchored = _descriptor_directory(fd)
-                try:
-                    assert_installed_package(anchored, package, version,
-                                             directory_fd=fd, cache_generation=True)
-                    _checked_cached_executable(anchored, binary)
-                except FileNotFoundError:
-                    # Preserve an evicted/incomplete tree and inspect later
-                    # generations before allocating a new exclusive install.
-                    continue
-                _directory_still_named(root / name, fd)
-                _directory_still_named(root, root_fd)
-                return root / name / "node_modules" / ".bin" / binary
-            finally:
-                os.close(fd)
+        reusable = _reusable_cached_executable(root, root_fd, key, stamped, package, version, binary)
+        if reusable is not None:
+            return reusable
         # An invalid or in-progress generation stays untouched. Concurrent
         # invocations allocate their own private generation with exclusive mkdir.
         name = key
@@ -2237,126 +2303,49 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: list[str] | None = None) -> int:
-    """Return 0 on a clean run, 1 on validation failures, 2 on any refusal.
+def validate_pinned_corpus(executable, repo, targets, dispositions, identity):
+    """Run strict validation and reconcile only explicitly ratified findings."""
+    if not dispositions:
+        verdict = run_validation(executable, repo, targets)   # check 5
+        applied, undispositioned = [], []
+    else:
+        verdict, findings, totals = run_reported_validation(  # check 5
+            executable, repo, targets)
+        render_findings(findings)
+        print(f"Totals: {totals.get('passed', 0)} passed, "
+              f"{totals.get('failed', 0)} failed "
+              f"({totals.get('items', 0)} items)", flush=True)
+        corpus_wide = any("--all" in target for target in targets)
+        applied, undispositioned, stale = reconcile(          # check 6
+            findings, dispositions, identity, corpus_wide)
+        report_dispositions(identity, applied, corpus_wide)
+        if stale:
+            raise PinRefusal(
+                "pin-disposition-stale",
+                "the pin disposes findings this run did not produce:\n"
+                + "\n".join(
+                    f"  • {entry['item']} / {entry['path']} "
+                    f"(repo {entry['repo']})" for entry in stale)
+                + "\n\nThe condition each was granted for no longer "
+                "occurs — typically because the change archived out of "
+                "the `--all` corpus, or because the pinned CLI now words "
+                "the finding differently. A suppression that outlives "
+                "its condition is a standing exemption nobody re-read, "
+                "so it is REFUSED rather than tolerated: delete the "
+                "entry from `dispositions:` in "
+                "contracts/openspec-cli-pin.yaml, in a change that says "
+                "the condition is gone")
+        # THE VERDICT IS DERIVED FROM THE RECONCILED FINDINGS AND NOT
+        # FROM THE CLI'S EXIT CODE, which is the whole mechanism: the
+        # tool exits non-zero over findings this pin has accepted in
+        # writing, and a pass here is a statement about UNDISPOSITIONED
+        # failures rather than an agreement with that exit code.
+        verdict = 1 if undispositioned else 0
+    return verdict, applied, undispositioned
 
-    The ORDER of the block below is the ordering the module docstring states, and
-    it is load-bearing: the pin's shape and the presence of a scan target are
-    both settled before anything is fetched, so a target-less invocation cannot
-    spend a registry round trip on its way to refusing.
-    """
-    args = build_parser().parse_args(argv)
 
-    try:
-        authorize_cli_sources(args)
-        pin_path = Path(args.pin)
-        pin = read_pin(pin_path)
-        version = pinned_version(pin)                       # check 1
-        integrity, shasum = pinned_integrity(pin)
-        package = pinned_package(pin)
-        binary = pinned_binary(pin)
-        lockfile, lockfile_integrity, lockfile_packages = pinned_lockfile(
-            pin, pin_path)
-        dispositions = pinned_dispositions(pin)
-        targets = validation_targets(args)                  # check 2
-        if not args.path_mode:
-            npm = trusted_npm_executable(args.npm)
-        repo = Path(args.repo).resolve() if args.repo else ROOT
-        # Asked BEFORE anything is fetched, for the same reason the shape checks
-        # are: a pin whose exceptions cannot be scoped is unusable, and learning
-        # that only after a registry round trip and a full corpus validation
-        # tells a reviewer nothing the question had already told them.
-        identity = repository_identity(repo) if dispositions else ""
-        # CHECK 3, LOCAL HALF, AND IT COMES BEFORE THE FETCH. The committed
-        # lockfile is this repository's own file: a disagreement between it and
-        # the pin is a defect a reviewer fixes HERE, and spending a registry
-        # round trip on the way to saying so would report it as though the
-        # environment were at fault.
-        lockfile_bytes = verify_lockfile(                   # check 3
-            lockfile, lockfile_integrity, lockfile_packages, package, integrity)
-
-        with tempfile.TemporaryDirectory(prefix="openspec-cli-pin-") as scratch:
-            workspace = Path(scratch)
-            if args.path_mode:
-                # No fetch: the mode's whole subject is the LOCAL install, and
-                # downloading the artifact in order to check a binary we are
-                # about to run from PATH anyway would verify bytes nobody runs.
-                executable = path_executable(binary)
-            elif args.tarball is not None:
-                # Authenticate once and stage those exact bytes in the private
-                # generation. npm's content cache then supplies the CLI while
-                # npm ci retains the unchanged integrity-locked dependency tree.
-                # A cold npm cache must not turn a vendored CLI into a new fetch.
-                supplied = Path(args.tarball)
-                payload = verify_artifact(supplied, integrity, shasum)  # check 3
-                executable = install_locked(
-                    workspace / "prefix", lockfile_bytes, package, version,
-                    binary, npm=npm, artifact_bytes=payload)
-            else:
-                cache_root = None if args.no_cache else (
-                    Path(args.cache_dir) if args.cache_dir
-                    else default_cache_root())
-                executable = resolve_pinned(                   # check 3
-                    package, version, integrity, shasum, binary, workspace,
-                    cache_root, lockfile_bytes, lockfile_integrity,
-                    npm=npm)
-            reported = assert_reported_version(executable, version)  # check 4
-            mode = "PATH" if args.path_mode else "pinned artifact"
-            print(f"openspec-cli-pin: {package}@{reported} from {mode} "
-                  f"({executable}); integrity {integrity[:23]}… verified",
-                  flush=True)
-            # THE CLOSURE, NAMED IN THE LOG THE GATE ALREADY PRINTS. A green
-            # check whose log does not say what it installed is the vacuous pass
-            # `neutral-product-pin` refuses: the line below is how a reader
-            # learns that the dependency tree was pinned at all, and which
-            # lockfile pinned it.
-            print(f"openspec-cli-pin: dependency closure {lockfile.name} "
-                  f"({lockfile_packages} packages); lockfile_integrity "
-                  f"{lockfile_integrity[:23]}… verified"
-                  + ("; NOT INSTALLED THROUGH — --path-mode uses the local "
-                     "binary's own tree" if args.path_mode
-                     else "; installed with `npm ci --ignore-scripts`"),
-                  flush=True)
-            if not dispositions:
-                verdict = run_validation(executable, repo, targets)   # check 5
-                applied, undispositioned, stale = [], [], []
-            else:
-                verdict, findings, totals = run_reported_validation(  # check 5
-                    executable, repo, targets)
-                render_findings(findings)
-                print(f"Totals: {totals.get('passed', 0)} passed, "
-                      f"{totals.get('failed', 0)} failed "
-                      f"({totals.get('items', 0)} items)", flush=True)
-                corpus_wide = any("--all" in target for target in targets)
-                applied, undispositioned, stale = reconcile(          # check 6
-                    findings, dispositions, identity, corpus_wide)
-                report_dispositions(identity, applied, stale, corpus_wide)
-                if stale:
-                    raise PinRefusal(
-                        "pin-disposition-stale",
-                        "the pin disposes findings this run did not produce:\n"
-                        + "\n".join(
-                            f"  • {entry['item']} / {entry['path']} "
-                            f"(repo {entry['repo']})" for entry in stale)
-                        + "\n\nThe condition each was granted for no longer "
-                        "occurs — typically because the change archived out of "
-                        "the `--all` corpus, or because the pinned CLI now words "
-                        "the finding differently. A suppression that outlives "
-                        "its condition is a standing exemption nobody re-read, "
-                        "so it is REFUSED rather than tolerated: delete the "
-                        "entry from `dispositions:` in "
-                        "contracts/openspec-cli-pin.yaml, in a change that says "
-                        "the condition is gone")
-                # THE VERDICT IS DERIVED FROM THE RECONCILED FINDINGS AND NOT
-                # FROM THE CLI'S EXIT CODE, which is the whole mechanism: the
-                # tool exits non-zero over findings this pin has accepted in
-                # writing, and a pass here is a statement about UNDISPOSITIONED
-                # failures rather than an agreement with that exit code.
-                verdict = 1 if undispositioned else 0
-    except PinRefusal as exc:
-        print(str(exc), file=sys.stderr)
-        return 2
-
+def report_validation_verdict(verdict, undispositioned, applied, package, version):
+    """Preserve the existing failure, accepted-exception and clean verdicts."""
     if verdict != 0:
         if not undispositioned:
             # THE DISPOSITION-FREE PATH, and its message is the one that shipped
@@ -2389,6 +2378,101 @@ def main(argv: list[str] | None = None) -> int:
     print(f"OK openspec-cli-pin: {package}@{version} verified against its "
           f"content address and every target validated --strict clean")
     return 0
+
+
+
+def main(argv: list[str] | None = None, *, consumer_root=None) -> int:
+    """Return 0 on a clean run, 1 on validation failures, 2 on any refusal.
+
+    The ORDER of the block below is the ordering the module docstring states, and
+    it is load-bearing: the pin's shape and the presence of a scan target are
+    both settled before anything is fetched, so a target-less invocation cannot
+    spend a registry round trip on its way to refusing.
+    """
+    args = build_parser().parse_args(argv)
+
+    try:
+        root = ROOT if consumer_root is None else consumer_context_root(consumer_root)
+        authorize_cli_sources(args, consumer_root=consumer_root)
+        pin_path = Path(args.pin)
+        pin = read_pin(pin_path)
+        version = pinned_version(pin)                       # check 1
+        integrity, shasum = pinned_integrity(pin)
+        package = pinned_package(pin)
+        binary = pinned_binary(pin)
+        lockfile, lockfile_integrity, lockfile_packages = pinned_lockfile(
+            pin, pin_path)
+        dispositions = pinned_dispositions(pin)
+        targets = validation_targets(args)                  # check 2
+        if not args.path_mode:
+            npm = trusted_npm_executable(args.npm)
+        repo = Path(args.repo).resolve() if args.repo else root
+        # Asked BEFORE anything is fetched, for the same reason the shape checks
+        # are: a pin whose exceptions cannot be scoped is unusable, and learning
+        # that only after a registry round trip and a full corpus validation
+        # tells a reviewer nothing the question had already told them.
+        identity = repository_identity(repo) if dispositions else ""
+        # CHECK 3, LOCAL HALF, AND IT COMES BEFORE THE FETCH. The committed
+        # lockfile is this repository's own file: a disagreement between it and
+        # the pin is a defect a reviewer fixes HERE, and spending a registry
+        # round trip on the way to saying so would report it as though the
+        # environment were at fault.
+        lockfile_bytes = verify_lockfile(                   # check 3
+            lockfile, lockfile_integrity, lockfile_packages, package, integrity)
+
+        with tempfile.TemporaryDirectory(prefix="openspec-cli-pin-") as scratch:
+            workspace = Path(scratch)
+            if args.path_mode:
+                # No fetch: the mode's whole subject is the LOCAL install, and
+                # downloading the artifact in order to check a binary we are
+                # about to run from PATH anyway would verify bytes nobody runs.
+                executable = path_executable(binary)
+            elif args.tarball is not None:
+                # Authenticate once and stage those exact bytes in the private
+                # generation. npm's content cache then supplies the CLI while
+                # npm ci retains the unchanged integrity-locked dependency tree.
+                # A cold npm cache must not turn a vendored CLI into a new fetch.
+                supplied = Path(args.tarball)
+                payload = verify_artifact(supplied, integrity, shasum)  # check 3
+                executable = install_locked(
+                    workspace / "prefix", lockfile_bytes, package, version,
+                    binary, npm=npm, artifact_bytes=payload)
+            else:
+                if args.no_cache:
+                    cache_root = None
+                elif args.cache_dir:
+                    cache_root = Path(args.cache_dir)
+                else:
+                    cache_root = default_cache_root()
+                executable = resolve_pinned(                   # check 3
+                    package, version, integrity, shasum, binary, workspace,
+                    cache_root, lockfile_bytes, lockfile_integrity,
+                    npm=npm)
+            reported = assert_reported_version(executable, version)  # check 4
+            mode = "PATH" if args.path_mode else "pinned artifact"
+            print(f"openspec-cli-pin: {package}@{reported} from {mode} "
+                  f"({executable}); integrity {integrity[:23]}… verified",
+                  flush=True)
+            # THE CLOSURE, NAMED IN THE LOG THE GATE ALREADY PRINTS. A green
+            # check whose log does not say what it installed is the vacuous pass
+            # `neutral-product-pin` refuses: the line below is how a reader
+            # learns that the dependency tree was pinned at all, and which
+            # lockfile pinned it.
+            print(f"openspec-cli-pin: dependency closure {lockfile.name} "
+                  f"({lockfile_packages} packages); lockfile_integrity "
+                  f"{lockfile_integrity[:23]}… verified"
+                  + ("; NOT INSTALLED THROUGH — --path-mode uses the local "
+                     "binary's own tree" if args.path_mode
+                     else "; installed with `npm ci --ignore-scripts`"),
+                  flush=True)
+            verdict, applied, undispositioned = validate_pinned_corpus(
+                executable, repo, targets, dispositions, identity)
+    except PinRefusal as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+    return report_validation_verdict(
+        verdict, undispositioned, applied, package, version)
 
 
 if __name__ == "__main__":

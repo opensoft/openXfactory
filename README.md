@@ -2,6 +2,8 @@
 
 P1 security repairs: [feature 045 requirements, plan, tasks and evidence](specs/045-p1-security-boundaries/README.md), separate from completed feature 044.
 
+Shared CLI source-quality maintenance: [feature 048 plan](specs/048-cli-source-quality/plan.md).
+
 Canonical repository name: `openXfactory`. Historical records, frozen contract identifiers, and compatibility selectors retain their original spelling.
 
 `openxFactory` documents the open reference stack and domain-neutral xFactory
@@ -559,6 +561,11 @@ Every DomainxFactory must validate against the canonical contract:
   and [contracts/CHANGELOG.md](contracts/CHANGELOG.md).
 
 ## OpenSpec Records
+
+- [preserve-delegated-source-proof-bootstrap](openspec/changes/preserve-delegated-source-proof-bootstrap/proposal.md) — draft [PR #1344](https://github.com/opensoft/openXfactory/pull/1344) for the existing private-source CI proof after delegated T010 authentication.
+- [Authorize internal private-connectivity completion](openspec/changes/authorize-private-connectivity-internal-production/proposal.md) — ratified by Brett at 2026-11-17T08:38:55.473Z for exact policy a66cfe60 and the USD 20/month storage-only option; [PR #1339](https://github.com/opensoft/openXfactory/pull/1339) is not yet landed. [Actual root grant](openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md); conditional source/release/internal rollout, with actual Q0-Q4 predicates and external Q5/macOS holds preserved.
+
+- [Extend private-connectivity cut validation](openspec/changes/extend-private-connectivity-cut-validation/proposal.md) — ratified N/E source scope at 2026-11-17T02:55:36.438Z; matching Ops/Tenant acceptance remains separate; [draft PR #1336](https://github.com/opensoft/openXfactory/pull/1336), not landed; no publication or rollout grant.
 
 - [fix-hosted-qualification-lease-budget](openspec/changes/fix-hosted-qualification-lease-budget/proposal.md)
   — draft qualification-only private-read amendment; source ratification pending.
@@ -12003,3 +12010,5 @@ measurement without treating them as passing acceptance.
 OpenSpec CLI maintenance: [npm legacy checksum compatibility](specs/046-npm-legacy-checksum/plan.md).
 
 Verified supplied CLI maintenance: [feature 047 plan](specs/047-vendored-cli-source/plan.md).
+
+Private-connectivity QA preparation: [Q1 dossier](specs/043-private-connectivity-production/review/qa-q1-approval-packet.md) and [release prerequisites](specs/043-private-connectivity-production/review/release-prerequisites.md). These are draft approval packets; no rollout gate is advanced.

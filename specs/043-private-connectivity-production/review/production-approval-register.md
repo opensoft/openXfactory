@@ -6,7 +6,62 @@ Prepared: 2026-11-14
 
 This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T012, T016 and T020 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required at their consumers. Coordinator #1310 has landed source-only with all actual post-merge checks passed. The actual T020 packet is authenticated and default-verified; Ops #628, codeXfactory #583, Headscale-Install #2 and the new coordinator evidence PR remain draft.
 
-## Current source handoff
+## Current admission after T013 authentication
+
+Brett Heap authenticated the exact T013 packet at 2026-11-16T23:54:13.808Z.
+Manifest 53c2b0700e342b77196980a617dea7fc2fa33512 and canonical content SHA-256
+f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6 are unchanged. The genuine original user-record
+SHA-256 is 91812de62be164256e848d8706226655231e62f8c1b7f47c4b83f62c1a5f9290.
+
+After recording that decision, full default T013/T010 dependency verification
+and both T013/control read-only inventory checks passed from 2026-11-16T23:57:08.543977+00:00 to
+2026-11-16T23:57:15.400535+00:00 against authenticated control 1fb3a6a8188a4b051693ac2cd93920f4e69b0d0b,
+whole-file SHA-256 02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326. T013 is complete: 17/68
+source tasks are checked. All remaining task metadata and frozen inputs are unchanged.
+
+The earlier dated handoffs below retain their historical then-current states.
+T014/T015/T017 and full Q0 remain incomplete. T018/T019/T023 release prerequisites
+still block their consuming runtime work. All seven open source/preparation PRs
+remain draft; no version/tag, deployment, C-03 or Q1-Q5 acceptance is granted.
+
+## Hosted source decision and QA preparation, 2026-11-16
+
+Brett's actual source-choice approval at 22:16:06.872Z is recorded in
+[the Hosted commissioning review](../../../openspec/changes/commission-hosted-headscale-production/review/qa-commissioning.md).
+The actual T013 source audit passed all three frozen cases and pinned strict
+validation; [its new authentication review](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md)
+is pending. T013 remains unchecked. The accepted 16 prior source tasks retain
+their immutable controls and actual authentication.
+
+The [QA dossier](qa-q1-approval-packet.md) links draft Ops #637 and Tenant #350
+for exact source/target scope review. These proposals do not change the 68-task
+definition. The [release preflight](release-prerequisites.md) supplies actual
+refreshed tests and preview/readback results, with T018/T019/T023 publication
+and all live gates still incomplete. Existing component and all preparation
+PRs remain draft.
+
+## Current preparation handoff — 2026-11-16
+
+T001-T012, T016 and T020-T022 are complete as authenticated source tasks
+(16/68). Coordinator #1327 landed source-only; GitHub recorded #1325 indirectly
+merged through its already-contained head. Headscale-Install #2, Ops #628 and
+codeXfactory #583 remain open drafts.
+
+Brett approved the exact private Hosted plan and Q0-H source choices at
+2026-11-16T22:16:06.872Z. The immutable reviewed private plan is linked from
+the [Hosted decision record](../../../openspec/changes/commission-hosted-headscale-production/review/qa-commissioning.md).
+Actual T013 source-output authentication/default admission remains due; no
+T013 completion or full Q0 pass is inferred from this source decision.
+
+The [release preflight](release-prerequisites.md) and
+[QA Q1 dossier](qa-q1-approval-packet.md) prepare the remaining exact decisions.
+The private Hosted Services planning PR also remains draft. No target,
+resource, identity, DNS, retention or staging operation is authorized.
+The earlier tables and chronology below preserve prior handoff states and
+must not be treated as current release, draft-state or gate acceptance.
+
+## Earlier source handoff (historical)
+
 
 | Item | Current state and next acceptance |
 | --- | --- |

@@ -1900,9 +1900,9 @@ def test_a_malformed_lockfile_address_is_a_named_refusal_and_not_a_traceback(
     `base64.b64decode(..., validate=True)` raises `binascii.Error` on impossible
     padding, and every value above matches `INTEGRITY_RE` and reaches it.
     `binascii.Error` IS a `ValueError` subclass, so the guard already caught it
-    and already produced the named refusal; the type is now written out at the
-    catch site as well, and this test is what keeps the property from depending
-    on anybody rediscovering that relation.
+    and produced the named refusal. Both catches handle ValueError. This
+    test checks the exception hierarchy and each observed refusal for every
+    supplied malformed address.
     """
     assert issubclass(binascii.Error, ValueError)
     path = write_pin(tmp_path, lockfile_integrity=f'"{integrity}"')
@@ -3363,3 +3363,148 @@ def test_real_npm_uses_supplied_cli_with_empty_cache_and_network_disabled(
                      "--pin", str(pin_path), "--tarball", str(artifact)]) == 0
     assert not sentinel.exists()
     assert artifact.read_bytes() == payload
+
+
+# ----------------------------------------- shared consumer context contract
+
+def test_explicit_consumer_context_selects_its_real_pin_and_corpus(mod, tmp_path, fake_npm, monkeypatch):
+    consumer = tmp_path / "consumer"
+    contracts = consumer / "contracts"
+    contracts.mkdir(parents=True)
+    (consumer / "openspec").mkdir()
+    write_pin(contracts).rename(contracts / "openspec-cli-pin.yaml")
+    monkeypatch.delenv("XFACTORY_OPENSPEC_PIN_PATH", raising=False)
+    observed = []
+    original = mod.run_validation
+    def validate(executable, repo, targets):
+        observed.append(repo)
+        return original(executable, repo, targets)
+    monkeypatch.setattr(mod, "run_validation", validate)
+    original_root, original_pin = mod.ROOT, mod.PIN_PATH
+    assert mod.main(["--all", "--no-cache"], consumer_root=consumer) == 0
+    assert observed == [consumer]
+    assert (mod.ROOT, mod.PIN_PATH) == (original_root, original_pin)
+
+
+def test_installer_explicit_context_reads_its_consumer_pin(installer, tmp_path, installer_npm, monkeypatch):
+    consumer = tmp_path / "consumer"
+    contracts = consumer / "contracts"
+    contracts.mkdir(parents=True)
+    selected = contracts / "openspec-cli-pin.yaml"
+    write_pin(contracts).rename(selected)
+    monkeypatch.delenv("XFACTORY_OPENSPEC_PIN_PATH", raising=False)
+    observed = []
+    original = installer.verifier.read_pin
+    def read(path):
+        observed.append(path)
+        return original(path)
+    monkeypatch.setattr(installer.verifier, "read_pin", read)
+    assert installer.main([], consumer_root=consumer) == 0
+    assert observed == [selected]
+
+
+@pytest.mark.parametrize("tool", ["verifier", "installer"])
+def test_shared_context_preserves_separately_selected_operator_pin(tool, mod, installer, tmp_path, monkeypatch):
+    consumer = tmp_path / "consumer"
+    consumer.mkdir()
+    (consumer / "openspec").mkdir()
+    selected = write_pin(tmp_path)
+    monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(selected))
+    monkeypatch.setenv("OPENSPEC_CLI_PIN_CACHE", str(tmp_path / "cache"))
+    target = mod if tool == "verifier" else installer
+    source = mod if tool == "verifier" else installer.verifier
+    calls, _ = _fake_registry(source, monkeypatch, tmp_path)
+    observed = []
+    original = source.read_pin
+    def read(path):
+        observed.append(path)
+        return original(path)
+    monkeypatch.setattr(source, "read_pin", read)
+    argv = ["--all", "--no-cache"] if tool == "verifier" else []
+    assert target.main(argv, consumer_root=consumer) == 0
+    assert observed == [selected]
+    assert calls
+
+
+@pytest.mark.parametrize("tool", ["verifier", "installer"])
+def test_shared_context_still_refuses_a_forged_pin_before_package_work(tool, mod, installer, tmp_path, monkeypatch):
+    consumer = tmp_path / "consumer"
+    consumer.mkdir()
+    selected = write_pin(tmp_path)
+    forged = tmp_path / "forged.yaml"
+    forged.write_bytes(selected.read_bytes())
+    monkeypatch.setenv("XFACTORY_OPENSPEC_PIN_PATH", str(selected))
+    target = mod if tool == "verifier" else installer
+    source = mod if tool == "verifier" else installer.verifier
+    calls, _ = _fake_registry(source, monkeypatch, tmp_path)
+    argv = (["--all", "--no-cache"] if tool == "verifier" else []) + ["--pin", str(forged)]
+    assert target.main(argv, consumer_root=consumer) == 2
+    assert calls == []
+
+
+@pytest.mark.parametrize("tool", ["verifier", "installer"])
+@pytest.mark.parametrize("invalid", ["empty", "filesystem-root", "missing", "file", "linked"])
+def test_shared_context_refuses_invalid_root_before_package_work(tool, invalid, mod, installer, tmp_path, monkeypatch, capsys):
+    roots = {"empty": "", "filesystem-root": "/", "missing": tmp_path / "missing",
+             "file": tmp_path / "file", "linked": tmp_path / "linked"}
+    (tmp_path / "file").write_text("not a directory")
+    actual = tmp_path / "actual"
+    actual.mkdir()
+    (tmp_path / "linked").symlink_to(actual, target_is_directory=True)
+    target = mod if tool == "verifier" else installer
+    source = mod if tool == "verifier" else installer.verifier
+    def forbidden(*args, **kwargs):
+        raise AssertionError("invalid consumer context reached package work")
+    monkeypatch.setattr(source, "resolve_pinned", forbidden)
+    argv = ["--all", "--no-cache"] if tool == "verifier" else []
+    assert target.main(argv, consumer_root=roots[invalid]) == 2
+    assert "pin-unresolvable" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("substitution", ["source", "bytecode"])
+def test_trusted_installer_embedding_uses_authenticated_verifier_snapshot(
+        mod, tmp_path, substitution):
+    import os
+    import py_compile
+    from types import ModuleType
+    scripts = tmp_path / "scripts"
+    scripts.mkdir()
+    sibling = scripts / "validate-openspec-cli-pin.py"
+    sentinel = tmp_path / "substitution-executed"
+    payload = "from pathlib import Path; Path(" + repr(str(sentinel)) + ").touch()\n"
+    sibling.write_text(payload)
+    if substitution == "bytecode":
+        py_compile.compile(str(sibling), doraise=True)
+        # Preserve timestamp/size compatibility so a normal filesystem import
+        # would accept this cached malicious code despite clean source bytes.
+        before = sibling.stat()
+        sibling.write_text("pass".ljust(len(payload)-1) + "\n")
+        os.utime(sibling, ns=(before.st_atime_ns, before.st_mtime_ns))
+    embedded = ModuleType("authenticated_installer")
+    embedded.__file__ = str(scripts / "install-pinned-openspec-cli.py")
+    embedded.__dict__["VERIFIED_VERIFIER"] = mod
+    exec(compile(INSTALLER.read_bytes(), embedded.__file__, "exec"), embedded.__dict__)
+    assert embedded.verifier is mod
+    assert not sentinel.exists()
+
+
+@pytest.mark.parametrize("binding", ["module", "none", "object"])
+def test_canonical_installer_embedding_never_reopens_the_verifier(
+        mod, monkeypatch, binding):
+    from types import ModuleType
+    def forbidden(*args, **kwargs):
+        raise AssertionError("authenticated embedding attempted filesystem loading")
+    monkeypatch.setattr(importlib.util, "spec_from_file_location", forbidden)
+    embedded = ModuleType("canonical_installer_embedding")
+    embedded.__file__ = str(INSTALLER)
+    embedded.__dict__["VERIFIED_VERIFIER"] = {
+        "module": mod, "none": None, "object": object()}[binding]
+    # Compile the actual canonical file under its actual filename. The earlier
+    # source/bytecode attack regressions intentionally keep their scratch paths.
+    program = compile(INSTALLER.read_bytes(), str(INSTALLER), "exec")
+    if binding == "module":
+        exec(program, embedded.__dict__)
+        assert embedded.verifier is mod
+    else:
+        with pytest.raises(TypeError, match="authenticated module"):
+            exec(program, embedded.__dict__)
