@@ -2594,6 +2594,40 @@ def test_that_same_surface_still_answers_normally_when_git_works(tmp_path):
     assert "could not be consulted" not in reason, reason
 
 
+def test_private_connectivity_conformance_has_one_nonmember_path(tmp_path):
+    import json
+
+    repo, source = reachable_pin_repo(tmp_path)
+    corpus = "contracts/private-connectivity/conformance.json"
+    neighboring = "contracts/private-connectivity/neighbor-conformance.json"
+    evidence = "specs/043-private-connectivity-production/evidence/T010.json"
+    corpus_text = (REPO_ROOT / corpus).read_text(encoding="utf-8")
+    _write(repo, corpus, corpus_text)
+    _write(repo, neighboring, corpus_text)
+    _write(repo, evidence, json.dumps({
+        "pin_inventory": [{
+            "repository": "opensoft/openxfactory",
+            "openxfactory_commit": source,
+        }],
+    }, indent=2))
+    _commit(repo, "published conformance and ordinary source evidence")
+
+    assert pc.non_member_reason(corpus)
+    assert pc.non_member_reason(neighboring) is None
+    assert pc.non_member_reason(evidence) is None
+    _classified, uncovered, _absent = pc.non_pin_sites(repo)
+    assert any(
+        site.path == neighboring and site.key == "revision"
+        and site.value.startswith("sha256:")
+        for site in uncovered
+    )
+    assert not any(site.path == corpus for site in uncovered)
+    assert not any(site.path == corpus for site in pc.uncovered_sites(repo))
+    [site] = [site for site in pc.member_sites(repo) if site.path == evidence]
+    assert site.pin == source
+    assert site.member_id == "private-connectivity-production-local-evidence"
+
+
 def test_private_connectivity_mixed_inventory_preserves_local_orphan_detection(tmp_path):
     repo, base, orphan = orphaned_pin_repo(tmp_path)
     import json

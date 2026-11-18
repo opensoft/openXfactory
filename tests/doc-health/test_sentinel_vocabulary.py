@@ -1191,12 +1191,19 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # The authenticated T010 receipt and commissioning record replace
     # 62 prior pin sites with 56 current sites. The exact historical
     # controls and all 39 standing members retain their reachability checks.
-    assert (standing_sites, standing_members) == (1440, 39)
+    # The independently prepared T018 source-cut decision, exact cut and
+    # preserved qualification add nine measured sites, with no new member.
+    # Source references supply no publication or rollout acceptance.
+    assert (standing_sites, standing_members) == (1449, 39)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
     assert len(report.lost) == 1
     assert len(report.lost_awaiting_record) == 0
+    corpus = "contracts/private-connectivity/conformance.json"
+    assert pc.non_member_reason(corpus)
+    assert not any(result.site.path == corpus for result in report.results)
+    assert not any(result.site.path == corpus for result in report.non_pins)
     assert report.uncovered == ()
     assert report.vanished == ()
     assert report.arrived == ()
