@@ -718,3 +718,14 @@ def test_neutral_writebacks_refuse_an_unset_mount():
             capture_output=True, text=True)
         assert proc.returncode != 0
         assert "neutral mount unavailable" in proc.stderr
+
+
+def test_doc_health_suite_requires_a_verified_mount_before_running():
+    run = step("finalize", "Run doc-health suite")["run"].splitlines()
+    guard = run[0]
+    assert "neutral mount unavailable" in guard
+    proc = subprocess.run(
+        ["bash", "-c", "unset OPENXFACTORY_MOUNT\n" + guard],
+        capture_output=True, text=True)
+    assert proc.returncode != 0
+    assert "neutral mount unavailable" in proc.stderr

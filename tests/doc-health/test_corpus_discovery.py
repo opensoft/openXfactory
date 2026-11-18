@@ -178,3 +178,40 @@ def test_empty_canonical_alias_does_not_hide_a_legacy_checkout(tmp_path):
     engineering = _repo(tmp_path / "xFactories/codexFactory")
     assert corpus.discover_repos(tmp_path) == [
         ("openxFactory", neutral), ("codexFactory", engineering)]
+
+
+@pytest.mark.parametrize("recorded", ["openxFactory", "openXfactory"])
+def test_two_materialized_mounts_use_the_recorded_checkout(tmp_path, recorded):
+    import subprocess
+
+    from doc_health.factory_checkout_paths import checkout_name
+
+    for mount in ("openxFactory", "openXfactory"):
+        _repo(tmp_path / mount)
+
+    def git(*args):
+        return subprocess.run(["git", "-C", str(tmp_path), *args],
+                              capture_output=True, text=True, check=True)
+
+    git("init", "-q")
+    (tmp_path / ".gitmodules").write_text(
+        f'[submodule "openxFactory"]\n\tpath = {recorded}\n'
+        "\turl = git@github.com:opensoft/openXfactory.git\n",
+        encoding="utf-8")
+    git("add", ".gitmodules")
+    git("update-index", "--add", "--cacheinfo", f"160000,{'a' * 40},{recorded}")
+    git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test",
+        "-c", "commit.gpgsign=false", "commit", "-qm", "record neutral provider")
+    assert corpus.discover_repos(tmp_path) == [("openxFactory", tmp_path / recorded)]
+    assert checkout_name(tmp_path / recorded) == "openxFactory"
+    standalone = tmp_path.parent / "standalone" / "openXfactory"
+    assert checkout_name(standalone) == "openXfactory"
+
+
+def test_dashboard_refresh_default_follows_the_neutral_mount(tmp_path):
+    from ideation_dashboard.dashboard_refresh_lane import _corpus_checkout
+
+    canonical = tmp_path / "openXfactory"
+    canonical.mkdir()
+    assert _corpus_checkout(tmp_path, None) == canonical
+    assert _corpus_checkout(tmp_path, "explicit") == tmp_path / "explicit"

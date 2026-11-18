@@ -2225,6 +2225,7 @@ jobs:
           NEUTRALITY_ENABLED: ${{ inputs.neutrality-drift }}
           NEUTRALITY_BASELINE_INPUT: ${{ inputs.neutrality-baseline }}
         run: |
+          : "${OPENXFACTORY_MOUNT:?neutral mount unavailable}"
           RUN_DATE="$(date -u +%F)"
           PREV="$(ls health/reports/[0-9]*.md 2>/dev/null | sort | tail -1 || true)"
           # Reports are immutable records: a same-day rerun must never

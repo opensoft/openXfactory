@@ -311,7 +311,7 @@ def _write_status(boundary: OutputBoundary, out_dir: Path, payload: dict) -> Pat
 def run_lane(
     agg_root: Path | str,
     *,
-    checkout: str = DEFAULT_CHECKOUT,
+    checkout: str | None = None,
     repository: str = DEFAULT_REPOSITORY,
     out_dir: str = DEFAULT_OUT_DIR,
     register: str = DEFAULT_REGISTER,
@@ -371,7 +371,10 @@ def run_lane(
 
     rev: str | None = None
     try:
-        checkout_root = checkout_path(agg_root, checkout).resolve()
+        chosen = (checkout_path(agg_root, DEFAULT_CHECKOUT) if checkout is None
+                  else agg_root / checkout)
+        checkout_root = chosen.resolve()
+        checkout = checkout or chosen.relative_to(agg_root).as_posix()
         if not checkout_root.is_dir():
             return _skip(f"pinned checkout not found: {checkout}")
 
@@ -974,7 +977,7 @@ def main(argv: list[str] | None = None) -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--repo-root", required=True,
                     help="the aggregation checkout root")
-    ap.add_argument("--checkout", default=DEFAULT_CHECKOUT,
+    ap.add_argument("--checkout", default=None,
                     help=f"pinned checkout to scan, relative to the aggregation "
                          f"root (default: {DEFAULT_CHECKOUT})")
     ap.add_argument("--repository", default=DEFAULT_REPOSITORY,
