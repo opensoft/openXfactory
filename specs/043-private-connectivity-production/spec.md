@@ -204,3 +204,15 @@ The rollout lead and affected owners admit a bounded production canary, evaluate
 - Publication of supported neutral contracts and owner artifacts follows existing release processes; no version is reserved and no consumer pin is advanced by this specification.
 - Local customer operation, standalone service use and qualified unbound domains remain independent offerings. Track/site canaries may have different schedules within their separate authority and dependencies.
 - Source/local validation, CI, staging observations, production canary acceptance and commercial/wave release remain distinct evidence and decisions.
+
+## Approved internal execution amendment
+
+Brett's [actual finite root grant](../../openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md) selects internal production for
+all three offerings, Windows 11/Ubuntu clients and the reviewed USD 20/month
+storage-only ceiling. macOS and external Q5 remain deferred. This opt-in
+amendment permits distinct Codex delegated decisions only under the qualified,
+anchored mechanism in contracts/task-evidence.md. It preserves every actual
+Q0-Q4 predicate, target/channel authority and numeric/data/resource limit.
+No unseen output is human-authenticated. T062-T068 remain pending at the
+internal endpoint; the T061 aggregate-only handoff joins actual accepted
+children without making one child depend on another's future result.

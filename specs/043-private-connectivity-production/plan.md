@@ -189,3 +189,18 @@ Never rewrite 040 evidence, carry its timing limits or five-role approvals forwa
 The [task list](tasks.md) now instantiates this plan and its contracts. [Speckit analysis and remediation](analysis.md) records six repaired findings and no outstanding artifact issue. Begin implementation only through its commissioning/governance predecessors; retain separate source, required CI, supported release, Q1/Q2, Q3/Q4 and Q5 validation gates. Every task must name the exact owner, accepted surfaces, required decision/candidate inputs, evidence class, verification and dependency. Owner runtime work is represented once in the coordinating list. Rerun analysis if these artifacts materially change.
 
 Governed contracts, workflows, pins, measured values, evidence readers and their tests must honor repository build-tier invariants; do not classify them as pattern-only work. No task may claim Q0–Q5 passed from the plan or an unexecuted validation case. Speckit analysis must clear critical findings before implementation. OpenSpec task 2.1 records only the verified spec/plan/tasks handoff. Task 2.2 and Q0 remain open until actual accepted owner scopes and consumed decisions exist.
+
+## Approved internal execution amendment
+
+Use the [actual thirty-day root](../../openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md) and its immutable reviewed policy.
+Land source prerequisites independently, qualify the delegation implementation,
+then activate its exact producer through reviewed protected-base history before
+delegated evidence acceptance. The attestor performs bounded authenticated
+readback; the verifier remains read-only. Existing human controls and original
+private-proof production remain unchanged. Reconcile the exact T010 attestor
+and T061 aggregate-only handoff scopes before use and refresh all sixteen inputs
+and all 68 tasks. Actual staged/canary observations, supported releases and
+current managed/customer authority remain mandatory. Root expiry/revocation
+stops new agent actions; accepted historical observations retain their original
+authority/admission semantics. Initial support is Windows/Linux; macOS and
+external Q5 remain deferred.

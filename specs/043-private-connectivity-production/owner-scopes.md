@@ -68,3 +68,88 @@ These are inspected source anchors and proposed new areas for C-01 review, not a
 | Actual domain | Selection and exact production paths are blocked on C-02. Historical codeXfactory anchors are profiles/hosted/private-connectivity.yaml, schemas/hosted-connectivity-profile.schema.json, tests/private_connectivity, scripts/merge_master/council_clearance.py and required doc/CI wiring | The historical profile is test/synthetic/customer-ineligible and its protection is exact to that file. A selected production owner must accept actual workload/profile/schema, exact definition-time protection and fail-closed required validation/dependencies. Equivalent owner mechanisms are acceptable; copying a directory prefix or another profile's evidence is not |
 
 The plan's E/N/L/H/I/D/O workstreams and [validation matrix](validation-matrix.md) use these boundaries. This source-anchor table does not enlarge the exact ratified per-task scopes above. Ops uses the accepted separate private-connectivity-validation workflow; scripts/run_test_shards.py and the existing opsx-validation workflow are excluded from that source grant.
+## Accepted cut-validation and QA handoff refinements
+
+Brett Heap accepted the exact N/E design at 2026-11-17T02:55:36.438Z and the
+matching Ops and Tenant owner plans at 2026-11-17T03:01:06.114Z. The actual
+owner decisions and source-only limits are recorded in their immutable review
+packets:
+
+- [N/E four-path T018 refinement, bounded 2a46 compatibility and complete freeze](https://github.com/opensoft/openXfactory/blob/55e3cafd3c2d44a9933de20708fad6d46e9d7573/openspec/changes/extend-private-connectivity-cut-validation/design.md).
+- [Ops seventeen coupled T043 paths and two T047 timing/manifest paths](https://github.com/opensoft/opsXfactory/blob/91c080220fd1acbd6b602883c93e177fb92a5218/openspec/changes/admit-private-connectivity-qa-operations/design.md).
+- [Tenant declarative target-data/runbook handoff](https://github.com/opensoft/Opensoft-Tenant/blob/71475785c0ef838e4c04c989a232f1a8f7d2b49a/openspec/changes/prepare-private-connectivity-qa-target/design.md).
+
+Only the accepted T018/T043/T047 file lists change. All 68 task identities,
+owners, classes, required cases, dependencies and verification commands remain
+unchanged. The T043 shard manifest/timing paths are coupled discovery/census
+metadata, not permission to change the generic shard runner or its required
+workflow. T047 may settle only their actual later CI measurement metadata.
+Three exact isolated workload sets remain behind their reviewed managing-factory
+channel, full release dependencies and current operating authority.
+
+Tenant is a later declarative operating target, not a seventh executable source
+component. Feature-specific validation remains Ops-owned and existing Tenant
+validation stays in place. No new Tenant validator, test or workflow is granted.
+Actual target writes/reconciliation remain a separately accepted T050/C-03
+operation after released dependencies, full Q0 and T049.
+
+Qualify the E compatibility/freeze/CI changes against the independent published
+contract-v4.2 tree before consuming N conformance/classification changes. Actual
+new E output requires separate custodian authentication and default admission.
+Original 2a46 controls/readers retain their exact accepted source-task closures;
+no pending or live task gains acceptance. All PRs stay draft. No merge, final
+version allocation, annotated publication, target effect, spend, enrollment,
+protected retention lock or Q0-Q5 acceptance is granted.
+
+### Accepted companion-prose coupling
+
+At 2026-11-17T03:40:50.580Z Brett accepted the exact additional four active
+Ops requirement-copy paths in the [reviewed N/E amendment](https://github.com/opensoft/openXfactory/blob/0576faced67b015bf07d054814ae0d96147aa320/openspec/changes/extend-private-connectivity-cut-validation/review/ops-prose-parity-scope.md)
+and its [matching Ops amendment](https://github.com/opensoft/opsXfactory/blob/657b02d0e6a4f01d6fcbef8453a1937131331550/openspec/changes/admit-private-connectivity-qa-operations/review/prose-parity-scope.md).
+Only T043 adds these four exact OpenSpec paths, bringing its coupled Ops
+additions to twenty-one. N's four paths, T047's two paths and every other task
+field stay unchanged. Existing MCP placement/fallback/history and all previous
+rules are preserved. Normal single-newline EOF formatting is recorded with the
+actual identical block hash in the owner-local implementation evidence.
+
+The source-only 4f963e0f candidate was never authenticated and supplies no
+accepted historical control. Preserve its actual observations under their
+original source identity; qualify this complete refreshed E source and CI anew.
+The fixed accepted 2a46 controls/readers remain the only added historical
+anchors. Actual new output authentication/default admission and all release,
+operating and Q0-Q5 gates remain separate.
+
+## Approved internal execution amendment
+
+Brett directly accepted the exact [root policy and record](../../openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md) at
+2026-11-17T08:38:55.473Z, valid for new agent actions until
+2026-12-17T08:38:55.473Z. He remains accountable for all initial component,
+rollout, release, operational/rollback, identity/DNS/TLS and custody roles.
+Codex is the distinct delegate; it never records a future human sign-off.
+
+The directly reviewed E refinement adds only
+specs/043-private-connectivity-production/attest-delegated-evidence.py to T010.
+The directly reviewed C-10 refinement adds only
+specs/043-private-connectivity-production/review/internal-production-handoff.md
+to T061 and the conditional aggregate-only case internal-program-handoff.
+All existing child cases, task identities, owners, classes, dependencies and
+commands remain. Existing exact E source/CI/test paths support the closed
+root/delegated-form, qualification, measured census and refusal regressions
+listed in the ratified policy. Newly necessary unlisted files still need their
+own exact independently reviewed amendment; the delegate cannot expand the
+root policy or its numeric/financial/target boundary.
+
+The human-root record is authority for qualifying the mechanism and conditional
+landings, not acceptance of the new E outputs. Original accepted controls stay
+immutable and independently usable. New actual source and operating outputs
+remain unaccepted until the qualified mechanism verifies them.
+
+### Reviewed attestor test refinement
+
+Codex recorded the independently reviewed C-01 source-scope decision at 2026-11-17T10:18:51.198109+00:00
+under the genuine human root, as preserved in the owning attestor-test-scope.md
+record at 052ec0d4fd963dbd4f6c4b8e8054b9805f08dded. It adds only the one
+T010 test_delegated_evidence.py path and a fourth mandatory measured current
+source suite. All original suites, historical readers, task dependencies and
+commands remain. This source permission is distinct from pending output
+acceptance and qualified producer activation.

@@ -447,6 +447,18 @@ _PC043_EVIDENCE_PATHS += ("specs/043-private-connectivity-production/evidence/co
 
 
 PIN_CLASS: tuple[PinMember, ...] = (
+    # The human authority record is separate from task receipts/inventories.
+    # Its reviewed policy refs all belong to this repository; a caller-supplied
+    # repository string cannot turn an unreachable local pin into foreign proof.
+    PinMember(
+        id="private-connectivity-internal-human-root",
+        paths=("openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",),
+        key="commit", key_form="field",
+        generator="feature 043 actual human ratification record",
+        reproduction=MEASURED, locality=REPO_LOCAL, presence=CURRENT,
+        note="Only the exact human-root policy references; all pins owe local "
+             "resolution. Classification supplies no authentication or gate authority.",
+    ),
     # Original Git references remain verbatim in the source container and
     # receipts. The inventory does not exempt their commit/revision fields
     # from the vocabulary sweep. Per-reference repository ownership decides
@@ -465,7 +477,8 @@ PIN_CLASS: tuple[PinMember, ...] = (
     # their receipts in the owner's tree. No bootstrap receipts or directory
     # exclusion are introduced. T010's first actual source export populates
     # local references; CURRENT measures presence, independently of the pending
-    # custodian authentication. The empty foreign member remains FUTURE.
+    # custodian authentication. The first actual T020 binding now populates
+    # the foreign member; that presence does not authenticate its output.
     PinMember(
         id="private-connectivity-production-local-evidence",
         paths=_PC043_EVIDENCE_PATHS,
@@ -482,7 +495,7 @@ PIN_CLASS: tuple[PinMember, ...] = (
         paths=_PC043_EVIDENCE_PATHS,
         key="foreign_commit", key_form="field",
         generator="feature 043 register-evidence-pins.py",
-        reproduction=MEASURED, locality=CROSS_REPOSITORY, presence=FUTURE,
+        reproduction=MEASURED, locality=CROSS_REPOSITORY, presence=CURRENT,
         key_expected=False,
         note="Exact 043 foreign-source inventory. Each entry names its canonical "
              "owner; the feature checker requires that owner's verified checkout "
@@ -1516,6 +1529,13 @@ NON_MEMBERS: tuple[NonMember, ...] = (
         reason="test fixtures. Their pins are synthetic (`dddd…`, `1111…`) or "
                "frozen sample data; a fixture is the subject of a test, not a "
                "record of a derivation.",
+    ),
+    NonMember(
+        paths=("contracts/private-connectivity/conformance.json",),
+        reason="The published private-connectivity conformance corpus is offline "
+               "test input. Its revision values exercise the binding reader "
+               "and carry no source derivation claim. The contract release "
+               "inventory pins the corpus bytes.",
     ),
     NonMember(
         paths=("contracts/council-convening/conformance/vectors/**",),

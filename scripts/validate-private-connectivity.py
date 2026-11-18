@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 from jsonschema import Draft202012Validator, FormatChecker
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = ROOT / "specs/040-private-connectivity/contracts/private-connectivity/binding.schema.json"
+SCHEMA = ROOT / "contracts/private-connectivity/binding.schema.json"
 
 
 def duplicate_guard(pairs):
@@ -23,13 +23,24 @@ def duplicate_guard(pairs):
     return result
 
 
+def reject_nonstandard_constant(value):
+    raise ValueError(f"invalid JSON constant: {value}")
+
+
 def validate(manifest, now):
     if not isinstance(manifest, dict):
         return ["manifest-object-required"]
     binding = manifest.get("private_connectivity")
     if binding is None:
         return []
-    validator = Draft202012Validator(json.loads(SCHEMA.read_text()), format_checker=FormatChecker())
+    if "date-time" not in FormatChecker.checkers:
+        raise ValueError("rfc3339-validator is required for connectivity bindings")
+    schema = json.loads(
+        SCHEMA.read_text(encoding="utf-8"),
+        object_pairs_hook=duplicate_guard,
+        parse_constant=reject_nonstandard_constant,
+    )
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
     if any(validator.iter_errors(binding)):
         return ["binding-shape-invalid"]
     context = manifest.get("installation", {})
@@ -123,7 +134,11 @@ def main(argv=None):
         now = datetime.fromisoformat(args.now.replace("Z", "+00:00")) if args.now else datetime.now(timezone.utc)
         if now.tzinfo is None:
             raise ValueError("timezone required")
-        manifest = json.loads(Path(checked_manifest(args.manifest)).read_text(encoding="utf-8"), object_pairs_hook=duplicate_guard)
+        manifest = json.loads(
+            Path(checked_manifest(args.manifest)).read_text(encoding="utf-8"),
+            object_pairs_hook=duplicate_guard,
+            parse_constant=reject_nonstandard_constant,
+        )
         findings = validate(manifest, now)
     except (OSError, ValueError, TypeError):
         print("FAIL: unreadable or invalid input", file=sys.stderr)

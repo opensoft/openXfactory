@@ -9,6 +9,29 @@ predate mandatory annotated tags and carry none. Tag enforcement begins at
 `contract-v1.7` — the first realized release published with an annotated tag —
 without fabricating historical tags.
 
+## contract-v4.3 — source candidate (additive private connectivity)
+
+Prepared under the actual neutral owner decision of 2026-11-17T00:30:45.368Z
+for feature 043 T018. This candidate is a draft: final allocation remains
+conditional on merge order and a fresh version/floor check. It creates no
+annotated tag and grants no consumer eligibility, target or rollout authority.
+
+Registers the optional schema-v1 private-connectivity binding, its normative
+contract, deterministic offline conformance corpus and independent reader.
+The four exact registrations join the generated inventory at this first
+publication floor. The schema preserves the historical optional-binding
+semantics; there is no schema-integer or authorization/lifecycle widening.
+Local operation requires no hosted subscription. Network readiness does not
+supply application or operating permission.
+
+The generated candidate inventory contains 346 members. The four neutral
+registrations, the closed intent-compliance version boundary and the conformance
+regressions are included in the same cut. Historical inventories remain intact.
+Full source qualification and independent review of the integrated candidate
+are pending. Recheck the version and release floor against protected main at
+landing. Annotated publication and independent T019 readback follow the
+reviewed landing. T018 stays open through publication.
+
 ## contract-v4.2 — 2026-11-15 (nonbreaking conformance maintenance)
 
 Realizes the credential-marker portion of feature
