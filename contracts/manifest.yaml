@@ -3806,6 +3806,6 @@ contracts:
     path: scripts/validate-private-connectivity.py
     type: tool
     schema_version: 1
-    sha256: b47b2b3e0354fdb3a4b7c35a27aebf8db07def0b99e9ab746b4ec1274e9dc5e3
+    sha256: c8b83cd53edd031d49bd8dc31a18b24087e73c046267b58b81b4ca690cac0119
     compatibility: canonical_openxfactory_contract
     adapter_owner: openxFactory

@@ -1204,7 +1204,7 @@ entries:
   path: contracts/manifest.yaml
   type: manifest
   git_mode: '100644'
-  digest: sha256:961bd78f1eea83e604801ec4e246aa06cdfcba48f22a63515eb76229e2c7f553
+  digest: sha256:e46d1b77ee5d06ce01b90e2337350ffa9aee28065ffa1f1efe42a9de4652ed51
 - artifact_id: private-connectivity-contract
   path: contracts/private-connectivity/README.md
   type: documentation
@@ -1470,7 +1470,7 @@ entries:
   path: scripts/hermes_runtime_validation/release.py
   type: validator
   git_mode: '100644'
-  digest: sha256:207aec39eb1ae40ef586e3ba81647a62e521c5775a2a48c308b9d468a6abff60
+  digest: sha256:e26533696f529ea02323daa3965664e2c008eaaef6c7eb758df3a02a05060a31
 - artifact_id: scripts-hermes_runtime_validation-schema_registry.py
   path: scripts/hermes_runtime_validation/schema_registry.py
   type: validator
@@ -1680,7 +1680,7 @@ entries:
   path: scripts/validate-private-connectivity.py
   type: validator
   git_mode: '100644'
-  digest: sha256:b47b2b3e0354fdb3a4b7c35a27aebf8db07def0b99e9ab746b4ec1274e9dc5e3
+  digest: sha256:c8b83cd53edd031d49bd8dc31a18b24087e73c046267b58b81b4ca690cac0119
 - artifact_id: tests-clearing-conftest.py
   path: tests/clearing/conftest.py
   type: documentation

@@ -27,7 +27,7 @@ def test_publication_preserves_schema_v1_semantics():
     assert set(supported["properties"]["state"]["enum"]) == {"requested","approved","enrolled","ready","unready","revoked"}
 
 
-def test_four_member_consumer_replays_corpus_without_pilot_or_provider_code(tmp_path, monkeypatch):
+def test_four_member_consumer_replays_corpus_without_pilot_or_provider_code(tmp_path, monkeypatch, capsys):
     consumer = tmp_path / "neutral-consumer";consumer.mkdir()
     for member in MEMBERS:
         destination = consumer / member;destination.parent.mkdir(parents=True,exist_ok=True)
@@ -42,24 +42,40 @@ def test_four_member_consumer_replays_corpus_without_pilot_or_provider_code(tmp_
     assert len({case["id"] for case in corpus["cases"]}) == len(corpus["cases"])
     assert any(not case["expected_findings"] for case in corpus["cases"])
     assert any(case["expected_findings"] for case in corpus["cases"])
+    monkeypatch.chdir(consumer)
+    manifest = consumer / "manifest.json"
+    cli_args = ["manifest.json", "--now", corpus["now"]]
     for case in corpus["cases"]:
-        assert reader.validate(case["manifest"],now) == case["expected_findings"],case["id"]
-        manifest = consumer/"manifest.json";manifest.write_text(json.dumps(case["manifest"]))
-        result = subprocess.run([sys.executable,str(consumer/"scripts/validate-private-connectivity.py"),"manifest.json","--now",corpus["now"]],
-                                cwd=consumer,capture_output=True,text=True)
-        assert result.returncode == (1 if case["expected_findings"] else 0),case["id"]
-        assert "synthetic-value" not in result.stderr
-    # Real CLI ordinary-input behavior remains enforced in the isolated consumer.
-    manifest.write_text('{"private_connectivity":null,"private_connectivity":null}')
-    assert subprocess.run([sys.executable,str(consumer/"scripts/validate-private-connectivity.py"),"manifest.json"],cwd=consumer,capture_output=True).returncode==2
-    (consumer/"alias.json").symlink_to(manifest)
-    assert subprocess.run([sys.executable,str(consumer/"scripts/validate-private-connectivity.py"),"alias.json"],cwd=consumer,capture_output=True).returncode==2
+        expected = case["expected_findings"]
+        assert reader.validate(case["manifest"], now) == expected, case["id"]
+        manifest.write_text(json.dumps(case["manifest"]), encoding="utf-8")
+        assert reader.main(cli_args) == (1 if expected else 0), case["id"]
+        output = capsys.readouterr()
+        assert output.err.splitlines() == [f"FAIL: {finding}" for finding in expected]
+
+    for invalid in (
+        '{"private_connectivity":null,"private_connectivity":null}',
+        '{"unrelated":NaN}',
+        '{"unrelated":Infinity}',
+        '{"unrelated":-Infinity}',
+    ):
+        manifest.write_text(invalid, encoding="utf-8")
+        assert reader.main(cli_args) == 2
+        assert capsys.readouterr().err == "FAIL: unreadable or invalid input\n"
+
+    (consumer / "alias.json").symlink_to(manifest)
+    assert reader.main(["alias.json"]) == 2
+
+    # Verify the shipped script's process entry point on success and refusal.
+    command = [sys.executable, str(consumer / MEMBERS[3]), *cli_args]
+    for text, expected_code in (("{}", 0), ('{"unrelated":NaN}', 2)):
+        manifest.write_text(text, encoding="utf-8")
+        assert subprocess.run(command, cwd=consumer, capture_output=True).returncode == expected_code
 
     ready = next(case for case in corpus["cases"] if case["id"] == "managed-ready-declaration")
-    manifest.write_text(json.dumps(ready["manifest"]))
+    manifest.write_text(json.dumps(ready["manifest"]), encoding="utf-8")
     repository_reader = runpy.run_path(str(ROOT / MEMBERS[3]))
     with monkeypatch.context() as isolated:
-        isolated.chdir(consumer)
         isolated.delitem(repository_reader["FormatChecker"].checkers, "date-time")
-        assert repository_reader["main"](["manifest.json", "--now", corpus["now"]]) == 2
+        assert repository_reader["main"](cli_args) == 2
         assert repository_reader["validate"]({}, now) == []

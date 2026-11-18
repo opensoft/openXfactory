@@ -833,17 +833,18 @@ def _read_private_connectivity_member(source, path, registration):
     if not source.exists(path):
         raise ReleaseDependencyError("connectivity required member is unavailable: " + path,
                                      code="HGR-RELEASE-CONNECTIVITY-MEMBER")
-    data, _, _ = source.read_member(path)
-    if registration.get("sha256") != hashlib.sha256(data).hexdigest():
+    data, git_mode, digest = source.read_member(path)
+    if digest != f"sha256:{registration.get('sha256')}":
         raise ReleaseDependencyError("connectivity registration digest differs: " + path,
                                      code="HGR-RELEASE-CONNECTIVITY-DIGEST")
-    return data
+    return data, git_mode, digest
 
 
 def _add_private_connectivity_members(source, manifest, release_version, members, catalog_map):
     """Close this exact family only at its first authorized publication floor."""
     if release_version is None or release_version < PRIVATE_CONNECTIVITY_RELEASE_FLOOR:
-        return
+        return {}
+    validated_reads = {}
     by_identity = _private_connectivity_registrations(manifest)
     for identity in PRIVATE_CONNECTIVITY_REQUIRED_REGISTRATIONS:
         identifier, path, artifact_type = identity
@@ -855,19 +856,21 @@ def _add_private_connectivity_members(source, manifest, release_version, members
         if path in catalog_map:
             raise ReleaseDependencyError("connectivity member has a conflicting catalog registration: " + path,
                                          code="HGR-RELEASE-CONNECTIVITY-COLLISION")
-        data = _read_private_connectivity_member(source, path, registration)
+        data, git_mode, digest = _read_private_connectivity_member(source, path, registration)
         if artifact_type == "schema":
             _validate_private_connectivity_schema(data)
+        validated_reads[path] = (git_mode, digest)
         members.add(path)
         # Manifest tool registrations use the inventory schema's validator type.
         inventory_type = "validator" if artifact_type == "tool" else artifact_type
         catalog_map[path] = {"contract_id": identifier, "type": inventory_type,
                              "contract_schema_version": PRIVATE_CONNECTIVITY_SCHEMA_VERSION}
+    return validated_reads
 
 
 def _collect_members(
     source: _WorkingTreeSource | _CommitSource,
-) -> tuple[list[str], dict[str, Mapping[str, object]]]:
+) -> tuple[list[str], dict[str, Mapping[str, object]], dict[str, tuple[str, str]]]:
     catalog = source.load_yaml(CATALOG_PATH)
     if not isinstance(catalog, Mapping):
         raise ReleaseDependencyError("contract catalog is not a mapping")
@@ -1049,7 +1052,9 @@ def _collect_members(
         if source.exists(CLEARING_VALIDATOR_PATH):
             members.add(CLEARING_VALIDATOR_PATH)
 
-    _add_private_connectivity_members(source, manifest, release_version, members, catalog_map)
+    validated_reads = _add_private_connectivity_members(
+        source, manifest, release_version, members, catalog_map,
+    )
 
     fixture_index = source.load_yaml(FIXTURE_INDEX_PATH)
     if not isinstance(fixture_index, Mapping):
@@ -1081,7 +1086,7 @@ def _collect_members(
             members.add(extra)
 
     members = {member for member in members if not _is_release_inventory_path(member)}
-    return _bytewise(members), catalog_map
+    return _bytewise(members), catalog_map, validated_reads
 
 
 def _entry_for(
@@ -1116,10 +1121,13 @@ def _entry_for(
 def _build_inventory(
     source: _WorkingTreeSource | _CommitSource, *, bundle_tag: str
 ) -> dict[str, object]:
-    members, catalog_map = _collect_members(source)
+    members, catalog_map, validated_reads = _collect_members(source)
     entries: list[dict[str, object]] = []
     for path in members:
-        _, git_mode, digest = source.read_member(path)
+        if path in validated_reads:
+            git_mode, digest = validated_reads[path]
+        else:
+            _, git_mode, digest = source.read_member(path)
         entries.append(_entry_for(path, catalog_map, git_mode, digest))
     entries.sort(key=lambda entry: str(entry["path"]).encode("utf-8"))
     return {
@@ -1137,7 +1145,7 @@ def _build_inventory(
 def release_membership(repo_root: Path) -> list[Path]:
     """Return the closed, bytewise-sorted release membership from the working tree."""
 
-    members, _ = _collect_members(_WorkingTreeSource(repo_root))
+    members, _, _ = _collect_members(_WorkingTreeSource(repo_root))
     return [Path(member) for member in members]
 
 

@@ -2681,6 +2681,30 @@ def test_connectivity_publication_includes_exact_four_raw_members(tmp_path):
     assert "contracts/private-connectivity/unregistered.json" not in {e["path"] for e in later["entries"]}
 
 
+def test_connectivity_inventory_reuses_the_validated_member_read(tmp_path, monkeypatch):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    schema = CONNECTIVITY_ROWS[0][1]
+    expected_digest = "sha256:" + hashlib.sha256((repo / schema).read_bytes()).hexdigest()
+    read_member = release._WorkingTreeSource.read_member
+    schema_reads = 0
+
+    def member_read(source, path):
+        nonlocal schema_reads
+        if path == schema:
+            schema_reads += 1
+            if schema_reads > 1:
+                changed = b"{}"
+                return changed, "100644", "sha256:" + hashlib.sha256(changed).hexdigest()
+        return read_member(source, path)
+
+    monkeypatch.setattr(release._WorkingTreeSource, "read_member", member_read)
+    result = release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    entry = next(item for item in result["entries"] if item["path"] == schema)
+    assert entry["digest"] == expected_digest
+    assert schema_reads == 1
+
+
 def test_connectivity_paths_do_not_retroactively_join_below_floor(tmp_path):
     repo, _ = _synthetic_repo(tmp_path)
     _connectivity_preview(repo, "contract-v4.2")
