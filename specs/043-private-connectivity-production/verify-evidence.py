@@ -114,7 +114,20 @@ DELEGATION_PRODUCER_REF = {'repository': 'opensoft/openxfactory', 'commit': 'ba9
 # Only actual outputs independently qualified and landed on the protected base
 # may enter this register. Producer activation alone grants no output authority.
 # Key: canonical subject SHA-256. Value: exact whole immutable output reference.
-DELEGATED_ATTESTATIONS = {}
+DELEGATED_ATTESTATIONS = {
+    "a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f": {
+        "commit": "5d82621d28fe94a9f0bef663015dcc8cd2f6d10f",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "8060207aca399a81340fb992271e1358b605f4d38bd6842721c154ef779f8619"
+    },
+    "ed53795c4d54152860abd38a15338449a24e3069dff3ec0483d66f741fbb2acd": {
+        "commit": "169d16217150264ce7a5cc9a21ff055172376499",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "97a01cdd2bc56897aee1e9e9898218aa5d260bc0562af3444de47dab7ac9b348"
+    }
+}
 
 
 def canonical_json(value):
@@ -583,6 +596,7 @@ class Verifier:
             require(alias not in FIXED_REPOSITORIES or repository.lower() == FIXED_REPOSITORIES[alias], "wrong canonical component owner")
         self.objects = {}
         self.authenticated, self.authenticated_at = True, None
+        self.delegated_source_authenticated = False
         self.delegated_root_id = None
         require(trust_reference["path"] != COMMISSIONING_PATH or "source_container" in t,
                 "source commissioning container required")
@@ -688,6 +702,7 @@ class Verifier:
             self.store, review["attestation"], subject, self.now,
             self.trust["revoked_authorities"], expected, self.trust["bindings"]["T010"]["source"])
         self.authenticated = True
+        self.delegated_source_authenticated = True
         self.delegated_root_id = "pc043-internal-20261117-e995d2290328"
 
     def blob(self, ref, binding=None):
@@ -823,7 +838,8 @@ class Verifier:
         output = self.read(record["output"], binding)
         start, end = timestamp(output["started_at"]), timestamp(output["ended_at"])
         require(start <= end <= self.now, "invalid/future actual run")
-        if self.objects and binding["task"] in {f"T{i:03}" for i in range(1, 11)}:
+        commissioned_source = bool(self.objects) and binding["task"] in {f"T{i:03}" for i in range(1, 11)}
+        if commissioned_source:
             require(self.authenticated and end <= self.authenticated_at, "output not authenticated after actual run")
             original = output["original"]
             require(isinstance(original, dict) and set(original) == {
@@ -859,6 +875,11 @@ class Verifier:
             require(admission["authority"] == binding["authority"]
                     and admission["reviewed_output_sha256"] == digest(self.blob(record["output"], binding)),
                     "admission is not for original authority/output")
+        elif (commissioned_source and self.delegated_source_authenticated
+              and binding["scope"]["phase"] == "source"
+              and binding["task"] not in self.trust.get("historical_controls", {})):
+            # Registered authentication admits these exact completed source outputs.
+            historical = True
         self.authority(binding["authority"], binding, start, end, historical=historical)
         return output, start, end, historical
 

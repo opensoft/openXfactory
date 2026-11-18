@@ -1,7 +1,7 @@
 {
   "schema": "043-reviewed-trust-v1",
   "feature": "043-private-connectivity-production",
-  "definition": "2a46a5420c9f90f5ace72e8482b0fa0541b55f733bd6ad7a8e53ebb99215d796",
+  "definition": "281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421",
   "custodian": "Brett Heap",
   "custody": {
     "kind": "source-git",
@@ -1613,8 +1613,8 @@
       },
       "source": {
         "repository": "opensoft/openxfactory",
-        "base": "fe79bc90783195d088ba8bfad42183631a909597",
-        "revision": "479750c62efad1bf803b6d1bec566c8ac07c5565"
+        "base": "2f2d343691a980bbda12aa9157362a1abfb4f9f7",
+        "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df"
       },
       "files": [
         ".github/workflows/pytest-suite.yml",
@@ -1626,9 +1626,11 @@
         ".github/workflows/doc-health-py314.yml",
         "scripts/validate-sonar-coverage.py",
         "sonar-project.properties",
-        "tests/sonar_quality/test_coverage_evidence.py"
+        "tests/sonar_quality/test_coverage_evidence.py",
+        "specs/043-private-connectivity-production/attest-delegated-evidence.py",
+        "specs/043-private-connectivity-production/tests/test_delegated_evidence.py"
       ],
-      "command": "set -euo pipefail\nrequested_head=\"$PC043_EXPECTED_REVISION\"\nfeature_path=\"specs/043-private-connectivity-production\"\nfor revision in \"$requested_head\" \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"; do\n  [[ \"$revision\" =~ ^[0-9a-f]{40}$ ]]\n  git cat-file -e \"$revision^{commit}\"\ndone\n[ \"$(git rev-parse HEAD)\" = \"$PC043_CHECKOUT_REVISION\" ]\ngit merge-base --is-ancestor \"$requested_head\" \"$PC043_CHECKOUT_REVISION\"\nexport PC043_SOURCE_MODE=pr-head\nif git cat-file -e \"$requested_head:$feature_path\" 2>/dev/null; then\n  [ \"$(git cat-file -t \"$requested_head:$feature_path\")\" = tree ]\nelse\n  git merge-base --is-ancestor \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"\n  ancestor=\"$(git merge-base \"$requested_head\" \"$PC043_BASE_REVISION\")\"\n  touched=\"$(git log --full-history -1 --format=%H \"$ancestor..$requested_head\" -- \"$feature_path\")\"\n  if git cat-file -e \"$ancestor:$feature_path\" 2>/dev/null || [ -n \"$touched\" ]; then\n    echo \"::error::A head that changed or removed feature 043 requires its own complete source suites.\"\n    exit 1\n  fi\n  export PC043_EXPECTED_REVISION=\"$PC043_CHECKOUT_REVISION\"\n  export PC043_SOURCE_MODE=merge-checkout\n  echo \"::notice::Unrelated head predates feature 043; testing the merge checkout does not qualify the PR head.\"\nfi\nfor module in test_evidence.py test_evidence_pins.py test_source_roots.py; do\n  [ \"$(git cat-file -t \"$PC043_EXPECTED_REVISION:$feature_path/tests/$module\")\" = blob ]\ndone\nprintf '043 source selection: mode=%s revision=%s requested_head=%s\\n' \\\n  \"$PC043_SOURCE_MODE\" \"$PC043_EXPECTED_REVISION\" \"$requested_head\"\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  specs/043-private-connectivity-production/tests/test_source_roots.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 557,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n    \"specs.043-private-connectivity-production.tests.test_source_roots\": 97,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
+      "command": "set -euo pipefail\nrequested_head=\"$PC043_EXPECTED_REVISION\"\nfeature_path=\"specs/043-private-connectivity-production\"\nfor revision in \"$requested_head\" \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"; do\n  [[ \"$revision\" =~ ^[0-9a-f]{40}$ ]]\n  git cat-file -e \"$revision^{commit}\"\ndone\n[ \"$(git rev-parse HEAD)\" = \"$PC043_CHECKOUT_REVISION\" ]\ngit merge-base --is-ancestor \"$requested_head\" \"$PC043_CHECKOUT_REVISION\"\nexport PC043_SOURCE_MODE=pr-head\nif git cat-file -e \"$requested_head:$feature_path/tests/test_delegated_evidence.py\" 2>/dev/null; then\n  [ \"$(git cat-file -t \"$requested_head:$feature_path\")\" = tree ]\nelse\n  git merge-base --is-ancestor \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"\n  ancestor=\"$(git merge-base \"$requested_head\" \"$PC043_BASE_REVISION\")\"\n  touched=\"$(git log --full-history -1 --format=%H \"$ancestor..$requested_head\" -- \"$feature_path\")\"\n  if git cat-file -e \"$ancestor:$feature_path/tests/test_delegated_evidence.py\" 2>/dev/null || [ -n \"$touched\" ]; then\n    echo \"::error::A head that changed or removed feature 043 requires its own complete four-suite source.\"\n    exit 1\n  fi\n  export PC043_EXPECTED_REVISION=\"$PC043_CHECKOUT_REVISION\"\n  export PC043_SOURCE_MODE=merge-checkout\n  echo \"::notice::Unrelated head predates the fourth 043 suite; testing the merge checkout does not qualify the PR head.\"\nfi\nfor module in test_evidence.py test_evidence_pins.py test_source_roots.py test_delegated_evidence.py; do\n  [ \"$(git cat-file -t \"$PC043_EXPECTED_REVISION:$feature_path/tests/$module\")\" = blob ]\ndone\nprintf '043 source selection: mode=%s revision=%s requested_head=%s\\n' \\\n  \"$PC043_SOURCE_MODE\" \"$PC043_EXPECTED_REVISION\" \"$requested_head\"\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  specs/043-private-connectivity-production/tests/test_source_roots.py \\\n  specs/043-private-connectivity-production/tests/test_delegated_evidence.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 711,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n    \"specs.043-private-connectivity-production.tests.test_source_roots\": 107,\n    \"specs.043-private-connectivity-production.tests.test_delegated_evidence\": 100,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nimport json\nsuites = {\"specs/043-private-connectivity-production/tests/\" + name.rsplit(\".\", 1)[-1] + \".py\": count\n          for name, count in actual.items()}\nprint(\"PC043-\" + \"SUITES \" + json.dumps({\"schema\": \"043-collected-suites-v1\",\n      \"source_revision\": os.environ[\"PC043_EXPECTED_REVISION\"], \"suites\": suites}, sort_keys=True))\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
       "roles": [
         "Brett Heap (coordinator source owner and E source-evidence custodian)"
       ],
@@ -1644,24 +1646,27 @@
             "kind": "equal",
             "expected": {
               "suites": {
-                "specs/043-private-connectivity-production/tests/test_evidence.py": 557,
+                "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+                "specs/043-private-connectivity-production/tests/test_evidence.py": 711,
                 "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40,
-                "specs/043-private-connectivity-production/tests/test_source_roots.py": 97
+                "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
               },
               "step": "Run private-connectivity production source suites (043)",
-              "source_revision": "479750c62efad1bf803b6d1bec566c8ac07c5565",
+              "source_revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
               "python_3_14": {
                 "repository": "opensoft/openxfactory",
-                "revision": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-                "run_id": 43775758027,
-                "job_id": 133001553498,
+                "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+                "run_id": 44086456470,
+                "job_id": 134050046773,
+                "attempt": 1,
                 "conclusion": "success",
                 "source_step": "Exercise source proof under Python 3.14 (043)",
-                "collected": 97,
-                "passed": 97,
-                "skipped": 0,
-                "failures": 0,
-                "errors": 0
+                "started_at": "2026-11-17T12:52:08Z",
+                "completed_at": "2026-11-17T12:52:23Z",
+                "suites": {
+                  "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+                  "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
+                }
               }
             }
           }
@@ -1671,24 +1676,38 @@
             "id": "actual-ci-observation",
             "kind": "equal",
             "expected": {
-              "repository": "opensoft/openxfactory",
-              "revision": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-              "run_id": 43775758307,
-              "job_id": 133001554391,
+              "primary": {
+                "repository": "opensoft/openxfactory",
+                "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+                "run_id": 44086456452,
+                "job_id": 134050047310,
+                "attempt": 1,
+                "conclusion": "success",
+                "source_step": "Run private-connectivity production source suites (043)",
+                "started_at": "2026-11-17T13:24:50Z",
+                "completed_at": "2026-11-17T13:28:49Z",
+                "suites": {
+                  "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+                  "specs/043-private-connectivity-production/tests/test_evidence.py": 711,
+                  "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40,
+                  "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
+                }
+              },
               "required_context": "pytest-suite",
-              "conclusion": "success",
               "python_3_14": {
                 "repository": "opensoft/openxfactory",
-                "revision": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-                "run_id": 43775758027,
-                "job_id": 133001553498,
+                "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+                "run_id": 44086456470,
+                "job_id": 134050046773,
+                "attempt": 1,
                 "conclusion": "success",
                 "source_step": "Exercise source proof under Python 3.14 (043)",
-                "collected": 97,
-                "passed": 97,
-                "skipped": 0,
-                "failures": 0,
-                "errors": 0
+                "started_at": "2026-11-17T12:52:08Z",
+                "completed_at": "2026-11-17T12:52:23Z",
+                "suites": {
+                  "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+                  "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
+                }
               }
             }
           }
@@ -1699,9 +1718,16 @@
             "kind": "equal",
             "expected": {
               "suites": {
+                "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": {
+                  "collected": 100,
+                  "passed": 100,
+                  "skipped": 0,
+                  "failures": 0,
+                  "errors": 0
+                },
                 "specs/043-private-connectivity-production/tests/test_evidence.py": {
-                  "collected": 557,
-                  "passed": 557,
+                  "collected": 711,
+                  "passed": 711,
                   "skipped": 0,
                   "failures": 0,
                   "errors": 0
@@ -1714,15 +1740,37 @@
                   "errors": 0
                 },
                 "specs/043-private-connectivity-production/tests/test_source_roots.py": {
-                  "collected": 97,
-                  "passed": 97,
+                  "collected": 107,
+                  "passed": 107,
                   "skipped": 0,
                   "failures": 0,
                   "errors": 0
                 }
               },
-              "private_preparation": "actual existing read-only Opensoft App mint and commit-only private owner proof passed in both lanes; domain mint skipped",
-              "trusted_producer": "actual authenticated producer 94caf6717ece69af66dfde121bf4b868a6c3abdf; read-only scoped token revoked before tests; temporary roots removed"
+              "private_proof_steps": {
+                "primary": [
+                  "Plan private-connectivity commit proof (043)",
+                  "Require the commissioned App identity (043)",
+                  "Mint scoped Opensoft source read token (043)",
+                  "Prepare commit-only owner roots with the reviewed producer (043)",
+                  "Revoke source tokens before any tests (043)",
+                  "Restore coordinator evidence history (043)",
+                  "Run private-connectivity production source suites (043)",
+                  "Remove ephemeral source proof (043)",
+                  "Post Mint scoped Opensoft source read token (043)"
+                ],
+                "python_3_14": [
+                  "Plan private-connectivity commit proof (043)",
+                  "Require the commissioned App identity (043)",
+                  "Mint scoped Opensoft source read token (043)",
+                  "Prepare commit-only owner roots with the reviewed producer (043)",
+                  "Revoke source tokens before any tests (043)",
+                  "Restore coordinator evidence history (043)",
+                  "Exercise source proof under Python 3.14 (043)",
+                  "Remove ephemeral source proof (043)",
+                  "Post Mint scoped Opensoft source read token (043)"
+                ]
+              }
             }
           }
         ]
@@ -1735,165 +1783,46 @@
       "metrics": {},
       "observation": null,
       "ci": {
-        "specs/043-private-connectivity-production/tests/test_evidence.py": 557,
+        "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+        "specs/043-private-connectivity-production/tests/test_evidence.py": 711,
         "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40,
-        "specs/043-private-connectivity-production/tests/test_source_roots.py": 97
+        "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
       },
       "artifacts": [
         {
           "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": ".github/workflows/pytest-suite.yml",
-          "sha256": "7e38a1870e5bb5e24c2f813d099f1f4658a884afa313827cdfb5ec04e2940bd3"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
           "path": ".github/workflows/doc-health-py314.yml",
-          "sha256": "1cd00507ce7fd2bcd868f2d3822bd5b64404b291f34c3c398016191b8da83695"
+          "commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+          "sha256": "61f4513fa7bccf6ef4b1eda6b775182b4fe6d054cfe71e192272109dc44b2061"
         },
         {
           "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/prepare-source-roots.py",
-          "sha256": "64df95a3906112e088c026cc2e99d9ad97d93b8dc5e48987f38248784869181e"
+          "path": ".github/workflows/pytest-suite.yml",
+          "commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+          "sha256": "6d6b362a1c7ea1db6cf8d8f768a8b8201e854c92769032cd02fca0861e3b9f5d"
         },
         {
           "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/tests/test_source_roots.py",
-          "sha256": "5c7eaa1d6aaeae749fd1d5561c2d5c0ca20523e86ce4ac4d0ead2cb9500ded00"
+          "path": "specs/043-private-connectivity-production/attest-delegated-evidence.py",
+          "commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+          "sha256": "da4ab3aca3759eb4b9c2b97bfffb621351201d0b969305125d62f78097a1e5f5"
         },
         {
           "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/verify-evidence.py",
-          "sha256": "e2aae8286af91d0ae04b99498da52ace1da69e3adfd0adc8df45437d8079ac6f"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/tests/test_evidence.py",
-          "sha256": "04193df94faf6d08834820a0fdb81fca3f5129db1d9a6d5a467b455c153f4864"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/register-evidence-pins.py",
-          "sha256": "3b20c928d6c6a639c186b30f4c171acbd62db9a7a21e395ef6996acb9813d9db"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/tests/test_evidence_pins.py",
-          "sha256": "b6363610d64803a378ecef0994651895cbf7726544dbe3574b18f6191e7f5828"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
-          "sha256": "b6592371c7987f040a44d6ecc9783979be786c11a0e9cfaefd46ae3628b31640"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/tasks.md",
-          "sha256": "d745ce645746c388dcc3ff9004f0712aad116a88eae6c75c5e7d5fa81d6333fe"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-          "sha256": "902903efb19398d014ef2c84acd6afa227c0cc97ee4df87f5d9cecf56fd29816"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-          "sha256": "57e2570d1f48f506dfca978e27784e1b39d643f1ae2bf6939247ee2956d8b942"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "openspec/changes/extend-private-connectivity-source-ci/proposal.md",
-          "sha256": "e0385105d14c6b99a01e5d71f82647d995a11dcc977944c1c25ec29dcd43242d"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "openspec/changes/extend-private-connectivity-source-ci/design.md",
-          "sha256": "64621cc3003093328ddbed1f0b8b6bbf0ccee1096ea02c0803bd78add7d75e3c"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "openspec/changes/extend-private-connectivity-source-ci/review/ratification.md",
-          "sha256": "e3fcd4f2321a3b0684b71754c83dffcc929f9be1503ea15b6a7f22e0483bbb93"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "tests/doc-health/test_pin_reachability.py",
-          "sha256": "a274e6de0588a4d9d5e9f5ccb0198afd134e0b643d504c28b430589a8dcc749f"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "tests/doc-health/test_sentinel_vocabulary.py",
-          "sha256": "09fe36ce2e84cb4db064e6eda1de58fd22d53d3a85431840f9fbd3448dadb1fb"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "scripts/doc_health/pin_class.py",
-          "sha256": "c6c8325037001cac7c0d72c111c9939becb3730276ba3bf54fd07837e6c18024"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "scripts/validate-sonar-coverage.py",
-          "sha256": "98badb9de8c9b72a8fc3707158ad52d0fa937967d6643cb2213265cd8ce0d240"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "sonar-project.properties",
-          "sha256": "7c28d8771db41ad9606f56831c2a9a796c734af597037fdad8a6cc39fd8644fd"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "tests/sonar_quality/test_coverage_evidence.py",
-          "sha256": "4e4a6b8293ea1ddab256e826ef4bf5c3ab6deb7559ac423df5851927d6c0a79f"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "openspec/changes/classify-private-connectivity-source-tests/proposal.md",
-          "sha256": "2a93ea089315bb061579db3498dff2cba952779f4df09b8ee7d1aec16501e632"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "openspec/changes/classify-private-connectivity-source-tests/design.md",
-          "sha256": "f3f2cc8e5e1c60b527a0bcd39629592420e47bebceea8503e652f33224f4b544"
-        },
-        {
-          "repository": "opensoft/openxfactory",
-          "commit": "479750c62efad1bf803b6d1bec566c8ac07c5565",
-          "path": "openspec/changes/classify-private-connectivity-source-tests/review/ratification.md",
-          "sha256": "03868d26318faf5e010a199e2971d84d3ae958ca9e90271caeb6d8ec568fe78d"
+          "path": "specs/043-private-connectivity-production/tests/test_delegated_evidence.py",
+          "commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+          "sha256": "d7c69b193b04770dc8d3a9ebecae0fc0b5725f0b4348649bd02079d9f5c302c6"
         }
       ],
-      "authority": {
-        "object": "T010-release-refinement-authority"
-      },
       "class": "CI-E",
+      "authority": {
+        "object": "T010-finite-original-human-source-authority-preview"
+      },
       "record": {
         "repository": "opensoft/openxfactory",
-        "commit": "fd4f23037ab3fd0465cf870d9526e313085f25b6",
+        "commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
         "path": "specs/043-private-connectivity-production/evidence/T010.json",
-        "sha256": "8797441f3fc411327c16e71c873a110cdca6c121ec8ebd2903511c5708129ba4"
+        "sha256": "8bb6fe496f3bc0b6aba76e16e8bd3fc04db3c941a9dbd1b7f86d52599b8a6ee0"
       }
     },
     "T016": {
@@ -8797,16 +8726,441 @@
             }
           ]
         }
+      },
+      "T010-original-delegated-scope": {
+        "tasks": [
+          "T010"
+        ],
+        "evidence_class": "source",
+        "value": {
+          "schema": "043-delegated-source-decision-v1",
+          "id": "T010-delegated-attestor-source-scope",
+          "kind": "C-01",
+          "decision": "accepted",
+          "owner": "Codex",
+          "actor": "Codex",
+          "accountable_owner": "Brett Heap",
+          "scope": {
+            "profile": "not-applicable",
+            "candidate": "043-source-only",
+            "offering": "source-evidence",
+            "run": "043-e-source-ci-refinement",
+            "network": "not-applicable",
+            "region": "not-applicable",
+            "wave": "not-applicable",
+            "site": "not-applicable",
+            "phase": "source",
+            "domain": "not-applicable",
+            "target": "not-applicable",
+            "offer": "not-applicable",
+            "environment": "source",
+            "customer": "not-applicable"
+          },
+          "valid_from": "2026-11-17T10:18:51.198109+00:00",
+          "valid_until": "2026-12-17T08:38:55.473Z",
+          "reviewed_at": "2026-11-17T10:18:51.198109+00:00",
+          "details": {
+            "original_human_root": {
+              "repository": "opensoft/openxfactory",
+              "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
+              "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
+              "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa"
+            },
+            "original_scope_proposal": {
+              "repository": "opensoft/openxfactory",
+              "commit": "7ed90134af760b0a68ca12601fc2f0fe098ee8ed",
+              "path": "openspec/changes/authorize-private-connectivity-internal-production/review/attestor-test-scope.md",
+              "sha256": "45085e399816c5ebbdd91fea53d94abe72f0d8680962f0e48a06c3130b781f16"
+            },
+            "original_scope_decision": {
+              "repository": "opensoft/openxfactory",
+              "commit": "052ec0d4fd963dbd4f6c4b8e8054b9805f08dded",
+              "path": "openspec/changes/authorize-private-connectivity-internal-production/review/attestor-test-scope.md",
+              "sha256": "d4adcc77220a3e7d81a448ded2cb4bb401b9dd24d1a212976ce9d5cda2291339"
+            },
+            "per_task_files": {
+              "T010": [
+                ".github/workflows/pytest-suite.yml",
+                "specs/043-private-connectivity-production/evidence/T010.json",
+                "specs/043-private-connectivity-production/evidence/commissioning.json",
+                "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
+                "scripts/doc_health/pin_class.py",
+                "tests/doc-health/test_sentinel_vocabulary.py",
+                ".github/workflows/doc-health-py314.yml",
+                "scripts/validate-sonar-coverage.py",
+                "sonar-project.properties",
+                "tests/sonar_quality/test_coverage_evidence.py",
+                "specs/043-private-connectivity-production/attest-delegated-evidence.py",
+                "specs/043-private-connectivity-production/tests/test_delegated_evidence.py"
+              ]
+            },
+            "export": "Projection of the original scope decision in the immutable source record, not approval of implementation outputs. The original delegated decision and independent review times are preserved."
+          },
+          "delegation": {
+            "repository": "opensoft/openxfactory",
+            "commit": "5d82621d28fe94a9f0bef663015dcc8cd2f6d10f",
+            "path": "specs/043-private-connectivity-production/evidence/T010.json",
+            "sha256": "8060207aca399a81340fb992271e1358b605f4d38bd6842721c154ef779f8619"
+          }
+        }
+      },
+      "T010-finite-original-human-source-authority-preview": {
+        "tasks": [
+          "T010"
+        ],
+        "evidence_class": "source",
+        "value": {
+          "id": "T010-pc043-internal-20261117-e995d2290328",
+          "owner": "Brett Heap",
+          "roles": [
+            "Brett Heap (coordinator source owner and E source-evidence custodian)"
+          ],
+          "decision": "accepted",
+          "scope": {
+            "profile": "not-applicable",
+            "candidate": "043-source-only",
+            "offering": "source-evidence",
+            "run": "043-e-source-ci-refinement",
+            "network": "not-applicable",
+            "region": "not-applicable",
+            "wave": "not-applicable",
+            "site": "not-applicable",
+            "phase": "source",
+            "domain": "not-applicable",
+            "target": "not-applicable",
+            "offer": "not-applicable",
+            "environment": "source",
+            "customer": "not-applicable"
+          },
+          "mode": "source",
+          "valid_from": "2026-11-17T08:38:55.473Z",
+          "valid_until": "2026-12-17T08:38:55.473Z",
+          "decisions": {
+            "C-01": {
+              "object": "T010-original-delegated-scope"
+            },
+            "C-08": {
+              "object": "T010-ci-refinement-C-08"
+            }
+          },
+          "provenance": {
+            "repository": "opensoft/openxfactory",
+            "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
+            "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
+            "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa"
+          }
+        }
+      },
+      "T010-new-actual-source-output-preview": {
+        "tasks": [
+          "T010"
+        ],
+        "evidence_class": "source",
+        "value": {
+          "task": "T010",
+          "instance": null,
+          "scope": {
+            "profile": "not-applicable",
+            "candidate": "043-source-only",
+            "offering": "source-evidence",
+            "run": "043-e-source-ci-refinement",
+            "network": "not-applicable",
+            "region": "not-applicable",
+            "wave": "not-applicable",
+            "site": "not-applicable",
+            "phase": "source",
+            "domain": "not-applicable",
+            "target": "not-applicable",
+            "offer": "not-applicable",
+            "environment": "source",
+            "customer": "not-applicable"
+          },
+          "source": {
+            "repository": "opensoft/openxfactory",
+            "base": "2f2d343691a980bbda12aa9157362a1abfb4f9f7",
+            "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df"
+          },
+          "command": "set -euo pipefail\nrequested_head=\"$PC043_EXPECTED_REVISION\"\nfeature_path=\"specs/043-private-connectivity-production\"\nfor revision in \"$requested_head\" \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"; do\n  [[ \"$revision\" =~ ^[0-9a-f]{40}$ ]]\n  git cat-file -e \"$revision^{commit}\"\ndone\n[ \"$(git rev-parse HEAD)\" = \"$PC043_CHECKOUT_REVISION\" ]\ngit merge-base --is-ancestor \"$requested_head\" \"$PC043_CHECKOUT_REVISION\"\nexport PC043_SOURCE_MODE=pr-head\nif git cat-file -e \"$requested_head:$feature_path/tests/test_delegated_evidence.py\" 2>/dev/null; then\n  [ \"$(git cat-file -t \"$requested_head:$feature_path\")\" = tree ]\nelse\n  git merge-base --is-ancestor \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"\n  ancestor=\"$(git merge-base \"$requested_head\" \"$PC043_BASE_REVISION\")\"\n  touched=\"$(git log --full-history -1 --format=%H \"$ancestor..$requested_head\" -- \"$feature_path\")\"\n  if git cat-file -e \"$ancestor:$feature_path/tests/test_delegated_evidence.py\" 2>/dev/null || [ -n \"$touched\" ]; then\n    echo \"::error::A head that changed or removed feature 043 requires its own complete four-suite source.\"\n    exit 1\n  fi\n  export PC043_EXPECTED_REVISION=\"$PC043_CHECKOUT_REVISION\"\n  export PC043_SOURCE_MODE=merge-checkout\n  echo \"::notice::Unrelated head predates the fourth 043 suite; testing the merge checkout does not qualify the PR head.\"\nfi\nfor module in test_evidence.py test_evidence_pins.py test_source_roots.py test_delegated_evidence.py; do\n  [ \"$(git cat-file -t \"$PC043_EXPECTED_REVISION:$feature_path/tests/$module\")\" = blob ]\ndone\nprintf '043 source selection: mode=%s revision=%s requested_head=%s\\n' \\\n  \"$PC043_SOURCE_MODE\" \"$PC043_EXPECTED_REVISION\" \"$requested_head\"\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  specs/043-private-connectivity-production/tests/test_source_roots.py \\\n  specs/043-private-connectivity-production/tests/test_delegated_evidence.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 711,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n    \"specs.043-private-connectivity-production.tests.test_source_roots\": 107,\n    \"specs.043-private-connectivity-production.tests.test_delegated_evidence\": 100,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nimport json\nsuites = {\"specs/043-private-connectivity-production/tests/\" + name.rsplit(\".\", 1)[-1] + \".py\": count\n          for name, count in actual.items()}\nprint(\"PC043-\" + \"SUITES \" + json.dumps({\"schema\": \"043-collected-suites-v1\",\n      \"source_revision\": os.environ[\"PC043_EXPECTED_REVISION\"], \"suites\": suites}, sort_keys=True))\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
+          "exit_code": 0,
+          "started_at": "2026-11-17T13:24:50Z",
+          "ended_at": "2026-11-17T13:28:49Z",
+          "events": {},
+          "metrics": {},
+          "coverage": null,
+          "ci": {
+            "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": {
+              "repository": "opensoft/openxfactory",
+              "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+              "run_id": 44086456452,
+              "job_id": 134050047310,
+              "conclusion": "success",
+              "required": true,
+              "collected": 100,
+              "passed": 100,
+              "skipped": 0
+            },
+            "specs/043-private-connectivity-production/tests/test_evidence.py": {
+              "repository": "opensoft/openxfactory",
+              "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+              "run_id": 44086456452,
+              "job_id": 134050047310,
+              "conclusion": "success",
+              "required": true,
+              "collected": 711,
+              "passed": 711,
+              "skipped": 0
+            },
+            "specs/043-private-connectivity-production/tests/test_evidence_pins.py": {
+              "repository": "opensoft/openxfactory",
+              "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+              "run_id": 44086456452,
+              "job_id": 134050047310,
+              "conclusion": "success",
+              "required": true,
+              "collected": 40,
+              "passed": 40,
+              "skipped": 0
+            },
+            "specs/043-private-connectivity-production/tests/test_source_roots.py": {
+              "repository": "opensoft/openxfactory",
+              "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+              "run_id": 44086456452,
+              "job_id": 134050047310,
+              "conclusion": "success",
+              "required": true,
+              "collected": 107,
+              "passed": 107,
+              "skipped": 0
+            }
+          },
+          "cases": [
+            {
+              "id": "explicit-suite-collection",
+              "scope": {
+                "profile": "not-applicable",
+                "candidate": "043-source-only",
+                "offering": "source-evidence",
+                "run": "043-e-source-ci-refinement",
+                "network": "not-applicable",
+                "region": "not-applicable",
+                "wave": "not-applicable",
+                "site": "not-applicable",
+                "phase": "source",
+                "domain": "not-applicable",
+                "target": "not-applicable",
+                "offer": "not-applicable",
+                "environment": "source",
+                "customer": "not-applicable"
+              },
+              "source": {
+                "repository": "opensoft/openxfactory",
+                "base": "2f2d343691a980bbda12aa9157362a1abfb4f9f7",
+                "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df"
+              },
+              "checks": [
+                {
+                  "id": "actual-ci-observation",
+                  "observed": {
+                    "suites": {
+                      "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+                      "specs/043-private-connectivity-production/tests/test_evidence.py": 711,
+                      "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40,
+                      "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
+                    },
+                    "step": "Run private-connectivity production source suites (043)",
+                    "source_revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+                    "python_3_14": {
+                      "repository": "opensoft/openxfactory",
+                      "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+                      "run_id": 44086456470,
+                      "job_id": 134050046773,
+                      "attempt": 1,
+                      "conclusion": "success",
+                      "source_step": "Exercise source proof under Python 3.14 (043)",
+                      "started_at": "2026-11-17T12:52:08Z",
+                      "completed_at": "2026-11-17T12:52:23Z",
+                      "suites": {
+                        "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+                        "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "exact-head-required-ci",
+              "scope": {
+                "profile": "not-applicable",
+                "candidate": "043-source-only",
+                "offering": "source-evidence",
+                "run": "043-e-source-ci-refinement",
+                "network": "not-applicable",
+                "region": "not-applicable",
+                "wave": "not-applicable",
+                "site": "not-applicable",
+                "phase": "source",
+                "domain": "not-applicable",
+                "target": "not-applicable",
+                "offer": "not-applicable",
+                "environment": "source",
+                "customer": "not-applicable"
+              },
+              "source": {
+                "repository": "opensoft/openxfactory",
+                "base": "2f2d343691a980bbda12aa9157362a1abfb4f9f7",
+                "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df"
+              },
+              "checks": [
+                {
+                  "id": "actual-ci-observation",
+                  "observed": {
+                    "primary": {
+                      "repository": "opensoft/openxfactory",
+                      "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+                      "run_id": 44086456452,
+                      "job_id": 134050047310,
+                      "attempt": 1,
+                      "conclusion": "success",
+                      "source_step": "Run private-connectivity production source suites (043)",
+                      "started_at": "2026-11-17T13:24:50Z",
+                      "completed_at": "2026-11-17T13:28:49Z",
+                      "suites": {
+                        "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+                        "specs/043-private-connectivity-production/tests/test_evidence.py": 711,
+                        "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40,
+                        "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
+                      }
+                    },
+                    "required_context": "pytest-suite",
+                    "python_3_14": {
+                      "repository": "opensoft/openxfactory",
+                      "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+                      "run_id": 44086456470,
+                      "job_id": 134050046773,
+                      "attempt": 1,
+                      "conclusion": "success",
+                      "source_step": "Exercise source proof under Python 3.14 (043)",
+                      "started_at": "2026-11-17T12:52:08Z",
+                      "completed_at": "2026-11-17T12:52:23Z",
+                      "suites": {
+                        "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
+                        "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "no-skips-or-waivers",
+              "scope": {
+                "profile": "not-applicable",
+                "candidate": "043-source-only",
+                "offering": "source-evidence",
+                "run": "043-e-source-ci-refinement",
+                "network": "not-applicable",
+                "region": "not-applicable",
+                "wave": "not-applicable",
+                "site": "not-applicable",
+                "phase": "source",
+                "domain": "not-applicable",
+                "target": "not-applicable",
+                "offer": "not-applicable",
+                "environment": "source",
+                "customer": "not-applicable"
+              },
+              "source": {
+                "repository": "opensoft/openxfactory",
+                "base": "2f2d343691a980bbda12aa9157362a1abfb4f9f7",
+                "revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df"
+              },
+              "checks": [
+                {
+                  "id": "actual-ci-observation",
+                  "observed": {
+                    "suites": {
+                      "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": {
+                        "collected": 100,
+                        "passed": 100,
+                        "skipped": 0,
+                        "failures": 0,
+                        "errors": 0
+                      },
+                      "specs/043-private-connectivity-production/tests/test_evidence.py": {
+                        "collected": 711,
+                        "passed": 711,
+                        "skipped": 0,
+                        "failures": 0,
+                        "errors": 0
+                      },
+                      "specs/043-private-connectivity-production/tests/test_evidence_pins.py": {
+                        "collected": 40,
+                        "passed": 40,
+                        "skipped": 0,
+                        "failures": 0,
+                        "errors": 0
+                      },
+                      "specs/043-private-connectivity-production/tests/test_source_roots.py": {
+                        "collected": 107,
+                        "passed": 107,
+                        "skipped": 0,
+                        "failures": 0,
+                        "errors": 0
+                      }
+                    },
+                    "private_proof_steps": {
+                      "primary": [
+                        "Plan private-connectivity commit proof (043)",
+                        "Require the commissioned App identity (043)",
+                        "Mint scoped Opensoft source read token (043)",
+                        "Prepare commit-only owner roots with the reviewed producer (043)",
+                        "Revoke source tokens before any tests (043)",
+                        "Restore coordinator evidence history (043)",
+                        "Run private-connectivity production source suites (043)",
+                        "Remove ephemeral source proof (043)",
+                        "Post Mint scoped Opensoft source read token (043)"
+                      ],
+                      "python_3_14": [
+                        "Plan private-connectivity commit proof (043)",
+                        "Require the commissioned App identity (043)",
+                        "Mint scoped Opensoft source read token (043)",
+                        "Prepare commit-only owner roots with the reviewed producer (043)",
+                        "Revoke source tokens before any tests (043)",
+                        "Restore coordinator evidence history (043)",
+                        "Exercise source proof under Python 3.14 (043)",
+                        "Remove ephemeral source proof (043)",
+                        "Post Mint scoped Opensoft source read token (043)"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "original": {
+            "command": "set -euo pipefail\nrequested_head=\"$PC043_EXPECTED_REVISION\"\nfeature_path=\"specs/043-private-connectivity-production\"\nfor revision in \"$requested_head\" \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"; do\n  [[ \"$revision\" =~ ^[0-9a-f]{40}$ ]]\n  git cat-file -e \"$revision^{commit}\"\ndone\n[ \"$(git rev-parse HEAD)\" = \"$PC043_CHECKOUT_REVISION\" ]\ngit merge-base --is-ancestor \"$requested_head\" \"$PC043_CHECKOUT_REVISION\"\nexport PC043_SOURCE_MODE=pr-head\nif git cat-file -e \"$requested_head:$feature_path/tests/test_delegated_evidence.py\" 2>/dev/null; then\n  [ \"$(git cat-file -t \"$requested_head:$feature_path\")\" = tree ]\nelse\n  git merge-base --is-ancestor \"$PC043_BASE_REVISION\" \"$PC043_CHECKOUT_REVISION\"\n  ancestor=\"$(git merge-base \"$requested_head\" \"$PC043_BASE_REVISION\")\"\n  touched=\"$(git log --full-history -1 --format=%H \"$ancestor..$requested_head\" -- \"$feature_path\")\"\n  if git cat-file -e \"$ancestor:$feature_path/tests/test_delegated_evidence.py\" 2>/dev/null || [ -n \"$touched\" ]; then\n    echo \"::error::A head that changed or removed feature 043 requires its own complete four-suite source.\"\n    exit 1\n  fi\n  export PC043_EXPECTED_REVISION=\"$PC043_CHECKOUT_REVISION\"\n  export PC043_SOURCE_MODE=merge-checkout\n  echo \"::notice::Unrelated head predates the fourth 043 suite; testing the merge checkout does not qualify the PR head.\"\nfi\nfor module in test_evidence.py test_evidence_pins.py test_source_roots.py test_delegated_evidence.py; do\n  [ \"$(git cat-file -t \"$PC043_EXPECTED_REVISION:$feature_path/tests/$module\")\" = blob ]\ndone\nprintf '043 source selection: mode=%s revision=%s requested_head=%s\\n' \\\n  \"$PC043_SOURCE_MODE\" \"$PC043_EXPECTED_REVISION\" \"$requested_head\"\noriginal_tree=\"$(pwd)\"\nfeature_tree=\"$GITHUB_WORKSPACE/private-connectivity-043-source\"\ngit -c core.hooksPath=/dev/null worktree add --detach \"$feature_tree\" \"$PC043_EXPECTED_REVISION\"\ncd \"$feature_tree\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\necho \"043 tested source: $(git rev-parse HEAD)\"\npython3 -m pytest -q \\\n  specs/043-private-connectivity-production/tests/test_evidence.py \\\n  specs/043-private-connectivity-production/tests/test_evidence_pins.py \\\n  specs/043-private-connectivity-production/tests/test_source_roots.py \\\n  specs/043-private-connectivity-production/tests/test_delegated_evidence.py \\\n  --junitxml=\"$RUNNER_TEMP/private-connectivity-043-source.xml\"\n[ \"$(git rev-parse HEAD)\" = \"$PC043_EXPECTED_REVISION\" ]\npython3 - <<'PY'\nfrom collections import Counter\nimport os\nfrom pathlib import Path\nimport xml.etree.ElementTree as ET\n\nexpected = {\n    \"specs.043-private-connectivity-production.tests.test_evidence\": 711,\n    \"specs.043-private-connectivity-production.tests.test_evidence_pins\": 40,\n    \"specs.043-private-connectivity-production.tests.test_source_roots\": 107,\n    \"specs.043-private-connectivity-production.tests.test_delegated_evidence\": 100,\n}\nreport = ET.parse(Path(os.environ[\"RUNNER_TEMP\"]) / \"private-connectivity-043-source.xml\").getroot()\ncases = list(report.iter(\"testcase\"))\nactual = Counter(case.get(\"classname\") for case in cases)\nif dict(actual) != expected:\n    raise SystemExit(f\"043 source suite collection mismatch: {dict(actual)!r}; expected {expected!r}\")\nidentities = [(case.get(\"classname\"), case.get(\"name\")) for case in cases]\nif len(identities) != len(set(identities)):\n    raise SystemExit(\"043 source report contains duplicate test identities\")\nfor suite in report.iter(\"testsuite\"):\n    if any(int(suite.get(field, 0)) != 0 for field in (\"failures\", \"errors\", \"skipped\")):\n        raise SystemExit(\"043 source suites must pass without failures, errors or skips\")\nif any(child.tag in (\"failure\", \"error\", \"skipped\") for case in cases for child in case):\n    raise SystemExit(\"043 source testcase did not run and pass\")\nfor name, count in sorted(actual.items()):\n    print(f\"043 source suite {name}: collected={count} passed={count} skipped=0 failures=0 errors=0\")\nimport json\nsuites = {\"specs/043-private-connectivity-production/tests/\" + name.rsplit(\".\", 1)[-1] + \".py\": count\n          for name, count in actual.items()}\nprint(\"PC043-\" + \"SUITES \" + json.dumps({\"schema\": \"043-collected-suites-v1\",\n      \"source_revision\": os.environ[\"PC043_EXPECTED_REVISION\"], \"suites\": suites}, sort_keys=True))\nPY\n[ -z \"$(git status --porcelain)\" ]\ncd \"$original_tree\"\ngit worktree remove \"$feature_tree\"\n",
+            "repository": "opensoft/openxfactory",
+            "source_revision": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
+            "started_at": "2026-11-17T13:24:50Z",
+            "ended_at": "2026-11-17T13:28:49Z",
+            "exit_code": 0,
+            "stdout": "PC043-SUITES {\"schema\": \"043-collected-suites-v1\", \"source_revision\": \"227040f2b1a90ff7bf33232c0ff4320e8f9d43df\", \"suites\": {\"specs/043-private-connectivity-production/tests/test_delegated_evidence.py\": 100, \"specs/043-private-connectivity-production/tests/test_evidence.py\": 711, \"specs/043-private-connectivity-production/tests/test_evidence_pins.py\": 40, \"specs/043-private-connectivity-production/tests/test_source_roots.py\": 107}}\n",
+            "original_sha256": "a5b3796d64d76c31a532cab917143c00edb29f7facaee5c7d5aa808ecdc5a881",
+            "export_sha256": "aa496b3cb6b61d7e0d67e91ace8794d44e3f8a2e4cea4c164ecbfcfa8a7796d8",
+            "redaction_method": "Preserve the one actual measured suite marker with timestamps removed. Omit all setup, scoped proof, and unrestricted job log content."
+          }
+        }
       }
     }
   },
-  "custody_status": "Source-only reviewed/redacted Git custody; authentication is determined by the exact referenced review decision. Protected customer/provider custody remains pending.",
+  "custody_status": "Source-only reviewed and redacted Git custody under the accepted C-08 scope. The exact authentication record determines admitted output. Protected customer and provider custody remain pending.",
   "authorizes_production": false,
   "review": {
     "repository": "opensoft/openxfactory",
-    "commit": "4d61a150fc44e472a4259792dd56b08a23da2cad",
+    "commit": "4c8a4d23883030e4e1e9e67e2e43fb939d9dce71",
     "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-    "sha256": "dafb6d4d987cc0ceb330434eacd1f8c57f469a98ca2d3911ab71da1a6031ca2b"
+    "sha256": "24fb46a7844b89bdf35fb6def5c7952d43ae952df82aef268936cd0e6cdaea32"
   },
   "qualification_history": [
     {
@@ -8877,6 +9231,47 @@
         "sha256": "94bccec667939b466520ef40207bbda343123fad4dff8679e51c77b26aaa226a"
       },
       "reason": "Keep the exact actual E CI export visible to the closed original-reference and inventory sweep as well as its separate immutable Git reference. No original output/observation is changed."
+    },
+    {
+      "prepared_source_review_only": true,
+      "original_scope_attestation": {
+        "repository": "opensoft/openxfactory",
+        "commit": "5d82621d28fe94a9f0bef663015dcc8cd2f6d10f",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "sha256": "8060207aca399a81340fb992271e1358b605f4d38bd6842721c154ef779f8619"
+      },
+      "original_human_root": {
+        "repository": "opensoft/openxfactory",
+        "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
+        "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
+        "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa"
+      },
+      "original_delegated_scope_projection": {
+        "repository": "opensoft/openxfactory",
+        "commit": "2220772494240dbdc791f9e8e9dd9dbeaf9ccf96",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "sha256": "8577511773064391e5aa29cf3e66a54722f0df24db7de5dfb76f57ed82a0f18a"
+      },
+      "original_nine_role_review_projection": {
+        "repository": "opensoft/openxfactory",
+        "commit": "a7b1191df88b549fba1c65771f124285b4ed787c",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "sha256": "ba9bcb1ca7216e5e4b906f7f2c7013a0cda1ad232341882482cb1d600642b35b"
+      },
+      "previous_current_source_receipt": {
+        "repository": "opensoft/openxfactory",
+        "commit": "7f826ca80e5df5d470da533dab6c8a155e299f27",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "sha256": "8797441f3fc411327c16e71c873a110cdca6c121ec8ebd2903511c5708129ba4"
+      },
+      "reason": "Prepared the actual expanded T010 source CI and its original scope proof for independent review. Preserved prior qualifications and rejected attempts.",
+      "preserved_hosted_control": {
+        "repository": "opensoft/openxfactory",
+        "commit": "1fb3a6a8188a4b051693ac2cd93920f4e69b0d0b",
+        "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+        "sha256": "02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326"
+      },
+      "hosted_preservation_reason": "The earlier local candidate verified T010 but refused T013's original immutable T010 dependency. Retain the already supported exact Hosted Headscale control and its reviewed predecessor."
     }
   ],
   "prior_containers": [
@@ -8945,6 +9340,12 @@
       "commit": "cf055928dac64ad0caedd7c16294ed8394140766",
       "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
       "sha256": "0bcdc45053d1380fff653a934719bbad00da73991031322eb9c6c2d09a9d005a"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "7f826ca80e5df5d470da533dab6c8a155e299f27",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+      "sha256": "02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326"
     }
   ],
   "pin_inventory": [
@@ -8955,6 +9356,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "0392c1c6ce0503ca260655ba2273fd615c934b21"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "052ec0d4fd963dbd4f6c4b8e8054b9805f08dded"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -8978,6 +9383,18 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "1fb3a6a8188a4b051693ac2cd93920f4e69b0d0b"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "2220772494240dbdc791f9e8e9dd9dbeaf9ccf96"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "2438f54b65e43837a33e3c0f3aff7dbbd4ba0cb4"
     },
     {
@@ -8987,6 +9404,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "2eb17c55bfad04c9e7aad8f2966dab2041ddb00f"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "2f2d343691a980bbda12aa9157362a1abfb4f9f7"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -9026,7 +9447,7 @@
     },
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "4d61a150fc44e472a4259792dd56b08a23da2cad"
+      "openxfactory_commit": "4c8a4d23883030e4e1e9e67e2e43fb939d9dce71"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -9035,6 +9456,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "507b1b4fb6d076b7b36b7379286021eec6b9568d"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "5d82621d28fe94a9f0bef663015dcc8cd2f6d10f"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -9090,6 +9515,14 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "7ed90134af760b0a68ca12601fc2f0fe098ee8ed"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "7f826ca80e5df5d470da533dab6c8a155e299f27"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "81388ed7bdca445601bfef44880669330b1d659d"
     },
     {
@@ -9135,6 +9568,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "a2f99bda30a6cfc65a28303e670785380ff1662f"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "a7b1191df88b549fba1c65771f124285b4ed787c"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -9198,6 +9635,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "d2528306ab6fe95c9235073f10c9150822b3f86e"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "d9dc8dc3090cc79506d720505436d775dd3c70e3"
     },
     {
@@ -9226,11 +9667,11 @@
     },
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "fca002e0b12b4b1b6dd29643fbbe1c5fe53cba6e"
+      "openxfactory_commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413"
     },
     {
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "fd4f23037ab3fd0465cf870d9526e313085f25b6"
+      "openxfactory_commit": "fca002e0b12b4b1b6dd29643fbbe1c5fe53cba6e"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -9350,6 +9791,12 @@
       "commit": "c4e380b43e27093a2a3b99264a3fb52a6cf36c21",
       "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
       "sha256": "902903efb19398d014ef2c84acd6afa227c0cc97ee4df87f5d9cecf56fd29816"
+    },
+    "T013": {
+      "repository": "opensoft/openxfactory",
+      "commit": "1fb3a6a8188a4b051693ac2cd93920f4e69b0d0b",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+      "sha256": "02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326"
     }
   },
   "source_ci_producer": {

@@ -1188,7 +1188,10 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # reachability obligations remain; presence supplies no authentication.
     # The exact internal-human-root record adds nine repo-local policy pins
     # and one standing member. Neighboring paths and foreign waivers stay refused.
-    assert (standing_sites, standing_members) == (1446, 39)
+    # The authenticated T010 receipt and commissioning record replace
+    # 62 prior pin sites with 56 current sites. The exact historical
+    # controls and all 39 standing members retain their reachability checks.
+    assert (standing_sites, standing_members) == (1440, 39)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
