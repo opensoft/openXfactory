@@ -2667,12 +2667,15 @@ def test_connectivity_publication_includes_exact_four_raw_members(tmp_path):
     schema = by_path[CONNECTIVITY_ROWS[0][1]]
     assert (schema["schema_id"], schema["schema_version"]) == ("private-connectivity-binding", 1)
     assert release.verify_inventory_against_commit(repo, commit, inventory) == []
-    for identity, path, _ in CONNECTIVITY_ROWS:
+    connectivity_paths = {path for _, path, _ in CONNECTIVITY_ROWS}
+    other_path = next(path for path in by_path if path not in connectivity_paths)
+    by_path[other_path]["artifact_id"] = CONNECTIVITY_ROWS[0][0]
+    for identity, path, _ in CONNECTIVITY_ROWS[1:]:
         by_path[path]["artifact_id"] = "substitute-" + identity
     findings = release.verify_inventory_against_commit(repo, commit, inventory)
+    expected_paths = {path for _, path, _ in CONNECTIVITY_ROWS[1:]} | {other_path}
     assert {(row["code"], row["path"]) for row in findings} == {
-        ("HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID", path)
-        for _, path, _ in CONNECTIVITY_ROWS
+        ("HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID", path) for path in expected_paths
     }
 
     # An unregistered neighboring file does not broaden this closed family.
@@ -2757,6 +2760,36 @@ def test_connectivity_publication_refuses_aliased_extra_registration(tmp_path, r
     with pytest.raises(release.ReleaseDependencyError) as error:
         release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
     assert error.value.code == "HGR-RELEASE-CONNECTIVITY-REGISTRATION"
+
+
+@pytest.mark.parametrize("tag", ["contract-v4.2", CONNECTIVITY_PREVIEW_TAG])
+@pytest.mark.parametrize("collision", ["namespace", "artifact-id"])
+def test_connectivity_release_refuses_generic_catalog_collision(tmp_path, tag, collision):
+    import yaml
+
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo, tag)
+    catalog_file = repo / release.CATALOG_PATH
+    catalog = yaml.safe_load(catalog_file.read_text())
+    if collision == "namespace":
+        relative = "../private-connectivity/extra.json"
+        identity = "unrelated-contract"
+    else:
+        relative = "unrelated-connectivity-id.json"
+        identity = CONNECTIVITY_ROWS[0][0]
+    member = catalog_file.parent / relative
+    member.write_text("{}")
+    catalog["contracts"].append({
+        "contract_id": identity,
+        "path": relative,
+        "type": "fixture",
+        "release_member": True,
+    })
+    catalog_file.write_text(yaml.safe_dump(catalog, sort_keys=False))
+
+    with pytest.raises(release.ReleaseDependencyError) as error:
+        release.build_release_inventory(repo, bundle_tag=tag)
+    assert error.value.code == "HGR-RELEASE-CONNECTIVITY-COLLISION"
 
 
 @pytest.mark.parametrize("relative", [row[1] for row in CONNECTIVITY_ROWS])

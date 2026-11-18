@@ -756,10 +756,12 @@ def _artifact_id(path: str) -> str:
     return path.lower().replace("/", "-")
 
 
-def _is_private_connectivity_registration_path(value):
-    if not isinstance(value, str):
+def _is_private_connectivity_registration(identity, path):
+    if isinstance(identity, str) and identity.casefold().startswith("private-connectivity-"):
+        return True
+    if not isinstance(path, str):
         return False
-    path = value.replace("\\", "/").casefold()
+    path = path.replace("\\", "/").casefold()
     return any(
         candidate.startswith(PRIVATE_CONNECTIVITY_PREFIX + "/")
         or candidate == "scripts/validate-private-connectivity.py"
@@ -774,9 +776,7 @@ def _private_connectivity_registrations(manifest):
         if not isinstance(row, Mapping):
             continue
         identity, path = row.get("id"), row.get("path")
-        if (
-            isinstance(identity, str) and identity.casefold().startswith("private-connectivity-")
-        ) or _is_private_connectivity_registration_path(path):
+        if _is_private_connectivity_registration(identity, path):
             registrations.append(row)
     identities = [(row.get("id"), row.get("path"), row.get("type")) for row in registrations]
     if (not all(all(isinstance(value, str) for value in identity) for identity in identities) or
@@ -916,6 +916,11 @@ def _collect_members(
                 "two catalog entries normalize to the same release member: "
                 f"{relative!r} -> {repo_path}",
                 code="HGR-RELEASE-MEMBER-COLLISION",
+            )
+        if _is_private_connectivity_registration(entry.get("contract_id"), repo_path):
+            raise ReleaseDependencyError(
+                f"generic catalog claims a private-connectivity registration: {repo_path}",
+                code="HGR-RELEASE-CONNECTIVITY-COLLISION",
             )
         catalog_map[repo_path] = entry
         members.add(repo_path)
@@ -1217,7 +1222,6 @@ def verify_inventory_against_commit(
         source, bundle_tag=bundle_tag if isinstance(bundle_tag, str) else ""
     )
     canonical_by_path = {str(entry["path"]): entry for entry in canonical["entries"]}
-    connectivity_paths = {path for _, path, _ in PRIVATE_CONNECTIVITY_REQUIRED_REGISTRATIONS}
 
     findings: list[dict[str, str]] = []
     if "commit" in inventory:
@@ -1313,7 +1317,11 @@ def verify_inventory_against_commit(
                     "artifact type does not match the canonical registration",
                 )
             )
-        if path in connectivity_paths and entry.get("artifact_id") != canonical_entry["artifact_id"]:
+        artifact_id = entry.get("artifact_id")
+        if (
+            _is_private_connectivity_registration(artifact_id, path)
+            and artifact_id != canonical_entry["artifact_id"]
+        ):
             findings.append(
                 _finding(
                     "HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID",

@@ -63,8 +63,12 @@ def test_four_member_consumer_replays_corpus_without_pilot_or_provider_code(tmp_
         assert reader.main(cli_args) == 2
         assert capsys.readouterr().err == "FAIL: unreadable or invalid input\n"
 
+    manifest.write_text("{}", encoding="utf-8")
+    assert reader.main(cli_args) == 0
+    capsys.readouterr()
     (consumer / "alias.json").symlink_to(manifest)
     assert reader.main(["alias.json"]) == 2
+    assert capsys.readouterr().err == "FAIL: unreadable or invalid input\n"
 
     # Verify the shipped script's process entry point on success and refusal.
     command = [sys.executable, str(consumer / MEMBERS[3]), *cli_args]
