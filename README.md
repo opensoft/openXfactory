@@ -562,6 +562,7 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [Align the private-connectivity MCP identity handoff](openspec/changes/align-private-connectivity-mcp-identity/proposal.md) — draft repository record of the November 18 approval by Brett Heap of the exact Entra policy wording. Owner source scope and rollout gates remain pending.
 - [preserve-delegated-source-proof-bootstrap](openspec/changes/preserve-delegated-source-proof-bootstrap/proposal.md) — draft [PR #1344](https://github.com/opensoft/openXfactory/pull/1344) for the existing private-source CI proof after delegated T010 authentication.
 - [Authorize internal private-connectivity completion](openspec/changes/authorize-private-connectivity-internal-production/proposal.md) — ratified by Brett at 2026-11-17T08:38:55.473Z for exact policy a66cfe60 and the USD 20/month storage-only option; [PR #1339](https://github.com/opensoft/openXfactory/pull/1339) is not yet landed. [Actual root grant](openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md); conditional source/release/internal rollout, with actual Q0-Q4 predicates and external Q5/macOS holds preserved.
 
