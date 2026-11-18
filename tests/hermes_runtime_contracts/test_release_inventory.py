@@ -2670,13 +2670,14 @@ def test_connectivity_publication_includes_exact_four_raw_members(tmp_path):
     connectivity_paths = {path for _, path, _ in CONNECTIVITY_ROWS}
     other_path = next(path for path in by_path if path not in connectivity_paths)
     by_path[other_path]["artifact_id"] = CONNECTIVITY_ROWS[0][0]
+    schema["schema_version"] = True
     for identity, path, _ in CONNECTIVITY_ROWS[1:]:
         by_path[path]["artifact_id"] = "substitute-" + identity
     findings = release.verify_inventory_against_commit(repo, commit, inventory)
     expected_paths = {path for _, path, _ in CONNECTIVITY_ROWS[1:]} | {other_path}
     assert {(row["code"], row["path"]) for row in findings} == {
         ("HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID", path) for path in expected_paths
-    }
+    } | {("HGR-RELEASE-SCHEMA-PIN-MISMATCH", schema["path"])}
 
     # An unregistered neighboring file does not broaden this closed family.
     (repo / "contracts/private-connectivity/unregistered.json").write_text("{}")

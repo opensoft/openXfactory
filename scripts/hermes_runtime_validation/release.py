@@ -1318,10 +1318,8 @@ def verify_inventory_against_commit(
                 )
             )
         artifact_id = entry.get("artifact_id")
-        if (
-            _is_private_connectivity_registration(artifact_id, path)
-            and artifact_id != canonical_entry["artifact_id"]
-        ):
+        connectivity_entry = _is_private_connectivity_registration(artifact_id, path)
+        if connectivity_entry and artifact_id != canonical_entry["artifact_id"]:
             findings.append(
                 _finding(
                     "HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID",
@@ -1331,9 +1329,12 @@ def verify_inventory_against_commit(
             )
         canonical_schema_id = canonical_entry.get("schema_id")
         if canonical_schema_id is not None:
-            if entry.get("schema_id") != canonical_schema_id or entry.get(
-                "schema_version"
-            ) != canonical_entry.get("schema_version"):
+            schema_version = entry.get("schema_version")
+            if (
+                entry.get("schema_id") != canonical_schema_id
+                or schema_version != canonical_entry.get("schema_version")
+                or (connectivity_entry and type(schema_version) is not int)
+            ):
                 findings.append(
                     _finding(
                         "HGR-RELEASE-SCHEMA-PIN-MISMATCH",
