@@ -53,9 +53,7 @@ from path_slug import slug
 # readiness task 2.3), reached by walking up to the aggregation checkout — the
 # same path-agnostic discovery `snapshot.find_validator` uses for the dashboard
 # validator.
-XREF_VALIDATOR_RELPATH = (
-    Path("openxFactory") / "scripts" / "validate-ideation-cross-reference.py"
-)
+XREF_VALIDATOR_RELPATH = Path("scripts") / "validate-ideation-cross-reference.py"
 
 # The pending-review queue — UNDER the gitignored `ideation/workbench/` prefix
 # (never the generated index), so a submission is session/proposal state a human
@@ -346,9 +344,10 @@ def find_cross_reference_validator(start: Path | None = None) -> Path | None:
     reachable — path-agnostic, mirroring `snapshot.find_validator`."""
     base = (start or Path.cwd()).resolve()
     for directory in [base, *base.parents]:
-        candidate = directory / XREF_VALIDATOR_RELPATH
-        if candidate.is_file():
-            return candidate
+        for name in ("openXfactory", "openxFactory"):
+            candidate = directory / name / XREF_VALIDATOR_RELPATH
+            if candidate.is_file():
+                return candidate
     return None
 
 

@@ -132,3 +132,49 @@ def test_openxfactory_keeps_its_laxer_admission(tmp_path):
 
 def test_an_aggregation_with_nothing_in_it_enumerates_nothing(tmp_path):
     assert corpus.discover_repos(tmp_path) == []
+
+
+@pytest.mark.parametrize("mount", ["openXfactory", "openxFactory"])
+def test_neutral_checkout_mount_preserves_the_corpus_identity(tmp_path, mount):
+    checkout = tmp_path / mount
+    checkout.mkdir()
+    assert corpus.discover_repos(tmp_path) == [("openxFactory", checkout)]
+
+
+@pytest.mark.parametrize("mount", ["codeXfactory", "codexFactory"])
+def test_engineering_checkout_keeps_the_catalog_repository_id(tmp_path, mount):
+    checkout = _repo(tmp_path / "xFactories" / mount)
+    assert corpus.discover_repos(tmp_path) == [("codexFactory", checkout)]
+
+
+@pytest.mark.parametrize("mount", ["openXfactory", "openxFactory"])
+def test_notebook_dry_run_opens_the_selected_mount(tmp_path, monkeypatch, mount):
+    from types import SimpleNamespace
+
+    from doc_health import runner
+
+    checkout = tmp_path / mount
+    script = checkout / runner.SYNC_SCRIPT
+    script.parent.mkdir(parents=True)
+    script.touch()
+    calls = []
+
+    def run(argv, **kwargs):
+        calls.append((argv, kwargs.get("cwd")))
+        return SimpleNamespace(returncode=0, stdout="fixture plan")
+
+    monkeypatch.setattr(runner.subprocess, "run", run)
+    assert runner._real_notebook_dryrun(tmp_path)() == "fixture plan"
+    assert calls == [
+        (["nlm", "notebook", "list"], None),
+        (["python3", str(script), "."], tmp_path),
+    ]
+
+
+def test_empty_canonical_alias_does_not_hide_a_legacy_checkout(tmp_path):
+    for path in ("openXfactory", "xFactories/codeXfactory"):
+        (tmp_path / path).mkdir(parents=True)
+    neutral = _repo(tmp_path / "openxFactory")
+    engineering = _repo(tmp_path / "xFactories/codexFactory")
+    assert corpus.discover_repos(tmp_path) == [
+        ("openxFactory", neutral), ("codexFactory", engineering)]

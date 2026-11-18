@@ -3781,7 +3781,7 @@ def test_the_seal_steps_failure_is_what_withholds_an_unwritten_result():
     assert seal["shell"] == "/bin/bash --noprofile --norc -p -e {0}"
     run = seal["run"]
     call = run.index('"${pythonLocation:?}/bin/python3" '
-                     "openxFactory/scripts/dashboard-refresh-nightly.py")
+                     '"$OPENXFACTORY_MOUNT/scripts/dashboard-refresh-nightly.py"')
     read = run.index('SEALED="$("${pythonLocation:?}/bin/python3"')
     assert call < read
     assert "set +e" not in run
@@ -4268,10 +4268,10 @@ def test_the_finalize_job_mounts_both_products_and_their_legs():
     run = finalize[_step_index(finalize, name="Init governed submodules only")]["run"]
     block = run[run.index("for product in openDox openXdox; do"):]
     assert '--get "submodule.${product}.path"' in block
-    assert 'git -C openxFactory submodule update --init "$product"' in block
+    assert 'git -C "$OPENXFACTORY_MOUNT" submodule update --init "$product"' in block
     assert "for leg in spec code; do" in block
     assert '--get "submodule.${leg}.path"' in block
-    assert 'git -C "openxFactory/${product}" submodule update --init "$leg"' in block
+    assert 'git -C "$OPENXFACTORY_MOUNT/${product}" submodule update --init "$leg"' in block
     assert "--recursive" not in block
     assert {gitlink for gitlink, _leg, _pkg in lane.RENDER_LEGS} == \
         {"openDox", "openXdox"}

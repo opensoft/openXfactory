@@ -91,6 +91,8 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
+from doc_health.factory_checkout_paths import RENAMED_MOUNTS, checkout_path
+
 # § 5.2 SHED REACH (RULED (a) / RULED Q7, `#656`): the modules this file reads
 # from `opendox.*` / `openxdox.*` below left openxFactory at the carve and are
 # read from the two PINNED legs through the ONE resolver. See
@@ -369,7 +371,7 @@ def run_lane(
 
     rev: str | None = None
     try:
-        checkout_root = (agg_root / checkout).resolve()
+        checkout_root = checkout_path(agg_root, checkout).resolve()
         if not checkout_root.is_dir():
             return _skip(f"pinned checkout not found: {checkout}")
 
@@ -658,6 +660,11 @@ def locate_checkout(agg_root: Path, repository: str,
     candidates = [c for c in (_declared_rel("", repository),
                               _declared_rel("", subs[name]) if subs.get(name) else None)
                   if c is not None]
+    for legacy, canonical in RENAMED_MOUNTS.items():
+        if repository in (legacy.name, legacy.as_posix()) and (
+            subs.get(canonical.name) == canonical.as_posix()
+        ):
+            candidates.insert(0, canonical.as_posix())
     candidates.extend(decl.get(name, []))
     uninitialised: list[str] = []
     for rel in dict.fromkeys(candidates):

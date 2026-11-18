@@ -34,6 +34,8 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
+from .factory_checkout_paths import checkout_path, logical_path
+
 from .lines import split_keepends
 
 GOVERNED_ROOTS = ("contracts", "docs", "examples", "ideation", "templates")
@@ -136,6 +138,14 @@ def _is_materialized_repo(path: Path) -> bool:
     return path.is_dir() and (path / ".git").exists()
 
 
+NEUTRAL_CHECKOUT_NAMES = ("openXfactory", "openxFactory")
+
+
+def find_neutral_checkout(repo_root: Path) -> Path | None:
+    checkout = checkout_path(repo_root, "openxFactory")
+    return checkout if checkout.is_dir() else None
+
+
 def discover_repos(repo_root: Path) -> list[tuple[str, Path]]:
     """Family repos inside an aggregation checkout: openxFactory, every
     root-level governed product the aggregation pins beside it, and every
@@ -172,8 +182,8 @@ def discover_repos(repo_root: Path) -> list[tuple[str, Path]]:
     suite) must still find it.
     """
     repos: list[tuple[str, Path]] = []
-    openx = repo_root / "openxFactory"
-    if openx.is_dir():
+    openx = find_neutral_checkout(repo_root)
+    if openx is not None:
         repos.append(("openxFactory", openx))
     for name in ROOT_LEVEL_GOVERNED_PRODUCTS:
         product = repo_root / name
@@ -183,7 +193,9 @@ def discover_repos(repo_root: Path) -> list[tuple[str, Path]]:
     if factories.is_dir():
         for child in sorted(factories.iterdir()):
             if _is_materialized_repo(child):
-                repos.append((child.name, child))
+                label = logical_path(child.relative_to(repo_root))
+                if child == checkout_path(repo_root, label):
+                    repos.append((label.name, child))
     return repos
 
 

@@ -215,6 +215,38 @@ def test_pin_skips_outside_aggregation(tmp_path):
     assert pin.find_aggregation_root(tmp_path / "x" / "y") is None
 
 
+@pytest.mark.parametrize("mount", ["openXfactory", "openxFactory"])
+def test_pin_reads_the_exact_registered_neutral_mount(tmp_path, mount):
+    consumer = tmp_path / "xFactories" / "codeXfactory"
+    consumer.mkdir(parents=True)
+    pointer = "a" * 40
+
+    def git(*args):
+        subprocess.run(["git", "-C", str(tmp_path), *args],
+                       capture_output=True, text=True, check=True)
+
+    git("init", "-q")
+    (tmp_path / ".gitmodules").write_text(
+        '[submodule "openxFactory"]\n'
+        f"\tpath = {mount}\n"
+        "\turl = git@github.com:opensoft/openXfactory.git\n",
+        encoding="utf-8")
+    git("add", ".gitmodules")
+    git("update-index", "--add", "--cacheinfo", f"160000,{pointer},{mount}")
+    git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test",
+        "-c", "commit.gpgsign=false", "commit", "-qm", "assemble")
+
+    assert pin.find_aggregation_root(consumer) == tmp_path
+    assert pin.recorded_mount(tmp_path) == (tmp_path / mount, pointer)
+
+    other = "openxFactory" if mount == "openXfactory" else "openXfactory"
+    git("update-index", "--add", "--cacheinfo", f"160000,{pointer},{other}")
+    git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.test",
+        "-c", "commit.gpgsign=false", "commit", "-qm", "ambiguous")
+    with pytest.raises(ValueError, match="expected exactly one neutral factory gitlink"):
+        pin.recorded_mount(tmp_path)
+
+
 def test_pin_hands_git_absolute_directories(tmp_path, monkeypatch):
     """Both roots can come from the command line, and a relative path that
     began with a dash would be read by git as an option. Resolving first is
@@ -233,7 +265,7 @@ def test_pin_hands_git_absolute_directories(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     (tmp_path / "-dashed").mkdir()
 
-    pin.recorded_pointer(Path("-dashed"))
+    pin.recorded_mount(Path("-dashed"))
     pin.git_is_ancestor(Path("-dashed"))("a" * 40, "b" * 40)
 
     assert len(seen) == 2
