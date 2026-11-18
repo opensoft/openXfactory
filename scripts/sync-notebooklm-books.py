@@ -71,9 +71,14 @@ import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Sequence
+
+# This CLI is also loaded directly by file path in a clean interpreter.
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
 
 from doc_health.factory_checkout_paths import checkout_path, logical_path
-from typing import Sequence
 
 STATIC_BOOKS = {
     "drafts": {"alias": "xf-drafts", "title": "xFactory — Working Drafts",
