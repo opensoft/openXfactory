@@ -3657,18 +3657,18 @@ def test_the_record_step_hands_on_a_strict_verdict_only_when_the_seal_says_so():
     assert run.index("STRICT=false") < guard              # defaulted first
 
 
-def _run_the_seal_step(tmp_path, pinned: str, *, plant=None):
+def _run_the_seal_step(tmp_path, pinned: str, *, plant=None, mount="openxFactory"):
     """The seal step's own script, run under its own shell in a stand-in
     workspace whose pinned lane is `pinned` and whose nightly script only
     records that it ran. `plant` puts something at the result's path first."""
     steps = _finalize_steps()
     seal = steps[_step_index(steps, id="dfr-seal")]
     workspace = tmp_path / "workspace"
-    package = workspace / "openxFactory" / "scripts" / "ideation_dashboard"
+    package = workspace / mount / "scripts" / "ideation_dashboard"
     package.mkdir(parents=True)
     (package / "__init__.py").write_text("")
     (package / "dashboard_refresh_lane.py").write_text(pinned)
-    (workspace / "openxFactory" / "scripts" /
+    (workspace / mount / "scripts" /
      "dashboard-refresh-nightly.py").write_text(
         "import json, pathlib\n"
         "pathlib.Path('nightly-ran').write_text('')\n"
@@ -3686,7 +3686,8 @@ def _run_the_seal_step(tmp_path, pinned: str, *, plant=None):
         ["/bin/bash", "--noprofile", "--norc", "-p", "-e", str(script)],
         cwd=workspace, capture_output=True, text=True, timeout=120,
         env={"PATH": "/usr/bin:/bin", "pythonLocation": str(python.parent),
-             "GITHUB_OUTPUT": str(output), "CORRELATION_ID": "c-1"})
+             "GITHUB_OUTPUT": str(output), "CORRELATION_ID": "c-1",
+             "OPENXFACTORY_MOUNT": mount})
     return proc, workspace, output.read_text()
 
 
@@ -3695,6 +3696,7 @@ _A_LANE_THAT_CONTAINS_ITS_RUNS = 'SEALED_IMAGE_ENV = "SEALED_IMAGE"\n'
 _A_LANE_THAT_CANNOT_BE_IMPORTED = "raise SystemExit(0)\ndef (:\n"
 
 
+@pytest.mark.parametrize("mount", ["openXfactory", "openxFactory"])
 @pytest.mark.parametrize("pinned, seals", [
     (_A_LANE_FROM_BEFORE_1191, False),
     (_A_LANE_THAT_CANNOT_BE_IMPORTED, False),
@@ -3702,7 +3704,7 @@ _A_LANE_THAT_CANNOT_BE_IMPORTED = "raise SystemExit(0)\ndef (:\n"
 ], ids=["a-lane-from-before-1191", "a-lane-that-cannot-be-imported",
         "a-lane-that-contains-its-runs"])
 def test_the_seal_step_runs_no_lane_that_would_run_sealed_code_here(
-        tmp_path, pinned, seals):
+        tmp_path, pinned, seals, mount):
     """This workflow runs at openxFactory main, and the lane comes from the
     aggregation's pin. A lane from before #1191 ignores SEALED_IMAGE and runs
     the probe, the render and its --strict validation on this runner. So the
@@ -3710,7 +3712,7 @@ def test_the_seal_step_runs_no_lane_that_would_run_sealed_code_here(
     SEALED_IMAGE. Any other lane seals nothing, and the refusal is recorded as
     the seal's result, so the record step reports it and nothing is uploaded
     or dispatched (Copilot, PR #1192)."""
-    proc, workspace, output = _run_the_seal_step(tmp_path, pinned)
+    proc, workspace, output = _run_the_seal_step(tmp_path, pinned, mount=mount)
     assert proc.returncode == 0, proc.stdout + proc.stderr
     result = json.loads((workspace / "dfr-seal-result.json").read_text())
     assert (workspace / "nightly-ran").exists() is seals
