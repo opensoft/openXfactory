@@ -1,48 +1,56 @@
 {
-  "schema": "043-delegated-source-decision-v1",
-  "id": "043-t015-c-08-private-source-custody-20261119",
-  "kind": "C-08",
-  "decision": "accepted",
-  "owner": "Codex",
-  "actor": "Codex",
-  "accountable_owner": "Brett Heap",
-  "scope": {
-    "run": "043-t015-private-ops-source-custody",
-    "candidate": "328eca94f0b8f01fbb40e8533244ccae5a5c9ce3d18633da2ef8603371fe7621",
-    "profile": "one-file-ops-source-custody",
-    "customer": "not-applicable",
-    "site": "not-applicable",
-    "network": "not-applicable",
-    "domain": "not-applicable",
-    "environment": "source",
-    "target": "opensoft/opsxfactory:evidence/private-connectivity-production/T015-source-custody.json",
-    "region": "not-applicable",
-    "offering": "operations-source",
-    "phase": "source",
-    "offer": "not-applicable",
-    "wave": "not-applicable"
-  },
-  "valid_from": "2026-11-19T23:06:53+00:00",
-  "valid_until": "2026-12-17T08:38:55.473000+00:00",
-  "reviewed_at": "2026-11-19T23:06:53+00:00",
-  "details": {
-    "access": "existing private repository permissions",
-    "custodian": "Brett Heap",
-    "exact_private_path": "evidence/private-connectivity-production/T015-source-custody.json",
-    "new_archive_bytes": "separate exact review required",
-    "original_local_copy_preserved": true,
-    "phase": "source",
-    "public_custody": "reviewed summaries, immutable references and digests only",
-    "repository": "opensoft/opsxfactory",
-    "repository_id": 1284702188,
-    "retention": "project lifetime",
-    "role": "Ops/O source custody",
-    "runtime_authorized": false,
-    "sealed_original": {
-      "commit": "6a2e1050548392e7cc094429c41f69b1dc7f83ee",
-      "path": "specs/043-private-connectivity-production/evidence/T015.json",
-      "repository": "opensoft/openxfactory",
-      "sha256": "328eca94f0b8f01fbb40e8533244ccae5a5c9ce3d18633da2ef8603371fe7621"
+  "reviewed_at": "2026-11-19T23:06:26.800416+00:00",
+  "roles": {
+    "architecture": {
+      "report": "Verified the exact candidate and frozen body digests, private repository ID, protected base, ratified Ops proposal and missing one-file destination. Both native source lanes selected protected successor 59439fec and control 7ea89ac2. The original sealed attachment is preserved; a separately reviewed task-output wrapper is required before write.",
+      "reviewer": "/root/admit44_architecture",
+      "verdict": "clear"
+    },
+    "contracts": {
+      "report": "Verified exact C-01/C-08 scope and current frozen T015 cases, coordinator files and unchanged T010 dependency. Live private 49cbb71d and absent target. Decisions are prospective, source only and retain original attachment; separate destination wrapper review required.",
+      "reviewer": "/root/land1350_contracts",
+      "verdict": "clear"
+    },
+    "integrity": {
+      "report": "Recomputed both decision and body digests. Exact 1198368-byte original and all 13 member seals pass. Original private CI records retain the same job, run, attempt, head and merge-parent binding. The original authorization and observation chronology stay unchanged.",
+      "reviewer": "/root/admit44_integrity",
+      "verdict": "clear"
+    },
+    "maintainability": {
+      "report": "Recomputed raw, canonical and scope body hashes. Exact private repository and same single file, C-01 retains T015 coordinator scope and T010 dependency, C-08 preserves the original under existing private access and requires new destination review. No scope or design drift.",
+      "reviewer": "/root/land1350_maintainability",
+      "verdict": "clear"
+    },
+    "performance": {
+      "report": "Reproduced both canonical decision digests and verified one existing private source file with a bounded sealed archive. No jobs, cloud resources, billing, deployment or runtime capability. Actual destination bytes require separate exact review.",
+      "reviewer": "/root/land1350_performance",
+      "verdict": "clear"
+    },
+    "qa": {
+      "report": "Verified raw and canonical decisions, accepted T010 binding, exact ratified Ops proposal and frozen definition. Both real successor logs replayed exact hashes, selected 59439fec and show successful 958 and 207 tests, revocation and cleanup. Separate exact wrapper review remains mandatory.",
+      "reviewer": "/root/admit44_qa",
+      "verdict": "clear"
+    },
+    "reliability": {
+      "report": "Verified exact complete source decision digests and live successor-run/jobs at exact #1350 head with successful completion before this prospective finite decision time. Frozen T010 dependency and original source authority remain unchanged. C-08 requires separate new exact-byte review.",
+      "reviewer": "/root/admit44_reliability",
+      "verdict": "clear"
+    },
+    "security": {
+      "report": "Verified both decisions exactly reproduce frozen source bodies and limit access to the existing protected private repository and the sole path. Decoded and verified 13 original members and scanned in place; no credential or customer payload matches. Contributor metadata belongs in private custody; review task-output wrapper separately.",
+      "reviewer": "/root/admit44_security",
+      "verdict": "clear"
+    },
+    "static": {
+      "report": "Strict parsed closed decision shapes, source phase, canonical frozen scope body and decision digests, Codex actor, Brett accountability and finite window. No data mutation. Verified the exact one-file target in both decision records.",
+      "reviewer": "/root/admit44_static",
+      "verdict": "clear"
     }
+  },
+  "schema": "043-independent-review-v1",
+  "subject": {
+    "definition": "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc",
+    "kind": "decision",
+    "record_sha256": "3bdd409b2871c6def52dea363b6dc2606adcd8c961430c483596e31ffd905d5d"
   }
 }
