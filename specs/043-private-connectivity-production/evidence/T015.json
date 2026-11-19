@@ -3,10 +3,10 @@
   "actor": "Codex",
   "evidence": [
     {
-      "commit": "2dd1e2115f593372b7ed56266107cb0c5e8c6df8",
+      "commit": "0b307a7fafa6612ac575ac01e6013d3734ae77e5",
       "path": "specs/043-private-connectivity-production/evidence/T015.json",
       "repository": "opensoft/openxfactory",
-      "sha256": "82afed76e1c8ff74c30e07ce199bfc1f6d506717fb1547d3d02719f6eb373378"
+      "sha256": "e094739475e066909efa6302ac2bc3ae1f2e92f5e772148e1ed456823bc59864"
     },
     {
       "commit": "ba9dc09cb1ab9665320919192fa25aa52e3b74d8",
@@ -28,10 +28,10 @@
     }
   ],
   "independent_review": {
-    "commit": "abf45b4cd9b038428081dcada70ea2a915940356",
+    "commit": "ae1bf6781013ffdd1d941c3e8a36addd9d01528d",
     "path": "specs/043-private-connectivity-production/evidence/T015.json",
     "repository": "opensoft/openxfactory",
-    "sha256": "976d81d1200b096b97876dad72b48443e17c47d6654159c16506cbb54ceb9394"
+    "sha256": "837491799a5974a57ecbf2b38ed71303ae883db0324b476af2b01156a3375067"
   },
   "producer": {
     "commit": "ba911daab0ed791641e19d7954f5b625a9b3c81c",
@@ -51,6 +51,6 @@
   "subject": {
     "definition": "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc",
     "kind": "decision",
-    "record_sha256": "23fff85225bff0139e86e838b9fe1356f7363eedfbded4358efef6caaeed97d9"
+    "record_sha256": "3bdd409b2871c6def52dea363b6dc2606adcd8c961430c483596e31ffd905d5d"
   }
 }
