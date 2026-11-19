@@ -1,136 +1,62 @@
 {
-  "schema": "043-task-evidence-v1",
-  "task": "T018",
-  "instance": null,
-  "owner": "C",
-  "evidence_class": "release-N",
-  "scope": {
-    "candidate": "contract-v4.4",
-    "customer": "not-applicable",
-    "domain": "not-applicable",
-    "environment": "source",
-    "network": "not-applicable",
-    "offer": "not-applicable",
-    "offering": "neutral-contract",
-    "phase": "source",
-    "profile": "neutral-private-connectivity-contract",
-    "region": "not-applicable",
-    "run": "043-neutral-publication-v4.4",
-    "site": "not-applicable",
-    "target": "not-applicable",
-    "wave": "not-applicable"
-  },
-  "source": {
-    "repository": "opensoft/openxfactory",
-    "base": "59439fec61fddc76713dc9b726545296759de8cb",
-    "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
-  },
-  "attempt": "043-t018-v4.4-observed-01",
-  "authority": {
-    "repository": "opensoft/openxfactory",
-    "commit": "70f4d0a2cb5976386055663df0e9b1030a3beb75",
-    "path": "specs/043-private-connectivity-production/evidence/T018.json",
-    "sha256": "658073db099e88b6a767e65748fd5f7a0b2857d65419e19d919d306bb3f7b2e0"
-  },
-  "verdict": "pass",
-  "command": "python3 scripts/validate-contract-release.py verify-commit --commit 3439ef61c289de06db9a7b76fc2511231e84d8a7 --json",
-  "output": {
-    "repository": "opensoft/openxfactory",
-    "commit": "7dd716e81a1267e94b7af168d1135e44fe440e77",
-    "path": "specs/043-private-connectivity-production/evidence/T018.json",
-    "sha256": "7d605dc486922abe2824dd9b8a17e60c44405b0c83f74555942e039741ba9e63"
-  },
-  "artifacts": [
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-      "path": "contracts/private-connectivity/README.md",
-      "sha256": "7e5abaabdfa3826acc9b0c7e4dc93025fbc9c76f5ffdc37ade683adb9f6fa7de"
+  "reviewed_at": "2026-11-19T22:49:12.105033+00:00",
+  "roles": {
+    "architecture": {
+      "report": "Recomputed the exact core, resolved 20 immutable blobs, preserved all 17 original bindings and frozen definitions, and verified live annotated tag, protected parent/tree, immutable v4.3 and 17/2 JUnit results. Source scopes only and no architecture finding. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/admit44_architecture",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-      "path": "contracts/private-connectivity/binding.schema.json",
-      "sha256": "3f71586c590583e602c7a3e8542b0f64abad131f418b63f6acfd99da606cc430"
+    "contracts": {
+      "report": "Verified actual annotated v4.4 tag, exact authority and output references, all previous bindings, 17 conformance cases and two independent consumer cases including absence of pilot/provider code. No actionable contract finding. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/land1350_contracts",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-      "path": "contracts/private-connectivity/conformance.json",
-      "sha256": "0fc733f3cf69cc90a57864ffcfc5c101a63bdac2e509607d6734c3125f4d18b3"
+    "integrity": {
+      "report": "Resolved 16 unique graph refs, seven cases, exact predecessor and 17 preserved bindings. Recomputed the annotated object's hash from Git bytes, verified the exact protected parents/tree, inventory SHA and all four member digests, and reproduced all stdout/JUnit hashes and successful chronology. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/admit44_integrity",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-      "path": "scripts/validate-private-connectivity.py",
-      "sha256": "c8b83cd53edd031d49bd8dc31a18b24087e73c046267b58b81b4ca690cac0119"
+    "maintainability": {
+      "report": "Clean four-path delta, 17 old bindings retained, old control and original T018 packet directly pinned, previous review resolves, and T019 binds byte-identical staged T018. Recomputed linked hashes, authority windows and merge/CI/tag/replay chronology. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/land1350_maintainability",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-      "path": "contracts/releases/contract-v4.4.digests.yaml",
-      "sha256": "1bbc6198f8e622515b2528c1c8aba63a589c5ad67092a0e96bcfe163261e2d8d"
+    "performance": {
+      "report": "Recomputed the canonical core; verified 20 task refs and both source-mode authorities. The four files decrease by 236407 bytes with no added executable, CI, or runtime surface. Predecessor review is retained. No actionable finding. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/land1350_performance",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-      "path": "contracts/manifest.yaml",
-      "sha256": "f1310f1f11c9c03c13a71d56d0ef54339c3dd6b03ef29d90542f45f00aba9c63"
+    "qa": {
+      "report": "Verified all four plus three frozen cases, five command stdout hashes and raw JUnit hashes with 17 and 2 successes and zero failures/errors/skips. The independent no-alternates checkout replayed four shipped files without pilot/provider files, and all six protected runs precede tag. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/admit44_qa",
+      "verdict": "clear"
     },
-    {
-      "repository": "opensoft/openxfactory",
-      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-      "path": "contracts/CHANGELOG.md",
-      "sha256": "a6156372eea85f2bf15e259c7a3cb81686dc6200c3b5d397c442459e784b87e5"
-    }
-  ],
-  "dependencies": {
-    "T016": {
-      "repository": "opensoft/openxfactory",
-      "commit": "aee21292c9d10c22cc8258b3b0bd07438fb6847f",
-      "path": "specs/043-private-connectivity-production/evidence/T016.json",
-      "sha256": "c58d2cfde19e853703101e54cdeec3c8274a6502ea58f52bc82509fb4d952ffa"
+    "reliability": {
+      "report": "Matched six live protected runs and seven jobs, checked tag and retained v4.3, independent checkout and replay, both authority windows and 14 historical controls. Reproduced default pending refusal and verified T010, T013, T016 and T022 through the prior authenticated control. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/admit44_reliability",
+      "verdict": "clear"
     },
-    "T010": {
-      "repository": "opensoft/openxfactory",
-      "commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
-      "path": "specs/043-private-connectivity-production/evidence/T010.json",
-      "sha256": "8bb6fe496f3bc0b6aba76e16e8bd3fc04db3c941a9dbd1b7f86d52599b8a6ee0"
+    "security": {
+      "report": "Scanned added lines across six candidate commits for credentials, private keys, embedded URL credentials, workspace paths, original user text and private custody destination. Zero findings. Checked exact authority/output hashes and tag; source-only scopes and hashed human provenance. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/admit44_security",
+      "verdict": "clear"
+    },
+    "static": {
+      "report": "Strict duplicate/nonfinite rejection, exact commissioning blob and core digests, four allowed paths, unchanged verifier and normalized inputs. Pin inventories reproduced as 91/6/4. Exact pending candidate refused by default and was unauthenticated in preparation. Re-reviewed the sole binding correction against the protected task path. Independently confirmed final manifest 65fe30cf matches raw SHA-256 329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1, corrected canonical core and parsed prior qualified correction; the formatting-preserving diff is one hunk (+2/-1).",
+      "reviewer": "/root/admit44_static",
+      "verdict": "clear"
     }
   },
-  "history": [],
-  "incidents": [],
-  "acceptance": "Completion is determined by authenticated commissioning and default verification.",
-  "original_prepublication_packet": {
-    "repository": "opensoft/openxfactory",
-    "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-    "path": "specs/043-private-connectivity-production/evidence/T018.json",
-    "sha256": "df85eccf8af6590cd2fc2ced9a7c4f66f1d404ff5dde7fca6e13ddff258097a2"
-  },
-  "pin_inventory": [
-    {
+  "schema": "043-independent-review-v1",
+  "subject": {
+    "content_sha256": "f8b9f88d4657a2682bcc5fdee3c8eefb9b0bc2d3b1d5d05ea8b29cf40aa09428",
+    "definition": "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc",
+    "kind": "source-authentication",
+    "reviewed_manifest": {
+      "commit": "65fe30cf3ee23d2df5167a073ced7d406972ef33",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
       "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "59439fec61fddc76713dc9b726545296759de8cb"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "70f4d0a2cb5976386055663df0e9b1030a3beb75"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "7dd716e81a1267e94b7af168d1135e44fe440e77"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "aee21292c9d10c22cc8258b3b0bd07438fb6847f"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413"
+      "sha256": "329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1"
     }
-  ]
+  }
 }
