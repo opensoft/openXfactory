@@ -41,9 +41,12 @@ reviewed. Deployment-specific declarations require the exact Entra resource
 identifier and approved Ops plan. The protected Ops hosting plan currently
 names `hermes`. Its owner issuer correction selects the Opensoft Entra v2.0
 issuer, tenant JWKS and a dedicated resource-only app as audience. Its task
-2.1 requires the registration and claim readback. Caller admission is separate.
-The material placement and identity plan changes retain the owner's task 4.2
-reapproval.
+2.1 requires the registration and claim readback. The approved identity
+row permits evaluating an existing app. If the owning plan requires a new
+registration, reuse requires a separately accepted amendment to that plan
+before task 2.1 or deployment declarations can rely on it. Caller
+admission remains separate. The material placement and identity plan
+changes retain the owner's task 4.2 reapproval.
 
 The artifact rebuilt from the unchanged Domain verifier remains historical
 reproduction evidence. The eventual Ops task 4.4 must verify the rebuilt
