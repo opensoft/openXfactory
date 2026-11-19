@@ -39,7 +39,23 @@ SonarCloud readback shows opensoft_Headscale-Install has automatic analysis enab
 
 Run the entire existing qualification unittest suite with a hash-pinned, wheel-only coverage tool in the existing credential-free owner job. Preserve its separate explicit 49-case guarded-runner check. The coverage-producing run must match the unique collected and executed test identities against the pinned full-suite baseline from the reviewed owner revision and finish successfully with zero skips. Include the tested commit, collected and executed counts, full baseline identity digest, execution verdict and report digests in the same-run receipt. Reject a reduced, duplicated, substituted, failed or skipped instrumented suite even if its report lists all expected source paths. The report must include zero-hit runtime modules and both qualification helpers. Validate the complete MAIN/TEST partition and receipt before transferring the report.
 
-Run the scanner in a separate job with an exact, full-history checkout, minimal GitHub token permissions, and checkout credential persistence disabled. Bind the coverage report and its receipt to the immutable artifact from the same workflow run attempt and exact scanner revision. Permit access to the scanner credential only from the pinned scanner step, on protected main or an explicitly trusted owner-PR revision admitted by existing controls. Fork and other untrusted PRs run credential-free qualification. Do not pass their code, artifacts or cache through any privileged trigger or job. Pin the actions and scanner, and fix the provider destination and project. Verify the existing credential grants Execute Analysis for only the intended project without retrieving the credential value. If the required credential scope and trust boundary cannot be verified, stop this route. No App, secret access scope, paid runner, or billing changes are included.
+Run the scanner in a separate job with an exact, full-history checkout,
+minimal GitHub token permissions and checkout credential persistence
+disabled. Bind the coverage report and receipt to the immutable artifact
+from the same run attempt and scanner revision. Pin the actions and scanner,
+and fix the provider destination and project.
+
+Before scanner activation, verify a credential-delivery control enforced
+outside the candidate workflow. Admit only the reviewed protected-main
+revision through protected history or an independently admitted immutable
+owner-PR revision, and verify refusal from other refs. Keep workflow
+credentials available only to the pinned scanner step. A condition written
+in the candidate workflow cannot establish this fence. Run unadmitted PRs
+credential-free and exclude their code, artifacts and cache from privileged
+execution. Verify that the effective credential can execute analysis only
+on the intended project using scope metadata. Hold the scanner if the
+ref or credential scope is unproven. Any necessary authorization or
+credential-delivery change requires a separate decision before activation.
 
 Use coverage source discovery for Python, including namespace packages. Restrict reporting to the exact tracked Python MAIN file list, then require the XML file paths to match that list exactly. A run that instruments only imported files can silently omit zero-hit modules. Reject missing, duplicate, absolute, out-of-tree or test-only paths, and reject a report whose source revision, branch coverage or digests fail validation. Keep this validation in the existing qualification workflow.
 
