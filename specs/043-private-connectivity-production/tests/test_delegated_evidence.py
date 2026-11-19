@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -405,14 +406,148 @@ def source_decision_fixture(source_fixture, kind="C-02", mutation=None):
     return world, ref, review, evidence, subject
 
 
+def _assert_original_t010_scope_carry():
+    v = load(HERE.parent / "verify-evidence.py", "exact_t010_custody_reader")
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    ref = v.T010_ORIGINAL_SCOPE_PROOF
+    stored_proof = v.decode(v._pinned_blob(store, ref))
+    decision = v.decode(v._pinned_blob(store, stored_proof["evidence"][0]))
+    decision["delegation"] = ref
+    reader = SimpleNamespace(definition=v.DEFINITION, store=store, now=h.DELEGATION_TIME.replace(day=19),
+                             trust={"revoked_authorities": []})
+    binding = {"task": "T010", "scope": decision["scope"]}
+    v.Verifier.delegated_decision(reader, decision, binding)
+    original_grant_id = reader.delegated_root_id
+
+    mismatches = (
+        ({**decision, "id": decision["id"] + "-changed"}, binding, False),
+        ({**decision, "delegation": {**ref, "commit": "f" * 40}}, binding, False),
+        (decision, {**binding, "task": "T015"}, False),
+        (decision, {**binding, "scope": {**binding["scope"], "phase": "staging",
+                                        "customer": "Opensoft Inc"}}, False),
+        (decision, binding, True),
+    )
+    for altered, task_binding, post_run in mismatches:
+        with pytest.raises(v.EvidenceError, match="delegated output is not independently qualified"):
+            v.Verifier.delegated_decision(reader, altered, task_binding, post_run=post_run)
+    reader.definition = "f" * 64
+    with pytest.raises(v.EvidenceError, match="delegated output is not independently qualified"):
+        v.Verifier.delegated_decision(reader, decision, binding)
+    reader.definition = v.DEFINITION
+    reader.trust["revoked_authorities"] = [original_grant_id]
+    with pytest.raises(v.EvidenceError, match="revoked"):
+        v.Verifier.delegated_decision(reader, decision, binding)
+
+    predecessor = v.T010_CUSTODY_PREDECESSOR["reference"]
+    v.validate_historical_binding("T010", predecessor)
+    with pytest.raises(v.EvidenceError, match="unaccepted historical task"):
+        v.validate_historical_binding("T015", predecessor)
+    with pytest.raises(v.EvidenceError, match="wrong commissioning manifest"):
+        v.make_verifier(h.TASKS, store, predecessor, reader.now)
+
+
+def _assert_protected_predecessor_transition(monkeypatch):
+    v = h.v
+    ref = v.T010_CUSTODY_PREDECESSOR["reference"]
+    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+    active = v._pinned_blob(store, ref)
+    base = "a" * 40
+    events = []
+
+    def read_base(expected):
+        assert expected == base
+        events.append("protected base")
+
+    def read_control(path, expected):
+        assert (path, expected) == (v.COMMISSIONING_PATH, base)
+        events.append("active control")
+        return active
+
+    def verify(key):
+        assert key == "T010"
+        events.append("T010")
+
+    def previous(selected_store, selected_ref, now):
+        assert selected_store is store and selected_ref == ref
+        return SimpleNamespace(verify=verify)
+
+    def branch_readback(path):
+        assert path == "repos/" + v.COORDINATOR + "/branches/main"
+        events.append("final branch readback")
+        return {"protected": True, "commit": {"sha": base}}
+
+    monkeypatch.setattr(v, "historical_verifier", previous)
+    provider = SimpleNamespace(qualified_base=read_base, content=read_control, get=branch_readback)
+    v.verify_t010_transition_predecessor(provider, store, base)
+    assert events == ["protected base", "active control", "T010", "protected base", "final branch readback"]
+
+    events.clear()
+    provider.content = lambda *_: b"changed active control"
+    with pytest.raises(v.EvidenceError, match="no longer selects the T010 predecessor"):
+        v.verify_t010_transition_predecessor(provider, store, base)
+    assert events == ["protected base"]
+
+    def moving_base(expected):
+        read_base(expected)
+        if events.count("protected base") == 2:
+            raise a.AttestationError("selected base is not current protected main")
+
+    events.clear()
+    provider.content = read_control
+    provider.qualified_base = moving_base
+    with pytest.raises(a.AttestationError, match="not current protected main"):
+        v.verify_t010_transition_predecessor(provider, store, base)
+    assert events == ["protected base", "active control", "T010", "protected base"]
+
+    checks = [dict(name=name, head_sha=base, status="completed", conclusion="success")
+              for name in ("pytest-suite", "doc-health-py314", "sonar-analysis")]
+    checks[-1]["details_url"] = "https://github.com/opensoft/openXfactory/actions/runs/10/job/30"
+    for stale in ({"protected": True, "commit": {"sha": "e" * 40}},
+                  {"protected": False, "commit": {"sha": base}}):
+        live = base_provider(checks)
+        read_provider = live.get
+        branch = {"protected": True, "commit": {"sha": base}}
+        branch_reads = []
+
+        def get(path, **kwargs):
+            if path.endswith("/branches/main"):
+                branch_reads.append(deepcopy(branch))
+                return deepcopy(branch)
+            response = read_provider(path, **kwargs)
+            if path.endswith("/actions/jobs/30") and len(branch_reads) == 2:
+                branch.update(stale)
+            return response
+
+        events.clear()
+        live.content = read_control
+        live.get = get
+        with pytest.raises(v.EvidenceError, match="protected main changed during T010"):
+            v.verify_t010_transition_predecessor(live, store, base)
+        original = {"protected": True, "commit": {"sha": base}}
+        assert branch_reads == [original, original, stale]
+        assert events == ["active control", "T010"]
+
+
 @pytest.mark.parametrize("kind", ["C-01", "C-02", "C-08", "C-13", "source-authority", "evidence-admission"])
-def test_source_decisions_are_reviewed_data_and_remain_unregistered(source_fixture, kind):
+def test_source_decisions_are_reviewed_data_and_remain_unregistered(source_fixture, kind, monkeypatch):
     world, ref, review, evidence, subject = source_decision_fixture(source_fixture, kind)
     result = a.attest_source_decision(h.v, world.store, ref, review, evidence, h.DELEGATION_TIME.replace(day=19))
     assert result["subject"] == subject
     assert result["provider_observations"] == []
     assert result["evidence"] == [ref, *evidence]
     assert h.v.DELEGATED_ATTESTATIONS == {}
+    if kind == "C-01":
+        v = h.v
+        signed = world.store.put(result, "reviews/fresh-source-attestation.json")
+        monkeypatch.setitem(v.DELEGATED_ATTESTATIONS, v.digest(v.canonical_json(subject)), signed)
+        fresh = v.decode(world.store.blob(ref))
+        fresh["delegation"] = signed
+        reader = SimpleNamespace(definition=v.DEFINITION, store=world.store, now=h.DELEGATION_TIME.replace(day=19),
+                                 trust={"revoked_authorities": []})
+        v.Verifier.delegated_decision(reader, fresh, {"task": "T010", "scope": fresh["scope"]})
+        assert reader.delegated_root_id
+        _assert_original_t010_scope_carry()
+        _assert_protected_predecessor_transition(monkeypatch)
 
 
 @pytest.mark.parametrize("kind,mutation", [
