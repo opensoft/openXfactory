@@ -2615,3 +2615,253 @@ def test_an_unreadable_leg_refuses_as_a_dependency_at_the_catalog_too(
         "which is the exit code this escaped as before it was translated — "
         "the finding class, for a question the validator never asked"
     )
+
+
+# Proposed first supported connectivity publication; exercised only in the
+# isolated T018 review candidate until the actual cut/version is authorized.
+CONNECTIVITY_PREVIEW_TAG = "contract-v4.3"
+CONNECTIVITY_ROWS = (
+    ("private-connectivity-binding", "contracts/private-connectivity/binding.schema.json", "schema"),
+    ("private-connectivity-contract", "contracts/private-connectivity/README.md", "documentation"),
+    ("private-connectivity-conformance", "contracts/private-connectivity/conformance.json", "fixture"),
+    ("private-connectivity-conformance-validator", "scripts/validate-private-connectivity.py", "tool"),
+)
+CONNECTIVITY_SCHEMA_ID = "https://xforge.us/schemas/openxfactory/private-connectivity/binding.schema.json"
+
+
+def _connectivity_preview(repo, tag=CONNECTIVITY_PREVIEW_TAG):
+    _set_bundle_tag(repo, tag)
+    _satisfy_intent_registration(repo)
+    payloads = {
+        CONNECTIVITY_ROWS[0][1]: json.dumps({"$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": CONNECTIVITY_SCHEMA_ID, "schema_version": 1, "kind": "xfactory-connectivity-binding-schema", "type": "object"}) + "\n",
+        CONNECTIVITY_ROWS[1][1]: "# Neutral connectivity\n",
+        CONNECTIVITY_ROWS[2][1]: '{"schema_version":1,"kind":"xfactory-connectivity-conformance-corpus","cases":[]}\n',
+        CONNECTIVITY_ROWS[3][1]: "# independently usable offline reader\n",
+    }
+    _write_tree(repo, payloads)
+    import yaml
+    path = repo / "contracts/manifest.yaml"
+    manifest = yaml.safe_load(path.read_text())
+    manifest.setdefault("contracts", []).extend(
+        {"id": identity, "path": relative, "type": kind, "schema_version": 1,
+         "sha256": hashlib.sha256(payloads[relative].encode()).hexdigest()}
+        for identity, relative, kind in CONNECTIVITY_ROWS)
+    path.write_text(yaml.safe_dump(manifest, sort_keys=False))
+
+
+def test_connectivity_publication_includes_exact_four_raw_members(tmp_path):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    commit = _commit_all(repo, "synthetic connectivity candidate")
+    inventory = release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert release.inventory_schema_findings(
+        inventory, path="contracts/releases/contract-v4.3.digests.yaml"
+    ) == []
+    by_path = {entry["path"]: entry for entry in inventory["entries"]}
+    for identity, path, kind in CONNECTIVITY_ROWS:
+        assert by_path[path]["artifact_id"] == identity
+        assert by_path[path]["type"] == ({"tool": "validator"}.get(kind, kind))
+        assert by_path[path]["digest"] == "sha256:" + hashlib.sha256(
+            subprocess.check_output(["git", "show", commit + ":" + path], cwd=repo)).hexdigest()
+    schema = by_path[CONNECTIVITY_ROWS[0][1]]
+    assert (schema["schema_id"], schema["schema_version"]) == ("private-connectivity-binding", 1)
+    assert release.verify_inventory_against_commit(repo, commit, inventory) == []
+    connectivity_paths = {path for _, path, _ in CONNECTIVITY_ROWS}
+    other_path = next(path for path in by_path if path not in connectivity_paths)
+    by_path[other_path]["artifact_id"] = CONNECTIVITY_ROWS[0][0]
+    schema["schema_version"] = True
+    for identity, path, _ in CONNECTIVITY_ROWS[1:]:
+        by_path[path]["artifact_id"] = "substitute-" + identity
+    findings = release.verify_inventory_against_commit(repo, commit, inventory)
+    expected_paths = {path for _, path, _ in CONNECTIVITY_ROWS[1:]} | {other_path}
+    assert {(row["code"], row["path"]) for row in findings} == {
+        ("HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID", path) for path in expected_paths
+    } | {("HGR-RELEASE-SCHEMA-PIN-MISMATCH", schema["path"])}
+
+    # An unregistered neighboring file does not broaden this closed family.
+    (repo / "contracts/private-connectivity/unregistered.json").write_text("{}")
+    later = release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert "contracts/private-connectivity/unregistered.json" not in {e["path"] for e in later["entries"]}
+
+
+def test_connectivity_inventory_reuses_the_validated_member_read(tmp_path, monkeypatch):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    schema = CONNECTIVITY_ROWS[0][1]
+    expected_digest = "sha256:" + hashlib.sha256((repo / schema).read_bytes()).hexdigest()
+    read_member = release._WorkingTreeSource.read_member
+    schema_reads = 0
+
+    def member_read(source, path):
+        nonlocal schema_reads
+        if path == schema:
+            schema_reads += 1
+            if schema_reads > 1:
+                changed = b"{}"
+                return changed, "100644", "sha256:" + hashlib.sha256(changed).hexdigest()
+        return read_member(source, path)
+
+    monkeypatch.setattr(release._WorkingTreeSource, "read_member", member_read)
+    result = release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    entry = next(item for item in result["entries"] if item["path"] == schema)
+    assert entry["digest"] == expected_digest
+    assert schema_reads == 1
+
+
+def test_connectivity_paths_do_not_retroactively_join_below_floor(tmp_path):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo, "contract-v4.2")
+    commit = _commit_all(repo, "older bundle with later files present")
+    inventory = release.build_release_inventory(repo, bundle_tag="contract-v4.2")
+    assert not {row[1] for row in CONNECTIVITY_ROWS} & {e["path"] for e in inventory["entries"]}
+    assert release.verify_inventory_against_commit(repo, commit, inventory) == []
+
+
+@pytest.mark.parametrize("mutation", ["missing", "duplicate", "extra", "id", "type", "path", "version", "digest"])
+def test_connectivity_publication_refuses_registration_substitution(tmp_path, mutation):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    import yaml
+    path = repo / "contracts/manifest.yaml"
+    data = yaml.safe_load(path.read_text())
+    rows = data["contracts"]
+    target = next(row for row in rows if row["id"] == "private-connectivity-binding")
+    if mutation == "missing":
+        rows.remove(target)
+    elif mutation == "duplicate":
+        rows.append(copy.deepcopy(target))
+    elif mutation == "extra":
+        rows.append({"id": "private-connectivity-extra", "path": "contracts/private-connectivity/extra.json", "type": "schema"})
+    else:
+        target[mutation if mutation not in ("version", "digest") else {"version": "schema_version", "digest": "sha256"}[mutation]] = {
+            "id": "substituted", "type": "tool", "path": "contracts/private-connectivity/../outside.json",
+            "version": True, "digest": "0" * 64}[mutation]
+    path.write_text(yaml.safe_dump(data, sort_keys=False))
+    with pytest.raises(release.ReleaseDependencyError):
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+
+
+@pytest.mark.parametrize("row", [CONNECTIVITY_ROWS[0], CONNECTIVITY_ROWS[3]])
+def test_connectivity_publication_refuses_aliased_extra_registration(tmp_path, row):
+    import yaml
+
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    manifest = repo / "contracts/manifest.yaml"
+    content = yaml.safe_load(manifest.read_text())
+    canonical = next(entry for entry in content["contracts"] if entry["id"] == row[0])
+    content["contracts"].append({
+        **canonical,
+        "id": "connectivity-unofficial-alias",
+        "path": "./" + canonical["path"],
+    })
+    manifest.write_text(yaml.safe_dump(content, sort_keys=False))
+
+    with pytest.raises(release.ReleaseDependencyError) as error:
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert error.value.code == "HGR-RELEASE-CONNECTIVITY-REGISTRATION"
+
+
+@pytest.mark.parametrize("tag", ["contract-v4.2", CONNECTIVITY_PREVIEW_TAG])
+@pytest.mark.parametrize("collision", ["namespace", "artifact-id"])
+def test_connectivity_release_refuses_generic_catalog_collision(tmp_path, tag, collision):
+    import yaml
+
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo, tag)
+    catalog_file = repo / release.CATALOG_PATH
+    catalog = yaml.safe_load(catalog_file.read_text())
+    if collision == "namespace":
+        relative = "../private-connectivity/extra.json"
+        identity = "unrelated-contract"
+    else:
+        relative = "unrelated-connectivity-id.json"
+        identity = CONNECTIVITY_ROWS[0][0]
+    member = catalog_file.parent / relative
+    member.write_text("{}")
+    catalog["contracts"].append({
+        "contract_id": identity,
+        "path": relative,
+        "type": "fixture",
+        "release_member": True,
+    })
+    catalog_file.write_text(yaml.safe_dump(catalog, sort_keys=False))
+
+    with pytest.raises(release.ReleaseDependencyError) as error:
+        release.build_release_inventory(repo, bundle_tag=tag)
+    assert error.value.code == "HGR-RELEASE-CONNECTIVITY-COLLISION"
+
+
+@pytest.mark.parametrize("relative", [row[1] for row in CONNECTIVITY_ROWS])
+def test_connectivity_publication_refuses_missing_or_unsafe_member(tmp_path, relative):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    path = repo / relative
+    path.unlink()
+    with pytest.raises(release.ReleaseDependencyError):
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    outside = tmp_path / "outside"
+    outside.write_text("not a release member")
+    path.symlink_to(outside)
+    with pytest.raises(release.ReleaseDependencyError):
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+
+
+def test_connectivity_publication_refuses_in_tree_symlinked_parent(tmp_path):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    family = repo / "contracts/private-connectivity"
+    alternate = repo / "contracts/alternate-connectivity"
+    family.rename(alternate)
+    family.symlink_to(alternate.name, target_is_directory=True)
+
+    with pytest.raises(release.ReleaseDependencyError) as error:
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert error.value.code == "HGR-RELEASE-CONNECTIVITY-MEMBER"
+
+
+@pytest.mark.parametrize("field,value", [("$id", "https://wrong.invalid/schema"), ("schema_version", 2), ("schema_version", True)])
+def test_connectivity_publication_refuses_schema_identity_substitution(tmp_path, field, value):
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    path = repo / CONNECTIVITY_ROWS[0][1]
+    schema = json.loads(path.read_text()); schema[field] = value; path.write_text(json.dumps(schema))
+    # Preserve the raw digest registration to isolate schema identity from hashing.
+    import yaml
+    manifest = repo / "contracts/manifest.yaml"; data = yaml.safe_load(manifest.read_text())
+    next(row for row in data["contracts"] if row["id"] == CONNECTIVITY_ROWS[0][0])["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    manifest.write_text(yaml.safe_dump(data, sort_keys=False))
+    with pytest.raises(release.ReleaseDependencyError):
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+
+
+@pytest.mark.parametrize("defect", ["yaml-only", "duplicate-field", "nonfinite", "invalid-schema"])
+def test_connectivity_publication_rejects_bad_schema_even_with_matching_digest(tmp_path, defect):
+    import yaml
+
+    repo, _ = _synthetic_repo(tmp_path)
+    _connectivity_preview(repo)
+    schema_path = repo / CONNECTIVITY_ROWS[0][1]
+    schema = json.loads(schema_path.read_text())
+    if defect == "yaml-only":
+        schema_path.write_text(yaml.safe_dump(schema))
+    elif defect == "duplicate-field":
+        encoded = json.dumps(schema)
+        schema_path.write_text('{"schema_version": 1, ' + encoded[1:])
+    elif defect == "nonfinite":
+        schema["format"] = float("nan")
+        schema_path.write_text(json.dumps(schema))
+    else:
+        schema["type"] = "not-a-schema-type"
+        schema_path.write_text(json.dumps(schema))
+
+    manifest = repo / "contracts/manifest.yaml"
+    content = yaml.safe_load(manifest.read_text())
+    registration = next(row for row in content["contracts"] if row["id"] == CONNECTIVITY_ROWS[0][0])
+    registration["sha256"] = hashlib.sha256(schema_path.read_bytes()).hexdigest()
+    manifest.write_text(yaml.safe_dump(content, sort_keys=False))
+
+    with pytest.raises(release.ReleaseDependencyError) as error:
+        release.build_release_inventory(repo, bundle_tag=CONNECTIVITY_PREVIEW_TAG)
+    assert error.value.code == "HGR-RELEASE-CONNECTIVITY-SCHEMA"

@@ -138,6 +138,45 @@ jobs:
           def core(value):
               return hashlib.sha256(json.dumps({k: v for k, v in value.items() if k not in {"review", "pin_inventory"}},
                                                sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+          def authenticated_control(raw):
+              value = decode(raw)
+              need(value["schema"] == "043-reviewed-trust-v1" and value["feature"] == "043-private-connectivity-production")
+              blocks = re.findall(rb"^```json\r?\n(.*?)^```[ \t]*$", blob(value["review"], auth_path), re.M | re.S)
+              need(len(blocks) == 1)
+              return value, decode(blocks[0])
+
+          def selected_source_proof(base):
+              value, auth = authenticated_control(git("show", base + ":" + control))
+              if auth.get("schema") == "043-delegated-source-authentication-v1":
+                  # Approve only the prior metadata-only producer. This does not
+                  # authenticate the delegated output or execute its attestor.
+                  need(set(auth) == {"schema", "decision", "actor", "accountable_owner", "reviewed_manifest",
+                                     "content_sha256", "attestation"} and auth["decision"] == "accepted" and
+                       auth["actor"] == "Codex" and auth["accountable_owner"] == "Brett Heap")
+                  reviewed = decode(blob(auth["reviewed_manifest"], control))
+                  need(core(value) == core(reviewed) == auth["content_sha256"])
+                  attestation = decode(blob(auth["attestation"], feature + "/evidence/T010.json"))
+                  need(attestation["schema"] == "043-delegated-attestation-v1" and
+                       attestation["actor"] == "Codex" and attestation["accountable_owner"] == "Brett Heap" and
+                       attestation["subject"] == {"kind": "source-authentication", "definition": value["definition"],
+                                                  "reviewed_manifest": auth["reviewed_manifest"],
+                                                  "content_sha256": auth["content_sha256"]})
+                  legacy_base = "59c4931fd89811f07f1a02046424a0fa78a2c92a"
+                  git("merge-base", "--is-ancestor", legacy_base, base)
+                  legacy = git("show", legacy_base + ":" + control)
+                  need(hashlib.sha256(legacy).hexdigest() == "02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326")
+                  legacy_value, legacy_auth = authenticated_control(legacy)
+                  for key in ("source_ci_producer", "source_ci_original_reference"):
+                      need(value[key] == legacy_value[key])
+                  base, value, auth = legacy_base, legacy_value, legacy_auth
+              need(set(auth) == {"schema", "decision", "custodian", "reviewed_manifest", "content_sha256", "reviewed_at"} and
+                   auth["schema"] == "043-source-authentication-v1" and auth["decision"] == "accepted" and auth["custodian"] == "Brett Heap")
+              when = datetime.fromisoformat(auth["reviewed_at"].replace("Z", "+00:00"))
+              need(when.tzinfo is not None and when <= datetime.now(timezone.utc))
+              reviewed = decode(blob(auth["reviewed_manifest"], control))
+              need(core(value) == core(reviewed) == auth["content_sha256"])
+              return base, blob(value["source_ci_producer"], helper)
+
           tasks = {"T010", "T011", "T012", "T013", "T014", "T015", "T016", "T017", "T018", "T019", "T027", "T042",
                    "T049", "T051", "T056", "T057", "T061", "T062", "T064", "T065", "T066", "T067", "T068"}
           private = False
@@ -159,18 +198,7 @@ jobs:
           else:
               base = os.environ["PC_SOURCE_BASE"]
               need(re.fullmatch("[0-9a-f]{40}", base))
-              value = decode(git("show", base + ":" + control))
-              need(value["schema"] == "043-reviewed-trust-v1" and value["feature"] == "043-private-connectivity-production")
-              blocks = re.findall(rb"^```json\r?\n(.*?)^```[ \t]*$", blob(value["review"], auth_path), re.M | re.S)
-              need(len(blocks) == 1)
-              auth = decode(blocks[0])
-              need(set(auth) == {"schema", "decision", "custodian", "reviewed_manifest", "content_sha256", "reviewed_at"} and
-                   auth["schema"] == "043-source-authentication-v1" and auth["decision"] == "accepted" and auth["custodian"] == "Brett Heap")
-              when = datetime.fromisoformat(auth["reviewed_at"].replace("Z", "+00:00"))
-              need(when.tzinfo is not None and when <= datetime.now(timezone.utc))
-              reviewed = decode(blob(auth["reviewed_manifest"], control))
-              need(core(value) == core(reviewed) == auth["content_sha256"])
-              code = blob(value["source_ci_producer"], helper)
+              base, code = selected_source_proof(base)
               parent = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
               target = parent / "pc043-reviewed-producer.py"
               need(not target.exists() and not target.is_symlink())
@@ -288,21 +316,21 @@ jobs:
           [ "$(git rev-parse HEAD)" = "$PC043_CHECKOUT_REVISION" ]
           git merge-base --is-ancestor "$requested_head" "$PC043_CHECKOUT_REVISION"
           export PC043_SOURCE_MODE=pr-head
-          if git cat-file -e "$requested_head:$feature_path" 2>/dev/null; then
+          if git cat-file -e "$requested_head:$feature_path/tests/test_delegated_evidence.py" 2>/dev/null; then
             [ "$(git cat-file -t "$requested_head:$feature_path")" = tree ]
           else
             git merge-base --is-ancestor "$PC043_BASE_REVISION" "$PC043_CHECKOUT_REVISION"
             ancestor="$(git merge-base "$requested_head" "$PC043_BASE_REVISION")"
             touched="$(git log --full-history -1 --format=%H "$ancestor..$requested_head" -- "$feature_path")"
-            if git cat-file -e "$ancestor:$feature_path" 2>/dev/null || [ -n "$touched" ]; then
-              echo "::error::A head that changed or removed feature 043 requires its own complete source suites."
+            if git cat-file -e "$ancestor:$feature_path/tests/test_delegated_evidence.py" 2>/dev/null || [ -n "$touched" ]; then
+              echo "::error::A head that changed or removed feature 043 requires its own complete four-suite source."
               exit 1
             fi
             export PC043_EXPECTED_REVISION="$PC043_CHECKOUT_REVISION"
             export PC043_SOURCE_MODE=merge-checkout
-            echo "::notice::Unrelated head predates feature 043; testing the merge checkout does not qualify the PR head."
+            echo "::notice::Unrelated head predates the fourth 043 suite; testing the merge checkout does not qualify the PR head."
           fi
-          for module in test_evidence.py test_evidence_pins.py test_source_roots.py; do
+          for module in test_evidence.py test_evidence_pins.py test_source_roots.py test_delegated_evidence.py; do
             [ "$(git cat-file -t "$PC043_EXPECTED_REVISION:$feature_path/tests/$module")" = blob ]
           done
           printf '043 source selection: mode=%s revision=%s requested_head=%s\n' \
@@ -312,7 +340,8 @@ jobs:
           git -c core.hooksPath=/dev/null worktree add --detach "$source_tree" "$PC043_EXPECTED_REVISION"
           cd "$source_tree"
           [ "$(git rev-parse HEAD)" = "$PC043_EXPECTED_REVISION" ]
-          python -m pytest specs/043-private-connectivity-production/tests/test_source_roots.py -q -rs \
+          python -m pytest specs/043-private-connectivity-production/tests/test_source_roots.py \
+            specs/043-private-connectivity-production/tests/test_delegated_evidence.py -q -rs \
             --junitxml="$RUNNER_TEMP/pc043-py314.xml"
           python - <<'PY'
           from collections import Counter
@@ -321,7 +350,8 @@ jobs:
           import xml.etree.ElementTree as ET
           report = ET.parse(Path(os.environ["RUNNER_TEMP"]) / "pc043-py314.xml").getroot()
           cases = list(report.iter("testcase"))
-          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 97}
+          expected = {"specs.043-private-connectivity-production.tests.test_source_roots": 107,
+                      "specs.043-private-connectivity-production.tests.test_delegated_evidence": 100}
           if dict(Counter(case.get("classname") for case in cases)) != expected:
               raise SystemExit("Python 3.14 proof suite collection mismatch")
           identities = {(case.get("classname"), case.get("name")) for case in cases}
@@ -331,7 +361,12 @@ jobs:
               raise SystemExit("Python 3.14 proof suite must run and pass without skips")
           if any(child.tag in ("skipped", "failure", "error") for case in cases for child in case):
               raise SystemExit("Python 3.14 proof case did not pass")
-          print("043 Python 3.14 proof: collected=97 passed=97 skipped=0 failures=0 errors=0 revision=" + os.environ["PC043_EXPECTED_REVISION"])
+          import json
+          actual = Counter(case.get("classname") for case in cases)
+          suites = {"specs/043-private-connectivity-production/tests/" + name.rsplit(".", 1)[-1] + ".py": count
+                    for name, count in actual.items()}
+          print("PC043-" + "SUITES " + json.dumps({"schema": "043-collected-suites-v1",
+                "source_revision": os.environ["PC043_EXPECTED_REVISION"], "suites": suites}, sort_keys=True))
           PY
           [ -z "$(git status --porcelain)" ]
           cd "$original_tree"

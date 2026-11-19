@@ -2,6 +2,8 @@
 
 P1 security repairs: [feature 045 requirements, plan, tasks and evidence](specs/045-p1-security-boundaries/README.md), separate from completed feature 044.
 
+Shared CLI source-quality maintenance: [feature 048 plan](specs/048-cli-source-quality/plan.md).
+
 Canonical repository name: `openXfactory`. Historical records, frozen contract identifiers, and compatibility selectors retain their original spelling.
 
 `openxFactory` documents the open reference stack and domain-neutral xFactory
@@ -560,6 +562,27 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [preserve-delegated-source-proof-bootstrap](openspec/changes/preserve-delegated-source-proof-bootstrap/proposal.md) — draft [PR #1344](https://github.com/opensoft/openXfactory/pull/1344) for the existing private-source CI proof after delegated T010 authentication.
+- [Authorize internal private-connectivity completion](openspec/changes/authorize-private-connectivity-internal-production/proposal.md) — ratified by Brett at 2026-11-17T08:38:55.473Z for exact policy a66cfe60 and the USD 20/month storage-only option; [PR #1339](https://github.com/opensoft/openXfactory/pull/1339) is not yet landed. [Actual root grant](openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md); conditional source/release/internal rollout, with actual Q0-Q4 predicates and external Q5/macOS holds preserved.
+
+- [Extend private-connectivity cut validation](openspec/changes/extend-private-connectivity-cut-validation/proposal.md) — ratified N/E source scope at 2026-11-17T02:55:36.438Z; matching Ops/Tenant acceptance remains separate; [draft PR #1336](https://github.com/opensoft/openXfactory/pull/1336), not landed; no publication or rollout grant.
+
+- [fix-hosted-qualification-lease-budget](openspec/changes/fix-hosted-qualification-lease-budget/proposal.md)
+  — draft qualification-only private-read amendment; source ratification pending.
+  [Design](openspec/changes/fix-hosted-qualification-lease-budget/design.md) ·
+  [Requirements](openspec/changes/fix-hosted-qualification-lease-budget/specs/hosted-qualification-lease-budget/spec.md) ·
+  [Handoff](openspec/changes/fix-hosted-qualification-lease-budget/tasks.md) ·
+  [Evidence](openspec/changes/fix-hosted-qualification-lease-budget/evidence.md).
+
+- [add-protected-runtime-report](openspec/changes/add-protected-runtime-report/proposal.md)
+  — draft T012T report-source decision; not ratified or commissioned for implementation.
+  [Design](openspec/changes/add-protected-runtime-report/design.md) ·
+  [Requirements](openspec/changes/add-protected-runtime-report/specs/protected-runtime-report/spec.md) ·
+  [Handoff](openspec/changes/add-protected-runtime-report/tasks.md) ·
+  [Preparation evidence](openspec/changes/add-protected-runtime-report/evidence.md).
+  The sole implementation list remains openXwallet feature017; setup/dispatch remain unauthorized.
+
+- [register-private-connectivity-release-members](openspec/changes/register-private-connectivity-release-members/proposal.md) — source scope ratified 2026-11-15 by Brett Heap in draft [PR #1327](https://github.com/opensoft/openXfactory/pull/1327); for the exact T018 release-builder/test additions and evidence-safe definition refinement. Preserves the current T020 actual packet until its distinct authentication/default verification; allocates no release version or tag.
 - [remediate-p1-security-boundaries](openspec/changes/remediate-p1-security-boundaries/proposal.md)
   — draft implementation packet for Brett Heap's 2026-11-15 direction to fix
   legacy P1 security boundaries. [Feature 045](specs/045-p1-security-boundaries/spec.md)
@@ -11983,3 +12006,9 @@ measurement without treating them as passing acceptance.
 
 - [Sonar quality remediation and measured main acceptance](specs/044-sonar-quality-remediation/README.md)
 - [Older Sonar reliability/security backlog](specs/044-sonar-quality-remediation/legacy-sonar-backlog.md)
+
+OpenSpec CLI maintenance: [npm legacy checksum compatibility](specs/046-npm-legacy-checksum/plan.md).
+
+Verified supplied CLI maintenance: [feature 047 plan](specs/047-vendored-cli-source/plan.md).
+
+Private-connectivity QA preparation: [Q1 dossier](specs/043-private-connectivity-production/review/qa-q1-approval-packet.md) and [release prerequisites](specs/043-private-connectivity-production/review/release-prerequisites.md). These are draft approval packets; no rollout gate is advanced.

@@ -45,3 +45,16 @@ Any material candidate, profile, provider, identity, region or policy change get
 Q5 names a commercial offer or an individual expansion wave; it is not a blanket fleet authorization. Customer cohort, profile, region, resources, spend and current release authority constrain admission. The next wave needs its own decision against current evidence.
 
 Decision ownership and missing inputs are recorded in [commissioning](commissioning.md); offering-specific cases are in the [local](local-headscale.md), [standalone managed](standalone-hosted-headscale.md) and [hosted domain](hosted-domainxfactories.md) specifications. The [instance dependency contract](contracts/task-evidence.md#per-instance-q3q5-dependencies) permits only a genuinely passed same-scope child to advance independently of unrelated pending aggregates. All program Q2 coverage remains required; commercial offer admission precedes its first expansion wave, and aggregate completion requires all commissioned instances.
+
+## Approved internal execution amendment
+
+The [actual root](../../openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md) permits a distinct Codex decision actor after
+qualified protected-base activation. It supplies no observed pass. Q0 still
+requires actual source commissioning; T049/T050 and current C-03-C-08 remain
+prerequisites to Q1. Q2 retains all four paths and the selected Windows/Linux
+matrix; Q3 is per instance; Q4 requires each actual approved window, incident
+closure and fresh acceptance. The conditional T061 internal-program-handoff
+joins all three actual Q4 children only afterward. Existing child cases and
+dependencies remain independent. T062-T068/external Q5 and macOS stay pending.
+A missing review, expired/revoked root, failed observation, uncomputed required
+Sonar gate, out-of-envelope target or financial need never becomes acceptance.

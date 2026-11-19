@@ -1,6 +1,6 @@
 schema_version: 1
 # Aggregate contract bundle release; must stay in sync with contracts/CHANGELOG.md.
-contract_bundle_version: contract-v4.2
+contract_bundle_version: contract-v4.3
 # source_compatibility_ref.local_source_path (a host-absolute developer path)
 # was removed at contract-v1.10 after the recorded supported-consumer audit
 # proved no supported consumer requires it; canonical repository and source
@@ -3777,3 +3777,35 @@ contracts:
       only shared layer. Pin the exact openxFactory commit with this row's
       per-file sha256 verified before any copy is treated as current; the
       runbook is `docs/factory-mcp-conformance.md`.
+
+  - id: private-connectivity-binding
+    path: contracts/private-connectivity/binding.schema.json
+    type: schema
+    schema_version: 1
+    sha256: 3f71586c590583e602c7a3e8542b0f64abad131f418b63f6acfd99da606cc430
+    compatibility: canonical_openxfactory_contract
+    adapter_owner: openxFactory
+
+  - id: private-connectivity-contract
+    path: contracts/private-connectivity/README.md
+    type: documentation
+    schema_version: 1
+    sha256: 9ad9be8b943a096bef73bff4d6cbd467ce7fd4b3c4e69d719e1f153ab4f33be7
+    compatibility: canonical_openxfactory_contract
+    adapter_owner: openxFactory
+
+  - id: private-connectivity-conformance
+    path: contracts/private-connectivity/conformance.json
+    type: fixture
+    schema_version: 1
+    sha256: 0fc733f3cf69cc90a57864ffcfc5c101a63bdac2e509607d6734c3125f4d18b3
+    compatibility: canonical_openxfactory_contract
+    adapter_owner: openxFactory
+
+  - id: private-connectivity-conformance-validator
+    path: scripts/validate-private-connectivity.py
+    type: tool
+    schema_version: 1
+    sha256: c8b83cd53edd031d49bd8dc31a18b24087e73c046267b58b81b4ca690cac0119
+    compatibility: canonical_openxfactory_contract
+    adapter_owner: openxFactory

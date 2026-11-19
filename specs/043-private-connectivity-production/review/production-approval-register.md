@@ -4,20 +4,75 @@ Status: draft
 Kind: review-packet
 Prepared: 2026-11-14
 
-This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T012 and T016 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required at their consumers. Coordinator #1310 is authorized for source-only review and landing; Ops #628, codeXfactory #583 and Headscale-Install #2 remain draft.
+This is a review index for the remaining owner and operating decisions. It does not replace the frozen task contract, authenticate unseen output or advance a gate. The sole implementation list is [043 tasks](../tasks.md); T001–T012, T016 and T020 are complete, while full Q0 remains pending. Brett accepted the five exact component source scopes and source-only custody on 2026-11-14; their consumed operating choices and actual evidence remain required at their consumers. Coordinator #1310 has landed source-only with all actual post-merge checks passed. The actual T020 packet is authenticated and default-verified; Ops #628, codeXfactory #583, Headscale-Install #2 and the new coordinator evidence PR remain draft.
 
-## Current source handoff
+## Current admission after T013 authentication
+
+Brett Heap authenticated the exact T013 packet at 2026-11-16T23:54:13.808Z.
+Manifest 53c2b0700e342b77196980a617dea7fc2fa33512 and canonical content SHA-256
+f91b58db2fe5302a9c08e9fc2bafbeb3f9947ce4351dcadf5e450bd6eeb6bdc6 are unchanged. The genuine original user-record
+SHA-256 is 91812de62be164256e848d8706226655231e62f8c1b7f47c4b83f62c1a5f9290.
+
+After recording that decision, full default T013/T010 dependency verification
+and both T013/control read-only inventory checks passed from 2026-11-16T23:57:08.543977+00:00 to
+2026-11-16T23:57:15.400535+00:00 against authenticated control 1fb3a6a8188a4b051693ac2cd93920f4e69b0d0b,
+whole-file SHA-256 02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326. T013 is complete: 17/68
+source tasks are checked. All remaining task metadata and frozen inputs are unchanged.
+
+The earlier dated handoffs below retain their historical then-current states.
+T014/T015/T017 and full Q0 remain incomplete. T018/T019/T023 release prerequisites
+still block their consuming runtime work. All seven open source/preparation PRs
+remain draft; no version/tag, deployment, C-03 or Q1-Q5 acceptance is granted.
+
+## Hosted source decision and QA preparation, 2026-11-16
+
+Brett's actual source-choice approval at 22:16:06.872Z is recorded in
+[the Hosted commissioning review](../../../openspec/changes/commission-hosted-headscale-production/review/qa-commissioning.md).
+The actual T013 source audit passed all three frozen cases and pinned strict
+validation; [its new authentication review](../../../openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md)
+is pending. T013 remains unchecked. The accepted 16 prior source tasks retain
+their immutable controls and actual authentication.
+
+The [QA dossier](qa-q1-approval-packet.md) links draft Ops #637 and Tenant #350
+for exact source/target scope review. These proposals do not change the 68-task
+definition. The [release preflight](release-prerequisites.md) supplies actual
+refreshed tests and preview/readback results, with T018/T019/T023 publication
+and all live gates still incomplete. Existing component and all preparation
+PRs remain draft.
+
+## Current preparation handoff — 2026-11-16
+
+T001-T012, T016 and T020-T022 are complete as authenticated source tasks
+(16/68). Coordinator #1327 landed source-only; GitHub recorded #1325 indirectly
+merged through its already-contained head. Headscale-Install #2, Ops #628 and
+codeXfactory #583 remain open drafts.
+
+Brett approved the exact private Hosted plan and Q0-H source choices at
+2026-11-16T22:16:06.872Z. The immutable reviewed private plan is linked from
+the [Hosted decision record](../../../openspec/changes/commission-hosted-headscale-production/review/qa-commissioning.md).
+Actual T013 source-output authentication/default admission remains due; no
+T013 completion or full Q0 pass is inferred from this source decision.
+
+The [release preflight](release-prerequisites.md) and
+[QA Q1 dossier](qa-q1-approval-packet.md) prepare the remaining exact decisions.
+The private Hosted Services planning PR also remains draft. No target,
+resource, identity, DNS, retention or staging operation is authorized.
+The earlier tables and chronology below preserve prior handoff states and
+must not be treated as current release, draft-state or gate acceptance.
+
+## Earlier source handoff (historical)
+
 
 | Item | Current state and next acceptance |
 | --- | --- |
 | T010 E, T016 N, T011 L | Actual packets authenticated, default commands passed and tasks complete; exact historical anchors are recorded below |
 | T012 I | Actual installer packet authenticated at 2026-11-14T22:31:50.896Z; default T012/T010/T011/T016 commands passed against accepted control 35e98a276fbd51c7cdfe89203a3eecbff1266f4f, preserving core b34071e4b290a4e5f58e5bb7bce9b2dee0a16cd18b40d51563c0d9f480c28beb |
-| T020 package source | [Headscale-Install draft #2](https://github.com/opensoft/Headscale-Install/pull/2) at 9109eeae4313473e3b46dbf5f17628755e6b4729 has 45 passing source tests (19 new), a green owner-qualification check and an exact-head Codex no-new-findings receipt; T020 is not admitted or complete |
-| Private CI/custody scope | [Ratified source-CI extension](../../../openspec/changes/extend-private-connectivity-source-ci/proposal.md) accepts bounded commit-metadata proof in both coordinator CI lanes. Brett authenticated manifest 95abc40b8e and default expanded T010 passed. Subsequent source repairs have independent CI/review observations; the authenticated control is unchanged. Trusted-base availability remains due before private dependent admission |
+| T020 package source | [Headscale-Install draft #2](https://github.com/opensoft/Headscale-Install/pull/2) at 9b4c6106633d5d28b777ef00f1d9bd695588efcf has a fresh 45-test source run (19 package regressions, zero skips), green exact-head owner CI and both real coordinator private-proof lanes passed. Brett authenticated manifest 991ebfc0e5/core f9d89883516aa147f3b0054b7132f1f53b66bd948c2c5834b2d9a4cea3dd3332 at 2026-11-15T21:23:43.887Z. [Accepted actual review](https://github.com/opensoft/openXfactory/blob/dec5161531d71c3cbe41b55e0e7b3c52c91c0bf7/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md) and [accepted control](https://github.com/opensoft/openXfactory/blob/c4e380b43e27093a2a3b99264a3fb52a6cf36c21/specs/043-private-connectivity-production/evidence/commissioning.json) passed full default T020 and prerequisite/inventory verification; T020 is complete |
+| Private CI/custody scope | [Ratified source-CI extension](../../../openspec/changes/extend-private-connectivity-source-ci/proposal.md) accepts bounded commit-metadata proof in both coordinator CI lanes. Brett authenticated manifest 95abc40b8e and default expanded T010 passed. Subsequent source repairs have independent CI/review observations; the authenticated control is unchanged. The authenticated producer is now available on trusted main at 6e2f829b16275827a0b73308623164fa099a7ae9. Actual new private-proof CI and authentication/default admission remain required |
 | T013–T015 / T017 | Concrete consumed provider/domain/integration/operating choices and actual per-owner evidence remain due; full Q0 remains pending |
 | Release and Q1–Q5 | Actual cut/publication authority, runtime qualification, target operations and rollout acceptances remain separate and ungranted |
 
-The four source PRs are coordinator #1310, Ops #628, codeXfactory #583 and Headscale-Install #2. On 2026-11-15 Brett authorized preparing only #1310 for source-only landing, marking it ready, requesting the required approval and merging after its check/review prerequisites. Post-merge CI and trusted-base readback must pass before T020 resumes. Ops #628, codeXfactory #583 and Headscale-Install #2 remain draft. T020's actual packet still needs separate authentication before default admission. The chronology below preserves earlier preparation states and failed attempts; the current handoff table governs the status reported by this index.
+The four source PRs are coordinator #1310, Ops #628, codeXfactory #583 and Headscale-Install #2. On 2026-11-15 Brett authorized preparing only #1310 for source-only landing, marking it ready, requesting the required approval and merging after its check/review prerequisites. All post-merge checks and trusted-base readback passed at 6e2f829b16275827a0b73308623164fa099a7ae9 before the fresh T020 source run. The standing author-owned approval override was used only for missing review after all checks cleared; no independent approval is recorded. Ops #628, codeXfactory #583 and Headscale-Install #2 remain draft. T020's new actual packet has now received separate human authentication and passed default admission; its coordinator evidence PR stays draft. The chronology below preserves earlier preparation states and failed attempts; the current handoff table governs the status reported by this index.
 
 ## Prepared source decisions
 
@@ -172,3 +227,11 @@ Default T010/T011/T012/T016 verification, both T010 inventory checks, the three 
 Brett's current instruction is: "Go ahead and prepare PR #1310 for source-only landing, mark it ready, request the required approval, and merge once checks and approval are satisfied. Verify post-merge CI, then resume T020 and present its actual evidence packet for authentication. Keep the other three PRs draft and honor Q0–Q5."
 
 Landing preparation incorporates current main while preserving the accepted control, actual original outputs, historical source anchors and complete frozen definition. This changes the earlier draft-only restriction for #1310 alone. It grants no new output authentication, task completion, neutral release cut, version/tag, private source publication, target operation, deployment, enrollment, spend or commercial acceptance. The managing source/CI producer must be independently available on the trusted base before a private T020 binding is introduced. Full program Q0 and Q1-Q5 remain pending.
+
+## Actual T020 authentication and default admission — 2026-11-15
+
+Brett authenticated the exact T020 packet at 2026-11-15T21:23:43.887Z after the 1,197 affected local regressions, both actual private-proof CI lanes, Sonar and exact-head Codex review had passed. The accepted authentication record preserves the original user decision, its record digest and the actual public CI run/job observations; private source/output remains exclusively in its private owner Git. The accepted control c4e380b43e27093a2a3b99264a3fb52a6cf36c21, file SHA-256 902903efb19398d014ef2c84acd6afa227c0cc97ee4df87f5d9cecf56fd29816, preserves core f9d89883516aa147f3b0054b7132f1f53b66bd948c2c5834b2d9a4cea3dd3332. No source_container, historical binding, original receipt or complete task definition changed.
+
+The full default T020 command passed after that actual decision, using the independently pinned control and the actual private owner Git root. Default T010/T011/T012/T016 and exact commissioning/T020 inventories also passed. T020 is checked only after these passes; current completed total is 14 of 68. T021/T022 may proceed as the next local source tasks under their already accepted exact scopes. The separately ratified register-private-connectivity-release-members scope may now prepare its bounded definition refinement with this accepted historical control fixed before any refresh. Its changed E source/CI outputs still need separate actual authentication before use.
+
+No supported version, cut, tag, deployment, live host, enrollment, paid execution, full Q0, Q1-Q5 or commercial acceptance is supplied by this decision. All source PRs remain draft. The earlier chronology retains the observations and pending boundaries that applied at each earlier point.

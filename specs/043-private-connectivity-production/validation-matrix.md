@@ -66,3 +66,19 @@ Q5 checks current exact eligibility and the bounded commercial offer/wave. A mat
 Local planning validation is separate from the source commands and observed cases above. Q0 is not accepted and Q1–Q5 have not run. No owner source test, required CI, release publication, target execution or live result is claimed by this matrix.
 
 T005 freezes this matrix for owner review together with the task/owner/case/dependency registry in the [review freeze](contracts/task-evidence.md#t005-review-freeze). The [evidence scope](../../openspec/changes/commission-private-connectivity-production-evidence/proposal.md) is now ratified at T006 with the source-only custody policy; the [neutral publication scope](../../openspec/changes/publish-private-connectivity-production-contract/proposal.md) remains draft and T016 is unaccepted. This pass stops before T007. A document freeze supplies no owner or live-gate authority by itself.
+
+## Approved internal execution amendment
+
+The [accepted root](../../openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md) adds source regressions for genuine root/actor/
+time/scope, arbitrary root/producer refusal, pre-activation refusal, actual
+provider job/head/conclusion/step identity, missing independent review,
+expired/revoked authority, copied outputs and source-as-runtime substitution.
+The read-only verifier must neither issue grants nor execute target commands.
+Its historical controls remain intact; qualified attestor readbacks are
+separate from structural checks.
+
+For internal T061, prove one valid child can pass while others remain pending;
+require all three actual Q4 offerings and full operator/release/CI/custody
+handoff for the internal join; reject missing/foreign children and every attempt
+to use that handoff as T062-T068 or external Q5. Initial Windows/Linux support
+does not qualify macOS. Every original Q0-Q5 case and numeric limit remains.

@@ -524,7 +524,7 @@ def test_shape_c_judges_dispositions_as_absent_is_empty_and_refuses_a_non_list()
 
 
 def test_dispositions_null_is_accepted_and_a_mapping_is_refused_malformed():
-    """(PR #1040 fix round 1, R5). `validate-openspec-cli-pin.py:933-935`
+    """(PR #1040 fix round 1, R5). `validate-openspec-cli-pin.py:946-948`
     treats `raw is None` as empty (`if raw is None: return []`), so an adapter
     refusing `dispositions: null` would be WIDER than the guard it tracks."""
     base = _base("c")
@@ -608,11 +608,11 @@ def _entry_without(*keys: str) -> dict:
 #: branches, which a test covering only one representative per row would leave
 #: untested, plus the one-based-index case.
 _ENTRY_REFUSALS: tuple[tuple, ...] = (
-    # row 2 (`:945-949`) — an entry that is not a mapping at all
+    # row 2 (`:958-962`) — an entry that is not a mapping at all
     ("row2-null", [None], "dispositions[1]", ps.NOT_A_MAPPING, "None", True),
     ("row2-bare-string", ["a"], "dispositions[1]", ps.NOT_A_MAPPING, "'a'",
      True),
-    # row 3 (`:950-959`) — FALSEY, not merely absent, over the six required keys
+    # row 3 (`:963-972`) — FALSEY, not merely absent, over the six required keys
     ("row3-empty-mapping", [{}], "dispositions[1]", ps.MISSING,
      "repo, item, path, finding, why, cited_to", True),
     ("row3-no-cited_to", [_entry_without("cited_to")], "dispositions[1]",
@@ -639,7 +639,7 @@ _ENTRY_REFUSALS: tuple[tuple, ...] = (
      ps.MALFORMED, "level 'WARNING' is outside ERROR", True),
     ("row5-level-empty-string", [_entry(level="")], "dispositions[1]",
      ps.MALFORMED, "level '' is outside ERROR", True),
-    # row 6 (`:981-987`) — neither authority spelling
+    # row 6 (`:994-1000`) — neither authority spelling
     ("row6-no-authority", [_entry_without("ratified_by")], "dispositions[1]",
      ps.MISSING, "ratified_by or recorded_by", True),
     # THE INDEX IS ONE-BASED AND IT IS THE GUARD'S OWN: a VALID first entry and
@@ -781,7 +781,7 @@ def test_the_two_corrected_readings_are_transcribed_exactly(cli_verifier):
     """§ 3.7's two boundary cases — D-1's "TWO READINGS THE MEASUREMENT
     CORRECTED", each a transcription trap that a plausible reading falls into.
 
-    (i) ROW 3 SUBSUMES THE FALSEY HALF OF ROW 4. `:950` tests TRUTHINESS
+    (i) ROW 3 SUBSUMES THE FALSEY HALF OF ROW 4. `:963` tests TRUTHINESS
     (`not entry.get(key)`), so `cited_to: []` is refused at `:827` as the
     MISSING key and never reaches `:837`'s citation-shape refusal. A
     transcription ordering the two the other way would name the wrong reading in
@@ -814,8 +814,8 @@ def test_the_two_corrected_readings_are_transcribed_exactly(cli_verifier):
 
 #: WHAT "EMPTY" MEANS FOR `dispositions:`, MEASURED AT THE GUARD AND NOT READ
 #: OFF THE WORD "FALSEY" — `(case, value, accepted, the member a refusal names)`.
-#: `:933-935` tests `raw is None` and NOTHING WEAKER, so `null` is EMPTY while
-#: `""`, `0` and `False` are PRESENT NON-SEQUENCES and refused at `:936-941`, at
+#: `:946-948` tests `raw is None` and NOTHING WEAKER, so `null` is EMPTY while
+#: `""`, `0` and `False` are PRESENT NON-SEQUENCES and refused at `:949-954`, at
 #: the MEMBER grain; `[]` is an empty sequence and empty; `[{}]` is a present
 #: sequence whose ENTRY the guard refuses, at the ENTRY grain. The guard is
 #: CALLED on every row below, so this table is the GUARD'S definition rather
@@ -837,7 +837,7 @@ _DISPOSITIONS_FALSEY: tuple[tuple, ...] = (
 def test_dispositions_is_empty_only_when_it_is_null_or_a_sequence(
         cli_verifier, value, accepted, named):
     """THE NON-NULL RULE, CASE BY CASE, WITH THE GUARD AS THE DEFINITION.
-    `pinned_dispositions` reads `if raw is None: return []` (`:933-935`) — an
+    `pinned_dispositions` reads `if raw is None: return []` (`:946-948`) — an
     IDENTITY test, not a truthiness test — so the member's empty readings are
     `null` and an empty SEQUENCE and nothing else, and a `""`, a `0` or a
     `False` is a present value that is not a list of entries. The two grains
@@ -868,7 +868,7 @@ def test_the_partition_reaches_only_the_optional_member_with_a_pure_guard():
     TODAY THAT IS `dispositions:` AND NOTHING ELSE. `pinned_dispositions` is
     PURE and SOURCE-FREE (`:794`, called at CHECK 1 before anything is fetched),
     so the positive-resolution reading can hold a PRESENT `dispositions:` to its
-    ENTRY grain: `null` and an empty sequence stay EMPTY (`:933-935` tests
+    ENTRY grain: `null` and an empty sequence stay EMPTY (`:946-948` tests
     `raw is None`, an identity test), any OTHER falsey non-null value is a
     present non-sequence and is refused at the MEMBER grain, and a sequence
     carrying an entry that guard refuses is refused at the ENTRY grain.
@@ -915,18 +915,18 @@ def test_the_optional_arms_citations_split_absent_is_empty_from_the_entry_grain(
     citations now SPLIT, and the split is the reason the optional arm can be a
     CALL at all:
 
-    - `:933` is the ABSENT-IS-EMPTY line, it is the one that reads
+    - `:1021` is the ABSENT-IS-EMPTY line, it is the one that reads
       `pin.get("dispositions")`, and it carries NO guard — there is nothing to
       CALL for an absent member, which is exactly why the equivalence test's
       guard leg ranges over the REQUIRED table (`_tracked_table`) and why THIS
       test is a PARALLEL HELPER for the optional arm rather than a widening of
       that leg;
-    - `:945`, `:950`, `:961`, `:970` and `:981` are the ENTRY-GRAIN conditions,
+    - `:960`, `:965`, `:976`, `:985` and `:996` are the ENTRY-GRAIN conditions,
       they read the ENTRY and NOT `pin.get("dispositions")`, and they DO have
       something to call — `pinned_dispositions` — so each names that guard and
       carries the condition text it was measured at, re-read here.
 
-    The last assertion is task 3.3's own prohibition, encoded: `:945` onwards
+    The last assertion is task 3.3's own prohibition, encoded: The entry-grain sites
     MUST NOT be cited as though it read the member."""
     member = {m.spellings[0]: m for m in ps.SHAPE_C.optional}["dispositions"]
     lines = (REPO_ROOT / _CLI_PIN).read_text(encoding="utf-8").splitlines()
@@ -934,10 +934,10 @@ def test_the_optional_arms_citations_split_absent_is_empty_from_the_entry_grain(
     absent_is_empty = [c for c in member.citations if c.guard is None]
     entry_grain = [c for c in member.citations if c.guard is not None]
 
-    assert [c.line for c in absent_is_empty] == [933]
-    assert 'pin.get("dispositions")' in lines[932]
+    assert [c.line for c in absent_is_empty] == [1021]
+    assert 'pin.get("dispositions")' in lines[1020]
 
-    assert [c.line for c in entry_grain] == [945, 950, 961, 970, 981]
+    assert [c.line for c in entry_grain] == [960, 965, 976, 985, 996]
     assert {c.guard for c in entry_grain} == {"pinned_dispositions"}
     assert callable(cli_verifier.pinned_dispositions)
     for citation in entry_grain:

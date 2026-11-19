@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-11-17
+skip_specs: true
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-17-preserve-delegated-source-proof-bootstrap
+  reason: Preserve the existing private source proof bootstrap after the protected main commissioning record adopts delegated source authentication.
+  proposed_by: Codex under the finite internal-production preparation authority
+  proposed_on: '2026-11-17'
+related:
+  - openXfactory:change:extend-private-connectivity-source-ci
+  - openXfactory:change:authorize-private-connectivity-internal-production

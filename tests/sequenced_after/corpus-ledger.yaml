@@ -155,6 +155,7 @@ rows:
   add-proposal-supporting-doc-lifecycle: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   add-propose-verb: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   add-protected-runtime-hosting-issuance: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1317", moved_on: "2026-11-14"}
+  add-protected-runtime-report: {state: active, class: sole, declares: [add-protected-runtime-hosting-issuance, fix-hosted-staging-refresh-budget], depth: 3, prose: false, moved_by: "#1332", moved_on: "2026-11-16"}
   add-register-edit-lane: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#666", moved_on: "2026-09-04"}
   add-release-inventory-drift-check: {state: archived, class: co-modifier, declares: absent, prose: true, moved_by: "#623", moved_on: "2026-09-03"}
   add-release-realization-flow: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
@@ -230,6 +231,7 @@ rows:
   amend-worker-input-budget-dispatch-wording: {state: archived, class: co-modifier, declares: [add-worker-input-budget], depth: 1, prose: false, moved_by: "#1269", moved_on: "2026-10-08"}
   apply-branch-sessions-deltas: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   assert-review-lane-lockstep-against-aggregation: {state: active, class: sole, declares: [mirror-floor-regeneration-automation], depth: 2, prose: false, moved_by: "#1145", moved_on: "2026-09-22"}
+  authorize-private-connectivity-internal-production: {state: active, class: sole, declares: [qualify-private-connectivity-production, commission-private-connectivity-production-evidence, extend-private-connectivity-cut-validation], depth: 6, prose: false, moved_by: "#1339", moved_on: "2026-11-17"}
   bump-openspec-cli-pin-to-1.12: {state: archived, class: sole, declares: absent, prose: false, moved_by: "#847", moved_on: "2026-09-09"}
   clarify-avatar-revocation-client-enforced: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   classify-private-connectivity-source-tests: {state: active, class: sole, declares: [extend-private-connectivity-source-ci, remediate-sonar-findings-and-coverage], depth: 7, prose: false, moved_by: "#1310", moved_on: "2026-11-15"}
@@ -261,11 +263,13 @@ rows:
   establish-openxsoft-hosted-connectivity: {state: active, class: sole, declares: [add-private-connectivity], depth: 1, prose: false, moved_by: "#1301", moved_on: "2026-11-10"}
   exclude-worktrees-from-notebook-projection: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   extend-merge-master-envelope-to-floor-bot-lanes: {state: active, class: co-modifier, declares: [mirror-floor-regeneration-automation, codexFactory:add-floor-regeneration-automation, add-substantive-review-lane], depth: 2, prose: false, moved_by: "#959", moved_on: "2026-09-11"}
+  extend-private-connectivity-cut-validation: {state: active, class: sole, declares: [publish-private-connectivity-production-contract, register-private-connectivity-release-members, commission-private-connectivity-production-evidence], depth: 5, prose: false, moved_by: "#1336", moved_on: "2026-11-17"}
   extend-private-connectivity-source-ci: {state: active, class: sole, declares: [commission-private-connectivity-production-evidence, amend-private-connectivity-evidence-bootstrap], depth: 6, prose: false, moved_by: "#1310", moved_on: "2026-11-14"}
   extend-prose-tagging-target-to-pinned-capabilities: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#1042", moved_on: "2026-09-15"}
   fix-abandoned-session-cleanup-terminal-states: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   fix-content-resolution-conflation: {state: archived, class: sole, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   fix-hosted-protection-read-budget: {state: active, class: sole, declares: [add-protected-runtime-hosting-issuance], depth: 1, prose: false, moved_by: "#1322", moved_on: "2026-11-15"}
+  fix-hosted-qualification-lease-budget: {state: active, class: sole, declares: [add-protected-runtime-report], depth: 4, prose: false, moved_by: "#1334", moved_on: "2026-11-16"}
   fix-hosted-staging-refresh-budget: {state: active, class: sole, declares: [add-protected-runtime-hosting-issuance, fix-hosted-protection-read-budget], depth: 2, prose: false, moved_by: "#1326", moved_on: "2026-11-15"}
   fix-pin-value-boundary-and-sentinel-split: {state: archived, class: sole, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   fix-protected-runtime-dispatch-bootstrap: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1311", moved_on: "2026-11-13"}
@@ -294,6 +298,7 @@ rows:
   prefer-triad-project-shape: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#1281", moved_on: "2026-10-09"}
   prepare-openspec-1-12-readiness: {state: active, class: sole, declares: absent, prose: false, moved_by: "#834", moved_on: "2026-09-09"}
   prepare-protected-runtime-qualification: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1307", moved_on: "2026-11-12"}
+  preserve-delegated-source-proof-bootstrap: {state: active, class: sole, declares: [extend-private-connectivity-source-ci, authorize-private-connectivity-internal-production], depth: 7, prose: false, moved_by: "#1344", moved_on: "2026-11-17"}
   preserve-openspec-repository-casing: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1306", moved_on: "2026-11-12"}
   promote-credential-contracts: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   promote-workflow-gate-contract: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
@@ -313,6 +318,7 @@ rows:
   refresh-install-repository-enumerations-opsxfactory-gateway: {state: archived, class: co-modifier, declares: [refresh-install-repository-enumerations, amend-repo-boundary-governance-scope-first-line], depth: 2, prose: false, moved_by: "#1278", moved_on: "2026-10-08"}
   register-gate-rules-council-seats: {state: active, class: sole, declares: [add-wallet-carried-review-authority, openXwallet:widen-register-reader-for-a-second-council], depth: 1, prose: false, moved_by: "#717", moved_on: "2026-09-06"}
   register-private-connectivity-evidence-pins: {state: active, class: sole, declares: [implement-private-connectivity-binding], depth: 2, prose: false, moved_by: "#1303", moved_on: "2026-11-10"}
+  register-private-connectivity-release-members: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1327", moved_on: "2026-11-15"}
   relocate-review-authority-floor-mirror: {state: archived, class: co-modifier, declares: [mirror-floor-regeneration-automation, codexFactory:relocate-review-authority-floor], depth: 2, prose: false, moved_by: "#925", moved_on: "2026-09-10"}
   remediate-p1-security-boundaries: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1321", moved_on: "2026-11-15"}
   remediate-sonar-findings-and-coverage: {state: active, class: sole, declares: absent, prose: false, moved_by: "#1316", moved_on: "2026-11-14"}
