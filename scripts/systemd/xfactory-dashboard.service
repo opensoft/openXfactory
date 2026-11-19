@@ -34,7 +34,7 @@
 
 [Unit]
 Description=xFactory ideation dashboard (local multi-repository plane)
-Documentation=file:%h/projects/xFactory/openxFactory/docs/ideation-dashboard-session-runbook.md
+Documentation=file:%h/projects/xFactory/openDox/spec/docs/ideation-dashboard-session-runbook.md
 After=network-online.target
 
 [Service]
@@ -42,7 +42,7 @@ Type=exec
 # EDIT THIS PATH if the runtime lives in a different checkout. It is deliberately
 # not derived: a unit that guesses its own working tree is worse than one that
 # states it.
-ExecStart=%h/projects/xFactory/openxFactory-worktrees/change-add-wheel-action-verbs/scripts/reserve-dashboard.sh
+ExecStart=%h/projects/xFactory/openXfactory/scripts/reserve-dashboard.sh
 Restart=always
 RestartSec=3
 # The serve binds loopback only and writes into the checkout the gate acts on;
