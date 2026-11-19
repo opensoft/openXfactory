@@ -65,6 +65,10 @@ original authority and timestamps.
 
 A decision may appear valid under a different task, phase, scope or proof
 reference. Require a refusal for each substitution and for revoked authority.
+Exercise the exact original decision and proof under a different,
+unapproved successor definition. Separately change a decision-body field
+outside its scope while preserving the source scope, proof and approved
+successor. Require refusal in both cases.
 Prove the exact original scope retains its original review time and normal
 checks. Exercise fresh source approval through the current-definition path.
 Demonstrate effect and runtime refusal with the historical proof.

@@ -18,8 +18,10 @@ authorization and qualification of the existing task scopes.
 ## 2. Qualification and custody handoff
 
 - [ ] 2.1 Verify the retained proof, fresh path, substitution and revocation
-  refusals with the existing reader suites. Qualify the successor's T010
-  commissioning and historical controls using current required CI and
+  refusals with the existing reader suites. Independently reject an
+  unapproved successor and a changed non-scope decision field with all
+  other binding inputs intact. Qualify the successor's T010 commissioning
+  and historical controls using current required CI and
   protected source authentication before the private archive write.
 - [ ] 2.2 Under the qualified successor, verify the exact one-path Ops C-01
   and C-08 authority and the complete freeze before the archive write. After
