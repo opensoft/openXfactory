@@ -1,1037 +1,136 @@
 {
-  "accountable_owner": "Brett Heap",
-  "actor": "Codex",
-  "evidence": [
-    {
-      "commit": "65fe30cf3ee23d2df5167a073ced7d406972ef33",
-      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-      "repository": "opensoft/openxfactory",
-      "sha256": "329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1"
-    },
-    {
-      "commit": "fdb926547dfa166661d5b57f7fa15ff54331f4b3",
-      "path": "evidence/private-connectivity-production/T021.json",
-      "repository": "opensoft/headscale-install",
-      "sha256": "6d3f436575702605f7c080cbec5a4b11a81ab2e3d2d5b5b18a8bb4313d6aaab3"
-    },
-    {
-      "commit": "b3c3bd01bc3f50d62b475dda81a58d5538b86fbd",
-      "path": "evidence/private-connectivity-production/T022.json",
-      "repository": "opensoft/headscale-install",
-      "sha256": "814c28132cdbf64fb3a6b2a63448fb3b8b953672dec29db09bc098bb870a1d08"
-    },
-    {
-      "commit": "7dd716e81a1267e94b7af168d1135e44fe440e77",
-      "path": "specs/043-private-connectivity-production/evidence/T018.json",
-      "repository": "opensoft/openxfactory",
-      "sha256": "7d605dc486922abe2824dd9b8a17e60c44405b0c83f74555942e039741ba9e63"
-    },
-    {
-      "commit": "7dd716e81a1267e94b7af168d1135e44fe440e77",
-      "path": "specs/043-private-connectivity-production/evidence/T019.json",
-      "repository": "opensoft/openxfactory",
-      "sha256": "09aaecfae075d0fb080639ea0811d5fa7a81b0a17da80b6fc933fdc462830548"
-    }
-  ],
-  "independent_review": {
-    "commit": "30364d4f2dbe87682f836a88bb3b513559d71076",
+  "schema": "043-task-evidence-v1",
+  "task": "T018",
+  "instance": null,
+  "owner": "C",
+  "evidence_class": "release-N",
+  "scope": {
+    "candidate": "contract-v4.4",
+    "customer": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "neutral-contract",
+    "phase": "source",
+    "profile": "neutral-private-connectivity-contract",
+    "region": "not-applicable",
+    "run": "043-neutral-publication-v4.4",
+    "site": "not-applicable",
+    "target": "not-applicable",
+    "wave": "not-applicable"
+  },
+  "source": {
+    "repository": "opensoft/openxfactory",
+    "base": "59439fec61fddc76713dc9b726545296759de8cb",
+    "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+  },
+  "attempt": "043-t018-v4.4-observed-01",
+  "authority": {
+    "repository": "opensoft/openxfactory",
+    "commit": "70f4d0a2cb5976386055663df0e9b1030a3beb75",
     "path": "specs/043-private-connectivity-production/evidence/T018.json",
-    "repository": "opensoft/openxfactory",
-    "sha256": "ba85751379466e4c26096de5a4feb36835361791a1e4fbc19ceb70e0f4cdfe83"
+    "sha256": "658073db099e88b6a767e65748fd5f7a0b2857d65419e19d919d306bb3f7b2e0"
   },
-  "producer": {
-    "commit": "ba911daab0ed791641e19d7954f5b625a9b3c81c",
-    "path": "specs/043-private-connectivity-production/attest-delegated-evidence.py",
+  "verdict": "pass",
+  "command": "python3 scripts/validate-contract-release.py verify-commit --commit 3439ef61c289de06db9a7b76fc2511231e84d8a7 --json",
+  "output": {
     "repository": "opensoft/openxfactory",
-    "sha256": "da4ab3aca3759eb4b9c2b97bfffb621351201d0b969305125d62f78097a1e5f5"
+    "commit": "7dd716e81a1267e94b7af168d1135e44fe440e77",
+    "path": "specs/043-private-connectivity-production/evidence/T018.json",
+    "sha256": "7d605dc486922abe2824dd9b8a17e60c44405b0c83f74555942e039741ba9e63"
   },
-  "provider_observations": [
+  "artifacts": [
     {
-      "job": {
-        "check_run_url": "https://api.github.com/repos/opensoft/openXfactory/check-runs/134050047310",
-        "completed_at": "2026-11-17T13:29:13Z",
-        "conclusion": "success",
-        "created_at": "2026-11-17T12:47:34Z",
-        "head_branch": "043-private-connectivity-delegation-implementation",
-        "head_sha": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-        "html_url": "https://github.com/opensoft/openXfactory/actions/runs/44086456452/job/134050047310",
-        "id": 134050047310,
-        "labels": [
-          "ubuntu-latest"
-        ],
-        "name": "pytest-suite",
-        "node_id": "CR_kwDOTAvnrs8AAAAfNgFlTg",
-        "run_attempt": 1,
-        "run_id": 44086456452,
-        "run_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456452",
-        "runner_group_id": 0,
-        "runner_group_name": "GitHub Actions",
-        "runner_id": 1000179217,
-        "runner_name": "GitHub Actions 1000179217",
-        "started_at": "2026-11-17T12:47:35Z",
-        "status": "completed",
-        "steps": [
-          {
-            "completed_at": "2026-11-17T12:47:37Z",
-            "conclusion": "success",
-            "name": "Set up job",
-            "number": 1,
-            "started_at": "2026-11-17T12:47:36Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:37Z",
-            "conclusion": "success",
-            "name": "Rewrite ssh submodule URLs for token auth",
-            "number": 2,
-            "started_at": "2026-11-17T12:47:37Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:42Z",
-            "conclusion": "success",
-            "name": "Run actions/checkout@v4",
-            "number": 3,
-            "started_at": "2026-11-17T12:47:37Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:47Z",
-            "conclusion": "success",
-            "name": "Init the openXwallet, openXdox and openDox gitlinks (openDox and openXdox RECURSIVELY — § 5.2 reads their code legs)",
-            "number": 4,
-            "started_at": "2026-11-17T12:47:42Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:48Z",
-            "conclusion": "success",
-            "name": "Mint the decision-core read token (codeXfactory installation)",
-            "number": 5,
-            "started_at": "2026-11-17T12:47:47Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:50Z",
-            "conclusion": "success",
-            "name": "Check out the pinned decision core (freshness verifier only)",
-            "number": 6,
-            "started_at": "2026-11-17T12:47:48Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:50Z",
-            "conclusion": "success",
-            "name": "Say whether the freshness verifier will run",
-            "number": 7,
-            "started_at": "2026-11-17T12:47:50Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:51Z",
-            "conclusion": "success",
-            "name": "Plan private-connectivity commit proof (043)",
-            "number": 8,
-            "started_at": "2026-11-17T12:47:50Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:51Z",
-            "conclusion": "success",
-            "name": "Require the commissioned App identity (043)",
-            "number": 9,
-            "started_at": "2026-11-17T12:47:51Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:51Z",
-            "conclusion": "success",
-            "name": "Mint scoped Opensoft source read token (043)",
-            "number": 10,
-            "started_at": "2026-11-17T12:47:51Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:51Z",
-            "conclusion": "skipped",
-            "name": "Mint scoped domain source read token (043)",
-            "number": 11,
-            "started_at": "2026-11-17T12:47:51Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:52Z",
-            "conclusion": "success",
-            "name": "Prepare commit-only owner roots with the reviewed producer (043)",
-            "number": 12,
-            "started_at": "2026-11-17T12:47:51Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:52Z",
-            "conclusion": "success",
-            "name": "Revoke source tokens before any tests (043)",
-            "number": 13,
-            "started_at": "2026-11-17T12:47:52Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:53Z",
-            "conclusion": "success",
-            "name": "Run actions/setup-python@v5",
-            "number": 14,
-            "started_at": "2026-11-17T12:47:52Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:53Z",
-            "conclusion": "success",
-            "name": "Restore coordinator evidence history (043)",
-            "number": 15,
-            "started_at": "2026-11-17T12:47:53Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:53Z",
-            "conclusion": "success",
-            "name": "Run actions/setup-node@v4",
-            "number": 16,
-            "started_at": "2026-11-17T12:47:53Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:55Z",
-            "conclusion": "success",
-            "name": "Install the pinned OpenSpec CLI for tests/proposal-support",
-            "number": 17,
-            "started_at": "2026-11-17T12:47:53Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:58Z",
-            "conclusion": "success",
-            "name": "Run pip install --require-hashes -r requirements/hermes-runtime-contracts.lock --only-binary :all:",
-            "number": 18,
-            "started_at": "2026-11-17T12:47:55Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:59Z",
-            "conclusion": "success",
-            "name": "Install isolated hash-pinned analysis tooling",
-            "number": 19,
-            "started_at": "2026-11-17T12:47:58Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:48:00Z",
-            "conclusion": "success",
-            "name": "Verify real child coverage before the full suite",
-            "number": 20,
-            "started_at": "2026-11-17T12:47:59Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:49:20Z",
-            "conclusion": "success",
-            "name": "Preserve original bounded CLI checks",
-            "number": 21,
-            "started_at": "2026-11-17T12:48:00Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:49:21Z",
-            "conclusion": "success",
-            "name": "Prepare a fresh exact-source measurement",
-            "number": 22,
-            "started_at": "2026-11-17T12:49:20Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:24:50Z",
-            "conclusion": "success",
-            "name": "Run python3 -m pytest tests/ -q -m \"not postgres\" --junitxml=pytest-report.xml",
-            "number": 23,
-            "started_at": "2026-11-17T12:49:21Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:24:50Z",
-            "conclusion": "success",
-            "name": "Pin the triple and require the named freshness verifier",
-            "number": 24,
-            "started_at": "2026-11-17T13:24:50Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:28:49Z",
-            "conclusion": "success",
-            "name": "Run private-connectivity production source suites (043)",
-            "number": 25,
-            "started_at": "2026-11-17T13:24:50Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:28:49Z",
-            "conclusion": "success",
-            "name": "Remove ephemeral source proof (043)",
-            "number": 26,
-            "started_at": "2026-11-17T13:28:49Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:08Z",
-            "conclusion": "success",
-            "name": "Generate and verify exhaustive measured coverage",
-            "number": 27,
-            "started_at": "2026-11-17T13:28:49Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:09Z",
-            "conclusion": "success",
-            "name": "Publish same-run coverage evidence",
-            "number": 28,
-            "started_at": "2026-11-17T13:29:08Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:09Z",
-            "conclusion": "success",
-            "name": "Post Run actions/setup-node@v4",
-            "number": 51,
-            "started_at": "2026-11-17T13:29:09Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:09Z",
-            "conclusion": "success",
-            "name": "Post Run actions/setup-python@v5",
-            "number": 52,
-            "started_at": "2026-11-17T13:29:09Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:10Z",
-            "conclusion": "success",
-            "name": "Post Mint scoped Opensoft source read token (043)",
-            "number": 53,
-            "started_at": "2026-11-17T13:29:09Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:10Z",
-            "conclusion": "success",
-            "name": "Post Check out the pinned decision core (freshness verifier only)",
-            "number": 54,
-            "started_at": "2026-11-17T13:29:10Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:10Z",
-            "conclusion": "success",
-            "name": "Post Mint the decision-core read token (codeXfactory installation)",
-            "number": 55,
-            "started_at": "2026-11-17T13:29:10Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:10Z",
-            "conclusion": "success",
-            "name": "Post Run actions/checkout@v4",
-            "number": 56,
-            "started_at": "2026-11-17T13:29:10Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T13:29:10Z",
-            "conclusion": "success",
-            "name": "Complete job",
-            "number": 57,
-            "started_at": "2026-11-17T13:29:10Z",
-            "status": "completed"
-          }
-        ],
-        "url": "https://api.github.com/repos/opensoft/openXfactory/actions/jobs/134050047310",
-        "workflow_name": "pytest-suite"
-      },
-      "log_sha256": "a5b3796d64d76c31a532cab917143c00edb29f7facaee5c7d5aa808ecdc5a881",
-      "run": {
-        "actor": {
-          "avatar_url": "https://avatars.githubusercontent.com/u/1513478?v=4",
-          "events_url": "https://api.github.com/users/brettheap/events{/privacy}",
-          "followers_url": "https://api.github.com/users/brettheap/followers",
-          "following_url": "https://api.github.com/users/brettheap/following{/other_user}",
-          "gists_url": "https://api.github.com/users/brettheap/gists{/gist_id}",
-          "gravatar_id": "",
-          "html_url": "https://github.com/brettheap",
-          "id": 1513478,
-          "login": "brettheap",
-          "node_id": "MDQ6VXNlcjE1MTM0Nzg=",
-          "organizations_url": "https://api.github.com/users/brettheap/orgs",
-          "received_events_url": "https://api.github.com/users/brettheap/received_events",
-          "repos_url": "https://api.github.com/users/brettheap/repos",
-          "site_admin": false,
-          "starred_url": "https://api.github.com/users/brettheap/starred{/owner}{/repo}",
-          "subscriptions_url": "https://api.github.com/users/brettheap/subscriptions",
-          "type": "User",
-          "url": "https://api.github.com/users/brettheap",
-          "user_view_type": "public"
-        },
-        "artifacts_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456452/artifacts",
-        "cancel_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456452/cancel",
-        "check_suite_id": 119342304146,
-        "check_suite_node_id": "CS_kwDOTAvnrs8AAAAbyVsLkg",
-        "check_suite_url": "https://api.github.com/repos/opensoft/openXfactory/check-suites/119342304146",
-        "conclusion": "success",
-        "created_at": "2026-11-17T12:47:33Z",
-        "display_title": "Prepare bounded private-connectivity evidence qualification",
-        "event": "pull_request",
-        "head_branch": "043-private-connectivity-delegation-implementation",
-        "head_commit": {
-          "author": {
-            "email": "service@opensoft.dev",
-            "name": "Brett Heap"
-          },
-          "committer": {
-            "email": "service@opensoft.dev",
-            "name": "Brett Heap"
-          },
-          "id": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-          "message": "Execute checked reader bytes and constrain source-decision owners",
-          "timestamp": "2026-11-17T12:37:40Z",
-          "tree_id": "a18bc2483c09f1c03938c1290d9613fab01443e4"
-        },
-        "head_repository": {
-          "archive_url": "https://api.github.com/repos/opensoft/openXfactory/{archive_format}{/ref}",
-          "assignees_url": "https://api.github.com/repos/opensoft/openXfactory/assignees{/user}",
-          "blobs_url": "https://api.github.com/repos/opensoft/openXfactory/git/blobs{/sha}",
-          "branches_url": "https://api.github.com/repos/opensoft/openXfactory/branches{/branch}",
-          "collaborators_url": "https://api.github.com/repos/opensoft/openXfactory/collaborators{/collaborator}",
-          "comments_url": "https://api.github.com/repos/opensoft/openXfactory/comments{/number}",
-          "commits_url": "https://api.github.com/repos/opensoft/openXfactory/commits{/sha}",
-          "compare_url": "https://api.github.com/repos/opensoft/openXfactory/compare/{base}...{head}",
-          "contents_url": "https://api.github.com/repos/opensoft/openXfactory/contents/{+path}",
-          "contributors_url": "https://api.github.com/repos/opensoft/openXfactory/contributors",
-          "deployments_url": "https://api.github.com/repos/opensoft/openXfactory/deployments",
-          "description": "AI software factory workflow: Hermes, OpenSpec, Omnigent/Polly, Spec Kit, and GitHub",
-          "downloads_url": "https://api.github.com/repos/opensoft/openXfactory/downloads",
-          "events_url": "https://api.github.com/repos/opensoft/openXfactory/events",
-          "fork": false,
-          "forks_url": "https://api.github.com/repos/opensoft/openXfactory/forks",
-          "full_name": "opensoft/openXfactory",
-          "git_commits_url": "https://api.github.com/repos/opensoft/openXfactory/git/commits{/sha}",
-          "git_refs_url": "https://api.github.com/repos/opensoft/openXfactory/git/refs{/sha}",
-          "git_tags_url": "https://api.github.com/repos/opensoft/openXfactory/git/tags{/sha}",
-          "hooks_url": "https://api.github.com/repos/opensoft/openXfactory/hooks",
-          "html_url": "https://github.com/opensoft/openXfactory",
-          "id": 1275848622,
-          "issue_comment_url": "https://api.github.com/repos/opensoft/openXfactory/issues/comments{/number}",
-          "issue_events_url": "https://api.github.com/repos/opensoft/openXfactory/issues/events{/number}",
-          "issues_url": "https://api.github.com/repos/opensoft/openXfactory/issues{/number}",
-          "keys_url": "https://api.github.com/repos/opensoft/openXfactory/keys{/key_id}",
-          "labels_url": "https://api.github.com/repos/opensoft/openXfactory/labels{/name}",
-          "languages_url": "https://api.github.com/repos/opensoft/openXfactory/languages",
-          "merges_url": "https://api.github.com/repos/opensoft/openXfactory/merges",
-          "milestones_url": "https://api.github.com/repos/opensoft/openXfactory/milestones{/number}",
-          "name": "openXfactory",
-          "node_id": "R_kgDOTAvnrg",
-          "notifications_url": "https://api.github.com/repos/opensoft/openXfactory/notifications{?since,all,participating}",
-          "owner": {
-            "avatar_url": "https://avatars.githubusercontent.com/u/638385?v=4",
-            "events_url": "https://api.github.com/users/opensoft/events{/privacy}",
-            "followers_url": "https://api.github.com/users/opensoft/followers",
-            "following_url": "https://api.github.com/users/opensoft/following{/other_user}",
-            "gists_url": "https://api.github.com/users/opensoft/gists{/gist_id}",
-            "gravatar_id": "",
-            "html_url": "https://github.com/opensoft",
-            "id": 638385,
-            "login": "opensoft",
-            "node_id": "MDEyOk9yZ2FuaXphdGlvbjYzODM4NQ==",
-            "organizations_url": "https://api.github.com/users/opensoft/orgs",
-            "received_events_url": "https://api.github.com/users/opensoft/received_events",
-            "repos_url": "https://api.github.com/users/opensoft/repos",
-            "site_admin": false,
-            "starred_url": "https://api.github.com/users/opensoft/starred{/owner}{/repo}",
-            "subscriptions_url": "https://api.github.com/users/opensoft/subscriptions",
-            "type": "Organization",
-            "url": "https://api.github.com/users/opensoft",
-            "user_view_type": "public"
-          },
-          "private": false,
-          "pulls_url": "https://api.github.com/repos/opensoft/openXfactory/pulls{/number}",
-          "releases_url": "https://api.github.com/repos/opensoft/openXfactory/releases{/id}",
-          "stargazers_url": "https://api.github.com/repos/opensoft/openXfactory/stargazers",
-          "statuses_url": "https://api.github.com/repos/opensoft/openXfactory/statuses/{sha}",
-          "subscribers_url": "https://api.github.com/repos/opensoft/openXfactory/subscribers",
-          "subscription_url": "https://api.github.com/repos/opensoft/openXfactory/subscription",
-          "tags_url": "https://api.github.com/repos/opensoft/openXfactory/tags",
-          "teams_url": "https://api.github.com/repos/opensoft/openXfactory/teams",
-          "trees_url": "https://api.github.com/repos/opensoft/openXfactory/git/trees{/sha}",
-          "url": "https://api.github.com/repos/opensoft/openXfactory"
-        },
-        "head_sha": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-        "html_url": "https://github.com/opensoft/openXfactory/actions/runs/44086456452",
-        "id": 44086456452,
-        "jobs_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456452/jobs",
-        "logs_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456452/logs",
-        "name": "pytest-suite",
-        "node_id": "WFR_kwLOTAvnrs8AAAAKQ8HwhA",
-        "path": ".github/workflows/pytest-suite.yml",
-        "previous_attempt_url": null,
-        "pull_requests": [],
-        "referenced_workflows": [],
-        "repository": {
-          "archive_url": "https://api.github.com/repos/opensoft/openXfactory/{archive_format}{/ref}",
-          "assignees_url": "https://api.github.com/repos/opensoft/openXfactory/assignees{/user}",
-          "blobs_url": "https://api.github.com/repos/opensoft/openXfactory/git/blobs{/sha}",
-          "branches_url": "https://api.github.com/repos/opensoft/openXfactory/branches{/branch}",
-          "collaborators_url": "https://api.github.com/repos/opensoft/openXfactory/collaborators{/collaborator}",
-          "comments_url": "https://api.github.com/repos/opensoft/openXfactory/comments{/number}",
-          "commits_url": "https://api.github.com/repos/opensoft/openXfactory/commits{/sha}",
-          "compare_url": "https://api.github.com/repos/opensoft/openXfactory/compare/{base}...{head}",
-          "contents_url": "https://api.github.com/repos/opensoft/openXfactory/contents/{+path}",
-          "contributors_url": "https://api.github.com/repos/opensoft/openXfactory/contributors",
-          "deployments_url": "https://api.github.com/repos/opensoft/openXfactory/deployments",
-          "description": "AI software factory workflow: Hermes, OpenSpec, Omnigent/Polly, Spec Kit, and GitHub",
-          "downloads_url": "https://api.github.com/repos/opensoft/openXfactory/downloads",
-          "events_url": "https://api.github.com/repos/opensoft/openXfactory/events",
-          "fork": false,
-          "forks_url": "https://api.github.com/repos/opensoft/openXfactory/forks",
-          "full_name": "opensoft/openXfactory",
-          "git_commits_url": "https://api.github.com/repos/opensoft/openXfactory/git/commits{/sha}",
-          "git_refs_url": "https://api.github.com/repos/opensoft/openXfactory/git/refs{/sha}",
-          "git_tags_url": "https://api.github.com/repos/opensoft/openXfactory/git/tags{/sha}",
-          "hooks_url": "https://api.github.com/repos/opensoft/openXfactory/hooks",
-          "html_url": "https://github.com/opensoft/openXfactory",
-          "id": 1275848622,
-          "issue_comment_url": "https://api.github.com/repos/opensoft/openXfactory/issues/comments{/number}",
-          "issue_events_url": "https://api.github.com/repos/opensoft/openXfactory/issues/events{/number}",
-          "issues_url": "https://api.github.com/repos/opensoft/openXfactory/issues{/number}",
-          "keys_url": "https://api.github.com/repos/opensoft/openXfactory/keys{/key_id}",
-          "labels_url": "https://api.github.com/repos/opensoft/openXfactory/labels{/name}",
-          "languages_url": "https://api.github.com/repos/opensoft/openXfactory/languages",
-          "merges_url": "https://api.github.com/repos/opensoft/openXfactory/merges",
-          "milestones_url": "https://api.github.com/repos/opensoft/openXfactory/milestones{/number}",
-          "name": "openXfactory",
-          "node_id": "R_kgDOTAvnrg",
-          "notifications_url": "https://api.github.com/repos/opensoft/openXfactory/notifications{?since,all,participating}",
-          "owner": {
-            "avatar_url": "https://avatars.githubusercontent.com/u/638385?v=4",
-            "events_url": "https://api.github.com/users/opensoft/events{/privacy}",
-            "followers_url": "https://api.github.com/users/opensoft/followers",
-            "following_url": "https://api.github.com/users/opensoft/following{/other_user}",
-            "gists_url": "https://api.github.com/users/opensoft/gists{/gist_id}",
-            "gravatar_id": "",
-            "html_url": "https://github.com/opensoft",
-            "id": 638385,
-            "login": "opensoft",
-            "node_id": "MDEyOk9yZ2FuaXphdGlvbjYzODM4NQ==",
-            "organizations_url": "https://api.github.com/users/opensoft/orgs",
-            "received_events_url": "https://api.github.com/users/opensoft/received_events",
-            "repos_url": "https://api.github.com/users/opensoft/repos",
-            "site_admin": false,
-            "starred_url": "https://api.github.com/users/opensoft/starred{/owner}{/repo}",
-            "subscriptions_url": "https://api.github.com/users/opensoft/subscriptions",
-            "type": "Organization",
-            "url": "https://api.github.com/users/opensoft",
-            "user_view_type": "public"
-          },
-          "private": false,
-          "pulls_url": "https://api.github.com/repos/opensoft/openXfactory/pulls{/number}",
-          "releases_url": "https://api.github.com/repos/opensoft/openXfactory/releases{/id}",
-          "stargazers_url": "https://api.github.com/repos/opensoft/openXfactory/stargazers",
-          "statuses_url": "https://api.github.com/repos/opensoft/openXfactory/statuses/{sha}",
-          "subscribers_url": "https://api.github.com/repos/opensoft/openXfactory/subscribers",
-          "subscription_url": "https://api.github.com/repos/opensoft/openXfactory/subscription",
-          "tags_url": "https://api.github.com/repos/opensoft/openXfactory/tags",
-          "teams_url": "https://api.github.com/repos/opensoft/openXfactory/teams",
-          "trees_url": "https://api.github.com/repos/opensoft/openXfactory/git/trees{/sha}",
-          "url": "https://api.github.com/repos/opensoft/openXfactory"
-        },
-        "rerun_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456452/rerun",
-        "run_attempt": 1,
-        "run_number": 4795,
-        "run_started_at": "2026-11-17T12:47:33Z",
-        "status": "completed",
-        "triggering_actor": {
-          "avatar_url": "https://avatars.githubusercontent.com/u/1513478?v=4",
-          "events_url": "https://api.github.com/users/brettheap/events{/privacy}",
-          "followers_url": "https://api.github.com/users/brettheap/followers",
-          "following_url": "https://api.github.com/users/brettheap/following{/other_user}",
-          "gists_url": "https://api.github.com/users/brettheap/gists{/gist_id}",
-          "gravatar_id": "",
-          "html_url": "https://github.com/brettheap",
-          "id": 1513478,
-          "login": "brettheap",
-          "node_id": "MDQ6VXNlcjE1MTM0Nzg=",
-          "organizations_url": "https://api.github.com/users/brettheap/orgs",
-          "received_events_url": "https://api.github.com/users/brettheap/received_events",
-          "repos_url": "https://api.github.com/users/brettheap/repos",
-          "site_admin": false,
-          "starred_url": "https://api.github.com/users/brettheap/starred{/owner}{/repo}",
-          "subscriptions_url": "https://api.github.com/users/brettheap/subscriptions",
-          "type": "User",
-          "url": "https://api.github.com/users/brettheap",
-          "user_view_type": "public"
-        },
-        "updated_at": "2026-11-17T13:31:13Z",
-        "url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456452",
-        "workflow_id": 341583570,
-        "workflow_url": "https://api.github.com/repos/opensoft/openXfactory/actions/workflows/341583570"
-      },
-      "suites": {
-        "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
-        "specs/043-private-connectivity-production/tests/test_evidence.py": 711,
-        "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40,
-        "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
-      }
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/private-connectivity/README.md",
+      "sha256": "7e5abaabdfa3826acc9b0c7e4dc93025fbc9c76f5ffdc37ade683adb9f6fa7de"
     },
     {
-      "job": {
-        "check_run_url": "https://api.github.com/repos/opensoft/openXfactory/check-runs/134050046773",
-        "completed_at": "2026-11-17T12:52:26Z",
-        "conclusion": "success",
-        "created_at": "2026-11-17T12:47:34Z",
-        "head_branch": "043-private-connectivity-delegation-implementation",
-        "head_sha": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-        "html_url": "https://github.com/opensoft/openXfactory/actions/runs/44086456470/job/134050046773",
-        "id": 134050046773,
-        "labels": [
-          "ubuntu-latest"
-        ],
-        "name": "doc-health-py314",
-        "node_id": "CR_kwDOTAvnrs8AAAAfNgFjNQ",
-        "run_attempt": 1,
-        "run_id": 44086456470,
-        "run_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456470",
-        "runner_group_id": 0,
-        "runner_group_name": "GitHub Actions",
-        "runner_id": 1000179218,
-        "runner_name": "GitHub Actions 1000179218",
-        "started_at": "2026-11-17T12:47:35Z",
-        "status": "completed",
-        "steps": [
-          {
-            "completed_at": "2026-11-17T12:47:37Z",
-            "conclusion": "success",
-            "name": "Set up job",
-            "number": 1,
-            "started_at": "2026-11-17T12:47:36Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:37Z",
-            "conclusion": "success",
-            "name": "Rewrite ssh submodule URLs for token auth",
-            "number": 2,
-            "started_at": "2026-11-17T12:47:37Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:42Z",
-            "conclusion": "success",
-            "name": "Run actions/checkout@v4",
-            "number": 3,
-            "started_at": "2026-11-17T12:47:37Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:47Z",
-            "conclusion": "success",
-            "name": "Init the openXwallet, openXdox and openDox gitlinks (openDox and openXdox RECURSIVELY, as pytest-suite does)",
-            "number": 4,
-            "started_at": "2026-11-17T12:47:42Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:47Z",
-            "conclusion": "success",
-            "name": "Plan private-connectivity commit proof (043)",
-            "number": 5,
-            "started_at": "2026-11-17T12:47:47Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:47Z",
-            "conclusion": "success",
-            "name": "Require the commissioned App identity (043)",
-            "number": 6,
-            "started_at": "2026-11-17T12:47:47Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:48Z",
-            "conclusion": "success",
-            "name": "Mint scoped Opensoft source read token (043)",
-            "number": 7,
-            "started_at": "2026-11-17T12:47:47Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:48Z",
-            "conclusion": "skipped",
-            "name": "Mint scoped domain source read token (043)",
-            "number": 8,
-            "started_at": "2026-11-17T12:47:48Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:49Z",
-            "conclusion": "success",
-            "name": "Prepare commit-only owner roots with the reviewed producer (043)",
-            "number": 9,
-            "started_at": "2026-11-17T12:47:48Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:49Z",
-            "conclusion": "success",
-            "name": "Revoke source tokens before any tests (043)",
-            "number": 10,
-            "started_at": "2026-11-17T12:47:49Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:50Z",
-            "conclusion": "success",
-            "name": "Run actions/setup-python@v5",
-            "number": 11,
-            "started_at": "2026-11-17T12:47:49Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:50Z",
-            "conclusion": "success",
-            "name": "Restore coordinator evidence history (043)",
-            "number": 12,
-            "started_at": "2026-11-17T12:47:50Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:50Z",
-            "conclusion": "success",
-            "name": "Run python --version",
-            "number": 13,
-            "started_at": "2026-11-17T12:47:50Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:47:53Z",
-            "conclusion": "success",
-            "name": "Run pip install --require-hashes --only-binary :all: \\",
-            "number": 14,
-            "started_at": "2026-11-17T12:47:50Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:52:08Z",
-            "conclusion": "success",
-            "name": "Run python -m pytest tests/doc-health -q -rs",
-            "number": 15,
-            "started_at": "2026-11-17T12:47:53Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:52:23Z",
-            "conclusion": "success",
-            "name": "Exercise source proof under Python 3.14 (043)",
-            "number": 16,
-            "started_at": "2026-11-17T12:52:08Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:52:23Z",
-            "conclusion": "success",
-            "name": "Remove ephemeral source proof (043)",
-            "number": 17,
-            "started_at": "2026-11-17T12:52:23Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:52:23Z",
-            "conclusion": "success",
-            "name": "Post Run actions/setup-python@v5",
-            "number": 32,
-            "started_at": "2026-11-17T12:52:23Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:52:23Z",
-            "conclusion": "success",
-            "name": "Post Mint scoped Opensoft source read token (043)",
-            "number": 33,
-            "started_at": "2026-11-17T12:52:23Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:52:24Z",
-            "conclusion": "success",
-            "name": "Post Run actions/checkout@v4",
-            "number": 34,
-            "started_at": "2026-11-17T12:52:23Z",
-            "status": "completed"
-          },
-          {
-            "completed_at": "2026-11-17T12:52:24Z",
-            "conclusion": "success",
-            "name": "Complete job",
-            "number": 35,
-            "started_at": "2026-11-17T12:52:24Z",
-            "status": "completed"
-          }
-        ],
-        "url": "https://api.github.com/repos/opensoft/openXfactory/actions/jobs/134050046773",
-        "workflow_name": "doc-health-py314"
-      },
-      "log_sha256": "49cc6829dcf489bdc24c834fa1ea7f6d1ce7e8102dc6efd9d160c4e28a80b06e",
-      "run": {
-        "actor": {
-          "avatar_url": "https://avatars.githubusercontent.com/u/1513478?v=4",
-          "events_url": "https://api.github.com/users/brettheap/events{/privacy}",
-          "followers_url": "https://api.github.com/users/brettheap/followers",
-          "following_url": "https://api.github.com/users/brettheap/following{/other_user}",
-          "gists_url": "https://api.github.com/users/brettheap/gists{/gist_id}",
-          "gravatar_id": "",
-          "html_url": "https://github.com/brettheap",
-          "id": 1513478,
-          "login": "brettheap",
-          "node_id": "MDQ6VXNlcjE1MTM0Nzg=",
-          "organizations_url": "https://api.github.com/users/brettheap/orgs",
-          "received_events_url": "https://api.github.com/users/brettheap/received_events",
-          "repos_url": "https://api.github.com/users/brettheap/repos",
-          "site_admin": false,
-          "starred_url": "https://api.github.com/users/brettheap/starred{/owner}{/repo}",
-          "subscriptions_url": "https://api.github.com/users/brettheap/subscriptions",
-          "type": "User",
-          "url": "https://api.github.com/users/brettheap",
-          "user_view_type": "public"
-        },
-        "artifacts_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456470/artifacts",
-        "cancel_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456470/cancel",
-        "check_suite_id": 119342304195,
-        "check_suite_node_id": "CS_kwDOTAvnrs8AAAAbyVsLww",
-        "check_suite_url": "https://api.github.com/repos/opensoft/openXfactory/check-suites/119342304195",
-        "conclusion": "success",
-        "created_at": "2026-11-17T12:47:33Z",
-        "display_title": "Prepare bounded private-connectivity evidence qualification",
-        "event": "pull_request",
-        "head_branch": "043-private-connectivity-delegation-implementation",
-        "head_commit": {
-          "author": {
-            "email": "service@opensoft.dev",
-            "name": "Brett Heap"
-          },
-          "committer": {
-            "email": "service@opensoft.dev",
-            "name": "Brett Heap"
-          },
-          "id": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-          "message": "Execute checked reader bytes and constrain source-decision owners",
-          "timestamp": "2026-11-17T12:37:40Z",
-          "tree_id": "a18bc2483c09f1c03938c1290d9613fab01443e4"
-        },
-        "head_repository": {
-          "archive_url": "https://api.github.com/repos/opensoft/openXfactory/{archive_format}{/ref}",
-          "assignees_url": "https://api.github.com/repos/opensoft/openXfactory/assignees{/user}",
-          "blobs_url": "https://api.github.com/repos/opensoft/openXfactory/git/blobs{/sha}",
-          "branches_url": "https://api.github.com/repos/opensoft/openXfactory/branches{/branch}",
-          "collaborators_url": "https://api.github.com/repos/opensoft/openXfactory/collaborators{/collaborator}",
-          "comments_url": "https://api.github.com/repos/opensoft/openXfactory/comments{/number}",
-          "commits_url": "https://api.github.com/repos/opensoft/openXfactory/commits{/sha}",
-          "compare_url": "https://api.github.com/repos/opensoft/openXfactory/compare/{base}...{head}",
-          "contents_url": "https://api.github.com/repos/opensoft/openXfactory/contents/{+path}",
-          "contributors_url": "https://api.github.com/repos/opensoft/openXfactory/contributors",
-          "deployments_url": "https://api.github.com/repos/opensoft/openXfactory/deployments",
-          "description": "AI software factory workflow: Hermes, OpenSpec, Omnigent/Polly, Spec Kit, and GitHub",
-          "downloads_url": "https://api.github.com/repos/opensoft/openXfactory/downloads",
-          "events_url": "https://api.github.com/repos/opensoft/openXfactory/events",
-          "fork": false,
-          "forks_url": "https://api.github.com/repos/opensoft/openXfactory/forks",
-          "full_name": "opensoft/openXfactory",
-          "git_commits_url": "https://api.github.com/repos/opensoft/openXfactory/git/commits{/sha}",
-          "git_refs_url": "https://api.github.com/repos/opensoft/openXfactory/git/refs{/sha}",
-          "git_tags_url": "https://api.github.com/repos/opensoft/openXfactory/git/tags{/sha}",
-          "hooks_url": "https://api.github.com/repos/opensoft/openXfactory/hooks",
-          "html_url": "https://github.com/opensoft/openXfactory",
-          "id": 1275848622,
-          "issue_comment_url": "https://api.github.com/repos/opensoft/openXfactory/issues/comments{/number}",
-          "issue_events_url": "https://api.github.com/repos/opensoft/openXfactory/issues/events{/number}",
-          "issues_url": "https://api.github.com/repos/opensoft/openXfactory/issues{/number}",
-          "keys_url": "https://api.github.com/repos/opensoft/openXfactory/keys{/key_id}",
-          "labels_url": "https://api.github.com/repos/opensoft/openXfactory/labels{/name}",
-          "languages_url": "https://api.github.com/repos/opensoft/openXfactory/languages",
-          "merges_url": "https://api.github.com/repos/opensoft/openXfactory/merges",
-          "milestones_url": "https://api.github.com/repos/opensoft/openXfactory/milestones{/number}",
-          "name": "openXfactory",
-          "node_id": "R_kgDOTAvnrg",
-          "notifications_url": "https://api.github.com/repos/opensoft/openXfactory/notifications{?since,all,participating}",
-          "owner": {
-            "avatar_url": "https://avatars.githubusercontent.com/u/638385?v=4",
-            "events_url": "https://api.github.com/users/opensoft/events{/privacy}",
-            "followers_url": "https://api.github.com/users/opensoft/followers",
-            "following_url": "https://api.github.com/users/opensoft/following{/other_user}",
-            "gists_url": "https://api.github.com/users/opensoft/gists{/gist_id}",
-            "gravatar_id": "",
-            "html_url": "https://github.com/opensoft",
-            "id": 638385,
-            "login": "opensoft",
-            "node_id": "MDEyOk9yZ2FuaXphdGlvbjYzODM4NQ==",
-            "organizations_url": "https://api.github.com/users/opensoft/orgs",
-            "received_events_url": "https://api.github.com/users/opensoft/received_events",
-            "repos_url": "https://api.github.com/users/opensoft/repos",
-            "site_admin": false,
-            "starred_url": "https://api.github.com/users/opensoft/starred{/owner}{/repo}",
-            "subscriptions_url": "https://api.github.com/users/opensoft/subscriptions",
-            "type": "Organization",
-            "url": "https://api.github.com/users/opensoft",
-            "user_view_type": "public"
-          },
-          "private": false,
-          "pulls_url": "https://api.github.com/repos/opensoft/openXfactory/pulls{/number}",
-          "releases_url": "https://api.github.com/repos/opensoft/openXfactory/releases{/id}",
-          "stargazers_url": "https://api.github.com/repos/opensoft/openXfactory/stargazers",
-          "statuses_url": "https://api.github.com/repos/opensoft/openXfactory/statuses/{sha}",
-          "subscribers_url": "https://api.github.com/repos/opensoft/openXfactory/subscribers",
-          "subscription_url": "https://api.github.com/repos/opensoft/openXfactory/subscription",
-          "tags_url": "https://api.github.com/repos/opensoft/openXfactory/tags",
-          "teams_url": "https://api.github.com/repos/opensoft/openXfactory/teams",
-          "trees_url": "https://api.github.com/repos/opensoft/openXfactory/git/trees{/sha}",
-          "url": "https://api.github.com/repos/opensoft/openXfactory"
-        },
-        "head_sha": "227040f2b1a90ff7bf33232c0ff4320e8f9d43df",
-        "html_url": "https://github.com/opensoft/openXfactory/actions/runs/44086456470",
-        "id": 44086456470,
-        "jobs_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456470/jobs",
-        "logs_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456470/logs",
-        "name": "doc-health-py314",
-        "node_id": "WFR_kwLOTAvnrs8AAAAKQ8Hwlg",
-        "path": ".github/workflows/doc-health-py314.yml",
-        "previous_attempt_url": null,
-        "pull_requests": [],
-        "referenced_workflows": [],
-        "repository": {
-          "archive_url": "https://api.github.com/repos/opensoft/openXfactory/{archive_format}{/ref}",
-          "assignees_url": "https://api.github.com/repos/opensoft/openXfactory/assignees{/user}",
-          "blobs_url": "https://api.github.com/repos/opensoft/openXfactory/git/blobs{/sha}",
-          "branches_url": "https://api.github.com/repos/opensoft/openXfactory/branches{/branch}",
-          "collaborators_url": "https://api.github.com/repos/opensoft/openXfactory/collaborators{/collaborator}",
-          "comments_url": "https://api.github.com/repos/opensoft/openXfactory/comments{/number}",
-          "commits_url": "https://api.github.com/repos/opensoft/openXfactory/commits{/sha}",
-          "compare_url": "https://api.github.com/repos/opensoft/openXfactory/compare/{base}...{head}",
-          "contents_url": "https://api.github.com/repos/opensoft/openXfactory/contents/{+path}",
-          "contributors_url": "https://api.github.com/repos/opensoft/openXfactory/contributors",
-          "deployments_url": "https://api.github.com/repos/opensoft/openXfactory/deployments",
-          "description": "AI software factory workflow: Hermes, OpenSpec, Omnigent/Polly, Spec Kit, and GitHub",
-          "downloads_url": "https://api.github.com/repos/opensoft/openXfactory/downloads",
-          "events_url": "https://api.github.com/repos/opensoft/openXfactory/events",
-          "fork": false,
-          "forks_url": "https://api.github.com/repos/opensoft/openXfactory/forks",
-          "full_name": "opensoft/openXfactory",
-          "git_commits_url": "https://api.github.com/repos/opensoft/openXfactory/git/commits{/sha}",
-          "git_refs_url": "https://api.github.com/repos/opensoft/openXfactory/git/refs{/sha}",
-          "git_tags_url": "https://api.github.com/repos/opensoft/openXfactory/git/tags{/sha}",
-          "hooks_url": "https://api.github.com/repos/opensoft/openXfactory/hooks",
-          "html_url": "https://github.com/opensoft/openXfactory",
-          "id": 1275848622,
-          "issue_comment_url": "https://api.github.com/repos/opensoft/openXfactory/issues/comments{/number}",
-          "issue_events_url": "https://api.github.com/repos/opensoft/openXfactory/issues/events{/number}",
-          "issues_url": "https://api.github.com/repos/opensoft/openXfactory/issues{/number}",
-          "keys_url": "https://api.github.com/repos/opensoft/openXfactory/keys{/key_id}",
-          "labels_url": "https://api.github.com/repos/opensoft/openXfactory/labels{/name}",
-          "languages_url": "https://api.github.com/repos/opensoft/openXfactory/languages",
-          "merges_url": "https://api.github.com/repos/opensoft/openXfactory/merges",
-          "milestones_url": "https://api.github.com/repos/opensoft/openXfactory/milestones{/number}",
-          "name": "openXfactory",
-          "node_id": "R_kgDOTAvnrg",
-          "notifications_url": "https://api.github.com/repos/opensoft/openXfactory/notifications{?since,all,participating}",
-          "owner": {
-            "avatar_url": "https://avatars.githubusercontent.com/u/638385?v=4",
-            "events_url": "https://api.github.com/users/opensoft/events{/privacy}",
-            "followers_url": "https://api.github.com/users/opensoft/followers",
-            "following_url": "https://api.github.com/users/opensoft/following{/other_user}",
-            "gists_url": "https://api.github.com/users/opensoft/gists{/gist_id}",
-            "gravatar_id": "",
-            "html_url": "https://github.com/opensoft",
-            "id": 638385,
-            "login": "opensoft",
-            "node_id": "MDEyOk9yZ2FuaXphdGlvbjYzODM4NQ==",
-            "organizations_url": "https://api.github.com/users/opensoft/orgs",
-            "received_events_url": "https://api.github.com/users/opensoft/received_events",
-            "repos_url": "https://api.github.com/users/opensoft/repos",
-            "site_admin": false,
-            "starred_url": "https://api.github.com/users/opensoft/starred{/owner}{/repo}",
-            "subscriptions_url": "https://api.github.com/users/opensoft/subscriptions",
-            "type": "Organization",
-            "url": "https://api.github.com/users/opensoft",
-            "user_view_type": "public"
-          },
-          "private": false,
-          "pulls_url": "https://api.github.com/repos/opensoft/openXfactory/pulls{/number}",
-          "releases_url": "https://api.github.com/repos/opensoft/openXfactory/releases{/id}",
-          "stargazers_url": "https://api.github.com/repos/opensoft/openXfactory/stargazers",
-          "statuses_url": "https://api.github.com/repos/opensoft/openXfactory/statuses/{sha}",
-          "subscribers_url": "https://api.github.com/repos/opensoft/openXfactory/subscribers",
-          "subscription_url": "https://api.github.com/repos/opensoft/openXfactory/subscription",
-          "tags_url": "https://api.github.com/repos/opensoft/openXfactory/tags",
-          "teams_url": "https://api.github.com/repos/opensoft/openXfactory/teams",
-          "trees_url": "https://api.github.com/repos/opensoft/openXfactory/git/trees{/sha}",
-          "url": "https://api.github.com/repos/opensoft/openXfactory"
-        },
-        "rerun_url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456470/rerun",
-        "run_attempt": 1,
-        "run_number": 468,
-        "run_started_at": "2026-11-17T12:47:33Z",
-        "status": "completed",
-        "triggering_actor": {
-          "avatar_url": "https://avatars.githubusercontent.com/u/1513478?v=4",
-          "events_url": "https://api.github.com/users/brettheap/events{/privacy}",
-          "followers_url": "https://api.github.com/users/brettheap/followers",
-          "following_url": "https://api.github.com/users/brettheap/following{/other_user}",
-          "gists_url": "https://api.github.com/users/brettheap/gists{/gist_id}",
-          "gravatar_id": "",
-          "html_url": "https://github.com/brettheap",
-          "id": 1513478,
-          "login": "brettheap",
-          "node_id": "MDQ6VXNlcjE1MTM0Nzg=",
-          "organizations_url": "https://api.github.com/users/brettheap/orgs",
-          "received_events_url": "https://api.github.com/users/brettheap/received_events",
-          "repos_url": "https://api.github.com/users/brettheap/repos",
-          "site_admin": false,
-          "starred_url": "https://api.github.com/users/brettheap/starred{/owner}{/repo}",
-          "subscriptions_url": "https://api.github.com/users/brettheap/subscriptions",
-          "type": "User",
-          "url": "https://api.github.com/users/brettheap",
-          "user_view_type": "public"
-        },
-        "updated_at": "2026-11-17T12:52:26Z",
-        "url": "https://api.github.com/repos/opensoft/openXfactory/actions/runs/44086456470",
-        "workflow_id": 371448519,
-        "workflow_url": "https://api.github.com/repos/opensoft/openXfactory/actions/workflows/371448519"
-      },
-      "suites": {
-        "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100,
-        "specs/043-private-connectivity-production/tests/test_source_roots.py": 107
-      }
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/private-connectivity/binding.schema.json",
+      "sha256": "3f71586c590583e602c7a3e8542b0f64abad131f418b63f6acfd99da606cc430"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/private-connectivity/conformance.json",
+      "sha256": "0fc733f3cf69cc90a57864ffcfc5c101a63bdac2e509607d6734c3125f4d18b3"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "scripts/validate-private-connectivity.py",
+      "sha256": "c8b83cd53edd031d49bd8dc31a18b24087e73c046267b58b81b4ca690cac0119"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/releases/contract-v4.4.digests.yaml",
+      "sha256": "1bbc6198f8e622515b2528c1c8aba63a589c5ad67092a0e96bcfe163261e2d8d"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/manifest.yaml",
+      "sha256": "f1310f1f11c9c03c13a71d56d0ef54339c3dd6b03ef29d90542f45f00aba9c63"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/CHANGELOG.md",
+      "sha256": "a6156372eea85f2bf15e259c7a3cb81686dc6200c3b5d397c442459e784b87e5"
     }
   ],
-  "reviewed_at": "2026-11-19T22:49:21.223139+00:00",
-  "root": {
-    "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
-    "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
-    "repository": "opensoft/openxfactory",
-    "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa"
-  },
-  "schema": "043-delegated-attestation-v1",
-  "subject": {
-    "content_sha256": "f8b9f88d4657a2682bcc5fdee3c8eefb9b0bc2d3b1d5d05ea8b29cf40aa09428",
-    "definition": "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc",
-    "kind": "source-authentication",
-    "reviewed_manifest": {
-      "commit": "65fe30cf3ee23d2df5167a073ced7d406972ef33",
-      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+  "dependencies": {
+    "T016": {
       "repository": "opensoft/openxfactory",
-      "sha256": "329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1"
+      "commit": "aee21292c9d10c22cc8258b3b0bd07438fb6847f",
+      "path": "specs/043-private-connectivity-production/evidence/T016.json",
+      "sha256": "c58d2cfde19e853703101e54cdeec3c8274a6502ea58f52bc82509fb4d952ffa"
+    },
+    "T010": {
+      "repository": "opensoft/openxfactory",
+      "commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "sha256": "8bb6fe496f3bc0b6aba76e16e8bd3fc04db3c941a9dbd1b7f86d52599b8a6ee0"
     }
-  }
+  },
+  "history": [],
+  "incidents": [],
+  "acceptance": "Completion is determined by authenticated commissioning and default verification.",
+  "original_prepublication_packet": {
+    "repository": "opensoft/openxfactory",
+    "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+    "path": "specs/043-private-connectivity-production/evidence/T018.json",
+    "sha256": "df85eccf8af6590cd2fc2ced9a7c4f66f1d404ff5dde7fca6e13ddff258097a2"
+  },
+  "pin_inventory": [
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "59439fec61fddc76713dc9b726545296759de8cb"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "70f4d0a2cb5976386055663df0e9b1030a3beb75"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "7dd716e81a1267e94b7af168d1135e44fe440e77"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "aee21292c9d10c22cc8258b3b0bd07438fb6847f"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413"
+    }
+  ]
 }
