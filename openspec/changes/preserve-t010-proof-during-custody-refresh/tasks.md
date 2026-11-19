@@ -27,8 +27,11 @@ authorization and qualification of the existing task scopes.
   successor through the normal subject path. Preserve the existing 100 test
   identities and both measured workflow counts. Keep the accepted predecessor
   selected while qualifying the successor reader and freeze on protected main.
-  Verify the fixed predecessor for source only using current authenticated
-  revocations and closures. Refuse stale or unavailable current authority.
+  Verify the predecessor with its pinned reader only after an independent
+  qualified protected-base readback confirms its manifest is still active.
+  Refuse stale, changed or unavailable current authority. After selection,
+  use the successor's authenticated revocations and completion closures for
+  nested historical verification.
   Prepare the separate immutable successor manifest and independently
   review its actual outputs. Run the existing qualified attestor with that
   manifest and exact review. Register the resulting proof and pass default

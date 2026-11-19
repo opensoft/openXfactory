@@ -92,23 +92,33 @@ remain in the existing evidence registration outside the inputs they sign.
 Stage the transition on protected main. Keep the current accepted
 commissioning manifest selected as the workflows' predecessor during the
 reader and definition update. Register that manifest and its reader as one
-fixed historical control using the existing exact-reference reader. Pass the
-registered commit, path and digest for default verification during the
-transition. At the reviewed base, both files come from 9da72c839c5904876d0ccdf0af4997ec5fb42eed.
+fixed historical control for the existing nested historical reader. Keep
+the registered commit, path and digest. At the reviewed base, both files come from 9da72c839c5904876d0ccdf0af4997ec5fb42eed.
 The accepted evidence/commissioning.json has SHA-256
 9493a7f106a0306bbb1e057a84b0673d9468f4b320f32cb507f5b062f5195248.
 Its verify-evidence.py has SHA-256
 87f2c99e7e6f481af1b2cc0d79e78d62e9cc105ca18c46a273cff5c2fe29ee9c.
-Limit this new predecessor path to source verification during the
-transition. Before verifying through the pinned reader, apply current
-authenticated authority revocations and completion closures using the
-existing historical-control rules. The pinned predecessor supplies original
-proof and does not supply current authority by itself. Refuse when current
-authority cannot be established and hold the transition. Exercise default
-verification with a predecessor source grant revoked after pinning and no
-valid completion closure, and with missing current authority. Verify that
-the unchanged approved predecessor passes default verification with current
-authority established and that both workflows still accept it.
+During the transition, both workflows continue selecting the protected
+predecessor for commit-proof preparation. Keep source-only default
+verification on the independently pinned predecessor reader until the
+successor has an authenticated active manifest. Before an operator verifies
+the predecessor, independently select current protected main using the
+existing attestor GitHub.qualified_base readback and fetch that commit's
+active evidence/commissioning.json with its GitHub.content readback.
+Require those active bytes to match the fixed predecessor manifest, then
+verify the predecessor with its pinned reader and the exact registered
+reference. Its authenticated revocations and completion closures are
+current only while that independent readback identifies it as the active
+protected control. Refuse stale, unavailable or changed authority and
+hold the transition. This adds no top-level historical fallback to the
+successor reader and does not accept a caller-supplied old trust reference
+as evidence of current authority.
+
+After the successor is selected, its authenticated manifest supplies current
+revocations and completion closures to the existing nested historical
+path. Exercise refusal when current authority is missing or when the active
+control changed after pinning, and nested verification when a predecessor
+source grant was revoked without a valid completion closure.
 
 Wait for required CI and evaluated Sonar on the protected reader and freeze.
 Prepare the successor's commissioning manifest at a separate immutable
