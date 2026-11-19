@@ -1,11 +1,7 @@
 {
-  "schema": "043-recorded-neutral-release-source-authority-v1",
   "task": "T018",
-  "id": "043-t018-v4.4-direct-source-authority",
-  "recorded_by": "Codex",
-  "owner": "Brett Heap",
-  "decision": "accepted",
-  "mode": "source",
+  "instance": null,
+  "command": "python3 scripts/validate-contract-release.py verify-commit --commit 3439ef61c289de06db9a7b76fc2511231e84d8a7 --json",
   "scope": {
     "candidate": "contract-v4.4",
     "customer": "not-applicable",
@@ -22,26 +18,426 @@
     "target": "not-applicable",
     "wave": "not-applicable"
   },
-  "roles": [
-    "Brett Heap (neutral publication and release owner)"
-  ],
-  "decisions": {},
-  "valid_from": "2026-11-19T19:47:26.771Z",
-  "valid_until": "2026-12-17T08:38:55.473Z",
-  "verified_original_input": {
-    "observed_event_at": "2026-11-19T19:47:26.771Z",
-    "message_bytes": 232,
-    "message_sha256": "c04aff7d294ea3bf936ede4e38d26ef45959d0e0a28b757129827d5a1da3d358",
-    "scope": "One-time admin merge of the exact #1350 head after checks and protected CI before v4.4 publication."
+  "source": {
+    "repository": "opensoft/openxfactory",
+    "base": "59439fec61fddc76713dc9b726545296759de8cb",
+    "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
   },
-  "exact_release": {
+  "exit_code": 0,
+  "started_at": "2026-11-19T22:24:44.335942+00:00",
+  "ended_at": "2026-11-19T22:25:04.871779+00:00",
+  "cases": [
+    {
+      "id": "supported-contract",
+      "scope": {
+        "candidate": "contract-v4.4",
+        "customer": "not-applicable",
+        "domain": "not-applicable",
+        "environment": "source",
+        "network": "not-applicable",
+        "offer": "not-applicable",
+        "offering": "neutral-contract",
+        "phase": "source",
+        "profile": "neutral-private-connectivity-contract",
+        "region": "not-applicable",
+        "run": "043-neutral-publication-v4.4",
+        "site": "not-applicable",
+        "target": "not-applicable",
+        "wave": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "59439fec61fddc76713dc9b726545296759de8cb",
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+      },
+      "checks": [
+        {
+          "id": "published_members",
+          "observed": {
+            "contracts/private-connectivity/README.md": "7e5abaabdfa3826acc9b0c7e4dc93025fbc9c76f5ffdc37ade683adb9f6fa7de",
+            "contracts/private-connectivity/binding.schema.json": "3f71586c590583e602c7a3e8542b0f64abad131f418b63f6acfd99da606cc430",
+            "contracts/private-connectivity/conformance.json": "0fc733f3cf69cc90a57864ffcfc5c101a63bdac2e509607d6734c3125f4d18b3",
+            "scripts/validate-private-connectivity.py": "c8b83cd53edd031d49bd8dc31a18b24087e73c046267b58b81b4ca690cac0119"
+          }
+        },
+        {
+          "id": "published_tag",
+          "observed": "contract-v4.4"
+        }
+      ]
+    },
+    {
+      "id": "atomic-cut",
+      "scope": {
+        "candidate": "contract-v4.4",
+        "customer": "not-applicable",
+        "domain": "not-applicable",
+        "environment": "source",
+        "network": "not-applicable",
+        "offer": "not-applicable",
+        "offering": "neutral-contract",
+        "phase": "source",
+        "profile": "neutral-private-connectivity-contract",
+        "region": "not-applicable",
+        "run": "043-neutral-publication-v4.4",
+        "site": "not-applicable",
+        "target": "not-applicable",
+        "wave": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "59439fec61fddc76713dc9b726545296759de8cb",
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+      },
+      "checks": [
+        {
+          "id": "changed_paths",
+          "observed": [
+            "contracts/CHANGELOG.md",
+            "contracts/manifest.yaml",
+            "contracts/private-connectivity/README.md",
+            "contracts/releases/contract-v4.4.digests.yaml",
+            "tests/intent-compliance/test_release_boundary.py"
+          ]
+        },
+        {
+          "id": "first_parent",
+          "observed": "59439fec61fddc76713dc9b726545296759de8cb"
+        },
+        {
+          "id": "release_commit",
+          "observed": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+        },
+        {
+          "id": "verifier_stdout",
+          "observed": "66ed7b3e9b0e7682458dcc13a9108104503e9253c14d945e0e821ca9642165ee"
+        },
+        {
+          "id": "inventory_sha256",
+          "observed": "1bbc6198f8e622515b2528c1c8aba63a589c5ad67092a0e96bcfe163261e2d8d"
+        }
+      ]
+    },
+    {
+      "id": "conformance",
+      "scope": {
+        "candidate": "contract-v4.4",
+        "customer": "not-applicable",
+        "domain": "not-applicable",
+        "environment": "source",
+        "network": "not-applicable",
+        "offer": "not-applicable",
+        "offering": "neutral-contract",
+        "phase": "source",
+        "profile": "neutral-private-connectivity-contract",
+        "region": "not-applicable",
+        "run": "043-neutral-publication-v4.4",
+        "site": "not-applicable",
+        "target": "not-applicable",
+        "wave": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "59439fec61fddc76713dc9b726545296759de8cb",
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+      },
+      "checks": [
+        {
+          "id": "errors",
+          "observed": 0
+        },
+        {
+          "id": "failures",
+          "observed": 0
+        },
+        {
+          "id": "skipped",
+          "observed": 0
+        },
+        {
+          "id": "tests",
+          "observed": 17
+        },
+        {
+          "id": "protected_main_attempts_verified",
+          "observed": 6
+        },
+        {
+          "id": "protected_main_jobs_verified",
+          "observed": 7
+        },
+        {
+          "id": "evaluated_gate_before_tag",
+          "observed": true
+        }
+      ]
+    },
+    {
+      "id": "publication-authority",
+      "scope": {
+        "candidate": "contract-v4.4",
+        "customer": "not-applicable",
+        "domain": "not-applicable",
+        "environment": "source",
+        "network": "not-applicable",
+        "offer": "not-applicable",
+        "offering": "neutral-contract",
+        "phase": "source",
+        "profile": "neutral-private-connectivity-contract",
+        "region": "not-applicable",
+        "run": "043-neutral-publication-v4.4",
+        "site": "not-applicable",
+        "target": "not-applicable",
+        "wave": "not-applicable"
+      },
+      "source": {
+        "repository": "opensoft/openxfactory",
+        "base": "59439fec61fddc76713dc9b726545296759de8cb",
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+      },
+      "checks": [
+        {
+          "id": "approval_event_at",
+          "observed": "2026-11-19T19:47:26.771Z"
+        },
+        {
+          "id": "actual_merge_at",
+          "observed": "2026-11-19T19:48:52Z"
+        },
+        {
+          "id": "all_protected_ci_completed_at",
+          "observed": "2026-11-19T20:53:18Z"
+        },
+        {
+          "id": "tag_created_at",
+          "observed": "2026-11-19T20:55:34Z"
+        },
+        {
+          "id": "merge_pull_request",
+          "observed": "https://github.com/opensoft/openXfactory/pull/1350"
+        },
+        {
+          "id": "original_approval_sha256",
+          "observed": "c04aff7d294ea3bf936ede4e38d26ef45959d0e0a28b757129827d5a1da3d358"
+        },
+        {
+          "id": "approved_head",
+          "observed": "1f7308dab8c07f37d3fb6f5ad87bc01e43580957"
+        }
+      ]
+    }
+  ],
+  "coverage": null,
+  "events": {},
+  "metrics": {},
+  "ci": {},
+  "original": {
+    "command": "python3 scripts/validate-contract-release.py verify-commit --commit 3439ef61c289de06db9a7b76fc2511231e84d8a7 --json",
+    "repository": "opensoft/openxfactory",
+    "source_revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+    "started_at": "2026-11-19T22:24:44.335942+00:00",
+    "ended_at": "2026-11-19T22:25:04.871779+00:00",
+    "exit_code": 0,
+    "stdout": "{\"command\":\"verify-commit\",\"exit_code\":0,\"findings\":[],\"status\":\"pass\",\"summary\":{\"inventory\":\"contracts/releases/contract-v4.4.digests.yaml\"}}\n",
+    "original_sha256": "66ed7b3e9b0e7682458dcc13a9108104503e9253c14d945e0e821ca9642165ee",
+    "export_sha256": "66ed7b3e9b0e7682458dcc13a9108104503e9253c14d945e0e821ca9642165ee",
+    "redaction_method": "none"
+  },
+  "authority_reference": {
+    "repository": "opensoft/openxfactory",
+    "commit": "70f4d0a2cb5976386055663df0e9b1030a3beb75",
+    "path": "specs/043-private-connectivity-production/evidence/T018.json",
+    "sha256": "658073db099e88b6a767e65748fd5f7a0b2857d65419e19d919d306bb3f7b2e0"
+  },
+  "exact_publication": {
+    "approved_head": "1f7308dab8c07f37d3fb6f5ad87bc01e43580957",
     "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-    "tag": "contract-v4.4"
+    "compatibility_payload_unchanged_since_v43": true,
+    "exact_changed_files": [
+      "contracts/CHANGELOG.md",
+      "contracts/manifest.yaml",
+      "contracts/private-connectivity/README.md",
+      "contracts/releases/contract-v4.4.digests.yaml",
+      "tests/intent-compliance/test_release_boundary.py"
+    ],
+    "first_parent": "59439fec61fddc76713dc9b726545296759de8cb",
+    "inventory_sha256": "1bbc6198f8e622515b2528c1c8aba63a589c5ad67092a0e96bcfe163261e2d8d",
+    "members": {
+      "contracts/private-connectivity/README.md": "7e5abaabdfa3826acc9b0c7e4dc93025fbc9c76f5ffdc37ade683adb9f6fa7de",
+      "contracts/private-connectivity/binding.schema.json": "3f71586c590583e602c7a3e8542b0f64abad131f418b63f6acfd99da606cc430",
+      "contracts/private-connectivity/conformance.json": "0fc733f3cf69cc90a57864ffcfc5c101a63bdac2e509607d6734c3125f4d18b3",
+      "scripts/validate-private-connectivity.py": "c8b83cd53edd031d49bd8dc31a18b24087e73c046267b58b81b4ca690cac0119"
+    },
+    "merged_at": "2026-11-19T19:48:52Z",
+    "pull_request": "https://github.com/opensoft/openXfactory/pull/1350",
+    "tag": "contract-v4.4",
+    "tagged_at": "2026-11-19T20:55:34Z",
+    "tree": {
+      "type": "git-tree",
+      "byte_encoding": "base64",
+      "sha1": "7FXuBs7Hg9E+3nxyAQAgFPcrQUs="
+    },
+    "tag_object": {
+      "type": "annotated-git-tag",
+      "byte_encoding": "base64",
+      "sha1": "o/t1Hg8mbEz0eLxspo217lVXtsw="
+    }
+  },
+  "measurements": {
+    "conformance": {
+      "command": "python3 -m pytest -q tests/private_connectivity/test_binding.py tests/private_connectivity/test_published_contract.py --junitxml=<captured-junit>",
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 17
+      },
+      "ended_at": "2026-11-19T22:25:15.731876+00:00",
+      "exit_code": 0,
+      "junit_sha256": "1137a2fdae273363ef178b4bac1c591d7f080182da8659bd6a83fcf3475738ac",
+      "started_at": "2026-11-19T22:25:04.871897+00:00",
+      "stdout_sha256": "2edf466d777121cb672bdea4a01ccb130de79576da630f721e203f7af4cf5bad"
+    },
+    "protected_main_ci": [
+      {
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "completed_at": "2026-11-19T19:49:18Z",
+            "conclusion": "success",
+            "id": 135836338396,
+            "name": "clearing-dispatch-gate"
+          }
+        ],
+        "name": "clearing-dispatch-gate",
+        "repository_id": 1275848622,
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+        "run_id": 44602214612,
+        "status": "completed",
+        "workflow_id": 349792680
+      },
+      {
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "completed_at": "2026-11-19T20:50:16Z",
+            "conclusion": "success",
+            "id": 135836339234,
+            "name": "pytest-suite"
+          },
+          {
+            "completed_at": "2026-11-19T20:53:18Z",
+            "conclusion": "success",
+            "id": 135873188570,
+            "name": "sonar-analysis"
+          }
+        ],
+        "name": "pytest-suite",
+        "repository_id": 1275848622,
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+        "run_id": 44602214486,
+        "status": "completed",
+        "workflow_id": 341583570
+      },
+      {
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "completed_at": "2026-11-19T19:49:11Z",
+            "conclusion": "success",
+            "id": 135836338815,
+            "name": "council-convening-gate"
+          }
+        ],
+        "name": "council-convening-gate",
+        "repository_id": 1275848622,
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+        "run_id": 44602214444,
+        "status": "completed",
+        "workflow_id": 379434706
+      },
+      {
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "completed_at": "2026-11-19T19:49:19Z",
+            "conclusion": "success",
+            "id": 135836338806,
+            "name": "privileged-dependencies"
+          }
+        ],
+        "name": "privileged-dependencies",
+        "repository_id": 1275848622,
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+        "run_id": 44602214464,
+        "status": "completed",
+        "workflow_id": 419172435
+      },
+      {
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "completed_at": "2026-11-19T19:54:23Z",
+            "conclusion": "success",
+            "id": 135836340189,
+            "name": "doc-health-py314"
+          }
+        ],
+        "name": "doc-health-py314",
+        "repository_id": 1275848622,
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+        "run_id": 44602214605,
+        "status": "completed",
+        "workflow_id": 371448519
+      },
+      {
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "completed_at": "2026-11-19T19:50:00Z",
+            "conclusion": "success",
+            "id": 135836339224,
+            "name": "signed-execution-chain-gate"
+          }
+        ],
+        "name": "signed-execution-chain-gate",
+        "repository_id": 1275848622,
+        "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+        "run_id": 44602214450,
+        "status": "completed",
+        "workflow_id": 346256112
+      }
+    ],
+    "protected_main_sonar": {
+      "artifact_id": 14573896142,
+      "sha256": "117c1ee26e823572ac69d1717f520fb770a1bb3ab97581c0c1aa4330379f8c90",
+      "coverage": "89.0",
+      "conditions_evaluated": 6,
+      "ignored_conditions": false
+    }
   },
   "pin_inventory": [
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "1f7308dab8c07f37d3fb6f5ad87bc01e43580957"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "59439fec61fddc76713dc9b726545296759de8cb"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "70f4d0a2cb5976386055663df0e9b1030a3beb75"
     }
   ]
 }
