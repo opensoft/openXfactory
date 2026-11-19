@@ -147,4 +147,3 @@ Future source acceptance SHALL require substantive real-local crypto/process/TLS
 #### Scenario: A live prerequisite is missing
 - **WHEN** actual deployment, independent protection/claims or cleanup evidence is absent
 - **THEN** qualification stays blocked or not-performed without a synthetic substitute
-
