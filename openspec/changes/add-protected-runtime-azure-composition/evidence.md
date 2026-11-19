@@ -65,3 +65,31 @@ Only this new packet's ledger row was added; old row provenance is preserved.
 Ledger-diff passes. Earlier local-only/publication-prerequisite paragraphs remain
 historical. Required fresh exact-head CI and local review follow publication;
 no connector review or operational authority is inferred.
+
+## Local contract-review correction
+
+The local panel identified one P2 source-planning gap: semantic envelope groups
+did not close the exact grammar and required static/provider/run facts before
+they existed. The internal boundary now defines exact typed reservation and
+provisioned forms, forbidden early fields, immutable complete resource-set/attempt
+binding, and a later actual-run link with no backward hash cycle. The adapter
+plan/matrix must mirror these phase/refusal obligations without owning the grammar.
+This is documentation-only finding resolution, not an implementation or grant.
+The proposed16KiB wrapper cap is also distinguished from unchanged per-reader
+limits. Fresh final-head local follow-up/CI remain required.
+
+The persistence follow-up also found that mandatory final_scope_ref prevented
+truthful setup-expiry/partial-setup/predispatch cleanup evidence. Closed setup
+and run receipt variants now bind the authority/facts available in each phase.
+Unknown incarnations/operations stay absent with pending/indeterminate results;
+complete requires exact reserved-set coverage, independent preservation/revocation
+and no unresolved effect. No fictitious run or provider operation ID is required.
+Future source controls include cleanup before provisioning completion, after P5
+before dispatch, and after P7 finalization.
+
+The final contract timing review separated fresh read-only observation authority
+from expired mutation authority. A bounded late failure observation cannot renew
+cleanup/proof authority, budgets, leases or retries; late completion remains a
+failed qualification. Without current observation authority, emission refuses
+and the missing authenticated receipt fails visibly. This permits honest expiry
+reporting without extending any operational grant.

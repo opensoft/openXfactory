@@ -121,9 +121,11 @@ restore. Credential retirement remains independently observed.
 ### D6: Separate infrastructure ownership from existing RunPlan
 
 Existing RunPlan kinds remain process, credential and file. Azure VMs, NICs and
-disks are not mislabeled as those kinds. Propose a separate factory-owned internal
-deployment envelope and infrastructure-retirement receipt, linked to accepted
-source/static/full config, case and actual run/attempt/lease. Existing runtime
+disks are not mislabeled as those kinds. Propose separate factory-owned closed reservation/provisioned deployment forms,
+a later actual-run final-scope link and an infrastructure-retirement receipt.
+Reservation forbids unavailable provider/static/run facts; provisioned records
+actual setup facts; only the later link binds independently approved static/full
+config, case and authenticated run/attempt/lease without a commitment cycle. Existing runtime
 cleanup and protected report remain byte-compatible; the independent infrastructure
 receipt is an additional owner acceptance artifact, not a new hidden report field.
 Overall deployment qualification is incomplete unless both scopes pass. Process
@@ -189,9 +191,9 @@ All existing per-reader/ARM/key/body/response caps remain. New composition calls
 must occupy budgeted existing capability slots with every nested I/O charged;
 no fresh child budget, hidden page or late upgrade. If a complete positive cannot
 fit, refuse this implementation candidate and seek a separate factory amendment.
-Remote envelopes and their contained canonical bytes must fit the existing16KiB
-response limit; this opt-in deployment can accept a narrower size subset but
-cannot increase old limits. Empty/digest-only substitutes are rejected.
+New remote envelopes and their contained canonical bytes have a proposed16KiB
+cap. Existing per-reader caps remain unchanged (including larger bounded
+observation/provider readers); this opt-in wrapper cannot increase those limits. Empty/digest-only substitutes are rejected.
 
 Owning crypto, valid-preimage worker denial, one-use/replay reservations and fresh
 protected full admission remain mandatory. No source/fixture report becomes a

@@ -78,7 +78,7 @@ Every trusted service/helper SHALL authenticate independently selected role/inca
 
 ### Requirement: Infrastructure ownership is separate from runtime cleanup
 
-The composition SHALL use a separately owned bounded internal deployment envelope and retirement receipt linked to exact sources/configuration/case/run/lease. It MUST NOT encode cloud VMs/disks as existing process/file kinds or add hidden fields to old reports. Overall deployment acceptance SHALL require both current runtime cleanup and independent infrastructure outcome.
+The composition SHALL use factory-owned closed reservation/provisioned envelopes, a later final-scope link and a retirement receipt. Pre-create reservation MUST forbid unavailable provider/static/full/run facts; provisioned facts MUST preserve the complete reserved set/attempt/owner and precede independent static selection; the final link MUST bind actual approved sources/configuration/case/run/lease without a backward commitment cycle. It MUST NOT encode cloud VMs/disks as existing process/file kinds or add hidden fields to old reports. Overall deployment acceptance SHALL require both current runtime cleanup and independent infrastructure outcome.
 
 #### Scenario: Both cleanup scopes pass
 - **WHEN** runtime cleanup and separately authenticated exact infrastructure retirement/preservation are complete
@@ -114,7 +114,7 @@ Retirement SHALL first close write/run authority, bind retiring state and fresh 
 
 ### Requirement: External watchdog reconciles actual outcomes
 
-The independently administered watchdog SHALL survive loss of the three hosts, retain authoritative reconciliation scope, deduplicate triggers and reconcile only original operations under bounded expiry. Accepted sends/HTTP202/timer schedules MUST NOT imply completed cleanup; authenticated terminal outcome and independent absence/revocation/retained/shared preservation readback are mandatory.
+The independently administered watchdog SHALL survive loss of the three hosts, retain authoritative reconciliation scope, deduplicate triggers and reconcile only original operations under bounded expiry. Pre-run setup failure/expiry/abort SHALL use original reservation/setup-cleanup authority without requiring nonexistent final-run facts; post-run evidence SHALL bind the actual final scope. Separately current read-only observation authority MAY report late failure after mutation expiry without renewing mutation/proof authority or budgets; missing observation authority MUST refuse emission and fail qualification. Accepted sends/HTTP202/timer schedules MUST NOT imply completed cleanup; authenticated terminal outcome and independent absence/revocation/retained/shared preservation readback are mandatory.
 
 #### Scenario: Control host dies
 - **WHEN** the original registered scope remains accessible to the separate watchdog
