@@ -1,77 +1,49 @@
 {
-  "archive_bytes": 1198368,
-  "archive_sha256": "328eca94f0b8f01fbb40e8533244ccae5a5c9ce3d18633da2ef8603371fe7621",
-  "credential_candidates": 0,
-  "definition": "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc",
-  "exact_private_path": "evidence/private-connectivity-production/T015-source-custody.json",
-  "exact_private_repository": 1284702188,
-  "private_base": "49cbb71d92c2ce9264366018adcafb74e934c5e3",
-  "protected_release": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-  "protected_successor": {
-    "commit": "59439fec61fddc76713dc9b726545296759de8cb",
-    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "repository": "opensoft/openxfactory",
-    "sha256": "7ea89ac217739efe43cf12fdd1a2f64546e5d9e4275d882dad163be4b43579e0"
+  "schema": "043-delegated-source-decision-v1",
+  "id": "043-t015-c-01-private-source-custody-20261119",
+  "kind": "C-01",
+  "decision": "accepted",
+  "owner": "Codex",
+  "actor": "Codex",
+  "accountable_owner": "Brett Heap",
+  "scope": {
+    "run": "043-t015-private-ops-source-custody",
+    "candidate": "328eca94f0b8f01fbb40e8533244ccae5a5c9ce3d18633da2ef8603371fe7621",
+    "profile": "one-file-ops-source-custody",
+    "customer": "not-applicable",
+    "site": "not-applicable",
+    "network": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "target": "opensoft/opsxfactory:evidence/private-connectivity-production/T015-source-custody.json",
+    "region": "not-applicable",
+    "offering": "operations-source",
+    "phase": "source",
+    "offer": "not-applicable",
+    "wave": "not-applicable"
   },
-  "reviewed_ops_proposal": {
-    "commit": "5a535f368556049060133593f417f0800d7e990e",
-    "path": "openspec/changes/seal-ops-commissioning-evidence/design.md",
+  "valid_from": "2026-11-19T23:06:53+00:00",
+  "valid_until": "2026-12-17T08:38:55.473000+00:00",
+  "reviewed_at": "2026-11-19T23:06:53+00:00",
+  "details": {
+    "coordinator_depends_on": [
+      "T010"
+    ],
+    "coordinator_file_envelope": "unchanged",
+    "coordinator_task": "T015",
+    "exact_private_path": "evidence/private-connectivity-production/T015-source-custody.json",
+    "exact_proposal": {
+      "commit": "5a535f368556049060133593f417f0800d7e990e",
+      "path": "openspec/changes/seal-ops-commissioning-evidence/design.md",
+      "repository": "opensoft/opsxfactory",
+      "sha256": "9d0b0433b960c3dd52d9488f796f04cc31b26b3a58fbbe6996dd28313c8c5125"
+    },
+    "one_file_only": true,
+    "parent_permission": "for exact file only",
+    "phase": "source",
     "repository": "opensoft/opsxfactory",
-    "sha256": "9d0b0433b960c3dd52d9488f796f04cc31b26b3a58fbbe6996dd28313c8c5125"
-  },
-  "runtime_authorized": false,
-  "schema": "043-t015-private-source-readback-v1",
-  "successor_provider_proof": {
-    "protected_release": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
-    "reviewed_at": "2026-11-19T22:52:30.485826+00:00",
-    "schema": "043-t015-successor-ci-preflight-v1",
-    "scope": "source decisions only",
-    "source_lanes": [
-      {
-        "api_log_sha256": "6cfd14607a350bcf636c324e9f43a403f1e2f38d49b3e01618aba3d576133df6",
-        "cleanup_steps": [
-          26
-        ],
-        "completed_at": "2026-11-19T19:06:17Z",
-        "head": "1f7308dab8c07f37d3fb6f5ad87bc01e43580957",
-        "job_id": 135785819662,
-        "lane": "primary",
-        "rendered_log_sha256": "9169c5f9739a0c9efd5dbd3acb1dc1b23a97c7e14bc59374b077b2302e40f5ce",
-        "repository_id": 1275848622,
-        "restore_steps": [
-          12,
-          15
-        ],
-        "revocation_steps": [
-          13
-        ],
-        "run_id": 44587929343,
-        "selected_successor": "59439fec61fddc76713dc9b726545296759de8cb",
-        "success": true
-      },
-      {
-        "api_log_sha256": "a37056223578d4c81ee9e73c1367c18c2054a566057c2e960b76fb61bef5a695",
-        "cleanup_steps": [
-          17
-        ],
-        "completed_at": "2026-11-19T18:33:33Z",
-        "head": "1f7308dab8c07f37d3fb6f5ad87bc01e43580957",
-        "job_id": 135785820906,
-        "lane": "py314",
-        "rendered_log_sha256": "6281423c996afa6984156e7baccbe0d8b0364be3791fda56cff54deb5e435455",
-        "repository_id": 1275848622,
-        "restore_steps": [
-          9,
-          12
-        ],
-        "revocation_steps": [
-          10
-        ],
-        "run_id": 44587929305,
-        "selected_successor": "59439fec61fddc76713dc9b726545296759de8cb",
-        "success": true
-      }
-    ]
-  },
-  "verified_member_count": 13
+    "repository_id": 1284702188,
+    "role": "Ops/O",
+    "runtime_authorized": false
+  }
 }
