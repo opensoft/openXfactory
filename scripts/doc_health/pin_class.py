@@ -1531,6 +1531,13 @@ NON_MEMBERS: tuple[NonMember, ...] = (
                "record of a derivation.",
     ),
     NonMember(
+        paths=("contracts/private-connectivity/conformance.json",),
+        reason="The published private-connectivity conformance corpus is offline "
+               "test input. Its revision values exercise the binding reader "
+               "and carry no source derivation claim. The contract release "
+               "inventory pins the corpus bytes.",
+    ),
+    NonMember(
         paths=("contracts/council-convening/conformance/vectors/**",),
         reason="THE COUNCIL-CONVENING CONFORMANCE CORPUS (feature 035, "
                "`renew-resolved-council-protocol`): test inputs, on the "

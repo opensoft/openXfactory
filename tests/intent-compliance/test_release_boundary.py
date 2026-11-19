@@ -216,6 +216,7 @@ class ReleaseState(StrEnum):
     FEATURE_SUCCESSOR_12 = "contract-v4.0"
     FEATURE_SUCCESSOR_13 = "contract-v4.1"
     FEATURE_SUCCESSOR_14 = "contract-v4.2"
+    FEATURE_SUCCESSOR_15 = "contract-v4.3"
 
 
 def _release_state() -> ReleaseState:
@@ -314,6 +315,7 @@ def test_release_membership_when_registration_changes_then_transition_is_atomic(
             | ReleaseState.FEATURE_SUCCESSOR_12
             | ReleaseState.FEATURE_SUCCESSOR_13
             | ReleaseState.FEATURE_SUCCESSOR_14
+            | ReleaseState.FEATURE_SUCCESSOR_15
         ):
             assert feature_members | {"scripts/__init__.py"} <= members
         case unreachable:
@@ -357,6 +359,7 @@ def test_release_inventory_when_registration_changes_then_schema_pins_are_atomic
             | ReleaseState.FEATURE_SUCCESSOR_12
             | ReleaseState.FEATURE_SUCCESSOR_13
             | ReleaseState.FEATURE_SUCCESSOR_14
+            | ReleaseState.FEATURE_SUCCESSOR_15
         ):
             for path in schema_paths:
                 assert entries[path]["schema_id"].startswith("intent-compliance-")

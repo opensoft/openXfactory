@@ -696,7 +696,8 @@ def enforce_contract(raw_output, cluster: dict, sources: dict, *,
 ROOT_FALLBACK_MARKER = "[readiness-root] fallback"
 
 VALIDATOR_REL = Path("scripts") / "validate-ideation-cross-reference.py"
-VALIDATOR_SIBLING_REL = Path("openxFactory") / VALIDATOR_REL
+VALIDATOR_SIBLING_RELS = tuple(Path(name) / VALIDATOR_REL
+                              for name in corpus_mod.NEUTRAL_CHECKOUT_NAMES)
 
 
 def _announce_root_fallback(message: str) -> None:
@@ -736,11 +737,12 @@ def find_index_validator(start=None, *, announce=_announce_root_fallback):
             return candidate
 
     for d in [base, *base.parents]:
-        candidate = d / VALIDATOR_SIBLING_REL
-        if candidate.is_file():
-            announce(f"resolved the index validator {candidate} by walking up "
-                     f"from the repository under test because {why}")
-            return candidate
+        for rel in VALIDATOR_SIBLING_RELS:
+            candidate = d / rel
+            if candidate.is_file():
+                announce(f"resolved the index validator {candidate} by walking up "
+                         f"from the repository under test because {why}")
+                return candidate
     return None
 
 
@@ -1458,11 +1460,13 @@ def _render_markdown(index: dict):
         if candidate.is_file():
             return _load(candidate)
 
-    rel = Path("openxFactory") / "scripts" / "render-ideation-cross-reference.py"
+    rel = Path("scripts") / "render-ideation-cross-reference.py"
     base = Path(__file__).resolve().parents[2]
     for d in [base, *base.parents]:
-        if (d / rel).is_file():
-            return _load(d / rel)
+        for name in corpus_mod.NEUTRAL_CHECKOUT_NAMES:
+            candidate = d / name / rel
+            if candidate.is_file():
+                return _load(candidate)
     return None
 
 

@@ -14,6 +14,7 @@ unavailable or unsafe dependency raises :class:`ReleaseDependencyError`
 from __future__ import annotations
 
 import hashlib
+import json
 import posixpath
 import re
 import subprocess
@@ -115,6 +116,19 @@ CLEARING_CONTRACT_PREFIX = "contracts/clearing"
 CLEARING_TEST_PACKAGE = "tests/clearing"
 CLEARING_VALIDATOR_PATH = "scripts/validate-clearing-dispatch.py"
 CLEARING_RELEASE_FLOOR = (4, 1)
+
+# Proposed first publication floor in the isolated T018 review candidate.
+# Apply the literal only with the owner-authorized atomic cut.
+PRIVATE_CONNECTIVITY_RELEASE_FLOOR = (4, 3)
+PRIVATE_CONNECTIVITY_PREFIX = "contracts/private-connectivity"
+PRIVATE_CONNECTIVITY_SCHEMA_ID = "https://xforge.us/schemas/openxfactory/private-connectivity/binding.schema.json"
+PRIVATE_CONNECTIVITY_SCHEMA_VERSION = 1
+PRIVATE_CONNECTIVITY_REQUIRED_REGISTRATIONS = (
+    ("private-connectivity-binding", "contracts/private-connectivity/binding.schema.json", "schema"),
+    ("private-connectivity-contract", "contracts/private-connectivity/README.md", "documentation"),
+    ("private-connectivity-conformance", "contracts/private-connectivity/conformance.json", "fixture"),
+    ("private-connectivity-conformance-validator", "scripts/validate-private-connectivity.py", "tool"),
+)
 
 NAMED_VALIDATORS = (
     "scripts/validate-hermes-runtime-contracts.py",
@@ -742,9 +756,121 @@ def _artifact_id(path: str) -> str:
     return path.lower().replace("/", "-")
 
 
+def _is_private_connectivity_registration(identity, path):
+    if isinstance(identity, str) and identity.casefold().startswith("private-connectivity-"):
+        return True
+    if not isinstance(path, str):
+        return False
+    path = path.replace("\\", "/").casefold()
+    return any(
+        candidate.startswith(PRIVATE_CONNECTIVITY_PREFIX + "/")
+        or candidate == "scripts/validate-private-connectivity.py"
+        for candidate in (path, posixpath.normpath(path))
+    )
+
+
+def _private_connectivity_registrations(manifest):
+    """Resolve only the exact canonical tuples, with no duplicates or extras."""
+    registrations = []
+    for row in manifest.get("contracts", []) or []:
+        if not isinstance(row, Mapping):
+            continue
+        identity, path = row.get("id"), row.get("path")
+        if _is_private_connectivity_registration(identity, path):
+            registrations.append(row)
+    identities = [(row.get("id"), row.get("path"), row.get("type")) for row in registrations]
+    if (not all(all(isinstance(value, str) for value in identity) for identity in identities) or
+            len(identities) != len(PRIVATE_CONNECTIVITY_REQUIRED_REGISTRATIONS) or
+            set(identities) != set(PRIVATE_CONNECTIVITY_REQUIRED_REGISTRATIONS)):
+        raise ReleaseDependencyError("connectivity publication requires exactly four canonical registrations",
+                                     code="HGR-RELEASE-CONNECTIVITY-REGISTRATION")
+    return dict(zip(identities, registrations, strict=True))
+
+
+def _unique_connectivity_schema_fields(pairs):
+    fields = dict(pairs)
+    if len(fields) != len(pairs):
+        raise ValueError("duplicate connectivity schema field")
+    return fields
+
+
+def _reject_connectivity_schema_constant(value):
+    raise ValueError(f"nonstandard JSON constant in connectivity schema: {value}")
+
+
+def _validate_private_connectivity_schema(data: bytes):
+    """Check the JSON schema from the same bytes used for the registered digest."""
+    from jsonschema import Draft202012Validator
+    from jsonschema.exceptions import SchemaError
+
+    try:
+        schema = json.loads(
+            data.decode("utf-8"),
+            object_pairs_hook=_unique_connectivity_schema_fields,
+            parse_constant=_reject_connectivity_schema_constant,
+        )
+        Draft202012Validator.check_schema(schema)
+    except (ValueError, SchemaError) as exc:
+        raise ReleaseDependencyError("connectivity schema metadata is unreadable",
+                                     code="HGR-RELEASE-CONNECTIVITY-SCHEMA") from exc
+    if (not isinstance(schema, Mapping) or schema.get("$id") != PRIVATE_CONNECTIVITY_SCHEMA_ID or
+            schema.get("kind") != "xfactory-connectivity-binding-schema" or
+            type(schema.get("schema_version")) is not int or
+            schema["schema_version"] != PRIVATE_CONNECTIVITY_SCHEMA_VERSION):
+        raise ReleaseDependencyError("connectivity schema identity/version differs",
+                                     code="HGR-RELEASE-CONNECTIVITY-SCHEMA")
+
+
+def _read_private_connectivity_member(source, path, registration):
+    if isinstance(source, _WorkingTreeSource) and any(
+        (source.root / parent).is_symlink()
+        for parent in Path(path).parents if parent != Path(".")
+    ):
+        raise ReleaseDependencyError(
+            "connectivity member has a symlinked parent: " + path,
+            code="HGR-RELEASE-CONNECTIVITY-MEMBER",
+        )
+    if not source.exists(path):
+        raise ReleaseDependencyError("connectivity required member is unavailable: " + path,
+                                     code="HGR-RELEASE-CONNECTIVITY-MEMBER")
+    data, git_mode, digest = source.read_member(path)
+    if digest != f"sha256:{registration.get('sha256')}":
+        raise ReleaseDependencyError("connectivity registration digest differs: " + path,
+                                     code="HGR-RELEASE-CONNECTIVITY-DIGEST")
+    return data, git_mode, digest
+
+
+def _add_private_connectivity_members(source, manifest, release_version, members, catalog_map):
+    """Close this exact family only at its first authorized publication floor."""
+    if release_version is None or release_version < PRIVATE_CONNECTIVITY_RELEASE_FLOOR:
+        return {}
+    validated_reads = {}
+    by_identity = _private_connectivity_registrations(manifest)
+    for identity in PRIVATE_CONNECTIVITY_REQUIRED_REGISTRATIONS:
+        identifier, path, artifact_type = identity
+        registration = by_identity[identity]
+        if (type(registration.get("schema_version")) is not int or
+                registration["schema_version"] != PRIVATE_CONNECTIVITY_SCHEMA_VERSION):
+            raise ReleaseDependencyError("connectivity registration schema version differs: " + identifier,
+                                         code="HGR-RELEASE-CONNECTIVITY-SCHEMA")
+        if path in catalog_map:
+            raise ReleaseDependencyError("connectivity member has a conflicting catalog registration: " + path,
+                                         code="HGR-RELEASE-CONNECTIVITY-COLLISION")
+        data, git_mode, digest = _read_private_connectivity_member(source, path, registration)
+        if artifact_type == "schema":
+            _validate_private_connectivity_schema(data)
+        validated_reads[path] = (git_mode, digest)
+        members.add(path)
+        # Manifest tool registrations use the inventory schema's validator type.
+        inventory_type = "validator" if artifact_type == "tool" else artifact_type
+        catalog_map[path] = {"contract_id": identifier, "type": inventory_type,
+                             "contract_schema_version": PRIVATE_CONNECTIVITY_SCHEMA_VERSION}
+    return validated_reads
+
+
 def _collect_members(
     source: _WorkingTreeSource | _CommitSource,
-) -> tuple[list[str], dict[str, Mapping[str, object]]]:
+) -> tuple[list[str], dict[str, Mapping[str, object]], dict[str, tuple[str, str]]]:
     catalog = source.load_yaml(CATALOG_PATH)
     if not isinstance(catalog, Mapping):
         raise ReleaseDependencyError("contract catalog is not a mapping")
@@ -790,6 +916,11 @@ def _collect_members(
                 "two catalog entries normalize to the same release member: "
                 f"{relative!r} -> {repo_path}",
                 code="HGR-RELEASE-MEMBER-COLLISION",
+            )
+        if _is_private_connectivity_registration(entry.get("contract_id"), repo_path):
+            raise ReleaseDependencyError(
+                f"generic catalog claims a private-connectivity registration: {repo_path}",
+                code="HGR-RELEASE-CONNECTIVITY-COLLISION",
             )
         catalog_map[repo_path] = entry
         members.add(repo_path)
@@ -926,6 +1057,10 @@ def _collect_members(
         if source.exists(CLEARING_VALIDATOR_PATH):
             members.add(CLEARING_VALIDATOR_PATH)
 
+    validated_reads = _add_private_connectivity_members(
+        source, manifest, release_version, members, catalog_map,
+    )
+
     fixture_index = source.load_yaml(FIXTURE_INDEX_PATH)
     if not isinstance(fixture_index, Mapping):
         raise ReleaseDependencyError("fixture index is not a mapping")
@@ -956,7 +1091,7 @@ def _collect_members(
             members.add(extra)
 
     members = {member for member in members if not _is_release_inventory_path(member)}
-    return _bytewise(members), catalog_map
+    return _bytewise(members), catalog_map, validated_reads
 
 
 def _entry_for(
@@ -991,10 +1126,13 @@ def _entry_for(
 def _build_inventory(
     source: _WorkingTreeSource | _CommitSource, *, bundle_tag: str
 ) -> dict[str, object]:
-    members, catalog_map = _collect_members(source)
+    members, catalog_map, validated_reads = _collect_members(source)
     entries: list[dict[str, object]] = []
     for path in members:
-        _, git_mode, digest = source.read_member(path)
+        if path in validated_reads:
+            git_mode, digest = validated_reads[path]
+        else:
+            _, git_mode, digest = source.read_member(path)
         entries.append(_entry_for(path, catalog_map, git_mode, digest))
     entries.sort(key=lambda entry: str(entry["path"]).encode("utf-8"))
     return {
@@ -1012,7 +1150,7 @@ def _build_inventory(
 def release_membership(repo_root: Path) -> list[Path]:
     """Return the closed, bytewise-sorted release membership from the working tree."""
 
-    members, _ = _collect_members(_WorkingTreeSource(repo_root))
+    members, _, _ = _collect_members(_WorkingTreeSource(repo_root))
     return [Path(member) for member in members]
 
 
@@ -1179,11 +1317,24 @@ def verify_inventory_against_commit(
                     "artifact type does not match the canonical registration",
                 )
             )
+        artifact_id = entry.get("artifact_id")
+        connectivity_entry = _is_private_connectivity_registration(artifact_id, path)
+        if connectivity_entry and artifact_id != canonical_entry["artifact_id"]:
+            findings.append(
+                _finding(
+                    "HGR-RELEASE-CONNECTIVITY-ARTIFACT-ID",
+                    path,
+                    "artifact ID does not match the canonical connectivity registration",
+                )
+            )
         canonical_schema_id = canonical_entry.get("schema_id")
         if canonical_schema_id is not None:
-            if entry.get("schema_id") != canonical_schema_id or entry.get(
-                "schema_version"
-            ) != canonical_entry.get("schema_version"):
+            schema_version = entry.get("schema_version")
+            if (
+                entry.get("schema_id") != canonical_schema_id
+                or schema_version != canonical_entry.get("schema_version")
+                or (connectivity_entry and type(schema_version) is not int)
+            ):
                 findings.append(
                     _finding(
                         "HGR-RELEASE-SCHEMA-PIN-MISMATCH",

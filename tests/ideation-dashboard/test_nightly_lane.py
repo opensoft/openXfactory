@@ -557,7 +557,7 @@ def test_reusable_nightly_publishes_the_registered_repository_index():
         / ".github/workflows/doc-health-reusable.yml"
     ).read_text(encoding="utf-8")
     command = (
-        "python3 openxFactory/scripts/ideation-dashboard-nightly.py "
+        'python3 "$OPENXFACTORY_MOUNT/scripts/ideation-dashboard-nightly.py" '
         "\\\n            --repo-root . \\\n"
         "            --repositories registered"
     )
@@ -972,3 +972,18 @@ def test_a_bare_repository_is_skipped_never_published(tmp_path):
     assert status["skipped"] == [
         {"repository": "bare", "reason": "submodule not initialised",
          "paths": ["bare"]}]
+
+
+@pytest.mark.parametrize(("repo_id", "mount"), [
+    ("openxFactory", "openXfactory"),
+    ("codexFactory", "xFactories/codeXfactory"),
+])
+def test_registered_snapshot_id_can_use_the_canonical_mount(tmp_path, repo_id, mount):
+    checkout = tmp_path / mount
+    checkout.parent.mkdir(parents=True, exist_ok=True)
+    _copy_git_fixture(checkout)
+    (tmp_path / ".gitmodules").write_text(
+        f'[submodule "{repo_id}"]\n\tpath = {mount}\n'
+        f"\turl = git@github.com:fixture/{checkout.name}.git\n",
+        encoding="utf-8")
+    assert lane.locate_checkout(tmp_path, repo_id).path == mount
