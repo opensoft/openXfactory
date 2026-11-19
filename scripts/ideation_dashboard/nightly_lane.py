@@ -91,6 +91,8 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
+from doc_health.factory_checkout_paths import RENAMED_MOUNTS, checkout_path
+
 # § 5.2 SHED REACH (RULED (a) / RULED Q7, `#656`): the modules this file reads
 # from `opendox.*` / `openxdox.*` below left openxFactory at the carve and are
 # read from the two PINNED legs through the ONE resolver. See
@@ -309,7 +311,7 @@ def _write_status(boundary: OutputBoundary, out_dir: Path, payload: dict) -> Pat
 def run_lane(
     agg_root: Path | str,
     *,
-    checkout: str = DEFAULT_CHECKOUT,
+    checkout: str | None = None,
     repository: str = DEFAULT_REPOSITORY,
     out_dir: str = DEFAULT_OUT_DIR,
     register: str = DEFAULT_REGISTER,
@@ -369,7 +371,10 @@ def run_lane(
 
     rev: str | None = None
     try:
-        checkout_root = (agg_root / checkout).resolve()
+        chosen = (checkout_path(agg_root, DEFAULT_CHECKOUT) if checkout is None
+                  else agg_root / checkout)
+        checkout_root = chosen.resolve()
+        checkout = checkout or chosen.relative_to(agg_root).as_posix()
         if not checkout_root.is_dir():
             return _skip(f"pinned checkout not found: {checkout}")
 
@@ -658,6 +663,11 @@ def locate_checkout(agg_root: Path, repository: str,
     candidates = [c for c in (_declared_rel("", repository),
                               _declared_rel("", subs[name]) if subs.get(name) else None)
                   if c is not None]
+    for legacy, canonical in RENAMED_MOUNTS.items():
+        if repository in (legacy.name, legacy.as_posix()) and (
+            subs.get(canonical.name) == canonical.as_posix()
+        ):
+            candidates.insert(0, canonical.as_posix())
     candidates.extend(decl.get(name, []))
     uninitialised: list[str] = []
     for rel in dict.fromkeys(candidates):
@@ -967,7 +977,7 @@ def main(argv: list[str] | None = None) -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--repo-root", required=True,
                     help="the aggregation checkout root")
-    ap.add_argument("--checkout", default=DEFAULT_CHECKOUT,
+    ap.add_argument("--checkout", default=None,
                     help=f"pinned checkout to scan, relative to the aggregation "
                          f"root (default: {DEFAULT_CHECKOUT})")
     ap.add_argument("--repository", default=DEFAULT_REPOSITORY,

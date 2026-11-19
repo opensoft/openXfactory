@@ -157,10 +157,23 @@ def manifest_at_commit(openx_root: Path, commit: str):
     return document if isinstance(document, dict) else None
 
 
+NEUTRAL_MOUNT_NAMES = ("openXfactory", "openxFactory")
+
+
 def find_aggregation_root(repo_root: Path) -> Path | None:
     candidate = repo_root.parent.parent
     gitmodules = candidate / ".gitmodules"
-    if gitmodules.is_file() and "openxFactory" in gitmodules.read_text(encoding="utf-8"):
+    if not gitmodules.is_file():
+        return None
+    paths = subprocess.run(
+        ["git", "-C", _git_dir_arg(candidate), "config", "--file", ".gitmodules",
+         "--get-regexp", r"^submodule\..*\.path$"],
+        capture_output=True, text=True, check=False,
+    )
+    if paths.returncode not in (0, 1):
+        raise ValueError(f"cannot read {gitmodules}")
+    if any(line.split(None, 1)[-1] in NEUTRAL_MOUNT_NAMES
+           for line in paths.stdout.splitlines()):
         return candidate
     return None
 
@@ -175,12 +188,16 @@ def _git_dir_arg(root: Path) -> str:
     return str(Path(root).resolve())
 
 
-def recorded_pointer(aggregation_root: Path) -> str:
-    out = subprocess.run(
-        ["git", "-C", _git_dir_arg(aggregation_root), "ls-tree", "HEAD", "openxFactory"],
+def recorded_mount(aggregation_root: Path) -> tuple[Path, str]:
+    entries = subprocess.run(
+        ["git", "-C", _git_dir_arg(aggregation_root), "ls-tree", "HEAD", "--",
+         *NEUTRAL_MOUNT_NAMES],
         capture_output=True, text=True, check=True,
-    ).stdout.split()
-    return out[2]
+    ).stdout.splitlines()
+    if len(entries) != 1 or not entries[0].startswith("160000 commit "):
+        raise ValueError("expected exactly one neutral factory gitlink")
+    metadata, path = entries[0].split("\t", 1)
+    return aggregation_root / path, metadata.split()[2]
 
 
 def git_is_ancestor(openx_root: Path):
@@ -212,16 +229,18 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    aggregation_root = args.aggregation_root or find_aggregation_root(args.repo_root)
-    if aggregation_root is None:
-        print("SKIP: pin reconciliation skipped (not an aggregation checkout)")
-        return 0
+    try:
+        aggregation_root = args.aggregation_root or find_aggregation_root(args.repo_root)
+        if aggregation_root is None:
+            print("SKIP: pin reconciliation skipped (not an aggregation checkout)")
+            return 0
+        openx_root, pointer = recorded_mount(aggregation_root)
+    except (ValueError, subprocess.CalledProcessError) as error:
+        print(f"ERROR: cannot read aggregation pin: {error}", file=sys.stderr)
+        return 1
 
     with (args.repo_root / "stack.yaml").open(encoding="utf-8") as handle:
         pin = yaml.safe_load(handle)["xfactory"]["contract_ref"]
-    pointer = recorded_pointer(aggregation_root)
-
-    openx_root = aggregation_root / "openxFactory"
     verdict, message = classify(pin, pointer, git_is_ancestor(openx_root))
     print(f"{verdict}: {message}", file=sys.stderr if verdict == ERROR else sys.stdout)
 

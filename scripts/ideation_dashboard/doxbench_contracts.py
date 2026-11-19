@@ -669,8 +669,9 @@ def resolve_root(root: Path | str | None = None, *,
     if is_publisher_checkout(base):
         return base
     for directory in [base, *base.parents]:
-        if (directory / VALIDATOR_RELPATH).is_file():
-            return directory / CHECKOUT_RELPATH
+        for name in ("openXfactory", "openxFactory"):
+            if (directory / name / VALIDATOR_IN_CHECKOUT).is_file():
+                return directory / name
     raise ContractPinError(
         f"no openxFactory checkout is reachable from {base} (it carries no "
         f"{', '.join(str(marker) for marker in PUBLISHER_MARKERS)} of its own, "

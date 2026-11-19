@@ -174,7 +174,7 @@ def test_reusable_installer_source_is_immutable_and_independent_of_caller_pin(tm
     assert materialize == [smoke["run"], smoke["run"]]
     script = smoke["run"]
     assert re.search(r"^\s*ref=[0-9a-f]{40}$", script, re.M)
-    assert 'git -C openxFactory archive "$ref"' in script
+    assert 'git -C "$OPENXFACTORY_MOUNT" archive "$ref"' in script
     assert "checkout" not in "\n".join(line for line in script.splitlines()
                                       if not line.lstrip().startswith("#"))
     assert "--depth" not in script

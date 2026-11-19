@@ -60,11 +60,11 @@ INIT_STEP_NAME = "Init governed submodules only"
 
 #: The command half. `--aggregation-root .` is the mode, and `.` is the
 #: aggregation checkout the reusable workflow runs in.
-PARITY_COMMAND = ("python3 openxFactory/scripts/verify-openxwallet-pin.py "
+PARITY_COMMAND = ('python3 "$OPENXFACTORY_MOUNT/scripts/verify-openxwallet-pin.py" '
                   "--aggregation-root .")
 
 #: The ordering guard, byte for byte the one the nested init already uses.
-GUARD = ("git -C openxFactory config --file .gitmodules "
+GUARD = ('git -C "$OPENXFACTORY_MOUNT" config --file .gitmodules '
          "--get submodule.openXwallet.path")
 
 

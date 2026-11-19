@@ -243,7 +243,7 @@ jobs:
           set -euo pipefail
           # The SAME governed filter the init step below applies, so the two can
           # never disagree about which submodules a token has to reach.
-          GOVERNED='^(openxFactory|xFactories/)'
+          GOVERNED='^(openXfactory$|openxFactory$|xFactories/)'
           MODULES=$(git config --file .gitmodules --get-regexp 'submodule\..*\.path' || true)
           FOREIGN=""
           ALL=""
@@ -443,8 +443,19 @@ jobs:
           done
       - name: Init governed submodules only
         run: |
+          OPENXFACTORY_MOUNT="$(python3 - <<'PY'
+          import subprocess
+
+          mounts = subprocess.check_output([
+              "git", "ls-tree", "HEAD", "--", "openXfactory", "openxFactory",
+          ], text=True).splitlines()
+          if len(mounts) != 1 or not mounts[0].startswith("160000 commit "):
+              raise SystemExit("expected exactly one neutral factory gitlink")
+          print(mounts[0].split("\t", 1)[1])
+          PY
+          )"
           SUBS=$(git config --file .gitmodules --get-regexp 'submodule\..*\.path' \
-                 | awk '{print $2}' | grep -E '^(openxFactory|xFactories/)')
+                 | awk '{print $2}' | grep -E '^(openXfactory$|openxFactory$|xFactories/)')
           git submodule update --init $SUBS
           # The NESTED neutral-product gitlink, one level down and scoped by
           # name. `openxFactory/openXwallet` is a submodule OF a submodule, so
@@ -459,9 +470,9 @@ jobs:
           # land in different pull requests (P4 after P3): before that bump the
           # init has nothing to do and an unguarded invocation would fail the
           # nightly for the ordering rather than for a defect.
-          if git -C openxFactory config --file .gitmodules \
+          if git -C "$OPENXFACTORY_MOUNT" config --file .gitmodules \
                --get submodule.openXwallet.path >/dev/null 2>&1; then
-            git -C openxFactory submodule update --init openXwallet
+            git -C "$OPENXFACTORY_MOUNT" submodule update --init openXwallet
             # TWO LEVELS FURTHER, by name, and only in THIS job (openXwallet
             # `split-openwallet-neutral-core`, design D6). From `xwallet-v1.0`
             # openXwallet nests the openWallet ROOT, which nests its `code` leg,
@@ -471,12 +482,12 @@ jobs:
             # GUARDED on each nested `.gitmodules` declaring the path, for the
             # ordering reason the guard above gives: a pin from before the
             # nested chain skips rather than failing the nightly.
-            if git -C openxFactory/openXwallet config --file .gitmodules \
+            if git -C "$OPENXFACTORY_MOUNT/openXwallet" config --file .gitmodules \
                  --get submodule.openWallet.path >/dev/null 2>&1; then
-              git -C openxFactory/openXwallet submodule update --init openWallet
-              if git -C openxFactory/openXwallet/openWallet config --file .gitmodules \
+              git -C "$OPENXFACTORY_MOUNT/openXwallet" submodule update --init openWallet
+              if git -C "$OPENXFACTORY_MOUNT/openXwallet/openWallet" config --file .gitmodules \
                    --get submodule.code.path >/dev/null 2>&1; then
-                git -C openxFactory/openXwallet/openWallet submodule update --init code
+                git -C "$OPENXFACTORY_MOUNT/openXwallet/openWallet" submodule update --init code
               else
                 echo "openxFactory/openXwallet/openWallet declares no code leg at this pin; skipping the nested init"
               fi
@@ -528,6 +539,12 @@ jobs:
           else
             echo "MedxEHR declares no code gitlink at this pin; skipping the nested init"
           fi
+          if [ ! -e "$OPENXFACTORY_MOUNT/.git" ] ||
+             [ "$(git -C "$OPENXFACTORY_MOUNT" rev-parse HEAD)" != "$(git rev-parse "HEAD:$OPENXFACTORY_MOUNT")" ]; then
+            echo "::error::neutral checkout does not match the recorded gitlink"
+            exit 1
+          fi
+          printf 'OPENXFACTORY_MOUNT=%s\n' "$OPENXFACTORY_MOUNT" >> "$GITHUB_ENV"
       - name: Verify openXwallet root-gitlink parity
         # split-openxwallet-repo task 9.4 / design D11. THIS IS THE ONLY CI THAT
         # INITIALIZES BOTH GITLINKS, which is why the check is invoked here and
@@ -572,9 +589,9 @@ jobs:
         # consumer that stops carrying the pin is not passing, it is not
         # participating.
         run: |
-          if git -C openxFactory config --file .gitmodules \
+          if git -C "$OPENXFACTORY_MOUNT" config --file .gitmodules \
                --get submodule.openXwallet.path >/dev/null 2>&1; then
-            python3 openxFactory/scripts/verify-openxwallet-pin.py \
+            python3 "$OPENXFACTORY_MOUNT/scripts/verify-openxwallet-pin.py" \
               --aggregation-root .
           else
             echo "openxFactory declares no openXwallet gitlink at this pin; skipping the root-gitlink parity check"
@@ -588,11 +605,11 @@ jobs:
           set -euo pipefail
           ref=2cd4050a220a9c46e1d6cdd8eff59fe41817d174
           # Keep the caller's provider checkout and selected pins intact.
-          if ! git -C openxFactory cat-file -e "$ref^{commit}" 2>/dev/null; then
-            git -C openxFactory fetch --no-tags origin "$ref"
+          if ! git -C "$OPENXFACTORY_MOUNT" cat-file -e "$ref^{commit}" 2>/dev/null; then
+            git -C "$OPENXFACTORY_MOUNT" fetch --no-tags origin "$ref"
           fi
           support="$(mktemp -d "$RUNNER_TEMP/openxfactory-install-support.XXXXXX")"
-          git -C openxFactory archive "$ref" -- .github/requirements .github/worker-cli |
+          git -C "$OPENXFACTORY_MOUNT" archive "$ref" -- .github/requirements .github/worker-cli |
             tar --extract --directory "$support" --no-same-owner --no-same-permissions
           printf 'root=%s\n' "$support" >> "$GITHUB_OUTPUT"
       - name: Install suite dependencies
@@ -616,7 +633,7 @@ jobs:
               SKIPS+=(--skip-family "$family")
             done
           fi
-          python3 openxFactory/scripts/doc-health.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/doc-health.py" \
             --repo-root . \
             "${SKIPS[@]}" \
             ${PREV_INV:+--previous-inventory "$PREV_INV"} \
@@ -646,7 +663,7 @@ jobs:
           if [ -n "$CATALOG_SCOPE_INPUT" ]; then
             SCOPE=(--catalog-scope "$CATALOG_SCOPE_INPUT")
           fi
-          python3 openxFactory/scripts/doc-health.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/doc-health.py" \
             --repo-root . \
             "${BASELINE[@]}" "${SCOPE[@]}" \
             --catalog-prepare catalog-bundle
@@ -1079,7 +1096,7 @@ jobs:
               MANUAL+=(--organizer-manual-idea "$idea")
             done
           fi
-          python3 openxFactory/scripts/doc-health.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/doc-health.py" \
             --repo-root . \
             "${SKIPS[@]}" "${MANUAL[@]}" \
             --organizer-tenant-boundary "$ORGANIZER_TENANT" \
@@ -1416,7 +1433,7 @@ jobs:
           set -euo pipefail
           # The SAME governed filter the init step below applies, so the two can
           # never disagree about which submodules a token has to reach.
-          GOVERNED='^(openxFactory|xFactories/)'
+          GOVERNED='^(openXfactory$|openxFactory$|xFactories/)'
           MODULES=$(git config --file .gitmodules --get-regexp 'submodule\..*\.path' || true)
           FOREIGN=""
           ALL=""
@@ -1616,8 +1633,19 @@ jobs:
           done
       - name: Init governed submodules only
         run: |
+          OPENXFACTORY_MOUNT="$(python3 - <<'PY'
+          import subprocess
+
+          mounts = subprocess.check_output([
+              "git", "ls-tree", "HEAD", "--", "openXfactory", "openxFactory",
+          ], text=True).splitlines()
+          if len(mounts) != 1 or not mounts[0].startswith("160000 commit "):
+              raise SystemExit("expected exactly one neutral factory gitlink")
+          print(mounts[0].split("\t", 1)[1])
+          PY
+          )"
           SUBS=$(git config --file .gitmodules --get-regexp 'submodule\..*\.path' \
-                 | awk '{print $2}' | grep -E '^(openxFactory|xFactories/)')
+                 | awk '{print $2}' | grep -E '^(openXfactory$|openxFactory$|xFactories/)')
           git submodule update --init $SUBS
           # The NESTED neutral-product gitlink, one level down and scoped by
           # name. `openxFactory/openXwallet` is a submodule OF a submodule, so
@@ -1632,9 +1660,9 @@ jobs:
           # land in different pull requests (P4 after P3): before that bump the
           # init has nothing to do and an unguarded invocation would fail the
           # nightly for the ordering rather than for a defect.
-          if git -C openxFactory config --file .gitmodules \
+          if git -C "$OPENXFACTORY_MOUNT" config --file .gitmodules \
                --get submodule.openXwallet.path >/dev/null 2>&1; then
-            git -C openxFactory submodule update --init openXwallet
+            git -C "$OPENXFACTORY_MOUNT" submodule update --init openXwallet
           else
             echo "openxFactory declares no openXwallet gitlink at this pin; skipping the nested init"
           fi
@@ -1680,13 +1708,13 @@ jobs:
           # from before the products were mounted skips the init rather than
           # failing the nightly over an ordering.
           for product in openDox openXdox; do
-            if git -C openxFactory config --file .gitmodules \
+            if git -C "$OPENXFACTORY_MOUNT" config --file .gitmodules \
                  --get "submodule.${product}.path" >/dev/null 2>&1; then
-              git -C openxFactory submodule update --init "$product"
+              git -C "$OPENXFACTORY_MOUNT" submodule update --init "$product"
               for leg in spec code; do
-                if git -C "openxFactory/${product}" config --file .gitmodules \
+                if git -C "$OPENXFACTORY_MOUNT/${product}" config --file .gitmodules \
                      --get "submodule.${leg}.path" >/dev/null 2>&1; then
-                  git -C "openxFactory/${product}" submodule update --init "$leg"
+                  git -C "$OPENXFACTORY_MOUNT/${product}" submodule update --init "$leg"
                 else
                   echo "openxFactory/${product} declares no ${leg} leg at this pin; skipping the nested init"
                 fi
@@ -1695,6 +1723,12 @@ jobs:
               echo "openxFactory declares no ${product} gitlink at this pin; skipping the nested init"
             fi
           done
+          if [ ! -e "$OPENXFACTORY_MOUNT/.git" ] ||
+             [ "$(git -C "$OPENXFACTORY_MOUNT" rev-parse HEAD)" != "$(git rev-parse "HEAD:$OPENXFACTORY_MOUNT")" ]; then
+            echo "::error::neutral checkout does not match the recorded gitlink"
+            exit 1
+          fi
+          printf 'OPENXFACTORY_MOUNT=%s\n' "$OPENXFACTORY_MOUNT" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -1704,11 +1738,11 @@ jobs:
           set -euo pipefail
           ref=2cd4050a220a9c46e1d6cdd8eff59fe41817d174
           # Keep the caller's provider checkout and selected pins intact.
-          if ! git -C openxFactory cat-file -e "$ref^{commit}" 2>/dev/null; then
-            git -C openxFactory fetch --no-tags origin "$ref"
+          if ! git -C "$OPENXFACTORY_MOUNT" cat-file -e "$ref^{commit}" 2>/dev/null; then
+            git -C "$OPENXFACTORY_MOUNT" fetch --no-tags origin "$ref"
           fi
           support="$(mktemp -d "$RUNNER_TEMP/openxfactory-install-support.XXXXXX")"
-          git -C openxFactory archive "$ref" -- .github/requirements .github/worker-cli |
+          git -C "$OPENXFACTORY_MOUNT" archive "$ref" -- .github/requirements .github/worker-cli |
             tar --extract --directory "$support" --no-same-owner --no-same-permissions
           printf 'root=%s\n' "$support" >> "$GITHUB_OUTPUT"
       - name: Install suite dependencies
@@ -2164,7 +2198,7 @@ jobs:
           # loop below zero times and exits 0, which is the actual
           # non-fatal contract this step keeps.
           SUBS=$(git config --file .gitmodules --get-regexp 'submodule\..*\.path' \
-                 | awk '{print $2}' | grep -E '^(openxFactory|xFactories/)' || true)
+                 | awk '{print $2}' | grep -E '^(openXfactory$|openxFactory$|xFactories/)' || true)
           for sub in $SUBS; do
             [ -e "$sub/.git" ] || continue
             if git -C "$sub" fetch --no-tags --quiet origin \
@@ -2191,6 +2225,7 @@ jobs:
           NEUTRALITY_ENABLED: ${{ inputs.neutrality-drift }}
           NEUTRALITY_BASELINE_INPUT: ${{ inputs.neutrality-baseline }}
         run: |
+          : "${OPENXFACTORY_MOUNT:?neutral mount unavailable}"
           RUN_DATE="$(date -u +%F)"
           PREV="$(ls health/reports/[0-9]*.md 2>/dev/null | sort | tail -1 || true)"
           # Reports are immutable records: a same-day rerun must never
@@ -2324,7 +2359,7 @@ jobs:
           # prepare-phase invocations above, which build bundles and discard
           # findings; the report this step writes is the only place the basis
           # is read by anyone, and it names the basis in its own section.
-          python3 openxFactory/scripts/doc-health.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/doc-health.py" \
             --repo-root . "${SKIPS[@]}" "${GATE[@]}" \
             --promotion-fidelity-basis live-main \
             --report-out "$REPORT_OUT" \
@@ -2348,8 +2383,8 @@ jobs:
           # after the upload already ran (opensoft/openxFactory#1118); it
           # reuses the same renderer for its own capped issue-body.md.
           python3 - "$RUN_DATE" <<'PY'
-          import json, sys
-          sys.path.insert(0, "openxFactory/scripts")
+          import json, os, sys
+          sys.path.insert(0, os.environ["OPENXFACTORY_MOUNT"] + "/scripts")
           from doc_health.regression_issue_body import render
           run_date = sys.argv[1]
           findings = json.load(open("new-findings.json"))
@@ -2443,7 +2478,7 @@ jobs:
           # (Copilot `PRRT_kwDOTAvnrs6jzmDm`.)
           RUN_DATE="${SUITE_RUN_DATE:-$(date -u +%F)}"
           echo "run_date=${RUN_DATE}" >> "$GITHUB_OUTPUT"
-          if ! python3 openxFactory/scripts/report-citation-remainder.py openxFactory \
+          if ! python3 "$OPENXFACTORY_MOUNT/scripts/report-citation-remainder.py" "$OPENXFACTORY_MOUNT" \
             --json > citation-remainder.json; then
             echo "::warning::citation-remainder: the report did not run, so no reading was taken and no artifact is uploaded tonight; this is not a finding"
             exit 1
@@ -2516,7 +2551,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
           RUN_DATE: ${{ steps.run.outputs.run_date }}
         run: |
-          cd openxFactory
+          cd -- "${OPENXFACTORY_MOUNT:?neutral mount unavailable}"
           git status --porcelain health/neutrality-drift/ | grep -q . \
             || { echo "no neutrality lane writes — nothing to commit back"; exit 0; }
           BRANCH="doc-health/neutrality-drift"
@@ -2740,7 +2775,7 @@ jobs:
         # that just produced this run's inventory.
         if: steps.xref-readiness.outputs.ready == 'true'
         run: |
-          python3 openxFactory/scripts/ideation-readiness-nightly.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/ideation-readiness-nightly.py" \
             --repo-root . --phase prepare --out-dir xref-bundle \
             --as-of "${{ steps.run.outputs.run_date }}" \
             --run-id "${{ steps.xref-readiness.outputs.correlation_id }}"
@@ -2932,7 +2967,7 @@ jobs:
             --report-in "${{ steps.run.outputs.report_out }}")
           [ -n "$FINDINGS_IN" ] && ARGS+=(--findings-in "$FINDINGS_IN")
           [ -n "$UNAVAILABLE" ] && ARGS+=(--unavailable-reason "$UNAVAILABLE")
-          python3 openxFactory/scripts/ideation-readiness-nightly.py "${ARGS[@]}"
+          python3 "$OPENXFACTORY_MOUNT/scripts/ideation-readiness-nightly.py" "${ARGS[@]}"
       # =====================================================================
       # Derive-possibles lane (openxFactory add-possibles-derivation-lane,
       # tasks 4.1/4.2/4.4). Clones the ideation-readiness lane's
@@ -3117,7 +3152,7 @@ jobs:
         # run's freshest.
         if: steps.dposs-readiness.outputs.ready == 'true'
         run: |
-          python3 openxFactory/scripts/derive-possibles-nightly.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/derive-possibles-nightly.py" \
             --repo-root . --phase prepare --out-dir dposs-bundle \
             --as-of "${{ steps.run.outputs.run_date }}" \
             --run-id "${{ steps.dposs-readiness.outputs.correlation_id }}"
@@ -3304,7 +3339,7 @@ jobs:
             --status-out dposs-status.json)
           [ -n "$FINDINGS_IN" ] && ARGS+=(--findings-in "$FINDINGS_IN")
           [ -n "$UNAVAILABLE" ] && ARGS+=(--unavailable-reason "$UNAVAILABLE")
-          python3 openxFactory/scripts/derive-possibles-nightly.py "${ARGS[@]}"
+          python3 "$OPENXFACTORY_MOUNT/scripts/derive-possibles-nightly.py" "${ARGS[@]}"
       - name: Derive-possibles register commit-back (rolling PR; dormant until first lane persist)
         # Change task 4.4: when — and only when — the merge above PERSISTED a
         # merged register into the openxFactory checkout, commit those
@@ -3340,7 +3375,7 @@ jobs:
           PERSISTED="$(python3 -c 'import json; print(str(json.load(open("dposs-status.json")).get("persisted", False)).lower())')"
           [ "$PERSISTED" = "true" ] || { echo "lane did not persist — nothing to commit back"; exit 0; }
           BRANCH="doc-health/derive-possibles"
-          cd openxFactory
+          cd -- "${OPENXFACTORY_MOUNT:?neutral mount unavailable}"
           git config user.name "openxfactory[bot]"
           git config user.email "openxfactory[bot]@users.noreply.github.com"
           git add ideation/cross-reference.yaml health/derive-possibles/
@@ -3394,7 +3429,7 @@ jobs:
       - name: Ideation-dashboard snapshot lane (skip-on-error, never gates)
         continue-on-error: true
         run: |
-          python3 openxFactory/scripts/ideation-dashboard-nightly.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/ideation-dashboard-nightly.py" \
             --repo-root . \
             --repositories registered \
             --aggregate medx-clinical \
@@ -3427,7 +3462,7 @@ jobs:
             --json url -q '.[0].url' 2>/dev/null || true)"
           ARGS=(--repo-root . --phase report --report-in "$REPORT")
           [ -n "$STUCK" ] && ARGS+=(--stuck-pull-request "$STUCK")
-          python3 openxFactory/scripts/dashboard-refresh-nightly.py "${ARGS[@]}"
+          python3 "$OPENXFACTORY_MOUNT/scripts/dashboard-refresh-nightly.py" "${ARGS[@]}"
       # Delivers living health/ artifacts. NOT gated on steps.run.outputs.commit:
       # a same-day rerun redirects only the DATED report/inventory to
       # RUNNER_TEMP (records are immutable — they never re-enter the tree, so
@@ -3765,7 +3800,7 @@ jobs:
         env:
           REASON: ${{ steps.dfr-readiness.outputs.reason }}
         run: |
-          python3 openxFactory/scripts/dashboard-refresh-nightly.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/dashboard-refresh-nightly.py" \
             --repo-root . --phase decide \
             --skip-reason "worker unavailable: ${REASON:-not_ready}"
       - name: Ideation-dashboard image refresh — decide (no-change short-circuit, before any build)
@@ -3783,9 +3818,9 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          python3 openxFactory/scripts/dashboard-refresh-nightly.py \
+          python3 "$OPENXFACTORY_MOUNT/scripts/dashboard-refresh-nightly.py" \
             --repo-root . --phase decide \
-            --corpus-checkout openxFactory \
+            --corpus-checkout "$OPENXFACTORY_MOUNT" \
             --run-url "$RUN_URL" \
             --decision-out dfr-decision.json
           BUILD="$(python3 -c 'import json;print(str(json.load(open("dfr-decision.json"))["build"]).lower())' 2>/dev/null || echo false)"
@@ -3926,7 +3961,7 @@ jobs:
           # first, and one that does not name SEALED_IMAGE, or cannot be
           # imported, seals nothing: the refusal is recorded as the seal's
           # result, and no sealed code runs.
-          if ! "${pythonLocation:?}/bin/python3" -c 'import sys; sys.path.insert(0, "openxFactory/scripts"); from ideation_dashboard import dashboard_refresh_lane as lane; sys.exit(getattr(lane, "SEALED_IMAGE_ENV", None) != "SEALED_IMAGE")' 2>/dev/null; then
+          if ! "${pythonLocation:?}/bin/python3" -c 'import os, sys; sys.path.insert(0, os.environ["OPENXFACTORY_MOUNT"] + "/scripts"); from ideation_dashboard import dashboard_refresh_lane as lane; sys.exit(getattr(lane, "SEALED_IMAGE_ENV", None) != "SEALED_IMAGE")' 2>/dev/null; then
             # Written as the lane writes its own result: whatever sits at the
             # path is removed, never followed, and the result is created
             # exclusively, through no link (Copilot, PR #1192). A path that
@@ -3938,9 +3973,9 @@ jobs:
             echo "sealed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          "${pythonLocation:?}/bin/python3" openxFactory/scripts/dashboard-refresh-nightly.py \
+          "${pythonLocation:?}/bin/python3" "$OPENXFACTORY_MOUNT/scripts/dashboard-refresh-nightly.py" \
             --repo-root . --phase seal \
-            --corpus-checkout openxFactory \
+            --corpus-checkout "$OPENXFACTORY_MOUNT" \
             --decision-in dfr-decision.json \
             --seal-out dfr-seal \
             --seal-result-out dfr-seal-result.json \
@@ -4012,7 +4047,7 @@ jobs:
           if [ "$STRICT" = "true" ]; then
             ARGS+=(--seal-result-in dfr-seal-result.json)
           fi
-          "${pythonLocation:?}/bin/python3" openxFactory/scripts/dashboard-refresh-nightly.py "${ARGS[@]}"
+          "${pythonLocation:?}/bin/python3" "$OPENXFACTORY_MOUNT/scripts/dashboard-refresh-nightly.py" "${ARGS[@]}"
       - name: Dispatch artifact-only dashboard-image child
         id: dfr-dispatch
         # Cloned from "Dispatch artifact-only readiness child". The child lives
@@ -4191,9 +4226,9 @@ jobs:
             echo "pinned=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          "${pythonLocation:?}/bin/python3" openxFactory/scripts/dashboard-refresh-nightly.py \
+          "${pythonLocation:?}/bin/python3" "$OPENXFACTORY_MOUNT/scripts/dashboard-refresh-nightly.py" \
             --repo-root . --phase pin \
-            --corpus-checkout openxFactory \
+            --corpus-checkout "$OPENXFACTORY_MOUNT" \
             --digest-in dfr-digest/digest.json \
             --pin-out dfr-pin \
             --run-url "$RUN_URL"
@@ -4287,7 +4322,7 @@ jobs:
             echo "::notice::ideation-dashboard-refresh: pin PR delivered — ${PR_URL}"
             # Patch this run's status with the PR reference (task 4.7). Rides the
             # next delivery, like the status itself. Best-effort.
-            "${pythonLocation:?}/bin/python3" openxFactory/scripts/dashboard-refresh-nightly.py \
+            "${pythonLocation:?}/bin/python3" "$OPENXFACTORY_MOUNT/scripts/dashboard-refresh-nightly.py" \
               --repo-root . --phase record-pr --pull-request "$PR_URL" || true
           else
             echo "::warning::pin branch delivered but the PR reference could not be resolved — refresh may need a manual PR open"
@@ -4307,8 +4342,8 @@ jobs:
           # the FULL list to new-findings.md before this step ever runs)
           # caps on UTF-8 bytes, which upper-bounds characters too.
           "${pythonLocation:?}/bin/python3" - <<'PY'
-          import json, sys
-          sys.path.insert(0, "openxFactory/scripts")
+          import json, os, sys
+          sys.path.insert(0, os.environ["OPENXFACTORY_MOUNT"] + "/scripts")
           from doc_health.regression_issue_body import render
           run_date = "${{ steps.run.outputs.run_date }}"
           findings = json.load(open("new-findings.json"))

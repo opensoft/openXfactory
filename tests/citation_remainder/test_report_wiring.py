@@ -23,6 +23,7 @@ belongs to the caller (`opensoft/xFactory`).
 
 from __future__ import annotations
 
+import shlex
 from pathlib import Path
 
 import yaml
@@ -34,7 +35,7 @@ WORKFLOW = ROOT / ".github" / "workflows" / "doc-health-reusable.yml"
 #: moves in one place and every assertion below travels with it.
 RUN_STEP_ID = "citation-remainder"
 ARTIFACT_FILE = "citation-remainder.json"
-SCRIPT_PATH = "openxFactory/scripts/report-citation-remainder.py"
+SCRIPT_PATH = "$OPENXFACTORY_MOUNT/scripts/report-citation-remainder.py"
 
 
 def workflow() -> dict:
@@ -93,7 +94,7 @@ def report_invocations(script: str) -> list:
     for command in joined:
         if "report-citation-remainder.py" not in command:
             continue
-        argv = command.split(">", 1)[0].split()
+        argv = shlex.split(command.split(">", 1)[0])
         while argv and argv[0] in ("if", "!"):
             argv.pop(0)
         invocations.append(argv)
@@ -120,7 +121,7 @@ def test_the_argv_is_the_fixed_one_and_carries_no_refinement():
     flag invented later is caught by the same line."""
     invocation, = report_invocations(step_by_id(finalize(),
                                                 RUN_STEP_ID)["run"])
-    assert invocation == ["python3", SCRIPT_PATH, "openxFactory", "--json"], \
+    assert invocation == ["python3", SCRIPT_PATH, "$OPENXFACTORY_MOUNT", "--json"], \
         invocation
 
 
@@ -140,7 +141,7 @@ def test_the_repo_root_positional_is_this_submodule_and_never_a_default():
     remainder, that would be published as this repository's."""
     invocation, = report_invocations(step_by_id(finalize(),
                                                 RUN_STEP_ID)["run"])
-    assert invocation[2] == "openxFactory"
+    assert invocation[2] == "$OPENXFACTORY_MOUNT"
 
 
 def test_the_json_flag_is_passed_with_no_operand():
@@ -224,7 +225,7 @@ def test_the_reading_is_taken_before_any_step_that_writes_in_the_submodule():
     job = finalize()
     reading_at = index_of(job, step_by_id(job, RUN_STEP_ID))
     writers = [(i, s.get("name")) for i, s in enumerate(job["steps"])
-               if "cd openxFactory" in (s.get("run") or "")]
+               if 'cd -- "${OPENXFACTORY_MOUNT:?neutral mount unavailable}"' in (s.get("run") or "")]
     assert writers, "expected at least one commit-back step to order against"
     for i, name in writers:
         assert i > reading_at, f"{name!r} writes in the submodule at step " \
