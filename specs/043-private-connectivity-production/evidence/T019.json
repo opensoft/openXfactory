@@ -1,0 +1,47 @@
+{
+  "schema": "043-recorded-neutral-release-source-authority-v1",
+  "task": "T019",
+  "id": "043-t019-v4.4-direct-source-authority",
+  "recorded_by": "Codex",
+  "owner": "Brett Heap",
+  "decision": "accepted",
+  "mode": "source",
+  "scope": {
+    "candidate": "contract-v4.4",
+    "customer": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "neutral-contract",
+    "phase": "source",
+    "profile": "neutral-private-connectivity-contract",
+    "region": "not-applicable",
+    "run": "043-neutral-published-readback-v4.4",
+    "site": "not-applicable",
+    "target": "not-applicable",
+    "wave": "not-applicable"
+  },
+  "roles": [
+    "Brett Heap (neutral publication and release owner)"
+  ],
+  "decisions": {},
+  "valid_from": "2026-11-19T22:19:27.620Z",
+  "valid_until": "2026-12-17T08:38:55.473Z",
+  "verified_original_input": {
+    "observed_event_at": "2026-11-19T22:19:27.620Z",
+    "message_bytes": 205,
+    "message_sha256": "521c08d7dfa6b2637027735f4880eb7764a7acac8f9bab309b80d2ab2dc87830",
+    "scope": "Complete T018–T019 from the verified v4.4 release and honor the independent rollout gates."
+  },
+  "exact_release": {
+    "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+    "tag": "contract-v4.4"
+  },
+  "pin_inventory": [
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+    }
+  ]
+}
