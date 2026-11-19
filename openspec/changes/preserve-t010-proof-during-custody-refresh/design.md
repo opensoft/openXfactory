@@ -99,14 +99,24 @@ The accepted evidence/commissioning.json has SHA-256
 9493a7f106a0306bbb1e057a84b0673d9468f4b320f32cb507f5b062f5195248.
 Its verify-evidence.py has SHA-256
 87f2c99e7e6f481af1b2cc0d79e78d62e9cc105ca18c46a273cff5c2fe29ee9c.
-Verify that the selected predecessor continues to pass default verification
-and that both existing workflows still accept it with the successor reader.
+Limit this new predecessor path to source verification during the
+transition. Before verifying through the pinned reader, apply current
+authenticated authority revocations and completion closures using the
+existing historical-control rules. The pinned predecessor supplies original
+proof and does not supply current authority by itself. Refuse when current
+authority cannot be established and hold the transition. Exercise default
+verification with a predecessor source grant revoked after pinning and no
+valid completion closure, and with missing current authority. Verify that
+the unchanged approved predecessor passes default verification with current
+authority established and that both workflows still accept it.
 
 Wait for required CI and evaluated Sonar on the protected reader and freeze.
-Then have the existing attestor prepare and independently review the
-successor's commissioning manifest at a separate immutable candidate commit,
-using the exact protected reader and current T010 source evidence. Register
-the fresh approval and verify the successor with default verification before
+Prepare the successor's commissioning manifest at a separate immutable
+candidate commit using the exact protected reader and current T010 source
+evidence. Have the independent reviewers verify that candidate and its actual
+source outputs. Pass their immutable review reference and the candidate
+manifest to the existing qualified attestor. Register the resulting approval
+and verify the successor with default verification before
 making it the selected CI control. Verify the historical controls and both
 current source lanes again before the private archive write. Preserve the
 original T010 proof and keep whichever prior accepted control was selected

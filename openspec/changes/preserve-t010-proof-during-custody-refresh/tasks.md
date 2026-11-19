@@ -26,9 +26,12 @@ authorization and qualification of the existing task scopes.
   Admit a fresh, independently registered T010 source C-01 under the same
   successor through the normal subject path. Preserve the existing 100 test
   identities and both measured workflow counts. Keep the accepted predecessor
-  selected and verifiable through its fixed historical reader while qualifying
-  the successor reader and freeze on protected main. Prepare and authenticate the
-  separate immutable successor manifest, register its fresh proof and pass default
+  selected while qualifying the successor reader and freeze on protected main.
+  Verify the fixed predecessor for source only using current authenticated
+  revocations and closures. Refuse stale or unavailable current authority.
+  Prepare the separate immutable successor manifest and independently
+  review its actual outputs. Run the existing qualified attestor with that
+  manifest and exact review. Register the resulting proof and pass default
   verification before selecting it. Verify current T010 commissioning and
   historical controls before the private archive write.
 - [ ] 2.2 Under the qualified successor, verify the exact one-path Ops C-01
