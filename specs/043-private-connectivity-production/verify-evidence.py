@@ -159,6 +159,18 @@ DELEGATED_ATTESTATIONS = {
         "path": "specs/043-private-connectivity-production/evidence/T018.json",
         "repository": "opensoft/openxfactory",
         "sha256": "6cbcb33c51103869fc8d3f00df73094a7052d767bbdb27976f70066b1cad09d6"
+    },
+    "9b521406a9c221269c9332b6852579ea26135a723547f8e4720988e2d8ae5bdb": {
+        "commit": "2711d92c38285c37f2ac21c28a3159fc9a83d50e",
+        "path": "specs/043-private-connectivity-production/evidence/T015.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "b332fbdc6917e7a375545ccd155e9d8b00c5d1fa03846afec82a1015ada698ac"
+    },
+    "b131505270619a34adbc9eb0208460a93ab37b3b5b9492296f671a7db9b7fb04": {
+        "commit": "81ae4857bbd6c526a10619ebe239e95645d09596",
+        "path": "specs/043-private-connectivity-production/evidence/T015.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "57720b82aae201553c1382b38319beed646a6f29cc793dd6fa0608ee6384bc0e"
     }
 }
 
