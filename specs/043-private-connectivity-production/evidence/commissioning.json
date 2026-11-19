@@ -3465,7 +3465,8 @@
         "contracts/manifest.yaml",
         "contracts/private-connectivity/README.md",
         "contracts/releases/contract-v4.4.digests.yaml",
-        "tests/intent-compliance/test_release_boundary.py"
+        "tests/intent-compliance/test_release_boundary.py",
+        "specs/043-private-connectivity-production/evidence/T018.json"
       ],
       "dependencies": {
         "T016": "T016",
