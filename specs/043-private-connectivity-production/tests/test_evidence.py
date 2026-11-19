@@ -1944,7 +1944,11 @@ def test_delegation_producer_uses_qualified_pin_and_refuses_inactive_state(monke
     raw = store.blob(ref)
     assert v.digest(raw) == ref["sha256"]
     assert v.require_delegation_producer(store, dict(ref)) == raw
-    assert sorted(v.DELEGATED_ATTESTATIONS) == ["a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f", "ed53795c4d54152860abd38a15338449a24e3069dff3ec0483d66f741fbb2acd"]
+    assert sorted(v.DELEGATED_ATTESTATIONS) == [
+        "08dc067d95a6199571d26983e1cd0d289329e8fde58fa338853961a68b365fea",
+        "a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f",
+        "ed53795c4d54152860abd38a15338449a24e3069dff3ec0483d66f741fbb2acd",
+    ]
     kinds = set()
     for subject_sha256, evidence_ref in v.DELEGATED_ATTESTATIONS.items():
         record = v.decode(store.blob(evidence_ref))

@@ -1,7 +1,7 @@
 {
   "schema": "043-reviewed-trust-v1",
   "feature": "043-private-connectivity-production",
-  "definition": "281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421",
+  "definition": "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc",
   "custodian": "Brett Heap",
   "custody": {
     "kind": "source-git",
@@ -9158,9 +9158,9 @@
   "authorizes_production": false,
   "review": {
     "repository": "opensoft/openxfactory",
-    "commit": "4c8a4d23883030e4e1e9e67e2e43fb939d9dce71",
+    "commit": "c569b3968ea6f459579c38a0ece7e9564b22c0ce",
     "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
-    "sha256": "24fb46a7844b89bdf35fb6def5c7952d43ae952df82aef268936cd0e6cdaea32"
+    "sha256": "bd6b14af418de6d31e9d51435bfce490d40d50dfd80d420e642967c9aabf10bc"
   },
   "qualification_history": [
     {
@@ -9272,6 +9272,50 @@
         "sha256": "02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326"
       },
       "hosted_preservation_reason": "The earlier local candidate verified T010 but refused T013's original immutable T010 dependency. Retain the already supported exact Hosted Headscale control and its reviewed predecessor."
+    },
+    {
+      "kind": "T010-protected-custody-transition",
+      "predecessor": {
+        "repository": "opensoft/openxfactory",
+        "commit": "9da72c839c5904876d0ccdf0af4997ec5fb42eed",
+        "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+        "sha256": "9493a7f106a0306bbb1e057a84b0673d9468f4b320f32cb507f5b062f5195248"
+      },
+      "protected_base": "e0539b3a1bd9978dc079deb2cdd6b9a0baa0b7e3",
+      "protected_predecessor_verified_at": "2026-11-19T12:50:51.029525+00:00",
+      "primary_source": {
+        "run_id": 44516704506,
+        "job_id": 135534459432,
+        "attempt": 1,
+        "log_sha256": "069fb8c0566e066e2294af664acfa96ac2bd99917e4fb95e5bd7f748ea266b4f",
+        "suites": {
+          "specs/043-private-connectivity-production/tests/test_evidence.py": 711,
+          "specs/043-private-connectivity-production/tests/test_evidence_pins.py": 40,
+          "specs/043-private-connectivity-production/tests/test_source_roots.py": 107,
+          "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100
+        }
+      },
+      "secondary_source": {
+        "run_id": 44516704561,
+        "job_id": 135534458684,
+        "attempt": 1,
+        "log_sha256": "8b7dd5650aefd12ff2e048660bc5d9252342b36ee4c79710d2746139804af38b",
+        "suites": {
+          "specs/043-private-connectivity-production/tests/test_source_roots.py": 107,
+          "specs/043-private-connectivity-production/tests/test_delegated_evidence.py": 100
+        }
+      },
+      "evaluated_sonar": {
+        "job_id": 135570097941,
+        "log_sha256": "88707e09ef32074da2495bbdec77723de492880e482cebf5056ea344a2e736fc",
+        "evaluated_steps": {
+          "Analyze and wait for the existing quality gate": "success",
+          "Verify evaluated conditions and exact main source": "success",
+          "Publish evaluated gate receipt": "success"
+        }
+      },
+      "original_source_binding_preserved": true,
+      "selection_status": "pending independent authentication and default verification"
     }
   ],
   "prior_containers": [
@@ -9346,6 +9390,12 @@
       "commit": "7f826ca80e5df5d470da533dab6c8a155e299f27",
       "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
       "sha256": "02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "9da72c839c5904876d0ccdf0af4997ec5fb42eed",
+      "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+      "sha256": "9493a7f106a0306bbb1e057a84b0673d9468f4b320f32cb507f5b062f5195248"
     }
   ],
   "pin_inventory": [
@@ -9444,10 +9494,6 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "479750c62efad1bf803b6d1bec566c8ac07c5565"
-    },
-    {
-      "repository": "opensoft/openxfactory",
-      "openxfactory_commit": "4c8a4d23883030e4e1e9e67e2e43fb939d9dce71"
     },
     {
       "repository": "opensoft/openxfactory",
@@ -9558,6 +9604,10 @@
       "foreign_commit": "9b4c6106633d5d28b777ef00f1d9bd695588efcf"
     },
     {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "9da72c839c5904876d0ccdf0af4997ec5fb42eed"
+    },
+    {
       "repository": "opensoft/headscale-install",
       "foreign_commit": "9e94411f893836550b481085f0ef628f4b14b99b"
     },
@@ -9615,6 +9665,10 @@
     },
     {
       "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "c569b3968ea6f459579c38a0ece7e9564b22c0ce"
+    },
+    {
+      "repository": "opensoft/openxfactory",
       "openxfactory_commit": "c5edba57d6ce8ea6debe16930335600f03aaa182"
     },
     {
@@ -9648,6 +9702,10 @@
     {
       "repository": "opensoft/openxfactory",
       "openxfactory_commit": "de9637eb7215f2f11b98bd7a874420c8692d03aa"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "e0539b3a1bd9978dc079deb2cdd6b9a0baa0b7e3"
     },
     {
       "repository": "opensoft/openxfactory",

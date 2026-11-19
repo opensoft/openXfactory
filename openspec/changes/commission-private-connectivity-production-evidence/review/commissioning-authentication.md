@@ -1,12 +1,12 @@
-# Authentication review: Expanded T010 source CI
+# T010 custody successor source authentication
 
 Status: record
 
-Codex authenticated the exact expanded T010 source-only output under Brett Heap's recorded delegation. The original scope attestation preserves the earlier C-01 decision and its nine independent reviews. The separate output attestation binds the actual primary and Python 3.14 run, job, attempt, measured collection and source-step output.
+Codex authenticated this exact source-only successor under Brett Heap’s recorded delegation after nine independent reviews. The independently reviewed manifest is 99679900a657d39600109ba0993ba28d11d96761. Its canonical content SHA-256 is 341e62d5ca91c30a65370901a57d5953b781756775d1ff8422de395ecf73d2d6.
 
-The independently reviewed manifest is eaedb5ce459260b0033fabc5aaeed2abe41eb6a8. Its canonical content SHA-256 is c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. The original source-only custody decision and previous accepted bindings retain their exact references. The earlier Hosted Headscale authentication is preserved in [the T013 record](https://github.com/opensoft/openXfactory/blob/4d61a150fc44e472a4259792dd56b08a23da2cad/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md).
+The original T010 binding and source CI references are retained. The same-core qualification history records both successful protected source lanes and the evaluated Sonar gate on e0539b3a1bd9978dc079deb2cdd6b9a0baa0b7e3.
 
-This record covers source-output custody and admission. Program commissioning, publication, deployment, spend and Q0 through Q5 remain separately gated.
+The earlier source authentication remains in [the immutable predecessor record](https://github.com/opensoft/openXfactory/blob/4c8a4d23883030e4e1e9e67e2e43fb939d9dce71/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md). Successor-backed qualification and the separately authorized Ops archive write remain pending.
 
 ```json
 {
@@ -16,16 +16,16 @@ This record covers source-output custody and admission. Program commissioning, p
   "accountable_owner": "Brett Heap",
   "reviewed_manifest": {
     "repository": "opensoft/openxfactory",
-    "commit": "eaedb5ce459260b0033fabc5aaeed2abe41eb6a8",
+    "commit": "99679900a657d39600109ba0993ba28d11d96761",
     "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "sha256": "49518e60c523b500f5b01bdadf10368979063eae4b437e382c798382f346fffc"
+    "sha256": "9d8d61f0cabb9faf473421908ec30df7c85e73734528bd41c9d28fe19c286430"
   },
-  "content_sha256": "c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516",
+  "content_sha256": "341e62d5ca91c30a65370901a57d5953b781756775d1ff8422de395ecf73d2d6",
   "attestation": {
     "repository": "opensoft/openxfactory",
-    "commit": "169d16217150264ce7a5cc9a21ff055172376499",
+    "commit": "c53df5c21786ccafefbe3e98ad7671ed88a3fb83",
     "path": "specs/043-private-connectivity-production/evidence/T010.json",
-    "sha256": "97a01cdd2bc56897aee1e9e9898218aa5d260bc0562af3444de47dab7ac9b348"
+    "sha256": "d7f123ac563fbbe87552ed31a5ca177dc871d54651e3d76a8ce758531ec74540"
   }
 }
 ```
