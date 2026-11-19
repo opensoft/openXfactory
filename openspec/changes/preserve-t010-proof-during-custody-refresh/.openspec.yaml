@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-11-19
+skip_specs: true
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-19-preserve-t010-proof-during-custody-refresh
+  reason: Preserve an already accepted source choice through the exact T015 custody definition refresh.
+  proposed_by: Codex under the finite internal-production preparation authority
+  proposed_on: '2026-11-19'
+related:
+  - openXfactory:change:authorize-private-connectivity-internal-production
+  - openXfactory:change:preserve-delegated-source-proof-bootstrap

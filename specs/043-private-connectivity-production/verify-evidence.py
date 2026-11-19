@@ -31,7 +31,8 @@ FEATURE = "043-private-connectivity-production"
 FEATURE_PATH = "specs/" + FEATURE
 COORDINATOR = "opensoft/openxfactory"
 HISTORICAL_CONTROL_ERROR = "unaccepted historical control"
-DEFINITION = "281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421"
+T010_CUSTODY_SUCCESSOR = "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc"
+DEFINITION = T010_CUSTODY_SUCCESSOR
 LEGACY_DEFINITION = "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0"
 LEGACY_CONTROL_SHA256 = "0dc18a4053e07fd484534dcd4b572a5f8c6b72718b6901ac1323298d4ec7243e"
 LEGACY_READER_SHA256 = "0ce860921467e94e942274905c45c99295a830a3f14b8a0b66ddb944103f697f"
@@ -101,6 +102,31 @@ INSTANCE_TASKS = frozenset(f"T{i:03}" for i in range(57, 65))
 COMMISSIONING_PATH = FEATURE_PATH + "/evidence/commissioning.json"
 AUTHENTICATION_PATH = "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md"
 
+# The custody transition keeps one accepted predecessor and one original T010 scope proof.
+T010_CUSTODY_PREDECESSOR = {
+    "reference": {
+        "repository": COORDINATOR,
+        "commit": "9da72c839c5904876d0ccdf0af4997ec5fb42eed",
+        "path": COMMISSIONING_PATH,
+        "sha256": "9493a7f106a0306bbb1e057a84b0673d9468f4b320f32cb507f5b062f5195248",
+    },
+    "definition": "281fdf8a64a6d3851a775d558bc95fcf2899d162bc6c2a615bdc88657fcc9421",
+    "reader": {
+        "repository": COORDINATOR,
+        "commit": "9da72c839c5904876d0ccdf0af4997ec5fb42eed",
+        "path": FEATURE_PATH + "/verify-evidence.py",
+        "sha256": "87f2c99e7e6f481af1b2cc0d79e78d62e9cc105ca18c46a273cff5c2fe29ee9c",
+    },
+    "content_sha256": "c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516",
+}
+T010_ORIGINAL_SCOPE_DECISION = "4f7060b31899c5b1a04452bd8b968edc42e9de04d47d6204287792c9c1e0cbcb"
+T010_ORIGINAL_SCOPE_PROOF = {
+    "repository": COORDINATOR,
+    "commit": "5d82621d28fe94a9f0bef663015dcc8cd2f6d10f",
+    "path": FEATURE_PATH + "/evidence/T010.json",
+    "sha256": "8060207aca399a81340fb992271e1358b605f4d38bd6842721c154ef779f8619",
+}
+
 
 DELEGATION_ROOT_REF = {
     "repository": COORDINATOR,
@@ -115,12 +141,7 @@ DELEGATION_PRODUCER_REF = {'repository': 'opensoft/openxfactory', 'commit': 'ba9
 # may enter this register. Producer activation alone grants no output authority.
 # Key: canonical subject SHA-256. Value: exact whole immutable output reference.
 DELEGATED_ATTESTATIONS = {
-    "a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f": {
-        "commit": "5d82621d28fe94a9f0bef663015dcc8cd2f6d10f",
-        "path": "specs/043-private-connectivity-production/evidence/T010.json",
-        "repository": "opensoft/openxfactory",
-        "sha256": "8060207aca399a81340fb992271e1358b605f4d38bd6842721c154ef779f8619"
-    },
+    "a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f": T010_ORIGINAL_SCOPE_PROOF,
     "ed53795c4d54152860abd38a15338449a24e3069dff3ec0483d66f741fbb2acd": {
         "commit": "169d16217150264ce7a5cc9a21ff055172376499",
         "path": "specs/043-private-connectivity-production/evidence/T010.json",
@@ -521,6 +542,9 @@ def fixed_2a46_control(ref):
 
 
 def historical_source_parameters(ref):
+    predecessor = T010_CUSTODY_PREDECESSOR
+    if _same_reference(ref, predecessor["reference"]):
+        return predecessor, predecessor["definition"], predecessor["reader"]
     selected = fixed_2a46_control(ref)
     if selected is not None:
         return selected, DEFINITION_2A46, READER_2A46
@@ -531,6 +555,9 @@ def historical_source_parameters(ref):
 
 def validate_historical_binding(key, ref):
     reference(ref)
+    if _same_reference(ref, T010_CUSTODY_PREDECESSOR["reference"]):
+        require(key == "T010", "unaccepted historical task")
+        return
     selected_2a46 = fixed_2a46_control(ref)
     if key in {"T013", "T021", "T022"}:
         require(selected_2a46 is not None and
@@ -567,6 +594,19 @@ def historical_verifier(store, ref, now=None, *, prepare=False):
     verifier = namespace["Verifier"](tasks, store, ref, now, prepare=prepare)
     verifier.definition = definition
     return verifier
+
+
+def verify_t010_transition_predecessor(provider, store, protected_base, now=None):
+    """Verify T010 only while the qualified protected base still selects its predecessor."""
+    ref = T010_CUSTODY_PREDECESSOR["reference"]
+    provider.qualified_base(protected_base)
+    active = provider.content(COMMISSIONING_PATH, protected_base)
+    require(digest(active) == ref["sha256"], "protected main no longer selects the T010 predecessor")
+    historical_verifier(store, ref, now).verify("T010")
+    provider.qualified_base(protected_base)
+    branch = provider.get("repos/" + COORDINATOR + "/branches/main")
+    require(branch.get("protected") is True and branch.get("commit", {}).get("sha") == protected_base,
+            "protected main changed during T010 predecessor verification")
 
 
 def make_verifier(tasks, store, ref, now=None, *, prepare=False):
@@ -733,6 +773,11 @@ class Verifier:
         subject = {"kind": "decision", "definition": self.definition,
                    "record_sha256": digest(canonical_json({key: value for key, value in decision.items()
                                                          if key != "delegation"}))}
+        if (self.definition == T010_CUSTODY_SUCCESSOR and binding["task"] == "T010" and not post_run
+                and decision.get("kind") == "C-01" and subject["record_sha256"] == T010_ORIGINAL_SCOPE_DECISION
+                and binding["scope"]["phase"] == decision["scope"]["phase"] == "source"
+                and _same_reference(decision["delegation"], T010_ORIGINAL_SCOPE_PROOF)):
+            subject["definition"] = T010_CUSTODY_PREDECESSOR["definition"]
         reviewed = require_delegated_review(self.store, decision["delegation"], subject, self.now,
                                            self.trust["revoked_authorities"])
         root = load_delegation_root(self.store, DELEGATION_ROOT_REF, reviewed,
