@@ -1947,12 +1947,14 @@ def test_delegation_producer_uses_qualified_pin_and_refuses_inactive_state(monke
     assert sorted(v.DELEGATED_ATTESTATIONS) == [
         "08dc067d95a6199571d26983e1cd0d289329e8fde58fa338853961a68b365fea",
         "a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f",
+        "bb6d9c4f29f55f7c633dbadd71c56907fa297800395d4dec961d9f529341990d",
         "ed53795c4d54152860abd38a15338449a24e3069dff3ec0483d66f741fbb2acd",
     ]
     kinds = set()
     for subject_sha256, evidence_ref in v.DELEGATED_ATTESTATIONS.items():
         record = v.decode(store.blob(evidence_ref))
-        assert evidence_ref['path'] == v.FEATURE_PATH + '/evidence/T010.json'
+        task = "T018" if subject_sha256 == "bb6d9c4f29f55f7c633dbadd71c56907fa297800395d4dec961d9f529341990d" else "T010"
+        assert evidence_ref['path'] == v.FEATURE_PATH + f'/evidence/{task}.json'
         assert record['schema'] == '043-delegated-attestation-v1'
         assert record['producer'] == ref
         assert v.digest(v.canonical_json(record['subject'])) == subject_sha256
