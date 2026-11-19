@@ -41,7 +41,10 @@ custody refresh. Bind that successor after review of its actual owner records
 and full input freeze. Keep the existing registered reference, content hash,
 human grant, original reviewers, time and revocation checks. Obtain fresh
 authentication for the current commissioning subject through the existing
-producer. Keep the original checked source observation and required lanes.
+producer. Preserve the accepted source_ci_producer and
+source_ci_original_reference exactly as recorded in the immutable legacy
+control. Verify both against that control before the successor is selected.
+Keep the original checked source observation and required lanes.
 The normal subject for every fresh decision uses its own qualified definition.
 
 ### Closed file scope
@@ -107,17 +110,23 @@ existing attestor GitHub.qualified_base readback and fetch that commit's
 active evidence/commissioning.json with its GitHub.content readback.
 Require those active bytes to match the fixed predecessor manifest, then
 verify the predecessor with its pinned reader and the exact registered
-reference. Its authenticated revocations and completion closures are
-current only while that independent readback identifies it as the active
-protected control. Refuse stale, unavailable or changed authority and
-hold the transition. This adds no top-level historical fallback to the
+reference. After that verification and immediately before accepting its
+result, repeat the existing GitHub branch readback. Require main to
+remain protected at the identical qualified commit. An intervening
+advance can change the active control even when the exact older content
+fetch still succeeds. Its authenticated revocations and completion
+closures are current only while that readback identifies it as the
+active protected control. Refuse stale, unavailable or changed authority
+and hold the transition. This adds no top-level historical fallback to the
 successor reader and does not accept a caller-supplied old trust reference
 as evidence of current authority.
 
 After the successor is selected, its authenticated manifest supplies current
 revocations and completion closures to the existing nested historical
 path. Exercise refusal when current authority is missing or when the active
-control changed after pinning, and nested verification when a predecessor
+control changed after pinning. Simulate main moving between the initial
+qualification and the final readback while the pinned content and proof
+remain valid. Separately exercise nested verification when a predecessor
 source grant was revoked without a valid completion closure.
 
 Wait for required CI and evaluated Sonar on the protected reader and freeze.
@@ -127,10 +136,14 @@ evidence. Have the independent reviewers verify that candidate and its actual
 source outputs. Pass their immutable review reference and the candidate
 manifest to the existing qualified attestor. Register the resulting approval
 and verify the successor with default verification before
-making it the selected CI control. Verify the historical controls and both
-current source lanes again before the private archive write. Preserve the
-original T010 proof and keep whichever prior accepted control was selected
-if any transition check fails.
+making it the selected CI control. Verify the historical controls and obtain
+successful evidence from both required source lanes using a trusted base
+whose selected active manifest is the exact successor. Record each actual
+run and its selected base. A promotion run can still select its predecessor
+through the PR base or push event.before and cannot establish this result.
+If a successor-backed lane fails or remains unverified, hold the private
+archive write and use the reviewed rollback under current authority.
+Preserve the original T010 proof throughout.
 
 Under the qualified successor, recheck and bind the exact one-path Ops C-01
 and C-08 decisions to its definition before the archive write. The qualified

@@ -29,14 +29,18 @@ authorization and qualification of the existing task scopes.
   selected while qualifying the successor reader and freeze on protected main.
   Verify the predecessor with its pinned reader only after an independent
   qualified protected-base readback confirms its manifest is still active.
+  Repeat the protected branch readback before accepting the result. Refuse
+  an advance during qualification even when the pinned bytes still verify.
   Refuse stale, changed or unavailable current authority. After selection,
   use the successor's authenticated revocations and completion closures for
   nested historical verification.
   Prepare the separate immutable successor manifest and independently
   review its actual outputs. Run the existing qualified attestor with that
-  manifest and exact review. Register the resulting proof and pass default
-  verification before selecting it. Verify current T010 commissioning and
-  historical controls before the private archive write.
+  manifest and exact review. Match both unchanged source CI reference fields
+  to the immutable legacy control. Register the resulting proof and pass
+  default verification before selecting it. Verify current T010 commissioning,
+  historical controls and both actual required lanes from a trusted base that
+  selects the successor before the private archive write.
 - [ ] 2.2 Under the qualified successor, verify the exact one-path Ops C-01
   and C-08 authority and the complete freeze before the archive write. After
   independent private readback and actual-output review, qualify the separate
