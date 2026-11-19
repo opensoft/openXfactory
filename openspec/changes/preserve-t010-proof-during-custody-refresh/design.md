@@ -52,6 +52,10 @@ compatibility binding and matching reviewed definition identity. Use the existin
 decision and proof readers. Under T010 E maintenance, extend the existing
 `specs/043-private-connectivity-production/tests/test_delegated_evidence.py`
 regressions and requalify T010 through its original source lanes.
+Extend assertions inside existing collected cases to retain the 100
+unique test identities, all existing coverage, and the measured count in
+both required workflows. Any necessary collection change requires separate
+exact scope for both workflow validators before use.
 Preserve both task file envelopes and their existing dependencies.
 
 Use the existing `owner-scopes.md` and `contracts/task-evidence.md` inputs for
@@ -65,23 +69,48 @@ original authority and timestamps.
 
 A decision may appear valid under a different task, phase, scope or proof
 reference. Require a refusal for each substitution and for revoked authority.
+Exercise task and phase substitutions separately at compatibility selection
+with the original decision, proof and approved successor intact. Require the
+normal subject path before the caller's scope validation can mask the result.
 Exercise the exact original decision and proof under a different,
 unapproved successor definition. Separately change a decision-body field
 outside its scope while preserving the source scope, proof and approved
 successor. Require refusal in both cases.
 Prove the exact original scope retains its original review time and normal
-checks. Exercise fresh source approval through the current-definition path.
+checks. Exercise a valid, independently registered fresh source-phase T010
+C-01 in the same approved successor through the current-definition path.
 Demonstrate effect and runtime refusal with the historical proof.
 
 ## Qualification and recovery
 
 Record independent T007 and T010 maintenance scope acceptance before
-implementing the binding. Record the proposed Ops custody scope and refresh
-the complete definition from its actual accepted source records. Qualify the
-successor with current T010 commissioning and the applicable historical
-controls. This qualification uses the original T010 proof and fresh measured
-source authentication for the successor before the private archive exists.
-If a predicate fails, retain the original protected definition and proof.
+implementing the binding. Build the complete successor definition from the
+exact approved Ops scope records and the full input freeze. The accepted
+scope bodies enter the freeze. Fresh attestations that bind that definition
+remain in the existing evidence registration outside the inputs they sign.
+
+Stage the transition on protected main. Keep the current accepted
+commissioning manifest selected as the workflows' predecessor during the
+reader and definition update. Register that manifest and its reader as one
+fixed historical control using the existing exact-reference reader. Pass the
+registered commit, path and digest for default verification during the
+transition. At the reviewed base, both files come from 9da72c839c5904876d0ccdf0af4997ec5fb42eed.
+The accepted evidence/commissioning.json has SHA-256
+9493a7f106a0306bbb1e057a84b0673d9468f4b320f32cb507f5b062f5195248.
+Its verify-evidence.py has SHA-256
+87f2c99e7e6f481af1b2cc0d79e78d62e9cc105ca18c46a273cff5c2fe29ee9c.
+Verify that the selected predecessor continues to pass default verification
+and that both existing workflows still accept it with the successor reader.
+
+Wait for required CI and evaluated Sonar on the protected reader and freeze.
+Then have the existing attestor prepare and independently review the
+successor's commissioning manifest at a separate immutable candidate commit,
+using the exact protected reader and current T010 source evidence. Register
+the fresh approval and verify the successor with default verification before
+making it the selected CI control. Verify the historical controls and both
+current source lanes again before the private archive write. Preserve the
+original T010 proof and keep whichever prior accepted control was selected
+if any transition check fails.
 
 Under the qualified successor, recheck and bind the exact one-path Ops C-01
 and C-08 decisions to its definition before the archive write. The qualified
