@@ -153,3 +153,27 @@ T010 test_delegated_evidence.py path and a fourth mandatory measured current
 source suite. All original suites, historical readers, task dependencies and
 commands remain. This source permission is distinct from pending output
 acceptance and qualified producer activation.
+
+## T015 one-file Ops source-custody scope
+
+The independently reviewed scope bodies apply to the existing private
+Ops repository with ID 1284702188 and the single designated archive
+file. C-01 limits the parent permission to that file. C-08 retains
+Brett Heap as source custodian under existing repository permissions
+and project-lifetime retention. Current access controls and original
+source observations remain unchanged.
+
+evidence/private-connectivity-production/T015-source-custody.json
+
+- C-01 canonical body SHA-256: d22e859c9ab379c4e60b089dc75ed4cd7a79b41285747feaae426b8b81e25b98.
+- C-08 canonical body SHA-256: d997309a3c2d28e6fbb941856889e238beaac93ce7cb9c07c15ba58e84ca2ecc.
+- Exact source-scope review input SHA-256: 33b963e03540fd6e511a4a24362b518c9e3f693829a6b59c09e1a0a0a386bd1b.
+- Independent scope review SHA-256: 450b601d74261b036267c19c98e24a1109ef3bd09a8404aecb8dc809f106b270.
+
+This record binds the reviewed bodies into the successor definition.
+Codex records the scope review under the finite human-root delegation.
+The Ops owner must separately qualify both exact source decisions under
+the successor and obtain review of the actual destination bytes before
+the archive write. T015 consumes only the immutable external custody
+reference and retains its coordinator-only files and T010 prerequisite.
+Neither the scope review nor these source records authorize runtime.
