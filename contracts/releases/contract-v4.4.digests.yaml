@@ -1204,12 +1204,12 @@ entries:
   path: contracts/manifest.yaml
   type: manifest
   git_mode: '100644'
-  digest: sha256:6313952b159f6eaf0bae047c298fe3d983921e2fddc8e77d79de16984c7f0ce1
+  digest: sha256:f1310f1f11c9c03c13a71d56d0ef54339c3dd6b03ef29d90542f45f00aba9c63
 - artifact_id: private-connectivity-contract
   path: contracts/private-connectivity/README.md
   type: documentation
   git_mode: '100644'
-  digest: sha256:6015f62566075dd2700aab7396c52876fe8b3067bb8618392b8c6bb2c1a53436
+  digest: sha256:7e5abaabdfa3826acc9b0c7e4dc93025fbc9c76f5ffdc37ade683adb9f6fa7de
 - artifact_id: private-connectivity-binding
   path: contracts/private-connectivity/binding.schema.json
   type: schema

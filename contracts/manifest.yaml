@@ -3790,7 +3790,7 @@ contracts:
     path: contracts/private-connectivity/README.md
     type: documentation
     schema_version: 1
-    sha256: 6015f62566075dd2700aab7396c52876fe8b3067bb8618392b8c6bb2c1a53436
+    sha256: 7e5abaabdfa3826acc9b0c7e4dc93025fbc9c76f5ffdc37ade683adb9f6fa7de
     compatibility: canonical_openxfactory_contract
     adapter_owner: openxFactory
 

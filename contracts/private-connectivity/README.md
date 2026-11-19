@@ -1,5 +1,9 @@
 # Neutral private-connectivity binding
 
+Status: ratified
+Ratified by: publish-private-connectivity-production-contract
+Kind: reference
+
 This schema-v1 package is distributed in published, annotated openXfactory
 contract bundles. Verify the bundle tag, its protected commit and the generated
 inventory before adopting the package. Treat worktree copies and inventory
