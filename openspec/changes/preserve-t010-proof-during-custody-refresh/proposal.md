@@ -41,7 +41,9 @@ qualified evidence while requalifying an amended source scope.
 
 ## Impact
 
-The executable change is limited to `specs/043-private-connectivity-production/verify-evidence.py`
-and `specs/043-private-connectivity-production/tests/test_delegated_evidence.py`.
-Record the matching approved owner scope and complete freeze in their existing
-input files. Feature 043 remains the governing task list and acceptance model.
+The existing T007 E scope covers `specs/043-private-connectivity-production/verify-evidence.py`.
+The existing T010 E scope covers
+`specs/043-private-connectivity-production/tests/test_delegated_evidence.py`
+and the resulting T010 requalification. Record both exact maintenance
+scopes and the complete reviewed freeze in their existing input files.
+Feature 043 remains the governing task list and acceptance model.

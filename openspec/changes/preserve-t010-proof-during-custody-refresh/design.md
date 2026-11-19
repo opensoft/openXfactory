@@ -46,11 +46,13 @@ The normal subject for every fresh decision uses its own qualified definition.
 
 ### Closed file scope
 
-In `specs/043-private-connectivity-production/verify-evidence.py`, add only
-the exact compatibility binding and the matching reviewed definition identity.
-Use the existing decision and proof readers. In
-`specs/043-private-connectivity-production/tests/test_delegated_evidence.py`,
-exercise the retained proof and fail-closed cases through that reader.
+Under T007 E maintenance, review and update
+`specs/043-private-connectivity-production/verify-evidence.py` with the exact
+compatibility binding and matching reviewed definition identity. Use the existing
+decision and proof readers. Under T010 E maintenance, extend the existing
+`specs/043-private-connectivity-production/tests/test_delegated_evidence.py`
+regressions and requalify T010 through its original source lanes.
+Preserve both task file envelopes and their existing dependencies.
 
 Use the existing `owner-scopes.md` and `contracts/task-evidence.md` inputs for
 the reviewed scope and complete regenerated freeze. Keep all 68 executable
@@ -69,9 +71,16 @@ Demonstrate effect and runtime refusal with the historical proof.
 
 ## Qualification and recovery
 
-Record the independently reviewed exact E scope before using the binding.
-Refresh the complete freeze from the actual accepted records. Run the affected
-reader suites, required source CI and default verification of T010 and all
-applicable historical controls on the reviewed protected base. If a predicate
-fails, retain the original protected definition and proof. Once the successor
-qualifies, follow the separate Ops archive scope and fresh T015 admission.
+Record independent T007 and T010 maintenance scope acceptance before
+implementing the binding. Record the proposed Ops custody scope and refresh
+the complete definition from its actual accepted source records. Qualify the
+successor with current T010 commissioning and the applicable historical
+controls. This qualification uses the original T010 proof and fresh measured
+source authentication for the successor before the private archive exists.
+If a predicate fails, retain the original protected definition and proof.
+
+Under the qualified successor, recheck and bind the exact one-path Ops C-01
+and C-08 decisions to its definition before the archive write. The qualified
+successor stage supplies T010 and the separate custody authorization. After
+the Ops archive lands, use its exact private readback to qualify the later
+T015 evidence and run default T015 admission.
