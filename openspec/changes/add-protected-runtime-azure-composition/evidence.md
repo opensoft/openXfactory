@@ -51,3 +51,17 @@ by this local evidence record; blocked optional publication remains unreplayed.
 
 Implementation/setup/dispatch, actual-run authority and live machine/consumer/human
 acceptance remain separate. Feedback deferred; every blocked write unreplayed.
+
+## Publication commission and actual ledger provenance
+
+The owner commissioned opening the P3 preparation PRs, generated factory ledger,
+hosted CI and local Codex expert review, finding resolution and presentation for
+ratification, scoped to the first pilot. Implementation/setup/dispatch remain
+unauthorized; feedback deferred and blocked writes unreplayed.
+
+Draft [factory PR#1353](https://github.com/opensoft/openXfactory/pull/1353) supplied
+the real identity. The unmodified seeder ran with --seed-ledger --moved-by #1353.
+Only this new packet's ledger row was added; old row provenance is preserved.
+Ledger-diff passes. Earlier local-only/publication-prerequisite paragraphs remain
+historical. Required fresh exact-head CI and local review follow publication;
+no connector review or operational authority is inferred.
