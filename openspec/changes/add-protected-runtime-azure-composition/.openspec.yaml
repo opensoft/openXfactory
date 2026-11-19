@@ -1,0 +1,8 @@
+schema: spec-driven
+created: 2026-11-19
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-19-add-protected-runtime-azure-composition
+  reason: Prepare P3 governed deployment composition proposal and feature017 plan after owner acceptance of the exact T013-S1 design basis; no implementation or operational authority.
+  approved_by: 'Brett Heap: I accept T013-S1 at 081dad41cfb4 with 049ede52b6ee as design basis only; roles subject to confirmation. Prepare P3’s governed proposal and plan. Keep implementation/setup/dispatch unauthorized, feedback deferred; don’t replay blocked writes.'
+  approved_on: '2026-11-19'
