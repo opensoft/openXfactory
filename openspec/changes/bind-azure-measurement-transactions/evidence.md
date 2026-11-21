@@ -36,7 +36,7 @@ publication provenance needs an actual PR number; no invented moved_by is used.
 Setup/dispatch unauthorized; feedback deferred; blocked writes unreplayed.
 
 
-## Local proposal validation checkpoint
+## Historical bare-CLI proposal validation checkpoint
 
 All four planning artifacts are present. Strict validation accepts this candidate;
 full current-main corpus is 151 items with one existing failure, while this
@@ -49,3 +49,22 @@ Dependency/sequence validation passes. Staged ledger-diff identifies the new
 change's missing row; its generated provenance must use an actual published PR
 number. No placeholder PR, manual ledger edit or publication success is claimed.
 Required CI/local review and exact paired source acceptance remain pending.
+
+
+## Canonical gate correction - 2026-11-21 UTC
+
+The earlier baseline diagnosis used the bare OpenSpec binary rather than this
+repository's required `scripts/validate-openspec-cli-pin.py --all` entrypoint.
+The existing content-addressed pin already carries Brett's 2026-09-05 exact-match
+ratified disposition for this declared Merged-into scenario retitle. It is not a
+new failure requiring a change to the ratified chain packet or the shared CLI.
+
+Fresh execution of the actual required pinned entrypoint at local factory head
+5855f3dfbbbbf925e8703da176838e4113f65627 exits zero: artifact and 80-package closure
+verified, 152 targets checked, zero undispositioned failures, one existing
+accepted finding. This is explicitly not a raw-clean corpus; the one applied
+exception and its original authority remain visible. No new exception, pin,
+validator or accepted contract byte is changed. The publication authority now
+covers both governance candidates, actual ledger generation, hosted CI and local
+Codex review, followed by presentation for v2 ratification. That ratification
+and dependent v2 code remain pending; setup/dispatch stay unauthorized.
