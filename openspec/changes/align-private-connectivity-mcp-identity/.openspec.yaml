@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-11-18
+skip_specs: true
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-18-align-private-connectivity-mcp-identity
+  reason: Record the approved existing Entra owner decision as a bounded amendment to the Feature 043 MCP identity handoff.
+  proposed_by: Codex under Brett Heap's explicit approval of the exact identity wording
+  proposed_on: '2026-11-18'
+related:
+  - openXfactory:change:authorize-private-connectivity-internal-production
+  - openXfactory:change:commission-hosted-domain-production

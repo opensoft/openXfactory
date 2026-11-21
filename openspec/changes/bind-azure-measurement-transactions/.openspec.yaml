@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-11-21
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-21-bind-azure-measurement-transactions
+  reason: Prepare the corrective source decision required by accepted feature017 P05
+    eligibility when existing interfaces cannot correlate a direct measurement response
+    with its fresh authenticated request.
+  approved_by: 'Brett Heap: Implement and test T013P05 in isolation. This draft follows
+    the accepted P05 governed-amendment guard; no acceptance of the proposed v2 contract
+    or operational authority is inferred.'
+  approved_on: '2026-11-21'
