@@ -2603,13 +2603,32 @@ written (`5962754358`). `consumer_reach.py` is gone.
     no task of this plan), T081 (`doxbench_install.py`'s single-writer
     order), T072 (the state directory), T084 (`serve_workbench.py`'s
     single-writer order: the console intake's hand-off), T007 (batch M).
-- [ ] T083 [US3] [oDc] **16.6, then F16.1.** `tests/test_provider_boundary.py`
+- [x] T083 [US3] [oDc] **16.6, then F16.1.** `tests/test_provider_boundary.py`
   stays green as 16.1 joins the one module. Then run F16.1 whole, with the
   line T007's batch M adds (`tests/test_model_binding_trust.py`, T100).
   - **Realizes**: 16.6, F16.1.
   - **Falsifier**: `tests/test_provider_boundary.py` for 16.6, then F16.1
     whole, as batch M amends it.
   - **After**: T080, T081, T082, T100.
+  - **Landed**: [`evidence/f16.1-run.md`](evidence/f16.1-run.md), run on
+    2026-10-03 at openDox-code `main` `a7853d11`, after T082 (#76 → `7af4c999`) and
+    T100 (#82 → `cb691b18`). It is quoted in openxFactory, in the checkpoints'
+    form, on the holder's ruling of 2026-10-03, as T077's and T074's runs are.
+    No openDox-code file changes in this task.
+    - 16.6: `tests/test_provider_boundary.py` passes whole (24 cases) on a
+      tree that carries 16.1's second dialect and T100's `doxbench_trust.py`.
+      The same file under `--noconftest`, 16.6's measured form, reds 12 of 28
+      at `1e4a57fb` and passes here, and a control that plants a network client
+      in `doxbench_trust.py` reds two cases, so the sweep reaches the new
+      module.
+    - F16.1, extracted byte for byte from #1144 at `de2ab703` with batch M's line,
+      exits 0 from a fresh clone and a fresh venv, in an `env -i` environment
+      with no sibling importable and no harness installed. The dialect and the
+      `model` field are declared, the control record is accepted, and a raw key
+      is refused in a field and in the URL. The catalog offers nothing with no
+      model configured. `tests/test_chat_model_configuration.py` passes
+      (83 cases) and so does `tests/test_model_binding_trust.py` (84), with
+      no `xfailed` or `skipped` case in any of the three files.
 - [ ] T102 [US3] [oDc] **The staging workbench offers the editors and the chat
   rail by scope.** The editors and the chat rail appear wherever the scope
   lets the document be edited. Only creating documents and Save stay behind
