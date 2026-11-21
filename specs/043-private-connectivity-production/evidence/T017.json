@@ -1,0 +1,42 @@
+{
+  "authorizes_production": false,
+  "decision": "accepted",
+  "decisions": {},
+  "id": "pc043-t017-program-source-assembly",
+  "instruction": {
+    "commit": "127818662babec50ffd88315e6d6696fbc5d8272",
+    "path": "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md",
+    "repository": "opensoft/openxfactory",
+    "sha256": "e6677f0d5faa1515401f162f0671b5137692bac35a3e199b792ea72cfeac36f9"
+  },
+  "mode": "source",
+  "owner": "Brett Heap",
+  "program_root": {
+    "commit": "0359853920d2a9b4485e49bac548b16aac042412",
+    "path": "openspec/changes/authorize-private-connectivity-internal-production/review/ratification.md",
+    "repository": "opensoft/openxfactory",
+    "sha256": "de0979b7e9ebd67c5d91f51a8f8acb519fb4bfa7824fb1b2e91fde24edec4b96"
+  },
+  "purpose": "Assemble the program Q0 source decision as directed. Authentication of these new outputs is separate.",
+  "roles": [
+    "Brett Heap (rollout lead and source-evidence custodian)"
+  ],
+  "scope": {
+    "candidate": "043-program-source",
+    "customer": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "private-connectivity-program",
+    "phase": "source",
+    "profile": "commissioned-three-offerings",
+    "region": "not-applicable",
+    "run": "043-q0-program-source",
+    "site": "not-applicable",
+    "target": "not-applicable",
+    "wave": "not-applicable"
+  },
+  "valid_from": "2026-11-21T19:29:04.975587+00:00",
+  "valid_until": "until-superseded"
+}
