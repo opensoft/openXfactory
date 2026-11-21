@@ -153,6 +153,11 @@ lifecycle are enforced by the delegated register validator
 
 ## Contents
 
+- [Worker Participation, CI and Shared Capacity](brainstorm/worker-participation-overview.md)
+  — six-document brainstorm supplement (four atoms, one synthesis, one overview)
+  covering independent GitHub registration, factory CI, optional Linux onboarding
+  and platform-wide donated capacity; links the existing Omni worker designs.
+
 - [Factory MCP Family](brainstorm/factory-mcp-overview.md) — fourteen-document
   brainstorm packet (ten atoms, three syntheses, one overview) covering shared
   conformance, domain services, existing codex tools and a proposed Ops DNS check.

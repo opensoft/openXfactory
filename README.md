@@ -93,6 +93,8 @@ Core domain-neutral docs:
   [Historical lab baseline](specs/043-private-connectivity-production/evidence/baseline.json) — historical only; no production authority.
   Planned interfaces: [Owner handoff](specs/043-private-connectivity-production/contracts/owner-handoff.md) · [Product interfaces](specs/043-private-connectivity-production/contracts/product-interfaces.md) · [Qualification evidence](specs/043-private-connectivity-production/contracts/qualification-evidence.md).
 
+- [Worker Participation, CI and Shared Capacity — Brainstorm](ideation/brainstorm/worker-participation-overview.md)
+  (independent GitHub registration, factory CI, optional Linux onboarding and shared donated capacity; supplements the existing Omni worker packet)
 - [Factory MCP Family — Brainstorm](ideation/brainstorm/factory-mcp-overview.md)
   (shared conformance, domain ownership and a proposed DNS evaluation boundary)
 - [Factory MCP Conformance — Promoted Specification](openspec/specs/factory-mcp-conformance/spec.md)
