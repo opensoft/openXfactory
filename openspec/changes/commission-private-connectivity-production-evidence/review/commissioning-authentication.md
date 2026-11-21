@@ -1,23 +1,16 @@
-# T014 and T015 source authentication review
+# T017 program commissioning source authentication
 
 Status: record
 
-Brett Heap authenticated the actual protected-main source outputs for this exact manifest. The recorded time is when this acceptance was captured.
-
-> I authenticate the T014–T015 source packet, manifest c7ca9749. Record it, run default verification, complete T014–T015, and close Q0. Keep advancing QA storage and T023 release prerequisites with macOS and external Q5 deferred.
+This pending review adds only T017 to the already authenticated T014–T015 control at e456ae61d27a265409f87560871545eb3d12cc7b. The earlier review remains available at its original immutable reference.
 
 ```json
 {
-  "content_sha256": "ebc7d965e16fc4f3016d01cbcdc6172deff3c40bd96d61ba2581b40f4660aa7c",
+  "content_sha256": "c98562e7468d1ea89dee2b8d4a7d4a918ddb305008a97a3089c83a5feb815c81",
   "custodian": "Brett Heap",
-  "decision": "accepted",
-  "reviewed_at": "2026-11-21T19:29:04.975587+00:00",
-  "reviewed_manifest": {
-    "commit": "c7ca974995369c70a94ba5ee01d94667eb661369",
-    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "repository": "opensoft/openxfactory",
-    "sha256": "a0e31db7fd2f3faa0a253c6bc7565e42aff696346a1b40f6c59d02a7c02d1d3f"
-  },
+  "decision": "pending",
+  "reviewed_at": null,
+  "reviewed_manifest": null,
   "schema": "043-source-authentication-v1"
 }
 ```
