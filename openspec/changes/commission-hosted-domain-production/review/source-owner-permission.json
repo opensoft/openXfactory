@@ -1,0 +1,37 @@
+{
+  "authorizes_production": false,
+  "decision": "accepted",
+  "decisions": {},
+  "definition_sha256": "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc",
+  "id": "pc043-t014-current-source",
+  "mode": "source",
+  "owner": "Brett Heap",
+  "provenance": "Existing human source-scope ratification applies to the exact owner-local scope. The landing time is the conservative start of this source readback window. Actual output authentication remains pending.",
+  "ratification": {
+    "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+    "path": "openspec/changes/commission-hosted-domain-production/review/ratification.md",
+    "repository": "opensoft/openxfactory",
+    "sha256": "288b757d0f9d865aa537ef825259714681307884bbbd3e6d48e03642df9b86b9"
+  },
+  "roles": [
+    "Brett Heap (Domain source/release owner and source-evidence custodian)"
+  ],
+  "scope": {
+    "candidate": "043-domain-source",
+    "customer": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "hosted-domainxfactory",
+    "phase": "source",
+    "profile": "043-domain-commissioning",
+    "region": "not-applicable",
+    "run": "043-q0-domain-source",
+    "site": "not-applicable",
+    "target": "not-applicable",
+    "wave": "not-applicable"
+  },
+  "valid_from": "2026-11-21T14:19:49Z",
+  "valid_until": "until-superseded"
+}
