@@ -2594,6 +2594,31 @@ def test_that_same_surface_still_answers_normally_when_git_works(tmp_path):
     assert "could not be consulted" not in reason, reason
 
 
+def test_private_connectivity_q0_owner_ratification_is_local_and_path_scoped(tmp_path):
+    import json
+
+    repo, main, orphan = orphaned_pin_repo(tmp_path)
+    ops = "openspec/changes/commission-connectivity-operations-production/review/source-owner-permission.json"
+    domain = "openspec/changes/commission-hosted-domain-production/review/source-owner-permission.json"
+    neighbor = Path(domain).with_name("neighbor-source-owner-permission.json").as_posix()
+    for path, commit in ((ops, main), (domain, orphan), (neighbor, main)):
+        _write(repo, path, json.dumps({
+            "ratification": {"commit": commit, "repository": "foreign/foreign"},
+        }, indent=2))
+    _commit(repo, "record bounded Q0 ratification references")
+
+    report = _verify(repo)
+    registered = [result.site for result in report.results
+                  if result.site.member_id == "private-connectivity-q0-owner-ratification"]
+    assert {(site.path, site.pin, site.locality) for site in registered} == {
+        (ops, main, pc.REPO_LOCAL),
+        (domain, orphan, pc.REPO_LOCAL),
+    }
+    assert any(result.site.path == domain and result.site.pin == orphan
+               for result in report.orphans)
+    assert any(site.path == neighbor for site in pc.uncovered_sites(repo))
+
+
 def test_private_connectivity_conformance_has_one_nonmember_path(tmp_path):
     import json
 
