@@ -1,0 +1,37 @@
+{
+  "authorizes_production": false,
+  "decision": "accepted",
+  "decisions": {},
+  "definition_sha256": "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc",
+  "id": "pc043-t015-current-source",
+  "mode": "source",
+  "owner": "Brett Heap",
+  "provenance": "Existing human source-scope ratification applies to the exact owner-local scope. The landing time is the conservative start of this source readback window. Actual output authentication remains pending.",
+  "ratification": {
+    "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+    "path": "openspec/changes/commission-connectivity-operations-production/review/ratification.md",
+    "repository": "opensoft/openxfactory",
+    "sha256": "4ae76144c3aa841e93ed5b33aa069b125f3354abf38589a9c32bc3e5993d59b8"
+  },
+  "roles": [
+    "Brett Heap (Ops source/release owner and source-evidence custodian)"
+  ],
+  "scope": {
+    "candidate": "043-ops-managed-source",
+    "customer": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "operations",
+    "phase": "source",
+    "profile": "private-connectivity-ops",
+    "region": "not-applicable",
+    "run": "043-q0-ops-source",
+    "site": "not-applicable",
+    "target": "not-applicable",
+    "wave": "not-applicable"
+  },
+  "valid_from": "2026-11-21T16:17:16Z",
+  "valid_until": "until-superseded"
+}
