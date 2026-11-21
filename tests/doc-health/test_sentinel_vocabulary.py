@@ -1194,7 +1194,12 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # The independently prepared T018 source-cut decision, exact cut and
     # preserved qualification add nine measured sites, with no new member.
     # Source references supply no publication or rollout acceptance.
-    assert (standing_sites, standing_members) == (1449, 39)
+    # The authenticated T010 custody successor adds four measured sites
+    # under the existing declarations. Its branch-side authentication commit
+    # remains reachable through its exact retention ref before landing.
+    # The v4.4 publication and independent readback add exact source-evidence
+    # references under the existing member declarations.
+    assert (standing_sites, standing_members) == (1484, 39)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]

@@ -1,0 +1,104 @@
+{
+  "schema": "043-task-evidence-v1",
+  "task": "T019",
+  "instance": null,
+  "owner": "C",
+  "evidence_class": "release-N-verified",
+  "scope": {
+    "candidate": "contract-v4.4",
+    "customer": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "neutral-contract",
+    "phase": "source",
+    "profile": "neutral-private-connectivity-contract",
+    "region": "not-applicable",
+    "run": "043-neutral-published-readback-v4.4",
+    "site": "not-applicable",
+    "target": "not-applicable",
+    "wave": "not-applicable"
+  },
+  "source": {
+    "repository": "opensoft/openxfactory",
+    "base": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+    "revision": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+  },
+  "attempt": "043-t019-v4.4-observed-01",
+  "authority": {
+    "repository": "opensoft/openxfactory",
+    "commit": "70f4d0a2cb5976386055663df0e9b1030a3beb75",
+    "path": "specs/043-private-connectivity-production/evidence/T019.json",
+    "sha256": "a5d95bc4bc84a2306a289ad8e256331ccad9bb37609a5a16d3b14c4f686c44b4"
+  },
+  "verdict": "pass",
+  "command": "python3 scripts/validate-contract-release.py verify-tag --remote origin --tag contract-v4.4 --json",
+  "output": {
+    "repository": "opensoft/openxfactory",
+    "commit": "7dd716e81a1267e94b7af168d1135e44fe440e77",
+    "path": "specs/043-private-connectivity-production/evidence/T019.json",
+    "sha256": "09aaecfae075d0fb080639ea0811d5fa7a81b0a17da80b6fc933fdc462830548"
+  },
+  "artifacts": [
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/private-connectivity/README.md",
+      "sha256": "7e5abaabdfa3826acc9b0c7e4dc93025fbc9c76f5ffdc37ade683adb9f6fa7de"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/private-connectivity/binding.schema.json",
+      "sha256": "3f71586c590583e602c7a3e8542b0f64abad131f418b63f6acfd99da606cc430"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/private-connectivity/conformance.json",
+      "sha256": "0fc733f3cf69cc90a57864ffcfc5c101a63bdac2e509607d6734c3125f4d18b3"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "scripts/validate-private-connectivity.py",
+      "sha256": "c8b83cd53edd031d49bd8dc31a18b24087e73c046267b58b81b4ca690cac0119"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7",
+      "path": "contracts/releases/contract-v4.4.digests.yaml",
+      "sha256": "1bbc6198f8e622515b2528c1c8aba63a589c5ad67092a0e96bcfe163261e2d8d"
+    }
+  ],
+  "dependencies": {
+    "T018": {
+      "repository": "opensoft/openxfactory",
+      "commit": "3948af84d310dfbcb50374fd99d7be60fe59aa58",
+      "path": "specs/043-private-connectivity-production/evidence/T018.json",
+      "sha256": "8de3ef9e0e76f34e9c2f11ecf68ca2a5d5a06ec967a168485c2ba34ba186f774"
+    }
+  },
+  "history": [],
+  "incidents": [],
+  "acceptance": "Completion is determined by authenticated commissioning and default verification.",
+  "pin_inventory": [
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "3439ef61c289de06db9a7b76fc2511231e84d8a7"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "3948af84d310dfbcb50374fd99d7be60fe59aa58"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "70f4d0a2cb5976386055663df0e9b1030a3beb75"
+    },
+    {
+      "repository": "opensoft/openxfactory",
+      "openxfactory_commit": "7dd716e81a1267e94b7af168d1135e44fe440e77"
+    }
+  ]
+}

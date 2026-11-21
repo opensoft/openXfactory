@@ -9,6 +9,20 @@ predate mandatory annotated tags and carry none. Tag enforcement begins at
 `contract-v1.7` — the first realized release published with an annotated tag —
 without fabricating historical tags.
 
+## contract-v4.4 — private-connectivity documentation correction
+
+The published contract-v4.3 README still called the supported schema-v1 package
+a draft. This release corrects that status and explains how to verify the
+annotated bundle, its protected release commit and its generated inventory.
+The schema, conformance corpus and validator use the same bytes as in
+contract-v4.3.
+
+For documentation uptake, verify this release and update the bundle commit and
+member digests together. Consumers pinned to contract-v4.3 can keep their
+existing schema-v1 bindings. The contract-v4.3 tag and its digest inventory
+remain available for exact verification. The entry below records the original
+candidate preparation. The annotated contract-v4.3 tag records its publication.
+
 ## contract-v4.3 — source candidate (additive private connectivity)
 
 Prepared under the actual neutral owner decision of 2026-11-17T00:30:45.368Z

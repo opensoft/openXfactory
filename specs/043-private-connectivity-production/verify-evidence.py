@@ -147,6 +147,30 @@ DELEGATED_ATTESTATIONS = {
         "path": "specs/043-private-connectivity-production/evidence/T010.json",
         "repository": "opensoft/openxfactory",
         "sha256": "97a01cdd2bc56897aee1e9e9898218aa5d260bc0562af3444de47dab7ac9b348"
+    },
+    "08dc067d95a6199571d26983e1cd0d289329e8fde58fa338853961a68b365fea": {
+        "commit": "c53df5c21786ccafefbe3e98ad7671ed88a3fb83",
+        "path": "specs/043-private-connectivity-production/evidence/T010.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "d7f123ac563fbbe87552ed31a5ca177dc871d54651e3d76a8ce758531ec74540"
+    },
+    "bb6d9c4f29f55f7c633dbadd71c56907fa297800395d4dec961d9f529341990d": {
+        "commit": "ffc58c7d1786a160beb99743caf1d90dda610004",
+        "path": "specs/043-private-connectivity-production/evidence/T018.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "6cbcb33c51103869fc8d3f00df73094a7052d767bbdb27976f70066b1cad09d6"
+    },
+    "9b521406a9c221269c9332b6852579ea26135a723547f8e4720988e2d8ae5bdb": {
+        "commit": "2711d92c38285c37f2ac21c28a3159fc9a83d50e",
+        "path": "specs/043-private-connectivity-production/evidence/T015.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "b332fbdc6917e7a375545ccd155e9d8b00c5d1fa03846afec82a1015ada698ac"
+    },
+    "b131505270619a34adbc9eb0208460a93ab37b3b5b9492296f671a7db9b7fb04": {
+        "commit": "81ae4857bbd6c526a10619ebe239e95645d09596",
+        "path": "specs/043-private-connectivity-production/evidence/T015.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "57720b82aae201553c1382b38319beed646a6f29cc793dd6fa0608ee6384bc0e"
     }
 }
 

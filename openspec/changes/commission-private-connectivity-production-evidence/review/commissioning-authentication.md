@@ -1,31 +1,27 @@
-# Authentication review: Expanded T010 source CI
+# T018 and T019 contract-v4.4 source evidence authentication
 
-Status: record
+Codex authenticated the exact neutral publication and independent consumer readback after the nine-role review and protected GitHub provider checks. The commissioning control preserves the original 17 bindings, the preceding accepted control and the original audit authority. Brett Heap remains the accountable owner.
 
-Codex authenticated the exact expanded T010 source-only output under Brett Heap's recorded delegation. The original scope attestation preserves the earlier C-01 decision and its nine independent reviews. The separate output attestation binds the actual primary and Python 3.14 run, job, attempt, measured collection and source-step output.
-
-The independently reviewed manifest is eaedb5ce459260b0033fabc5aaeed2abe41eb6a8. Its canonical content SHA-256 is c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516. The original source-only custody decision and previous accepted bindings retain their exact references. The earlier Hosted Headscale authentication is preserved in [the T013 record](https://github.com/opensoft/openXfactory/blob/4d61a150fc44e472a4259792dd56b08a23da2cad/openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md).
-
-This record covers source-output custody and admission. Program commissioning, publication, deployment, spend and Q0 through Q5 remain separately gated.
+This record covers the release evidence and compatibility readback. Full Q0 and Q1–Q5 remain pending.
 
 ```json
 {
-  "schema": "043-delegated-source-authentication-v1",
-  "decision": "accepted",
-  "actor": "Codex",
   "accountable_owner": "Brett Heap",
-  "reviewed_manifest": {
-    "repository": "opensoft/openxfactory",
-    "commit": "eaedb5ce459260b0033fabc5aaeed2abe41eb6a8",
-    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
-    "sha256": "49518e60c523b500f5b01bdadf10368979063eae4b437e382c798382f346fffc"
-  },
-  "content_sha256": "c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516",
+  "actor": "Codex",
   "attestation": {
+    "commit": "ffc58c7d1786a160beb99743caf1d90dda610004",
+    "path": "specs/043-private-connectivity-production/evidence/T018.json",
     "repository": "opensoft/openxfactory",
-    "commit": "169d16217150264ce7a5cc9a21ff055172376499",
-    "path": "specs/043-private-connectivity-production/evidence/T010.json",
-    "sha256": "97a01cdd2bc56897aee1e9e9898218aa5d260bc0562af3444de47dab7ac9b348"
-  }
+    "sha256": "6cbcb33c51103869fc8d3f00df73094a7052d767bbdb27976f70066b1cad09d6"
+  },
+  "content_sha256": "f8b9f88d4657a2682bcc5fdee3c8eefb9b0bc2d3b1d5d05ea8b29cf40aa09428",
+  "decision": "accepted",
+  "reviewed_manifest": {
+    "commit": "65fe30cf3ee23d2df5167a073ced7d406972ef33",
+    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1"
+  },
+  "schema": "043-delegated-source-authentication-v1"
 }
 ```

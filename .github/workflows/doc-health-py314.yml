@@ -155,7 +155,11 @@ jobs:
                        auth["actor"] == "Codex" and auth["accountable_owner"] == "Brett Heap")
                   reviewed = decode(blob(auth["reviewed_manifest"], control))
                   need(core(value) == core(reviewed) == auth["content_sha256"])
-                  attestation = decode(blob(auth["attestation"], feature + "/evidence/T010.json"))
+                  attestation_ref = auth["attestation"]
+                  need(isinstance(attestation_ref, dict))
+                  attestation_path = attestation_ref.get("path")
+                  need(attestation_path in (feature + "/evidence/T010.json", feature + "/evidence/T018.json"))
+                  attestation = decode(blob(attestation_ref, attestation_path))
                   need(attestation["schema"] == "043-delegated-attestation-v1" and
                        attestation["actor"] == "Codex" and attestation["accountable_owner"] == "Brett Heap" and
                        attestation["subject"] == {"kind": "source-authentication", "definition": value["definition"],
