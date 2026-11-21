@@ -82,6 +82,16 @@ export or registration occurs; reject stale receipts, mismatched SIDs,
 unexpected files, later phases, ambiguous dates and wrong-host invocation.
 Static parsing alone did not catch the pilot's binding or runtime failures.
 
+## Preventing the next script-repair loop
+
+Use the [installer regression gates](worker-onboarding-lessons-installer-regression-gates.md)
+as the concrete failure-to-check map. Each fix needs a reproducing fixture or
+native scenario, a proof that later mutations are fenced on failure, and a
+known-state resume check. Qualify the complete interactive/helper/WSL chain on
+a disposable supported host before presenting another immutable candidate to
+the owner. Documenting the symptom alone does not establish that this regression
+gate exists in the product.
+
 ## Relationships and open questions
 
 Receipt schema ownership, generation/rollback fencing and crash recovery need

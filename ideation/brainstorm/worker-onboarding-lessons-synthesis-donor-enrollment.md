@@ -17,8 +17,9 @@ Captured: 2026-11-21
 Atomic members are [donor entry](worker-onboarding-lessons-donor-entry-and-registration.md),
 [service identities](worker-onboarding-lessons-service-identities-and-tools.md),
 [WSL ownership](worker-onboarding-lessons-wsl-ownership-and-startup.md),
-[credential handoff](worker-onboarding-lessons-credential-handoff.md), and
-[recoverable bootstrap](worker-onboarding-lessons-recoverable-bootstrap.md).
+[credential handoff](worker-onboarding-lessons-credential-handoff.md),
+[recoverable bootstrap](worker-onboarding-lessons-recoverable-bootstrap.md), and
+[installer regression gates](worker-onboarding-lessons-installer-regression-gates.md).
 
 ### Intent becomes authority before it becomes execution
 
@@ -53,6 +54,12 @@ The manual CPC setup's fixed helper and request-specific receipts demonstrate
 a useful local seam. The product should own that seam rather than ask donors
 to copy successive elevated shell programs. Support can request sanitized
 phase/identity/error evidence without requesting credentials or whole exports.
+
+That seam also needs native regression qualification before the owner receives
+an installer. The actual CPC failures supply a corpus for identity resolution,
+profile logon, serialization, token handoff and task dispatch. A fixed helper
+interface enables those checks; it does not replace proving them on supported
+Windows/PowerShell/WSL combinations.
 
 ### Dispatch connectivity and administration can mature independently
 

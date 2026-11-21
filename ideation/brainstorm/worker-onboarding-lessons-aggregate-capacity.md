@@ -39,7 +39,7 @@ space before promising new capacity.
 | Slot count | Number of logical jobs that could execute; not a performance claim |
 | Ready capacity | Qualified, consented and currently admitted work after competing consumers are accounted |
 
-## Pilot budget and an explicitly unqualified expansion
+## Pilot budget and later expansion qualification
 
 The existing Linux service's enforced limits were two CPU equivalents and
 8 GiB RAM. A real CI job checked its cgroup CPU ratio and memory maximum.
@@ -52,9 +52,14 @@ were therefore six CPU equivalents and 14 GiB RAM. The three child memory
 maxima did not each reserve 4 GiB. Concurrent heavy jobs could experience
 contention or memory pressure within the shared pool.
 
-That expansion had not been reported installed or qualified at this checkpoint.
-It is not evidence of four simultaneous successful jobs. The numbers are a
-dated managed-host example, not public-donation defaults or a benchmark.
+At the initial checkpoint that expansion was only prepared. The owner later
+executed the installer under the admission hold, and four distinct Linux
+registrations passed the parallel qualification with 88 seconds of overlapping
+workspace execution. The test checked the actual child and shared-parent
+constraints before normal dispatch was restored. This establishes concurrent
+logical execution under that envelope; it does not prove that four large builds
+fit comfortably or receive their individual maxima simultaneously. The numbers
+remain a dated managed-host example, not public-donation defaults or a benchmark.
 
 CPUQuota percentages refer to CPU equivalents, not a percentage of all host
 processors. Memory ceilings and reclaim thresholds are not admission control.

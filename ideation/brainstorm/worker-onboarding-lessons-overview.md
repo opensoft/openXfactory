@@ -48,12 +48,12 @@ receipts and private organization CI establish the following boundaries:
 | Claim | Checkpoint evidence |
 |---|---|
 | Managed host | 8-vCPU/32-GiB Windows Cloud PC; roughly 16 GiB visible in the worker's WSL environment |
-| Existing endpoints | Two factory-oriented Windows registrations, one general Windows CI registration and one Linux CI registration: four total |
+| Starting endpoints | Two factory-oriented Windows registrations, one general Windows CI registration and one Linux CI registration: four total before expansion |
 | Service ownership | Linux runner migrated to a dedicated non-administrator Windows account, with its own profile, and a non-root Linux service account |
 | Execution | Private-repository smoke passed checkout, Python/workspace execution, expected identities and actual two-CPU/8-GiB limits |
 | Broader workload | A full platform-validation head passed with a job-local Python loader correction and preserved validation gates |
-| Additional slots | Three new Linux slots requested; installer and a conservative shared-budget design prepared, enrollment/concurrency not reported complete |
-| Maintenance | Existing Linux registration moved into a group with no repository access; its assigned job passed and the runner drained to idle; expansion and release remained held |
+| Additional slots | Three added Linux registrations enrolled under the hold; all four Linux jobs passed identity, limit, checkout and workspace checks with 88 seconds of overlapping workspace execution; seven total provider registrations after expansion |
+| Maintenance | Existing Linux registration moved into a group with no repository access; its assigned job passed and drained; qualification-only access then admitted the four-way test, and all four registrations returned to the recorded normal private-CI group after success |
 | Observation | A running child job was omitted by an in-progress-only workflow scan because its parent reported queued; direct job readback corrected the diagnosis |
 | Completion scope | A later "Ready" report referred to prior single-runner setup; user clarification and live inventory established that the three-slot installer had not run |
 | Cold startup | Boot-triggered service-account startup configured and session-0 execution observed; reboot without sign-in not yet qualified |
@@ -74,7 +74,8 @@ shared resources, and report precisely what passed.
 This packet does not ratify contract changes, implement the host app or website,
 authorize hardware takeover, change workstation-intake policy, promote the
 pilot's private runner group into a donation default, or claim the pending
-four-slot/reboot acceptance. It does not replace independent output acceptance.
+no-sign-in reboot acceptance. Managed four-slot qualification does not replace
+public-donor containment or independent output acceptance.
 
 ## System model
 
@@ -100,13 +101,14 @@ admission coordination or an accounted partition.
 ## Cluster map and document map
 
 The [donor-enrollment synthesis](worker-onboarding-lessons-synthesis-donor-enrollment.md)
-connects five mechanisms:
+connects six mechanisms:
 
 - [Donor entry and registration choices](worker-onboarding-lessons-donor-entry-and-registration.md).
 - [Service identities and execution tools](worker-onboarding-lessons-service-identities-and-tools.md).
 - [WSL ownership and unattended startup](worker-onboarding-lessons-wsl-ownership-and-startup.md).
 - [Scoped enrollment and credential handoff](worker-onboarding-lessons-credential-handoff.md).
 - [Recoverable worker bootstrap](worker-onboarding-lessons-recoverable-bootstrap.md).
+- [Installer regression gates from the CPC failures](worker-onboarding-lessons-installer-regression-gates.md).
 
 The [operation and acceptance synthesis](worker-onboarding-lessons-synthesis-operation-and-acceptance.md)
 connects startup/recovery with:
@@ -116,7 +118,7 @@ connects startup/recovery with:
 - [Maintenance admission and safe fleet expansion](worker-onboarding-lessons-maintenance-admission.md).
 - [Job-level observation and conflicting provider state](worker-onboarding-lessons-job-observability.md).
 
-The nine atoms, two syntheses and this overview form one linked supplement to
+The ten atoms, two syntheses and this overview form one linked supplement to
 the original participation packet.
 
 ## Decisions still open

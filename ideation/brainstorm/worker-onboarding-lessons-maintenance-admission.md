@@ -52,8 +52,11 @@ policy and membership rather than infer a hold from a group's name.
    broadly eligible default group followed by a later move leaves a race in
    which queued business work can claim an unqualified slot.
 4. After the complete expected inventory is online and idle, admit only the
-   qualification repository and exact immutable workflow revision. Keep normal
-   business dispatch denied while the parallel matrix executes.
+   qualification repository and workflow using the provider's supported selector.
+   GitHub requires a branch reference for a non-reusable workflow; use a dedicated
+   branch and independently verify that its head and the executing run match the
+   tested commit. Reusable workflows can use a full-SHA access selector. Keep
+   normal business dispatch denied while the parallel matrix executes.
 5. Require success on the expected distinct runner IDs, expected identities and
    actual limits, with overlapping workspace execution. Four sequential green
    jobs are insufficient evidence of four-slot concurrency.
@@ -61,11 +64,19 @@ policy and membership rather than infer a hold from a group's name.
    move only the owned registrations back to that route. Verify membership and
    close the hold receipt. Preserve the hold on an unmet gate.
 
-Steps after the observed drain were prepared for the pilot; the added slots and
-four-way qualification had not been executed at this documentation checkpoint.
-The release plan retained the existing group and common Linux selectors, adding
-unique slot labels only for diagnostics. It did not require business workflows
-to adopt a new route or bypass their required checks.
+The pilot subsequently completed enrollment and this four-way qualification.
+All four workspace steps overlapped for 88 seconds and every job passed; the
+four registrations then returned to the recorded normal private-CI group.
+Release retained the common Linux selectors, adding unique slot labels only
+for diagnostics. It did not require business workflows to adopt a new route or
+bypass their required checks.
+
+The first qualification admission used a SHA selector for a non-reusable
+workflow. GitHub accepted the policy write, but all four jobs stayed queued.
+The correction used the documented fully qualified branch selector and retained
+an independent branch-head/run-source check. An accepted policy update alone
+does not prove that the intended job can reach a runner. See
+[GitHub's workflow-access rules](https://docs.github.com/en/enterprise-cloud%40latest/actions/how-tos/manage-runners/self-hosted-runners/manage-access).
 
 ## Recovery and authority boundaries
 

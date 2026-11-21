@@ -18,8 +18,9 @@ Atomic members are [WSL startup](worker-onboarding-lessons-wsl-ownership-and-sta
 [recoverable bootstrap](worker-onboarding-lessons-recoverable-bootstrap.md),
 [aggregate capacity](worker-onboarding-lessons-aggregate-capacity.md),
 [qualification and portability](worker-onboarding-lessons-qualification-and-portability.md),
-[maintenance admission](worker-onboarding-lessons-maintenance-admission.md), and
-[job-level observation](worker-onboarding-lessons-job-observability.md).
+[maintenance admission](worker-onboarding-lessons-maintenance-admission.md),
+[job-level observation](worker-onboarding-lessons-job-observability.md), and
+[installer regression gates](worker-onboarding-lessons-installer-regression-gates.md).
 
 ### Capacity advertisement depends on both runtime state and current authority
 
@@ -41,6 +42,12 @@ receipt. Restarting a service to refresh PATH is a runtime intervention, not
 just a metadata update. The same reconciler that applies changes should drain
 work, keep durable phase/operation identities, reject stale success, and leave
 unknown state unavailable rather than assume it is free.
+
+The installer regression corpus connects those phases to actual failure
+boundaries. An injected task error must demonstrate that a dependent source
+stop/export cannot occur, and each retained partial state needs a qualified
+resume path. This is stronger evidence than a script that merely parses or
+passes its happy path once.
 
 A guarded migration has a critical ordering edge: the old registration must
 stop before a copied identity can start, and rollback must reverse that safely.

@@ -88,12 +88,20 @@ for its qualified PR head in about 27 minutes. Another compatibility head
 failed in its test-suite step; a successful host precedent does not make other
 source revisions green or diagnose every failure as infrastructure.
 
-Three additional Linux slots were prepared but not reported enrolled; their
-four-slot concurrency test and the no-sign-in reboot test remained pending.
-These are checkpoint facts, not a live fleet inventory or a global donor trust
-qualification. Sanitized private receipts and organization CI runs remain with
-the operator; do not publish credentials, machine SIDs, copied home data or
-complete filesystem exports to make a brainstorm look evidenced.
+The expansion was initially only prepared. After the completion-scope ambiguity
+was resolved, the owner executed the additional-slots installer. Live readback
+then established four distinct Linux registrations in the held group. The
+[four-slot qualification](https://github.com/opensoft/Opensoft-Tenant/actions/runs/44953253951)
+passed on all four, checking service identity, actual child/parent limits,
+private checkout and workspace execution. Their workspace steps overlapped for
+88 seconds. The operation restored the four registrations to their recorded
+normal private-CI group after success.
+
+The no-sign-in reboot test remained pending. These are dated checkpoint facts,
+not a live fleet inventory, a four-heavy-build throughput benchmark or a global
+donor trust qualification. Sanitized private receipts and organization CI runs
+remain with the operator; do not publish credentials, machine SIDs, copied home
+data or complete filesystem exports to make a brainstorm look evidenced.
 
 ## Relationships and open questions
 
