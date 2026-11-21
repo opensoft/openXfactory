@@ -57,6 +57,11 @@ nested network read against that same operation. Server processing is local
 kernel/file/nonce-state work only. The server clips an independent local timer
 to original absolute deadline and caller remaining milliseconds; it cannot allocate
 proof/admission authority, reset a ledger, join clocks across hosts or renew expiry.
+The request interval is a conservative fixed selection, checked again after TLS
+readiness before GO/send. It is not the original maximum copied before a blocking
+connection and assumed still available afterward. If it no longer fits, refuse
+before sending rather than rewriting/retrying. Response expiry cannot exceed the
+original request deadline; the caller's original monotonic end remains decisive.
 Real ProcessLaunch, MeasurementBindings and manager/lifecycle checks remain on the
 worker kernel. A remote PID/JSON is never a control-host local capability.
 

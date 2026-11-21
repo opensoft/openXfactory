@@ -42,6 +42,14 @@ peer, role, filesystem path, PID or observer policy. deadline is the original
 caller's current integer epoch deadline. remaining_milliseconds is an integer
 1..10,000 no greater than the original caller's measured remaining interval at
 construction and actual send. Neither request field supplies a new grant.
+The caller chooses a conservative fixed interval and checks that it still fits
+its original remaining time after TLS readiness, immediately before GO/send.
+It MUST refuse before sending when that fixed interval no longer fits; it MUST
+NOT rewrite the request, increase the interval or retry with fresh authority.
+Response expires_at is no later than the original request deadline and all
+selected service/scope expiries. The original caller's monotonic end still
+controls acceptance after receipt; the server's independent local timer cannot
+extend it or authorize an effect after the caller has expired.
 
 The trusted service authenticates actual selected peer credentials, effective
 role/incarnation/source/fingerprint and separately approved scope/expiry before
