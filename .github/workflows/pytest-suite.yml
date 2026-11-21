@@ -617,6 +617,45 @@ jobs:
           def core(value):
               return hashlib.sha256(json.dumps({k: v for k, v in value.items() if k not in {"review", "pin_inventory"}},
                                                sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+          def authenticated_control(raw):
+              value = decode(raw)
+              need(value["schema"] == "043-reviewed-trust-v1" and value["feature"] == "043-private-connectivity-production")
+              blocks = re.findall(rb"^```json\r?\n(.*?)^```[ \t]*$", blob(value["review"], auth_path), re.M | re.S)
+              need(len(blocks) == 1)
+              return value, decode(blocks[0])
+
+          def selected_source_proof(base):
+              value, auth = authenticated_control(git("show", base + ":" + control))
+              if auth.get("schema") == "043-delegated-source-authentication-v1":
+                  # Approve only the prior metadata-only producer. This does not
+                  # authenticate the delegated output or execute its attestor.
+                  need(set(auth) == {"schema", "decision", "actor", "accountable_owner", "reviewed_manifest",
+                                     "content_sha256", "attestation"} and auth["decision"] == "accepted" and
+                       auth["actor"] == "Codex" and auth["accountable_owner"] == "Brett Heap")
+                  reviewed = decode(blob(auth["reviewed_manifest"], control))
+                  need(core(value) == core(reviewed) == auth["content_sha256"])
+                  attestation = decode(blob(auth["attestation"], feature + "/evidence/T010.json"))
+                  need(attestation["schema"] == "043-delegated-attestation-v1" and
+                       attestation["actor"] == "Codex" and attestation["accountable_owner"] == "Brett Heap" and
+                       attestation["subject"] == {"kind": "source-authentication", "definition": value["definition"],
+                                                  "reviewed_manifest": auth["reviewed_manifest"],
+                                                  "content_sha256": auth["content_sha256"]})
+                  legacy_base = "59c4931fd89811f07f1a02046424a0fa78a2c92a"
+                  git("merge-base", "--is-ancestor", legacy_base, base)
+                  legacy = git("show", legacy_base + ":" + control)
+                  need(hashlib.sha256(legacy).hexdigest() == "02158d50df76a25eed4b1cd046bef3bf724aa21c0e9763b3352a02a60ac9a326")
+                  legacy_value, legacy_auth = authenticated_control(legacy)
+                  for key in ("source_ci_producer", "source_ci_original_reference"):
+                      need(value[key] == legacy_value[key])
+                  base, value, auth = legacy_base, legacy_value, legacy_auth
+              need(set(auth) == {"schema", "decision", "custodian", "reviewed_manifest", "content_sha256", "reviewed_at"} and
+                   auth["schema"] == "043-source-authentication-v1" and auth["decision"] == "accepted" and auth["custodian"] == "Brett Heap")
+              when = datetime.fromisoformat(auth["reviewed_at"].replace("Z", "+00:00"))
+              need(when.tzinfo is not None and when <= datetime.now(timezone.utc))
+              reviewed = decode(blob(auth["reviewed_manifest"], control))
+              need(core(value) == core(reviewed) == auth["content_sha256"])
+              return base, blob(value["source_ci_producer"], helper)
+
           tasks = {"T010", "T011", "T012", "T013", "T014", "T015", "T016", "T017", "T018", "T019", "T027", "T042",
                    "T049", "T051", "T056", "T057", "T061", "T062", "T064", "T065", "T066", "T067", "T068"}
           private = False
@@ -638,18 +677,7 @@ jobs:
           else:
               base = os.environ["PC_SOURCE_BASE"]
               need(re.fullmatch("[0-9a-f]{40}", base))
-              value = decode(git("show", base + ":" + control))
-              need(value["schema"] == "043-reviewed-trust-v1" and value["feature"] == "043-private-connectivity-production")
-              blocks = re.findall(rb"^```json\r?\n(.*?)^```[ \t]*$", blob(value["review"], auth_path), re.M | re.S)
-              need(len(blocks) == 1)
-              auth = decode(blocks[0])
-              need(set(auth) == {"schema", "decision", "custodian", "reviewed_manifest", "content_sha256", "reviewed_at"} and
-                   auth["schema"] == "043-source-authentication-v1" and auth["decision"] == "accepted" and auth["custodian"] == "Brett Heap")
-              when = datetime.fromisoformat(auth["reviewed_at"].replace("Z", "+00:00"))
-              need(when.tzinfo is not None and when <= datetime.now(timezone.utc))
-              reviewed = decode(blob(auth["reviewed_manifest"], control))
-              need(core(value) == core(reviewed) == auth["content_sha256"])
-              code = blob(value["source_ci_producer"], helper)
+              base, code = selected_source_proof(base)
               parent = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
               target = parent / "pc043-reviewed-producer.py"
               need(not target.exists() and not target.is_symlink())
