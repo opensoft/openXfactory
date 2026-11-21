@@ -1,125 +1,101 @@
 {
-  "acceptance": "pending actual source custody authentication",
-  "audit_program_sha256": "c8b2bfcf7d1ea58b310f9fa3d340d3bd220144e72e3c6476919079fdc9c5c072",
-  "authority_reference": {
+  "admission_state": "Candidate only. Actual custodian authentication and default verification remain pending.",
+  "artifacts": [
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/.openspec.yaml",
+      "repository": "opensoft/openxfactory",
+      "sha256": "02c2e84480373dd34c2eaf4c973753edb3c2048d9a043732223a968f8faedef2"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/design.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "79d4938d86d0358f6262918e9a38506560dcdee103f17778486cb3d2d3f8b49c"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/proposal.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "5d924ff1fe57fee7ba05e61fe24c03f63dfb843396e087d0a4ea269884ef3492"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/review/ratification.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "288b757d0f9d865aa537ef825259714681307884bbbd3e6d48e03642df9b86b9"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/specs/hosted-domain-connectivity-production/spec.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "aaf8e688bfc317144a6bf3ee36b9a95cfc91ccc5c2c951585b3132e28a9e3cf6"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/tasks.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "394449a1c3c49f0b03e7aef7169ab35544324e4ee0d931d3b84735f6dad36cc0"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "specs/043-private-connectivity-production/tasks.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "461933b7990e825b57a18ff106d931c8dd5b548de41e200f743537825737d64e"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "2bc0e5aaf7b6dc496bca05e4968204bc98d0ca72b9db4024a28924d7e1b7de85"
+    }
+  ],
+  "attempt": "domain-protected-audit-1",
+  "authority": {
     "commit": "3461f13bc2c9e8adf01a458c8ff3b8e412768251",
     "path": "openspec/changes/commission-hosted-domain-production/review/source-owner-permission.json",
     "repository": "opensoft/openxfactory",
     "sha256": "dcfd3f093890a0ea5a475794e4e4cfb415f6156e4d4c93f511be96df85b9b163"
   },
-  "authorizes_production": false,
-  "cases": [
+  "command": "python3 -",
+  "dependencies": {
+    "T010": {
+      "commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "repository": "opensoft/openxfactory",
+      "sha256": "8bb6fe496f3bc0b6aba76e16e8bd3fc04db3c941a9dbd1b7f86d52599b8a6ee0"
+    }
+  },
+  "evidence_class": "Q0-D",
+  "history": [],
+  "incidents": [],
+  "instance": null,
+  "output": {
+    "commit": "8e0a2501c5501a220911f3a02c41a5a43fa73414",
+    "path": "specs/043-private-connectivity-production/evidence/T014.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "f4ff61495eaf0e56b7f2a056dabd854d0588228d66e2367200aba1cf15d933c2"
+  },
+  "owner": "C",
+  "pin_inventory": [
     {
-      "checks": [
-        {
-          "id": "current-source-audit",
-          "observed": true
-        }
-      ],
-      "id": "actual-domain-selection",
-      "scope": {
-        "candidate": "043-domain-source",
-        "customer": "not-applicable",
-        "domain": "not-applicable",
-        "environment": "source",
-        "network": "not-applicable",
-        "offer": "not-applicable",
-        "offering": "hosted-domainxfactory",
-        "phase": "source",
-        "profile": "043-domain-commissioning",
-        "region": "not-applicable",
-        "run": "043-q0-domain-source",
-        "site": "not-applicable",
-        "target": "not-applicable",
-        "wave": "not-applicable"
-      },
-      "source": {
-        "base": "dcb3413dda317533485b52a784dc43e5ee3278bc",
-        "repository": "opensoft/openxfactory",
-        "revision": "dcb3413dda317533485b52a784dc43e5ee3278bc"
-      }
+      "openxfactory_commit": "3461f13bc2c9e8adf01a458c8ff3b8e412768251",
+      "repository": "opensoft/openxfactory"
     },
     {
-      "checks": [
-        {
-          "id": "current-source-audit",
-          "observed": true
-        }
-      ],
-      "id": "exact-profile-protection-scope",
-      "scope": {
-        "candidate": "043-domain-source",
-        "customer": "not-applicable",
-        "domain": "not-applicable",
-        "environment": "source",
-        "network": "not-applicable",
-        "offer": "not-applicable",
-        "offering": "hosted-domainxfactory",
-        "phase": "source",
-        "profile": "043-domain-commissioning",
-        "region": "not-applicable",
-        "run": "043-q0-domain-source",
-        "site": "not-applicable",
-        "target": "not-applicable",
-        "wave": "not-applicable"
-      },
-      "source": {
-        "base": "dcb3413dda317533485b52a784dc43e5ee3278bc",
-        "repository": "opensoft/openxfactory",
-        "revision": "dcb3413dda317533485b52a784dc43e5ee3278bc"
-      }
+      "openxfactory_commit": "8e0a2501c5501a220911f3a02c41a5a43fa73414",
+      "repository": "opensoft/openxfactory"
     },
     {
-      "checks": [
-        {
-          "id": "current-source-audit",
-          "observed": true
-        }
-      ],
-      "id": "owner-and-inventory-authority",
-      "scope": {
-        "candidate": "043-domain-source",
-        "customer": "not-applicable",
-        "domain": "not-applicable",
-        "environment": "source",
-        "network": "not-applicable",
-        "offer": "not-applicable",
-        "offering": "hosted-domainxfactory",
-        "phase": "source",
-        "profile": "043-domain-commissioning",
-        "region": "not-applicable",
-        "run": "043-q0-domain-source",
-        "site": "not-applicable",
-        "target": "not-applicable",
-        "wave": "not-applicable"
-      },
-      "source": {
-        "base": "dcb3413dda317533485b52a784dc43e5ee3278bc",
-        "repository": "opensoft/openxfactory",
-        "revision": "dcb3413dda317533485b52a784dc43e5ee3278bc"
-      }
+      "openxfactory_commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "repository": "opensoft/openxfactory"
+    },
+    {
+      "openxfactory_commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
+      "repository": "opensoft/openxfactory"
     }
   ],
-  "ci": {},
-  "command": "python3 -",
-  "coverage": null,
-  "ended_at": "2026-11-21T17:15:37.082980+00:00",
-  "events": [],
-  "exit_code": 0,
-  "instance": null,
-  "metrics": {},
-  "original": {
-    "command": "python3 -",
-    "ended_at": "2026-11-21T17:15:37.082980+00:00",
-    "exit_code": 0,
-    "export_sha256": "431b7df5cb08066cb31ea07b588333f04575ee29570f16ebeb3da0826070a57a",
-    "original_sha256": "431b7df5cb08066cb31ea07b588333f04575ee29570f16ebeb3da0826070a57a",
-    "redaction_method": "none",
-    "repository": "opensoft/openxfactory",
-    "source_revision": "dcb3413dda317533485b52a784dc43e5ee3278bc",
-    "started_at": "2026-11-21T17:15:15.557644+00:00",
-    "stdout": "{\n  \"T014\": {\n    \"domain\": {\n      \"at\": \"2026-11-21T14:19:49Z\",\n      \"head\": \"955fb3c69438d2783935dfb95d6021fa5b83ccca\",\n      \"merged\": \"5b3526f470d5802f1decac1b9d363e088085b058\",\n      \"pr\": 583,\n      \"url\": \"https://github.com/codeXfactory/codeXfactory/pull/583\"\n    },\n    \"domain_ratification\": {\n      \"path\": \"openspec/changes/commission-hosted-domain-production/review/ratification.md\",\n      \"sha256\": \"49d043467827668e2d2d64089331d8af35c82c7b4f6a867befae04bd96da8fe6\"\n    },\n    \"identity\": {\n      \"at\": \"2026-11-21T16:17:27Z\",\n      \"head\": \"73867d065f1ec4cf39e873df2a51db9c6f5219b0\",\n      \"merged\": \"dcb3413dda317533485b52a784dc43e5ee3278bc\",\n      \"pr\": 1347,\n      \"url\": \"https://github.com/opensoft/openXfactory/pull/1347\"\n    },\n    \"provider_id\": 1281785369,\n    \"scope_verified\": [\n      \"T036\",\n      \"T037\",\n      \"T038\"\n    ]\n  },\n  \"T015\": {\n    \"archive\": {\n      \"bytes\": 1611534,\n      \"path\": \"evidence/private-connectivity-production/T015-source-custody.json\",\n      \"sha256\": \"ae8b324bd18f46b8e567a97e98dc92f955698d93e8287019778fb6270da0fe9d\"\n    },\n    \"archive_decisions\": [\n      \"C-08 one-file source custody decision verified, 2026-11-19T23:06:53+00:00\",\n      \"C-01 one-file source custody decision verified, 2026-11-19T23:06:53+00:00\"\n    ],\n    \"ops\": {\n      \"at\": \"2026-11-21T16:17:16Z\",\n      \"head\": \"d94f8379dbbf646a9fea56b818227a6e2715d2cf\",\n      \"merged\": \"a47178c6f5463dc572c17629825cca576c5f74d6\",\n      \"pr\": 642,\n      \"url\": \"https://github.com/opensoft/opsXfactory/pull/642\"\n    },\n    \"ops_ratification\": {\n      \"path\": \"openspec/changes/commission-connectivity-operations-production/review/ratification.md\",\n      \"sha256\": \"4ae76144c3aa841e93ed5b33aa069b125f3354abf38589a9c32bc3e5993d59b8\"\n    },\n    \"original_cases\": [\n      \"explicit-ci-scope\",\n      \"operational-owner-scope\",\n      \"target-channel-custody\"\n    ],\n    \"source_scope\": {\n      \"candidate\": \"043-ops-managed-source\",\n      \"customer\": \"not-applicable\",\n      \"domain\": \"not-applicable\",\n      \"environment\": \"source\",\n      \"network\": \"not-applicable\",\n      \"offer\": \"not-applicable\",\n      \"offering\": \"operations\",\n      \"phase\": \"source\",\n      \"profile\": \"private-connectivity-ops\",\n      \"region\": \"not-applicable\",\n      \"run\": \"043-q0-ops-source\",\n      \"site\": \"not-applicable\",\n      \"target\": \"not-applicable\",\n      \"wave\": \"not-applicable\"\n    }\n  },\n  \"authorizes_production\": false,\n  \"coordinator\": \"dcb3413dda317533485b52a784dc43e5ee3278bc\",\n  \"custody_authentication\": \"pending\",\n  \"definition\": \"93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc\",\n  \"ended_at\": \"2026-11-21T17:15:37.082980+00:00\",\n  \"kind\": \"043 commissioning source audit for pending custody review\",\n  \"provider_runs\": [\n    {\n      \"attempt\": 1,\n      \"head\": \"5b3526f470d5802f1decac1b9d363e088085b058\",\n      \"jobs\": [\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136873675784,\n          \"name\": \"validate\"\n        },\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136884468789,\n          \"name\": \"browser-ui-repair\"\n        }\n      ],\n      \"repository\": \"codeXfactory/codeXfactory\",\n      \"run\": 44913363611\n    },\n    {\n      \"attempt\": 1,\n      \"head\": \"5b3526f470d5802f1decac1b9d363e088085b058\",\n      \"jobs\": [\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136873675824,\n          \"name\": \"Resolve the pinned contract source\"\n        },\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136873803750,\n          \"name\": \"Coverage from the declared execution plane\"\n        },\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136882250323,\n          \"name\": \"Static analysis and quality gate\"\n        }\n      ],\n      \"repository\": \"codeXfactory/codeXfactory\",\n      \"run\": 44913363568\n    },\n    {\n      \"attempt\": 1,\n      \"head\": \"a47178c6f5463dc572c17629825cca576c5f74d6\",\n      \"jobs\": [\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136905188478,\n          \"name\": \"opsx-validation\"\n        }\n      ],\n      \"repository\": \"opensoft/opsXfactory\",\n      \"run\": 44923746889\n    },\n    {\n      \"attempt\": 1,\n      \"head\": \"dcb3413dda317533485b52a784dc43e5ee3278bc\",\n      \"jobs\": [\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136905237076,\n          \"name\": \"pytest-suite\"\n        },\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136920156487,\n          \"name\": \"sonar-analysis\"\n        }\n      ],\n      \"repository\": \"opensoft/openXfactory\",\n      \"run\": 44923761530\n    },\n    {\n      \"attempt\": 1,\n      \"head\": \"dcb3413dda317533485b52a784dc43e5ee3278bc\",\n      \"jobs\": [\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136905236778,\n          \"name\": \"doc-health-py314\"\n        }\n      ],\n      \"repository\": \"opensoft/openXfactory\",\n      \"run\": 44923761429\n    },\n    {\n      \"attempt\": 1,\n      \"head\": \"dcb3413dda317533485b52a784dc43e5ee3278bc\",\n      \"jobs\": [\n        {\n          \"conclusion\": \"success\",\n          \"id\": 136905236967,\n          \"name\": \"signed-execution-chain-gate\"\n        }\n      ],\n      \"repository\": \"opensoft/openXfactory\",\n      \"run\": 44923761463\n    }\n  ],\n  \"q0\": \"pending\",\n  \"started_at\": \"2026-11-21T17:15:15.557644+00:00\"\n}\n"
-  },
+  "schema": "043-task-evidence-v1",
   "scope": {
     "candidate": "043-domain-source",
     "customer": "not-applicable",
@@ -141,6 +117,6 @@
     "repository": "opensoft/openxfactory",
     "revision": "dcb3413dda317533485b52a784dc43e5ee3278bc"
   },
-  "started_at": "2026-11-21T17:15:15.557644+00:00",
-  "task": "T014"
+  "task": "T014",
+  "verdict": "pass"
 }
