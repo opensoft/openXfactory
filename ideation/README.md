@@ -158,6 +158,13 @@ lifecycle are enforced by the delegated register validator
   covering independent GitHub registration, factory CI, optional Linux onboarding
   and platform-wide donated capacity; links the existing Omni worker designs.
 
+- [Worker Onboarding Field Lessons](brainstorm/worker-onboarding-lessons-overview.md)
+  — ten-document supplement (seven atoms, two syntheses, one overview) applying
+  the managed CPC setup to the donation journey: service-owned WSL, credential
+  handoff, resumable recovery, resource accounting and distinct acceptance gates.
+  Records pending expansion/reboot evidence without treating private CI access
+  as a public-volunteer enrollment model.
+
 - [Factory MCP Family](brainstorm/factory-mcp-overview.md) — fourteen-document
   brainstorm packet (ten atoms, three syntheses, one overview) covering shared
   conformance, domain services, existing codex tools and a proposed Ops DNS check.

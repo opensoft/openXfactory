@@ -72,6 +72,13 @@ as the existing Omni enrollment brainstorm already identifies.
 
 ## Open questions
 
+The [field-lessons supplement](worker-onboarding-lessons-overview.md) now
+captures the actual account/profile, tool environment, encoding, timestamp and
+task-error failures behind these readiness requirements. Its
+[qualification matrix](worker-onboarding-lessons-qualification-and-portability.md)
+separates configured startup from a verified reboot without sign-in and planned
+work slots from measured concurrent execution.
+
 Which OS versions and WSL configurations will the first release qualify? What
 changes require administrator approval? Which probes establish capability
 expiry after tool or policy changes? These remain realization decisions; this

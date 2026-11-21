@@ -91,6 +91,13 @@ which connects all four atomic documents:
 
 ## Follow-on decisions
 
+The [worker onboarding field lessons](worker-onboarding-lessons-overview.md)
+add the 2026-11-21 CPC experience: service identity and WSL ownership, transient
+credential handoff, failed-bootstrap recovery, aggregate capacity and separate
+workload/concurrency/reboot acceptance. The managed-host checkpoint is not a
+qualification of public volunteer execution; three additional Linux slots and
+the no-sign-in reboot test remained unqualified there.
+
 The next design step should resolve the transport-neutral enrollment boundary
 against existing contracts, select an initial factory CI adapter and result
 publication path, locate shared allocation in existing dispatch ownership, and
