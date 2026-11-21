@@ -2,8 +2,8 @@
 
 Status: brainstorm
 Kind: architecture
-Summary: Connect startup ownership, fenced recovery, shared capacity and workload-specific evidence so donated capacity is advertised and restored honestly.
-Topics: worker-onboarding-lessons, worker-readiness, aggregate-budget, owner-controls, synthesis
+Summary: Connect startup ownership, fenced recovery, shared capacity, maintenance admission and job-specific evidence so donated capacity is advertised and restored honestly.
+Topics: worker-onboarding-lessons, worker-readiness, aggregate-budget, owner-controls, observability, synthesis
 Repository context: openXfactory owns neutral admission and acceptance seams; host managers, executor adapters and independent verifiers supply their own evidence.
 Captured: 2026-11-21
 
@@ -16,8 +16,10 @@ Captured: 2026-11-21
 
 Atomic members are [WSL startup](worker-onboarding-lessons-wsl-ownership-and-startup.md),
 [recoverable bootstrap](worker-onboarding-lessons-recoverable-bootstrap.md),
-[aggregate capacity](worker-onboarding-lessons-aggregate-capacity.md), and
-[qualification and portability](worker-onboarding-lessons-qualification-and-portability.md).
+[aggregate capacity](worker-onboarding-lessons-aggregate-capacity.md),
+[qualification and portability](worker-onboarding-lessons-qualification-and-portability.md),
+[maintenance admission](worker-onboarding-lessons-maintenance-admission.md), and
+[job-level observation](worker-onboarding-lessons-job-observability.md).
 
 ### Capacity advertisement depends on both runtime state and current authority
 
@@ -58,6 +60,22 @@ revision. Workflow routing and compatibility conditions must move together,
 without dropping tests or weakening environment-isolation assertions. The
 owner-facing health view should identify a workload failure separately from a
 host-enrollment failure.
+
+### Maintenance intent changes the meaning of observed queue state
+
+Admission must be denied before draining, and new slots must enter under that
+same hold. Otherwise an independent provider scheduler can consume a slot
+between registration and qualification. Qualification-only repository/workflow
+access allows evidence collection while ordinary business dispatch remains
+blocked. Release then reconciles only the operation's owned membership against
+the current normal policy, preserving other maintenance decisions.
+
+Job-level observation explains this sequence. A queued parent can have an
+executing child; an idle runner under a verified hold can correctly leave jobs
+unassigned. Neither a filtered workflow list nor the word "Ready" can decide
+that the desired inventory is installed and qualified. Bind admission transitions
+to the expected registration IDs and completed operation, then require actual
+overlap for a concurrency claim.
 
 ## Emergent behavior
 

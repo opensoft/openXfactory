@@ -53,6 +53,9 @@ receipts and private organization CI establish the following boundaries:
 | Execution | Private-repository smoke passed checkout, Python/workspace execution, expected identities and actual two-CPU/8-GiB limits |
 | Broader workload | A full platform-validation head passed with a job-local Python loader correction and preserved validation gates |
 | Additional slots | Three new Linux slots requested; installer and a conservative shared-budget design prepared, enrollment/concurrency not reported complete |
+| Maintenance | Existing Linux registration moved into a group with no repository access; its assigned job passed and the runner drained to idle; expansion and release remained held |
+| Observation | A running child job was omitted by an in-progress-only workflow scan because its parent reported queued; direct job readback corrected the diagnosis |
+| Completion scope | A later "Ready" report referred to prior single-runner setup; user clarification and live inventory established that the three-slot installer had not run |
 | Cold startup | Boot-triggered service-account startup configured and session-0 execution observed; reboot without sign-in not yet qualified |
 | Administration | Private SSH/Headscale connectivity was a separate unfinished capability; outbound GitHub CI did not depend on it |
 
@@ -110,8 +113,10 @@ connects startup/recovery with:
 
 - [Measured capacity and logical work slots](worker-onboarding-lessons-aggregate-capacity.md).
 - [Capability qualification and CI portability](worker-onboarding-lessons-qualification-and-portability.md).
+- [Maintenance admission and safe fleet expansion](worker-onboarding-lessons-maintenance-admission.md).
+- [Job-level observation and conflicting provider state](worker-onboarding-lessons-job-observability.md).
 
-The seven atoms, two syntheses and this overview form one linked supplement to
+The nine atoms, two syntheses and this overview form one linked supplement to
 the original participation packet.
 
 ## Decisions still open

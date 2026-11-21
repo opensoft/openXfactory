@@ -159,9 +159,10 @@ lifecycle are enforced by the delegated register validator
   and platform-wide donated capacity; links the existing Omni worker designs.
 
 - [Worker Onboarding Field Lessons](brainstorm/worker-onboarding-lessons-overview.md)
-  — ten-document supplement (seven atoms, two syntheses, one overview) applying
+  — twelve-document supplement (nine atoms, two syntheses, one overview) applying
   the managed CPC setup to the donation journey: service-owned WSL, credential
-  handoff, resumable recovery, resource accounting and distinct acceptance gates.
+  handoff, resumable recovery, resource accounting, maintenance admission,
+  job-level observation and distinct acceptance gates.
   Records pending expansion/reboot evidence without treating private CI access
   as a public-volunteer enrollment model.
 

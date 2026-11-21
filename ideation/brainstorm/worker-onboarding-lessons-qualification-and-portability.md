@@ -36,6 +36,27 @@ Capability changes can invalidate earlier evidence: service-account changes,
 new tool versions, policy, OS/WSL updates, resource limits, shared placement and
 workflow assumptions should have explicit requalification rules.
 
+## Completion messages need an operation scope
+
+Later in the pilot, a human report of "Ready" referred to the earlier completed
+single-runner setup. Live organization readback still showed only the original
+Linux registration. Clarification established that the separate three-slot
+expansion installer had not been run. The operator kept the hold and withheld
+the four-way test and release until the expected inventory could be observed.
+
+A completion receipt or UI message should name its operation and installation
+generation, requested endpoint names/count, completed gate and remaining gates.
+The reconciler should distinguish prepared, published, presented to the owner,
+executed, installed, provider-registered, online, qualified and admitted. A
+pinned installer being available or a prior operation succeeding cannot advance
+a later operation's state.
+
+The app can prevent this manual handoff ambiguity by reconciling the desired
+inventory against both local receipts and current provider registrations. An
+unprivileged CI service does not gain host-administrator authority because
+more slots were requested. Any required owner elevation or missing control
+connection should be explicit in that operation's progress and next action.
+
 ## Toolchain and routing lessons
 
 The Linux smoke passed under the non-root service account with private checkout,
@@ -78,7 +99,9 @@ complete filesystem exports to make a brainstorm look evidenced.
 
 See [identity-specific tools](worker-onboarding-lessons-service-identities-and-tools.md),
 [WSL startup](worker-onboarding-lessons-wsl-ownership-and-startup.md),
-[capacity](worker-onboarding-lessons-aggregate-capacity.md) and
+[capacity](worker-onboarding-lessons-aggregate-capacity.md),
+[maintenance admission](worker-onboarding-lessons-maintenance-admission.md),
+[job-level observation](worker-onboarding-lessons-job-observability.md) and
 [the operations synthesis](worker-onboarding-lessons-synthesis-operation-and-acceptance.md).
 Receipt format, expiry, independent acceptance and the first supported OS/build
 matrix still need realization. Host success does not replace the existing
