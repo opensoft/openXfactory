@@ -10,7 +10,12 @@ Actual protected-main source observations for the frozen 043 definition. This is
   "custodian": "Brett Heap",
   "decision": "pending",
   "reviewed_at": null,
-  "reviewed_manifest": null,
+  "reviewed_manifest": {
+    "commit": "c7ca974995369c70a94ba5ee01d94667eb661369",
+    "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "a0e31db7fd2f3faa0a253c6bc7565e42aff696346a1b40f6c59d02a7c02d1d3f"
+  },
   "schema": "043-source-authentication-v1"
 }
 ```
