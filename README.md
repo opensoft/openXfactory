@@ -6,6 +6,8 @@ Shared CLI source-quality maintenance: [feature 048 plan](specs/048-cli-source-q
 
 Canonical repository name: `openXfactory`. Historical records, frozen contract identifiers, and compatibility selectors retain their original spelling.
 
+Older Sonar debt: [2026-11-15 triage and prioritized repairs](docs/quality/sonar-legacy-triage-2026-11-15/README.md) (separate from completed feature 044 gate acceptance).
+
 `openxFactory` documents the open reference stack and domain-neutral xFactory
 layer used by Opensoft domain factory projects.
 
