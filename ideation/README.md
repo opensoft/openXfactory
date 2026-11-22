@@ -163,8 +163,8 @@ lifecycle are enforced by the delegated register validator
   the managed CPC setup to the donation journey: service-owned WSL, credential
   handoff, resumable recovery, resource accounting, maintenance admission,
   job-level observation, installer regression gates and distinct acceptance gates.
-  Records qualified four-slot expansion and pending reboot evidence without
-  treating private CI access as a public-volunteer enrollment model.
+  Records qualified four-slot expansion and actual no-sign-in reboot evidence
+  without treating private CI access as a public-volunteer enrollment model.
 
 - [Factory MCP Family](brainstorm/factory-mcp-overview.md) — fourteen-document
   brainstorm packet (ten atoms, three syntheses, one overview) covering shared

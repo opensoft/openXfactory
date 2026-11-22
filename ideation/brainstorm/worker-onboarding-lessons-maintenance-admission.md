@@ -33,6 +33,13 @@ It does not prove a general donor pause adapter or authorize applying the same
 group policy to other workers. The native Windows/factory registrations were
 outside this Linux-only maintenance operation.
 
+A later whole-CPC reboot expanded the hold scope to all seven known provider
+endpoints. The operator recorded each normal group and moved those registrations
+into a separate reboot-maintenance group with no repository access. Whole-host
+maintenance needs that broader inventory even when its acceptance question is
+only whether the Linux services start. Restore each role's own group rather
+than putting factory-specific workers into the general CI pool.
+
 Removing one custom label would leave broader selectors such as `self-hosted`
 eligible. The useful invariant is a provider-enforced denial covering every
 ordinary selector that could reach the held registration. GitHub's
@@ -77,6 +84,12 @@ The correction used the documented fully qualified branch selector and retained
 an independent branch-head/run-source check. An accepted policy update alone
 does not prove that the intended job can reach a runner. See
 [GitHub's workflow-access rules](https://docs.github.com/en/enterprise-cloud%40latest/actions/how-tos/manage-runners/self-hosted-runners/manage-access).
+
+When preparing the reboot proof, updating workflow access before the new file
+existed on the selected branch was rejected. Keep repository access denied,
+publish and verify the branch/file first, then install its workflow selector
+and admit the qualification repository. Source publication and an accepted
+effective admission policy are distinct prerequisites.
 
 ## Recovery and authority boundaries
 

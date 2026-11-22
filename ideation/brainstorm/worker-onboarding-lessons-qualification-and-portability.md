@@ -97,11 +97,22 @@ private checkout and workspace execution. Their workspace steps overlapped for
 88 seconds. The operation restored the four registrations to their recorded
 normal private-CI group after success.
 
-The no-sign-in reboot test remained pending. These are dated checkpoint facts,
-not a live fleet inventory, a four-heavy-build throughput benchmark or a global
-donor trust qualification. Sanitized private receipts and organization CI runs
-remain with the operator; do not publish credentials, machine SIDs, copied home
-data or complete filesystem exports to make a brainstorm look evidenced.
+The later [unattended reboot qualification](https://github.com/opensoft/Opensoft-Tenant/actions/runs/44968376008)
+passed six jobs: a native Windows boot/no-desktop check, one job on each Linux
+registration, and the same Windows check afterward. Fresh pre/post Windows and
+WSL boot identities and a renewed service-owner receipt established execution
+on the new boot. The session probe saw the original interactive desktop before
+restart and no signed-in users or Explorer sessions at both postboot checkpoints.
+Linux checks did not start WSL or any service; they executed only after the
+listeners had reconnected automatically. Each known endpoint then returned to
+its original CI or factory group.
+
+These are dated checkpoint facts, not a live fleet inventory, a four-heavy-build
+throughput benchmark or a global donor trust qualification. A future reboot
+needs a new baseline; replaying this success is insufficient. Sanitized private
+receipts and organization CI runs remain with the operator; do not publish
+credentials, machine SIDs, copied home data or complete filesystem exports to
+make a brainstorm look evidenced.
 
 ## Relationships and open questions
 

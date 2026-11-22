@@ -56,7 +56,7 @@ receipts and private organization CI establish the following boundaries:
 | Maintenance | Existing Linux registration moved into a group with no repository access; its assigned job passed and drained; qualification-only access then admitted the four-way test, and all four registrations returned to the recorded normal private-CI group after success |
 | Observation | A running child job was omitted by an in-progress-only workflow scan because its parent reported queued; direct job readback corrected the diagnosis |
 | Completion scope | A later "Ready" report referred to prior single-runner setup; user clarification and live inventory established that the three-slot installer had not run |
-| Cold startup | Boot-triggered service-account startup configured and session-0 execution observed; reboot without sign-in not yet qualified |
+| Cold startup | Actual reboot qualified all four Linux registrations: changed Windows/WSL boot identities, renewed session-0 owner evidence, successful jobs and no signed-in desktop at checks before/after those jobs |
 | Administration | Private SSH/Headscale connectivity was a separate unfinished capability; outbound GitHub CI did not depend on it |
 
 The managed pilot used approved private-organization runner access and
@@ -73,9 +73,10 @@ shared resources, and report precisely what passed.
 
 This packet does not ratify contract changes, implement the host app or website,
 authorize hardware takeover, change workstation-intake policy, promote the
-pilot's private runner group into a donation default, or claim the pending
-no-sign-in reboot acceptance. Managed four-slot qualification does not replace
-public-donor containment or independent output acceptance.
+pilot's private runner group into a donation default, or treat this managed
+four-slot/reboot acceptance as a complete supported-host product matrix.
+Managed qualification does not replace public-donor containment or independent
+output acceptance.
 
 ## System model
 

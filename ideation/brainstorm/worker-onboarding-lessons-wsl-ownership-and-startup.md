@@ -63,11 +63,44 @@ an explicit drain/cancellation policy for active jobs.
 
 ## Qualification and containment boundaries
 
-The pilot proved non-interactive service-account launch and real CI, but the
-recorded reboot-without-sign-in test remained pending. For that test, capture
-the prior Windows boot identity, restart, close the remote client to prevent
-automatic sign-in, and verify renewed owner evidence plus a successful job
-before reconnecting. Session 0 or an old success receipt alone is insufficient.
+The pilot first proved non-interactive service-account launch and real CI.
+The later [six-job reboot qualification](https://github.com/opensoft/Opensoft-Tenant/actions/runs/44968376008)
+also passed for all four Linux registrations. It compared fresh pre/post Windows
+and WSL boot identities, checked renewed service-owner evidence, and found no
+signed-in desktop users before or after the four Linux jobs. The owner kept the
+remote client closed throughout this proof. Session 0 or an old success receipt
+alone would have been insufficient.
+
+The later four-runner test used a more explicit proof sequence:
+
+1. Hold every known endpoint on the machine, including native/factory workers,
+   and retain each registration's original group. Collect a fresh Windows boot
+   timestamp, WSL kernel boot ID and service-owner receipt. Prove that the
+   session probe can see the existing desktop before the restart.
+2. Restart the machine and close its remote client. Observe provider disconnect
+   and reconnect without entering the desktop or invoking WSL from an inspection
+   session. Opening the distribution to inspect it could start the capability
+   the test is meant to qualify.
+3. Use a native Windows service job to compare the new boot identity and check
+   for no signed-in users or desktop shell. This job reads CIM/session state;
+   it never launches WSL or starts a runner service.
+4. Execute a separate job on each expected Linux registration. Check the new
+   shared WSL kernel identity, a refreshed owner receipt for that Windows boot,
+   service-account session 0, enabled/active systemd units, enforced limits and
+   private checkout/workspace execution.
+5. Repeat the Windows no-desktop check after the Linux jobs. Restore only the
+   operation's owned routing changes after all proof jobs pass, preserving the
+   unrelated fleet's maintenance and each factory worker's original access.
+
+The baseline probe could read the interactive user and Explorer session under
+the existing non-administrator Windows CI account. The postboot counterpart
+requires those observations to be absent. This supplies explicit local session
+evidence in addition to the owner's report that the remote client stayed closed.
+It remains managed-host operational evidence, not attestation against a hostile
+donor. An online flag alone cannot establish this result. Every later reboot
+qualification needs its own fresh baseline and operation/source binding;
+rerunning a workflow against this operation's old baseline would not prove that
+another restart occurred.
 
 The [worker-owned WSL design](omni-unattended-worker-wsl2-worker-owned-distro.md)
 already addresses ownership and executor boundaries. Multiple services in one

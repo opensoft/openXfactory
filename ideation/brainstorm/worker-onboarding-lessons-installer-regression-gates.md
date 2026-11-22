@@ -91,13 +91,17 @@ they are evidence and implementation references, not the public donor package:
 |---|---|---|
 | Resume the already-exported service-account migration | [Complete-ExportedMigration.ps1 at the accepted recovery revision](https://github.com/opensoft/Opensoft-Tenant/blob/103004584eb23c268fdcf8c80f39ff6921457ce4/ops/cpc-linux-service-migration/Complete-ExportedMigration.ps1) | Retained export reuse, fixed helper task/credentials, request-specific receipts, service-account profile/session and target startup |
 | Add three Linux registrations under the expansion hold | [Add-CpcLinuxRunners.ps1 at the accepted expansion revision](https://github.com/opensoft/Opensoft-Tenant/blob/200142992dfe21a810c8da8932208f9f002ddb5b/ops/cpc-linux-fleet/Add-CpcLinuxRunners.ps1) | Existing owner/task checks, separate slot accounts and registrations, protected transient token handoff and shared child-service limits |
+| Qualify startup after an actual reboot with no desktop sign-in | [Six-job reboot workflow at its accepted revision](https://github.com/opensoft/Opensoft-Tenant/blob/1962c594ef69152df8ecec9d5cb4b51b4d9ef42d/.github/workflows/cpc-reboot-qualification.yml) | New Windows/WSL boot identities, fresh service-owner evidence, all four Linux jobs and no-desktop checks before/after them |
 
 Use the protected operator receipts for the matching checksums and actual
 execution results. Start a repair by inspecting the applicable accepted source
 and current phase instead of reconstructing an older command from chat. These
-references do not authorize rerunning a migration against a later state or
-claim no-sign-in reboot acceptance. They still need extraction into the owning
-host product with the regression corpus above and supported-host qualification.
+references do not authorize rerunning a migration against a later state. The
+reboot proof binds one fresh captured baseline; every future reboot test needs
+a new baseline and operation/source binding. Recovery or expansion success alone
+does not establish cold startup. These precedents still need extraction into
+the owning host product with the regression corpus above and supported-host
+qualification.
 
 ## Relationships and open questions
 
