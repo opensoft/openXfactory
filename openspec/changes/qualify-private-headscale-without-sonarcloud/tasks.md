@@ -1,3 +1,8 @@
+# Tasks for private Headscale T023 qualification
+
+Status: ratified
+Ratified: 2026-11-22 by Brett Heap. [Ratification record](review/ratification.md)
+
 ## 1. Review and bind the exact scope
 
 - [ ] 1.1 Record the private T023 decision and validate the complete local gate crosswalk, exact changed-code baseline, and known-bad cases under the existing no-spend envelope. Route each unevaluated criterion to the affected owner for disposition.

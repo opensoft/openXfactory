@@ -1,6 +1,7 @@
 # Design for the private Headscale release gate
 
-Status: draft
+Status: ratified
+Ratified: 2026-11-22 by Brett Heap. [Ratification record](review/ratification.md)
 
 ## Context
 

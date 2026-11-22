@@ -562,7 +562,7 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
-- [qualify-private-headscale-without-sonarcloud](openspec/changes/qualify-private-headscale-without-sonarcloud/proposal.md) — draft [PR #1361](https://github.com/opensoft/openXfactory/pull/1361) for local source-quality qualification of the private Headscale T023 package. The public coordinator's Sonar requirements and Q0–Q5 gates continue to apply.
+- [qualify-private-headscale-without-sonarcloud](openspec/changes/qualify-private-headscale-without-sonarcloud/proposal.md) — ratified by Brett Heap on 2026-11-22 for source-quality qualification of the private Headscale T023 package. [Ratification record](openspec/changes/qualify-private-headscale-without-sonarcloud/review/ratification.md) · [PR #1361](https://github.com/opensoft/openXfactory/pull/1361). Exact implementation scope and release evidence remain subject to their existing gates.
 
 - [bind-azure-measurement-transactions](openspec/changes/bind-azure-measurement-transactions/proposal.md) — draft P05 direct-v2 transaction-binding proposal; paired source acceptance pending. [Design](openspec/changes/bind-azure-measurement-transactions/design.md) · [Requirements](openspec/changes/bind-azure-measurement-transactions/specs/azure-measurement-transactions/spec.md) · [Wire grammar](openspec/changes/bind-azure-measurement-transactions/supporting-docs/measurement-transactions.md) · [Evidence](openspec/changes/bind-azure-measurement-transactions/evidence.md) · [Handoff](openspec/changes/bind-azure-measurement-transactions/tasks.md).
 
