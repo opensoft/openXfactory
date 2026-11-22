@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-11-22
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-22-qualify-private-headscale-without-sonarcloud
+  reason: Prepare exact source qualification for the private Headscale T023 package under the owner's SonarCloud decision and zero-new-CI-spend constraint.
+  proposed_by: Codex on Brett Heap's direction
+  proposed_on: '2026-11-22'
+related:
+  - openXfactory:change:commission-headscale-production
+  - openXfactory:change:authorize-private-connectivity-internal-production
