@@ -6,8 +6,9 @@
 ## 2. Hand off to T023 and verify the resulting source evidence
 
 - [ ] 2.1 Hand implementation to the existing T023 task using the accepted paths and dependency order. Verify exact tested source, complete and matching test collection and execution, the separate guarded-runner suite, full eligible XML path coverage, and all evaluated local gate criteria.
-- [ ] 2.2 Verify protected owner CI, independent result acceptance, protected coordinator source proof, and default T023 verification. Include refusal cases for stale candidate or baseline, missing criterion, omitted zero-hit module, and invalid custody or budget.
+- [ ] 2.2 Verify protected owner CI, independent acceptance of the evaluated source results, and protected coordinator source proof before publication. Include refusal cases for stale candidate or baseline, missing criterion, omitted zero-hit module, and invalid custody or budget.
 
 ## 3. Record the release boundary
 
-- [ ] 3.1 Use the existing immutable publication and readback process when T023 is admitted. Verify exact tag, source, artifact and dependency identities before admitting consumer pins. Keep runtime and later Q0–Q5 decisions in their assigned gates.
+- [ ] 3.1 Use the existing immutable publication process after exact source and CI acceptance and current release authorization. Read back the exact tag, source, artifact, and dependency identities.
+- [ ] 3.2 Authenticate the actual release evidence and pass the default T023 verifier before completing T023 or admitting consumer pins. Verify that a source-only pass or missing readback refuses dependent admission. Keep runtime and Q0–Q5 decisions in their assigned gates.

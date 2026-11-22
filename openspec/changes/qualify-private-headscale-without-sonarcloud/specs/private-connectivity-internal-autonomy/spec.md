@@ -18,10 +18,15 @@ The current measured PR and post-merge main Sonar conditions, baseline, and thre
 - **WHEN** a required check, review finding, or integration dependency is unresolved
 - **THEN** landing SHALL remain blocked while scoped repairs and fresh validation proceed
 
-#### Scenario: Private T023 qualifies with local evidence
+#### Scenario: Private T023 candidate is eligible for publication
 
-- **WHEN** the approved private package candidate passes every evaluated local criterion and exact owner CI and its independently accepted evidence passes default verification
+- **WHEN** the approved private package candidate passes every evaluated local criterion and exact owner CI, the source results are independently accepted, and the release authority is current
 - **THEN** its source release may proceed through the existing immutable publication and readback process
+
+#### Scenario: Private T023 release evidence is verified
+
+- **WHEN** the exact package has been published and read back, and its authenticated release evidence passes default T023 verification
+- **THEN** T023 may be recorded complete and dependent tasks may consume its verified pin under their own gates
 
 #### Scenario: Private T023 evidence is incomplete
 

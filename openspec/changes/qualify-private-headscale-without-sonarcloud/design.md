@@ -12,7 +12,7 @@ The current autonomy requirement retains Sonar conditions for protected source. 
 Qualify the private package with evaluated checks under existing capacity. Preserve the claims and boundaries that downstream installer and hosted consumers rely on.
 
 **Non-Goals**
-The public coordinator, provider administration, hosted services, package activation, QA migration, and rollout authorization sit outside this amendment.
+The public coordinator's existing Sonar requirements and its work outside T023, provider administration, hosted services, package activation, QA migration, and rollout authorization sit outside this amendment.
 
 ## Decisions
 
@@ -30,7 +30,7 @@ Apply the decision only to the T023 source and release of opensoft/Headscale-Ins
 
 The two predecessor capabilities still live in active ratified changes. Archive this amendment after those deltas are in the canonical specs. The sequencing declaration preserves their order.
 
-Use the existing L/E C-01 refinement and definition refresh route for any proposed file additions. Freeze the whole Feature 043 definition before implementation, preserve task ownership and dependencies, and qualify coordinator source proof on protected main. Independently accept the actual owner output and run default verification before publication. Verify immutable release readback before dependent tasks consume the pin. Q0 through Q5 continue to govern their respective decisions.
+Use the existing L/E C-01 refinement and definition refresh route for any proposed file additions. Freeze the whole Feature 043 definition before implementation, preserve task ownership and dependencies, and qualify coordinator source proof on protected main. Before publication, independently accept the evaluated owner quality and CI evidence and verify the current release authority. Publish through the existing immutable release process and read back the exact tag, artifact, and provenance. Authenticate the actual release evidence and run default T023 verification before completing T023 or admitting any dependent pin. Q0 through Q5 continue to govern their respective decisions.
 
 ## Risks / Trade-offs
 
