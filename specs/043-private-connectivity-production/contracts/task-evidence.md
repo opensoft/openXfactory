@@ -156,6 +156,25 @@ Q0 per-owner acceptance permits only its exact preparation/implementation; T017 
 Task/registry changes after approval require reviewed scope/contract updates and affected re-verification. New shared pin classes, census, workflow or protected surfaces need their owning authority. Preserve 040, existing validation floors and current revocations; no silently widened prefix, skip, waiver or customer eligibility flag is allowed.
 
 
+
+## Private T023 release qualification
+
+Keep the existing three T023 cases and exact verification command. Require the
+two exact protected owner CI suite identities and an independently reviewed
+zero-spend source result covering all six criteria against the immutable
+pre-production baseline. Bind the evaluated summary, independent quality and
+hotspot disposition, and authorized release readback to the same source and
+immutable CI run/job. Check the exact release tag, artifact digest, provenance
+and positive publication readback. A local result, cancelled provider
+analysis or unevaluated criterion cannot admit T023. Custody remains under the
+source-only decision and downstream pins require the normal verified receipt.
+
+The predecessor continues to select the actual accepted Q0 record until new
+E outputs are separately qualified, reviewed, authenticated and selected.
+This definition refresh does not activate successor evidence or reopen any
+runtime authorization. The exact predecessor control retains its original
+definition, reader and SHA-256 anchors.
+
 ## Opt-in internal delegated authority
 
 The actual human root is immutable policy a66cfe60 and its genuine recorded
@@ -225,18 +244,26 @@ of the actual private bytes are required before archive custody changes.
 
 ## T005 review freeze
 
-### Reviewed T015 successor definition candidate
+### Reviewed T023 successor definition candidate
+
+The exact C-01 acceptance and its L/E scope are recorded in the
+[T023 decision record](../../../openspec/changes/qualify-private-headscale-without-sonarcloud/review/t023-c01-scope.md).
+Only the T023 file field and the two corresponding definition inputs change.
+The successor freeze awaits actual protected E qualification and separate
+authentication. The original selected T017/Q0 control remains active.
+
+### Retained T015 successor definition history
 
 Brett's original root approval at 2026-11-17T08:38:55.473Z accepted the exact
 T010 attestor and conditional T061 aggregate-only handoff scopes, initial
 Windows/Linux support and finite internal delegation. Those historical
 decisions retain their original authority, source and time.
 
-The table below binds the two refreshed scope inputs and all 68 unchanged
-task lines. Registry child cases, owners, classes, file envelopes,
-dependencies and verification commands retain their existing definitions.
-The predecessor remains active until the successor commissioning manifest
-has been independently authenticated, verified by default and selected.
+For T015 the previous freeze bound two refreshed scope inputs and all 68
+unchanged task lines. Registry child cases, owners, classes, file envelopes,
+dependencies and verification commands retained their definitions. The
+predecessor remained active until the successor commissioning manifest
+was independently authenticated, verified by default and selected.
 
 The prior unauthenticated 6b406630 and 4f963e0f source candidates retain their
 original observations and are not added as accepted historical controls.
@@ -257,7 +284,7 @@ Historical source-scope note, retained without changing its old facts:
 > handoff input changes. Original freezes, controls, readers and actual accepted
 > observations remain immutable at their exact historical source references.
 
-Review packet SHA-256: 93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc
+Review packet SHA-256: b987ca77d1932c86b8a0286d1602a10273af6cbf01bfdda56b610a747e9ef484
 
 This digest covers canonical UTF-8 JSON keys inputs, registry and tasks,
 sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal
@@ -271,7 +298,7 @@ body before the T005 heading. No partial task/input freeze is accepted.
 | plan.md | 2edb9ad4eb75621218dadbeefedf961cdb64221f51d20c84bd281564cefc9818 |
 | research.md | 295751853b252eafabbcaf64933a577df88370f7c457f01fe69a479c9df7f9d2 |
 | data-model.md | 16a1351ef27a1924be4ce4e1c77197adfc48a40391b3e4ea20d5f849a72c4391 |
-| owner-scopes.md | 9536566c17695c11ab1928fbd4b7d38f02a2683b2e7a43bca99a4be82f6797ca |
+| owner-scopes.md | 4c7eb2fb25d261881fa63e5d8eb38ab4941a6694bd8a7af968adb0a656378842 |
 | commissioning.md | 8f5917f9bdbee09a8fd6f93bbe53f34b371213196b6e38611a3a6850373f829c |
 | rollout-gates.md | 0815198f6c67e4eaf02d18efbd9558821747c8560ed338b626de34f993c9b32d |
 | validation-matrix.md | 7ebee6a87bee75ea50ca70d30a64ae50460ef6081a5489dd75d5c83a4f481f53 |
@@ -282,7 +309,7 @@ body before the T005 heading. No partial task/input freeze is accepted.
 | contracts/owner-handoff.md | d8fec9881a390420c41d6bc1dfef8fb44ab35457054611ae3751a8a98ca9fd78 |
 | contracts/product-interfaces.md | 5643be4adba7bb0ac5413a1ddb74bab863af981c945d92c4fde14d97fd0d94e7 |
 | contracts/qualification-evidence.md | 8d7d4ab79a6bb456a2dabef0d6ec4d5ba40da296e5ba19ceab2c7e907df31e92 |
-| contracts/task-evidence.md | 2eb08478b625f5b64b9c0d5c988151fbfef0105e86d8f022bdf9d5e82327a690 |
+| contracts/task-evidence.md | 32370d43dab3f6389e81b9bf7d33f3958626c7c7a072dc51a5606f2d9841c2f9 |
 
 Source-scope approval does not authenticate new actual E source/CI output.
 That separate review/default admission is required before consuming N changes.

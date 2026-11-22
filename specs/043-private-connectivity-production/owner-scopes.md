@@ -177,3 +177,14 @@ the successor and obtain review of the actual destination bytes before
 the archive write. T015 consumes only the immutable external custody
 reference and retains its coordinator-only files and T010 prerequisite.
 Neither the scope review nor these source records authorize runtime.
+
+## T023 private package handoff
+
+Brett Heap approved the exact T023 L/E C-01 scope. L implements the private
+source gate, the listed endpoint, instance, recovery and qualification-runner
+repairs, and their named tests and inputs. L retains the separate real-client
+guard collection and keeps raw reports in private custody. E reviews the
+complete successor freeze, verifies the immutable redacted quality and release
+proof in the existing evidence path, and preserves the authenticated
+predecessor. Source implementation and local checks do not select a new active
+commissioning manifest. See the [decision record](../../openspec/changes/qualify-private-headscale-without-sonarcloud/review/t023-c01-scope.md).

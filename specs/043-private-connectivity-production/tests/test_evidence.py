@@ -41,6 +41,12 @@ def accepted_historical_control():
 def test_actual_historical_control_uses_matching_frozen_reader(accepted_historical_control):
     store = v.GitStore({v.COORDINATOR: str(ROOT)})
     prior = v.make_verifier(TASKS, store, accepted_historical_control)
+    predecessor = v.T023_PREDECESSOR["reference"]
+    selected = v.make_verifier(TASKS, store, predecessor)
+    assert selected.definition == v.T010_CUSTODY_SUCCESSOR
+    assert selected.trust["authorizes_production"] is False
+    with pytest.raises(ValueError, match="uncommissioned task"):
+        selected.binding("T023")
     assert prior.definition == v.LEGACY_DEFINITION
     for task in ("T010", "T011", "T012", "T016"):
         prior.verify(task)
@@ -239,6 +245,8 @@ class World:
             binding["ci"] = {"tests/synthetic.py": 3}
         if task == "T010":
             binding["ci"] = {v.FEATURE_PATH + "/tests/" + name: 3 for name in ("test_evidence.py", "test_evidence_pins.py", "test_source_roots.py", "test_delegated_evidence.py")}
+        if task == "T023":
+            binding["ci"] = {"package-owner-qualification": 171, "package-production-runner": 49}
         if task == "T050":
             binding["decisions"] = ["C-03", "C-07"]
         if task == "T051":
@@ -288,6 +296,13 @@ class World:
         if scope["phase"] != "source":
             output.update(events=dict(probe=START), metrics={"synthetic-latency": dict(value=1, unit="seconds", event="probe")},
                           coverage=dict(window=[START, END], intervals=[[START, END]]))
+        if task == "T023":
+            proof, approval = synthetic_t023_proof(repo, source["revision"], 101, 201)
+            proof["readback"]["provenance"] = next(item for item in binding["artifacts"]
+                if item["path"] == "release/private-connectivity-production.json")
+            proof["authorization"] = self.store.put(approval, "decisions/t023-publication.json")
+            output["t023_release"] = proof
+            binding["t023_release_sha256"] = v.digest(v.canonical_json(proof))
         self.records[key], self.outputs[key] = record, output
         self.publish(key)
         if 50 <= int(task[1:]) <= 64:
@@ -306,6 +321,14 @@ class World:
         record = self.records[key]
         binding = self.trust["bindings"][key]
         record["output"] = self.store.put(self.outputs[key], "outputs/" + key + ".json")
+        if key == "T023":
+            binding["admission_roles"] = ["synthetic-release-admission"]
+            binding["admission"] = self.store.put(dict(kind="evidence-admission", decision="accepted",
+                id="synthetic-T023-admission", owner="Synthetic Admitter", scope=binding["scope"],
+                roles=binding["admission_roles"], authority=binding["authority"],
+                reviewed_output_sha256=record["output"]["sha256"], valid_from=AUTHORITY_START,
+                valid_until=AUTHORITY_END, reviewed_at=shifted(END, 2)), "decisions/t023-admission.json")
+            record["admission"] = binding["admission"]
         number = int(binding["task"][1:])
         owner = binding["owner"]
         prefix = v.FEATURE_PATH + "/evidence/" if owner == "C" else "evidence/private-connectivity-production/"
@@ -1071,11 +1094,93 @@ def test_cli_fails_closed_without_custody_anchor(tmp_path):
     assert "PC_EVIDENCE_TRUST is required" in result.stderr
 
 
+def synthetic_t023_proof(repo, revision, run_id, job_id):
+    sha = "b" * 64
+    summary = {name: sha for name in v.T023_DIGESTS}
+    criteria = {
+        "new_reliability_rating": {"state": "automatic-pass", "new": 0},
+        "new_maintainability_rating": {"state": "automatic-pass", "new": 0},
+        "new_security_rating": {"state": "independent-review-required", "new_ruff": 0},
+        "new_security_hotspots_reviewed": {"state": "independent-review-required", "subjects_sha256": sha},
+        "new_coverage": {"state": "automatic-pass", "hit": 80, "possible": 100},
+        "new_duplicated_lines_density": {"state": "automatic-pass", "hit": 3, "possible": 100},
+    }
+    summary.update(schema="043-t023-local-quality-v1", repository=repo, repository_id=1452848226,
+                   source_revision=revision, baseline=v.T023_BASE, criteria=criteria, released=False, runtime_qualified=False,
+                   owner_suite={"count": 171, "sha256": sha}, guarded_suite={"count": 49, "sha256": sha})
+    guard = dict(inventory_sha256=sha, subjects_sha256=sha, discovery=["ruff", "independent-boundary-review"],
+                 total=0, reviewed=0)
+    review = dict(schema="043-t023-quality-review-v1", reviewer="Independent Reviewer", implementer="Implementer",
+                  approved=True, summary_sha256=v.digest(v.canonical_json(summary)), source_revision=revision,
+                  criteria={name: "accepted" for name in v.T023_METRICS}, security_unresolved=0, guard_identity="verified-source-budget",
+                  zero_charge_guard_verified=True, ci_compute_usd=0, ci_artifact_storage_usd=0,
+                  hotspots=guard, run_id=run_id, job_id=job_id, reviewed_at=START)
+    review_sha = v.digest(v.canonical_json(review))
+    readback = dict(schema="043-t023-release-readback-v1", published=True, draft=False, repository=repo, tag="reviewed-tag",
+                    tag_commit=revision, source_revision=revision, review_sha256=review_sha, release_id=333,
+                    artifact=dict(id=444, name="immutable-package", sha256=sha), published_at=END,
+                    observed_at=shifted(END, 1), provenance=dict(repository=repo, commit=revision,
+                    path="release/private-connectivity-production.json", sha256=sha))
+    approval = dict(kind="package-release-publication", decision="accepted", source_revision=revision,
+                    tag=readback["tag"], review_sha256=review_sha, owner="Package Owner", approved_at=START)
+    proof = dict(summary=summary, review=review, readback=readback, authorization="selected-source-decision")
+    return proof, approval
+
+
+def assert_t023_release_boundary():
+    revision, repo = "a" * 40, v.FIXED_REPOSITORIES["L"]
+    proof, approval = synthetic_t023_proof(repo, revision, 111, 222)
+    review, criteria = proof["review"], proof["summary"]["criteria"]
+    guard = review["hotspots"]
+    store = SimpleNamespace(blob=lambda ref: b"source inventory")
+    reader = SimpleNamespace(store=store, read=lambda ref, binding: approval, now=NOW)
+    runs = {name: {"run_id": 111, "job_id": 222, "revision": revision} for name in v.T023_CI}
+    binding = dict(source={"repository": repo, "revision": revision}, ci={"package-owner-qualification": 171,
+                   "package-production-runner": 49}, admission="selected-actual-admission")
+
+    def check(candidate):
+        selected = {**binding, "t023_release_sha256": v.digest(v.canonical_json(candidate))}
+        v.Verifier.t023_release(reader, {"t023_release": candidate, "ci": runs}, selected)
+
+    with pytest.raises(v.EvidenceError, match="release readback required"):
+        v.Verifier.t023_release(reader, {"ci": runs}, binding)
+    check(proof)
+    for field, value, message in (
+        ("baseline", revision, "immutable baseline"),
+        ("source_revision", "c" * 40, "candidate"),
+        ("criteria", {key: item for key, item in criteria.items() if key != "new_security_rating"}, "criteria"),
+    ):
+        altered = deepcopy(proof)
+        altered["summary"][field] = value
+        with pytest.raises(v.EvidenceError, match=message):
+            check(altered)
+    for field, value, message in (
+        ("zero_charge_guard_verified", False, "zero-charge"),
+        ("hotspots", {**guard, "discovery": ["ruff"]}, "hotspot review incomplete"),
+        ("reviewer", review["implementer"], "independent"),
+    ):
+        altered = deepcopy(proof)
+        altered["review"][field] = value
+        with pytest.raises(v.EvidenceError, match=message):
+            check(altered)
+    altered = deepcopy(proof)
+    altered["readback"]["tag_commit"] = "c" * 40
+    with pytest.raises(v.EvidenceError, match="readback differs"):
+        check(altered)
+    approval["kind"] = "C-01"
+    with pytest.raises(v.EvidenceError, match="distinct release authority"):
+        check(proof)
+
+
 def test_registry_has_all_68_tasks_and_current_freeze():
     assert set(TASKS) == {f"T{i:03}" for i in range(1, 69)}
     assert all(set(d["dependencies"]) < set(TASKS) for d in TASKS.values())
     assert TASKS["T057"]["dependencies"] == ["T056"]
     assert TASKS["T050"]["dependencies"][-1] == "T049"
+    assert TASKS["T023"]["dependencies"] == ["T021", "T022"]
+    assert TASKS["T023"]["class"] == "release-L"
+    assert len(TASKS["T023"]["files"]) == 14
+    assert_t023_release_boundary()
 
 
 @pytest.mark.parametrize("mode", ["managed-pull", "managed-push", "customer"])

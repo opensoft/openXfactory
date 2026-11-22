@@ -32,7 +32,7 @@ FEATURE_PATH = "specs/" + FEATURE
 COORDINATOR = "opensoft/openxfactory"
 HISTORICAL_CONTROL_ERROR = "unaccepted historical control"
 T010_CUSTODY_SUCCESSOR = "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc"
-DEFINITION = T010_CUSTODY_SUCCESSOR
+DEFINITION = "b987ca77d1932c86b8a0286d1602a10273af6cbf01bfdda56b610a747e9ef484"
 LEGACY_DEFINITION = "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0"
 LEGACY_CONTROL_SHA256 = "0dc18a4053e07fd484534dcd4b572a5f8c6b72718b6901ac1323298d4ec7243e"
 LEGACY_READER_SHA256 = "0ce860921467e94e942274905c45c99295a830a3f14b8a0b66ddb944103f697f"
@@ -101,6 +101,35 @@ REF_FIELDS = frozenset(("repository", "commit", "path", "sha256"))
 INSTANCE_TASKS = frozenset(f"T{i:03}" for i in range(57, 65))
 COMMISSIONING_PATH = FEATURE_PATH + "/evidence/commissioning.json"
 AUTHENTICATION_PATH = "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md"
+T023_PREDECESSOR = {
+    "reference": {
+        "repository": COORDINATOR,
+        "commit": "c78f91b798af873e981b03a74fb96f5c413c5475",
+        "path": COMMISSIONING_PATH,
+        "sha256": "a083e7861c08d0fe8e0480eab0bcab9e988980d5c0a3ffd3e700e64e523d5708",
+    },
+    "approved_original": {
+        "repository": COORDINATOR,
+        "commit": "9b9bfa515d9a52197fe6364bc26ee63674ce89a7",
+        "path": COMMISSIONING_PATH,
+        "sha256": "0532ab8e184f4eab0c157ec006ab3cd9c9b001bfb6fde957749abe289d101072",
+    },
+    "definition": T010_CUSTODY_SUCCESSOR,
+    "reader": {
+        "repository": COORDINATOR,
+        "commit": "c78f91b798af873e981b03a74fb96f5c413c5475",
+        "path": FEATURE_PATH + "/verify-evidence.py",
+        "sha256": "bb4afae0301fd5514c25049b9e30da3f0a7b07f71e201bf7e7fb5b4e2a6d5b99",
+    },
+    "content_sha256": "c98562e7468d1ea89dee2b8d4a7d4a918ddb305008a97a3089c83a5feb815c81",
+}
+T023_BASE = "11bd61fe665cf40f2bbf02980c512475329b3151"
+T023_CI = frozenset(("package-owner-qualification", "package-production-runner"))
+T023_METRICS = frozenset(("new_reliability_rating", "new_security_rating", "new_maintainability_rating",
+                          "new_coverage", "new_duplicated_lines_density", "new_security_hotspots_reviewed"))
+T023_DIGESTS = frozenset(("policy_sha256", "tool_lock_sha256", "inventory_sha256", "changed_lines_sha256",
+                          "coverage_json_sha256", "coverage_xml_sha256", "diagnostics_sha256"))
+
 
 # The custody transition keeps one accepted predecessor and one original T010 scope proof.
 T010_CUSTODY_PREDECESSOR = {
@@ -565,7 +594,83 @@ def fixed_2a46_control(ref):
     return next((item for item in CONTROLS_2A46.values() if normalized == item["reference"]), None)
 
 
+def require_t023_hash(value):
+    require(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value), "T023 evidence digest required")
+
+
+def require_t023_counts(value, *, minimum, threshold):
+    hit, possible = value["hit"], value["possible"]
+    require(type(hit) is int and type(possible) is int and 0 <= hit <= possible and possible > 0,
+            "T023 invalid metric denominator")
+    require(100 * hit >= threshold * possible if minimum else 100 * hit <= threshold * possible,
+            "T023 quality threshold exceeded")
+
+
+def require_t023_source(summary, binding):
+    expected_keys = T023_DIGESTS | {"schema", "repository", "repository_id", "source_revision", "baseline",
+                                   "criteria", "owner_suite", "guarded_suite", "released", "runtime_qualified"}
+    source = binding["source"]
+    revision = source["revision"]
+    require(set(summary) == expected_keys and summary["schema"] == "043-t023-local-quality-v1"
+            and summary["repository"] == source["repository"].lower() == FIXED_REPOSITORIES["L"]
+            and summary["repository_id"] == 1452848226 and summary["source_revision"] == revision
+            and summary["baseline"] == T023_BASE and revision != T023_BASE
+            and summary["released"] is False and summary["runtime_qualified"] is False,
+            "T023 source summary, candidate or immutable baseline differs")
+    for field in T023_DIGESTS:
+        require_t023_hash(summary[field])
+    criteria = summary["criteria"]
+    require(set(criteria) == T023_METRICS, "T023 quality criteria missing or substituted")
+    for name in ("new_reliability_rating", "new_maintainability_rating"):
+        row = criteria[name]
+        require(row["state"] == "automatic-pass" and type(row["new"]) is int and row["new"] == 0,
+                "T023 unresolved mechanical findings")
+    for name in ("new_security_rating", "new_security_hotspots_reviewed"):
+        require(criteria[name]["state"] == "independent-review-required", "T023 missing independent review control")
+    require_t023_hash(criteria["new_security_hotspots_reviewed"]["subjects_sha256"])
+    coverage, clone = criteria["new_coverage"], criteria["new_duplicated_lines_density"]
+    require(coverage["state"] == clone["state"] == "automatic-pass", "T023 unevaluated source measure")
+    require_t023_counts(coverage, minimum=True, threshold=80)
+    require_t023_counts(clone, minimum=False, threshold=3)
+
+
+def require_t023_review(review, summary, binding, runs):
+    for field in ("reviewer", "implementer", "guard_identity"):
+        text(review[field], "T023 review or zero-charge identity")
+    require(review["schema"] == "043-t023-quality-review-v1" and review["reviewer"] != review["implementer"]
+            and review["approved"] is True and review["summary_sha256"] == digest(canonical_json(summary))
+            and review["source_revision"] == summary["source_revision"]
+            and review["criteria"] == {name: "accepted" for name in T023_METRICS}
+            and type(review["security_unresolved"]) is int and review["security_unresolved"] == 0
+            and review["zero_charge_guard_verified"] is True
+            and type(review["ci_compute_usd"]) is int and review["ci_compute_usd"] == 0
+            and type(review["ci_artifact_storage_usd"]) is int and review["ci_artifact_storage_usd"] == 0,
+            "T023 independent quality or zero-charge review missing")
+    inventory = review["hotspots"]
+    require_t023_hash(inventory["inventory_sha256"])
+    require(inventory["subjects_sha256"] == summary["criteria"]["new_security_hotspots_reviewed"]["subjects_sha256"]
+            and inventory["discovery"] == ["ruff", "independent-boundary-review"]
+            and type(inventory["total"]) is int and type(inventory["reviewed"]) is int
+            and inventory["total"] == inventory["reviewed"] >= 0, "T023 hotspot review incomplete")
+    require(set(runs) == T023_CI and set(binding["ci"]) == T023_CI, "T023 protected CI suite inventory missing")
+    for suite, name in (("package-owner-qualification", "owner_suite"), ("package-production-runner", "guarded_suite")):
+        run = runs[suite]
+        require_t023_hash(summary[name]["sha256"])
+        require(type(summary[name]["count"]) is int and summary[name]["count"] == binding["ci"][suite]
+                and run["run_id"] == review["run_id"] and run["job_id"] == review["job_id"]
+                and run["revision"] == summary["source_revision"], "T023 exact CI and collection identity mismatch")
+    require(summary["owner_suite"]["count"] > 160 and summary["guarded_suite"]["count"] == 49,
+            "T023 approved test collection differs")
+
+
+def is_t023_predecessor(ref):
+    return any(_same_reference(ref, T023_PREDECESSOR[key]) for key in ("reference", "approved_original"))
+
+
 def historical_source_parameters(ref):
+    predecessor = T023_PREDECESSOR
+    if is_t023_predecessor(ref):
+        return predecessor, predecessor["definition"], predecessor["reader"]
     predecessor = T010_CUSTODY_PREDECESSOR
     if _same_reference(ref, predecessor["reference"]):
         return predecessor, predecessor["definition"], predecessor["reader"]
@@ -636,6 +741,8 @@ def verify_t010_transition_predecessor(provider, store, protected_base, now=None
 def make_verifier(tasks, store, ref, now=None, *, prepare=False):
     known = ({LEGACY_CONTROL_SHA256} | {item["reference"]["sha256"] for item in C37_CONTROLS.values()}
              | {item["reference"]["sha256"] for item in CONTROLS_2A46.values()})
+    if is_t023_predecessor(ref):
+        return historical_verifier(store, ref, now, prepare=prepare)
     if ref.get("sha256") in known:
         return historical_verifier(store, ref, now, prepare=prepare)
     return Verifier(tasks, store, ref, now, prepare=prepare)
@@ -797,7 +904,7 @@ class Verifier:
         subject = {"kind": "decision", "definition": self.definition,
                    "record_sha256": digest(canonical_json({key: value for key, value in decision.items()
                                                          if key != "delegation"}))}
-        if (self.definition == T010_CUSTODY_SUCCESSOR and binding["task"] == "T010" and not post_run
+        if (self.definition in {T010_CUSTODY_SUCCESSOR, DEFINITION} and binding["task"] == "T010" and not post_run
                 and decision.get("kind") == "C-01" and subject["record_sha256"] == T010_ORIGINAL_SCOPE_DECISION
                 and binding["scope"]["phase"] == decision["scope"]["phase"] == "source"
                 and _same_reference(decision["delegation"], T010_ORIGINAL_SCOPE_PROOF)):
@@ -1122,6 +1229,43 @@ class Verifier:
             for field in ("run_id", "job_id"):
                 require(type(run[field]) is int and run[field] > 0, "actual GitHub run/job identity required")
 
+    def t023_release(self, output, binding):
+        require(binding.get("admission") is not None, "T023 independently authenticated release admission missing")
+        proof = output.get("t023_release")
+        require(isinstance(proof, dict) and set(proof) == {"summary", "review", "readback", "authorization"},
+                "T023 release readback required")
+        require(binding.get("t023_release_sha256") == digest(canonical_json(proof)), "T023 immutable release proof differs")
+        summary, review, readback = (proof[key] for key in ("summary", "review", "readback"))
+        require_t023_source(summary, binding)
+        require_t023_review(review, summary, binding, output["ci"])
+        revision = summary["source_revision"]
+        tag = text(readback["tag"], "T023 immutable tag")
+        require(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,126}", tag)
+                and readback["schema"] == "043-t023-release-readback-v1"
+                and readback["published"] is True and readback["draft"] is False
+                and readback["repository"] == summary["repository"]
+                and readback["tag_commit"] == revision and readback["source_revision"] == revision
+                and readback["review_sha256"] == digest(canonical_json(review))
+                and type(readback["release_id"]) is int and readback["release_id"] > 0,
+                "T023 immutable package publication readback differs")
+        artifact = readback["artifact"]
+        require_t023_hash(artifact["sha256"])
+        require(type(artifact["id"]) is int and artifact["id"] > 0, "T023 immutable release artifact required")
+        text(artifact["name"], "T023 immutable artifact name")
+        origin = reference(readback["provenance"])
+        require(origin["repository"].lower() == summary["repository"] and origin["commit"] == revision
+                and origin["path"] == "release/private-connectivity-production.json",
+                "T023 released provenance is outside the exact package source")
+        require(self.store.blob(origin), "T023 release source provenance unavailable")
+        approved = self.read(proof["authorization"], binding)
+        require(approved["kind"] == "package-release-publication" and approved["decision"] == "accepted"
+                and approved["source_revision"] == revision and approved["tag"] == tag
+                and approved["review_sha256"] == readback["review_sha256"], "T023 distinct release authority required")
+        text(approved["owner"], "T023 approving release owner")
+        require(timestamp(review["reviewed_at"]) <= timestamp(approved["approved_at"])
+                <= timestamp(readback["published_at"]) < timestamp(readback["observed_at"]) <= self.now,
+                "T023 release approval and readback chronology differs")
+
     def prior_acceptance(self, key, start, message):
         self.verify(key)
         binding = self.binding(key)
@@ -1211,6 +1355,8 @@ class Verifier:
         self.cases(output, binding)
         self.observations(output, binding)
         self.ci(output, binding)
+        if task == "T023":
+            self.t023_release(output, binding)
         require(record["dependencies"] == {dep: (self.trust["aggregates"][selected] if selected in INSTANCE_TASKS else self.trust["bindings"][selected]["record"])
                                            for dep, selected in binding["dependencies"].items()}, "immutable dependency substitution")
         # Every child still depends on the complete program Q2; no partial union.
