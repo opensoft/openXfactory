@@ -297,7 +297,7 @@ class World:
             output.update(events=dict(probe=START), metrics={"synthetic-latency": dict(value=1, unit="seconds", event="probe")},
                           coverage=dict(window=[START, END], intervals=[[START, END]]))
         if task == "T023":
-            proof, approval = synthetic_t023_proof(repo, source["revision"], 101, 201)
+            proof, approval = synthetic_t023_proof(repo, source["revision"], 101, 201, scope)
             proof["readback"]["provenance"] = next(item for item in binding["artifacts"]
                 if item["path"] == "release/private-connectivity-production.json")
             proof["authorization"] = self.store.put(approval, "decisions/t023-publication.json")
@@ -1094,7 +1094,7 @@ def test_cli_fails_closed_without_custody_anchor(tmp_path):
     assert "PC_EVIDENCE_TRUST is required" in result.stderr
 
 
-def synthetic_t023_proof(repo, revision, run_id, job_id):
+def synthetic_t023_proof(repo, revision, run_id, job_id, scope):
     sha = "b" * 64
     summary = {name: sha for name in v.T023_DIGESTS}
     criteria = {
@@ -1122,21 +1122,27 @@ def synthetic_t023_proof(repo, revision, run_id, job_id):
                     observed_at=shifted(END, 1), provenance=dict(repository=repo, commit=revision,
                     path="release/private-connectivity-production.json", sha256=sha))
     approval = dict(kind="package-release-publication", decision="accepted", source_revision=revision,
-                    tag=readback["tag"], review_sha256=review_sha, owner="Package Owner", approved_at=START)
+                    tag=readback["tag"], review_sha256=review_sha, owner="Package Owner", approved_at=START,
+                    id="synthetic-T023-publication", scope=deepcopy(scope), valid_from=START, valid_until=shifted(END, 2))
     proof = dict(summary=summary, review=review, readback=readback, authorization="selected-source-decision")
     return proof, approval
 
 
 def assert_t023_release_boundary():
     revision, repo = "a" * 40, v.FIXED_REPOSITORIES["L"]
-    proof, approval = synthetic_t023_proof(repo, revision, 111, 222)
+    world = World()
+    key = world.add("T023")
+    scope = world.trust["bindings"][key]["scope"]
+    proof, approval = synthetic_t023_proof(repo, revision, 111, 222, scope)
     review, criteria = proof["review"], proof["summary"]["criteria"]
     guard = review["hotspots"]
-    store = SimpleNamespace(blob=lambda ref: b"source inventory")
-    reader = SimpleNamespace(store=store, read=lambda ref, binding: approval, now=NOW)
+    reader = world.verifier()
+    reader.store = SimpleNamespace(blob=lambda ref: b"source inventory")
+    reader.read = lambda ref, binding: approval
     runs = {name: {"run_id": 111, "job_id": 222, "revision": revision} for name in v.T023_CI}
-    binding = dict(source={"repository": repo, "revision": revision}, ci={"package-owner-qualification": 171,
-                   "package-production-runner": 49}, admission="selected-actual-admission")
+    binding = dict(task="T023", scope=scope, source={"repository": repo, "revision": revision},
+                   ci={"package-owner-qualification": 171, "package-production-runner": 49},
+                   admission="selected-actual-admission")
 
     def check(candidate):
         selected = {**binding, "t023_release_sha256": v.digest(v.canonical_json(candidate))}
@@ -1167,8 +1173,20 @@ def assert_t023_release_boundary():
     altered["readback"]["tag_commit"] = "c" * 40
     with pytest.raises(v.EvidenceError, match="readback differs"):
         check(altered)
-    approval["kind"] = "C-01"
-    with pytest.raises(v.EvidenceError, match="distinct release authority"):
+    for field, value, message in (
+        ("kind", "C-01", "required decision is not accepted"),
+        ("valid_until", END, "authority cannot retroactively authorize effects"),
+        ("valid_from", shifted(END, 1), "authority cannot retroactively authorize effects"),
+        ("owner", "Codex", "distinct delegated decision actor required"),
+        ("scope", {**scope, "environment": "other"}, "required decision scope mismatch"),
+    ):
+        original = approval[field]
+        approval[field] = value
+        with pytest.raises(v.EvidenceError, match=message):
+            check(proof)
+        approval[field] = original
+    reader.trust["revoked_authorities"].append(approval["id"])
+    with pytest.raises(v.EvidenceError, match="revoked authority without completion closure"):
         check(proof)
 
 

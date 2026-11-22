@@ -1257,13 +1257,13 @@ class Verifier:
                 and origin["path"] == "release/private-connectivity-production.json",
                 "T023 released provenance is outside the exact package source")
         require(self.store.blob(origin), "T023 release source provenance unavailable")
-        approved = self.read(proof["authorization"], binding)
-        require(approved["kind"] == "package-release-publication" and approved["decision"] == "accepted"
-                and approved["source_revision"] == revision and approved["tag"] == tag
+        published_at = timestamp(readback["published_at"])
+        approved = self.decision(proof["authorization"], binding, "package-release-publication",
+                                 start=published_at, end=published_at, historical=True)
+        require(approved["source_revision"] == revision and approved["tag"] == tag
                 and approved["review_sha256"] == readback["review_sha256"], "T023 distinct release authority required")
-        text(approved["owner"], "T023 approving release owner")
         require(timestamp(review["reviewed_at"]) <= timestamp(approved["approved_at"])
-                <= timestamp(readback["published_at"]) < timestamp(readback["observed_at"]) <= self.now,
+                <= published_at < timestamp(readback["observed_at"]) <= self.now,
                 "T023 release approval and readback chronology differs")
 
     def prior_acceptance(self, key, start, message):
