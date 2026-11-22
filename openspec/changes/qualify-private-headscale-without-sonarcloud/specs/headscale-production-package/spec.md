@@ -2,6 +2,8 @@
 
 ### Requirement: Supported release and truthful qualification
 
+**Modified over `commission-headscale-production`'s addition by qualify-private-headscale-without-sonarcloud (2026-11-22):** — the ratified package commissioning change adds this requirement. This draft carries it forward for private T023 release qualification.
+
 Publication SHALL retain actual collected source and CI evidence and immutable supported candidate and provenance readback. For the private T023 package, the owner SHALL supply evaluated, independently accepted quality results that cover the reviewed source, exact test collection and execution, and measured code coverage. The producer SHALL retain the guarded runner case population and report eligible files with zero hits. The coordinator SHALL verify the bound results and preserve private source custody. Source or fixture evidence MUST NOT satisfy actual-client or target observations required by rollout gates.
 
 #### Scenario: Supported release and truthful qualification succeeds within scope

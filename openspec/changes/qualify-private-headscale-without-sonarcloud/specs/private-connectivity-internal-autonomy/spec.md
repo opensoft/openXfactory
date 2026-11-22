@@ -2,6 +2,8 @@
 
 ### Requirement: Source and release autonomy keeps review constraints
 
+**Modified over `authorize-private-connectivity-internal-production`'s addition by qualify-private-headscale-without-sonarcloud (2026-11-22):** — the ratified autonomy change adds this requirement. This draft preserves its review constraints and scopes the private T023 quality change within them.
+
 Within the exact feature purpose the delegate SHALL obtain independent exact-file amendment review and refresh the complete definition before using new source scope. Ready, merge, and release SHALL require exact-head checks, review, dependency order, normal immutable publication, and actual readback. Admin override SHALL address only missing independent GitHub approval, never failed checks, conflicts, or unresolved findings. Required checks and original source-proof privacy SHALL NOT be weakened.
 
 The current measured PR and post-merge main Sonar conditions, baseline, and thresholds SHALL remain for other projects and release paths. An uncomputed or unevaluated required gate SHALL NOT establish a passing post-merge result. For private Headscale-Install T023 alone, the accepted amendment SHALL use locally evaluated quality and owner CI results in place of a SonarCloud result. Acceptance SHALL require an independently approved mapping and disposition for each current quality criterion, exact candidate and baseline provenance, private evidence custody, and verification within existing spend authority.
