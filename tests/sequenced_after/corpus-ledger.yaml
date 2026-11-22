@@ -233,7 +233,7 @@ rows:
   amend-worker-input-budget-dispatch-wording: {state: archived, class: co-modifier, declares: [add-worker-input-budget], depth: 1, prose: false, moved_by: "#1269", moved_on: "2026-10-08"}
   apply-branch-sessions-deltas: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   assert-review-lane-lockstep-against-aggregation: {state: active, class: sole, declares: [mirror-floor-regeneration-automation], depth: 2, prose: false, moved_by: "#1145", moved_on: "2026-09-22"}
-  authorize-private-connectivity-internal-production: {state: active, class: sole, declares: [qualify-private-connectivity-production, commission-private-connectivity-production-evidence, extend-private-connectivity-cut-validation], depth: 6, prose: false, moved_by: "#1339", moved_on: "2026-11-17"}
+  authorize-private-connectivity-internal-production: {state: active, class: co-modifier, declares: [qualify-private-connectivity-production, commission-private-connectivity-production-evidence, extend-private-connectivity-cut-validation], depth: 6, prose: false, moved_by: "#1361", moved_on: "2026-11-22"}
   bind-azure-measurement-transactions: {state: active, class: sole, declares: [add-protected-runtime-azure-composition], depth: 5, prose: false, moved_by: "#1359", moved_on: "2026-11-21"}
   bump-openspec-cli-pin-to-1.12: {state: archived, class: sole, declares: absent, prose: false, moved_by: "#847", moved_on: "2026-09-09"}
   clarify-avatar-revocation-client-enforced: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
@@ -241,7 +241,7 @@ rows:
   clean-doc-health-floor: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   commission-connectivity-installer-production: {state: active, class: sole, declares: [qualify-private-connectivity-production, implement-private-connectivity-binding], depth: 4, prose: false, moved_by: "#1310", moved_on: "2026-11-14"}
   commission-connectivity-operations-production: {state: active, class: sole, declares: [qualify-private-connectivity-production, establish-headscale-install-ownership], depth: 4, prose: false, moved_by: "#1310", moved_on: "2026-11-14"}
-  commission-headscale-production: {state: active, class: sole, declares: [qualify-private-connectivity-production, establish-headscale-install-ownership], depth: 4, prose: false, moved_by: "#1310", moved_on: "2026-11-14"}
+  commission-headscale-production: {state: active, class: co-modifier, declares: [qualify-private-connectivity-production, establish-headscale-install-ownership], depth: 4, prose: false, moved_by: "#1361", moved_on: "2026-11-22"}
   commission-hosted-domain-production: {state: active, class: sole, declares: [qualify-private-connectivity-production, establish-openxsoft-hosted-connectivity], depth: 4, prose: false, moved_by: "#1310", moved_on: "2026-11-14"}
   commission-hosted-headscale-production: {state: active, class: sole, declares: [qualify-private-connectivity-production, establish-openxsoft-hosted-connectivity], depth: 4, prose: false, moved_by: "#1310", moved_on: "2026-11-14"}
   commission-private-connectivity-production-evidence: {state: active, class: sole, declares: [qualify-private-connectivity-production, register-private-connectivity-evidence-pins], depth: 4, prose: false, moved_by: "#1310", moved_on: "2026-11-13"}
@@ -312,6 +312,7 @@ rows:
   qualify-avatar-brokered-call-feasibility: {state: archived, class: sole, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   qualify-avatar-live-voice: {state: active, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   qualify-private-connectivity-production: {state: active, class: sole, declares: [add-private-connectivity, implement-private-connectivity-binding, establish-headscale-install-ownership, establish-openxsoft-hosted-connectivity, register-private-connectivity-evidence-pins], depth: 3, prose: false, moved_by: "#1309", moved_on: "2026-11-12"}
+  qualify-private-headscale-without-sonarcloud: {state: active, class: co-modifier, declares: [authorize-private-connectivity-internal-production, commission-headscale-production], depth: 7, prose: false, moved_by: "#1361", moved_on: "2026-11-22"}
   ratify-doxbench-landed-context-surfaces: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}
   realize-doc-health-direction-arc: {state: active, class: sole, declares: [], depth: 0, prose: false, moved_by: "#1247", moved_on: "2026-10-06"}
   reconcile-domain-neutral-and-engineering-spec-ownership: {state: archived, class: co-modifier, declares: absent, prose: false, moved_by: "#623", moved_on: "2026-09-03"}

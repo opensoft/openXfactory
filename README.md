@@ -562,6 +562,8 @@ Every DomainxFactory must validate against the canonical contract:
 
 ## OpenSpec Records
 
+- [qualify-private-headscale-without-sonarcloud](openspec/changes/qualify-private-headscale-without-sonarcloud/proposal.md) — draft [PR #1361](https://github.com/opensoft/openXfactory/pull/1361) for local source-quality qualification of the private Headscale T023 package. The public coordinator's Sonar requirements and Q0–Q5 gates continue to apply.
+
 - [bind-azure-measurement-transactions](openspec/changes/bind-azure-measurement-transactions/proposal.md) — draft P05 direct-v2 transaction-binding proposal; paired source acceptance pending. [Design](openspec/changes/bind-azure-measurement-transactions/design.md) · [Requirements](openspec/changes/bind-azure-measurement-transactions/specs/azure-measurement-transactions/spec.md) · [Wire grammar](openspec/changes/bind-azure-measurement-transactions/supporting-docs/measurement-transactions.md) · [Evidence](openspec/changes/bind-azure-measurement-transactions/evidence.md) · [Handoff](openspec/changes/bind-azure-measurement-transactions/tasks.md).
 
 - [Align the private-connectivity MCP identity handoff](openspec/changes/align-private-connectivity-mcp-identity/proposal.md) — draft repository record of the November 18 approval by Brett Heap of the exact Entra policy wording. Owner source scope and rollout gates remain pending.
