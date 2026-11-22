@@ -1,5 +1,8 @@
 # T023 C-01 owner decision
 
+Status: record
+Kind: review
+
 Brett Heap approved the exact T023 C-01 scope as L package and release owner
 and E source-evidence custodian on 2026-11-22. The approved local packet has
 SHA-256
