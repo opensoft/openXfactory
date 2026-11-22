@@ -1,0 +1,122 @@
+{
+  "admission_state": "Candidate only. Actual custodian authentication and default verification remain pending.",
+  "artifacts": [
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-connectivity-operations-production/.openspec.yaml",
+      "repository": "opensoft/openxfactory",
+      "sha256": "556780309132dcf7525aa93e348cbb75c417db56e79fbb7f0e96c6700840b453"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-connectivity-operations-production/design.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "380dd038d73b5cfeee392fbfa93f2f8e6943af4b53468fe0638464d4f61bcff9"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-connectivity-operations-production/proposal.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "39916b2c423671ada7b979d2207af6d5f19a8171e19a42d2b316309e3750a9aa"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-connectivity-operations-production/review/ratification.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "4ae76144c3aa841e93ed5b33aa069b125f3354abf38589a9c32bc3e5993d59b8"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-connectivity-operations-production/specs/connectivity-operations-production/spec.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "dc3df8fd86cf1926a86234000d1d34b1ffa67535d0d349d656eec858a871c003"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-connectivity-operations-production/tasks.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "e341fde12cc98cf123973a9120797beeb3ecbd2d6a624cc481e2834e06cf6b44"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "specs/043-private-connectivity-production/tasks.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "461933b7990e825b57a18ff106d931c8dd5b548de41e200f743537825737d64e"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "2bc0e5aaf7b6dc496bca05e4968204bc98d0ca72b9db4024a28924d7e1b7de85"
+    }
+  ],
+  "attempt": "ops-protected-audit-1",
+  "authority": {
+    "commit": "c7f2d0d5ecce53a1f2a8bb0129dbfcfd0b23c003",
+    "path": "openspec/changes/commission-connectivity-operations-production/review/source-owner-permission.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "d8e02e20493d29de6c064e7ffef06b08b7fba7826bbff8f9dd120e1cea21fc00"
+  },
+  "command": "python3 -",
+  "dependencies": {
+    "T010": {
+      "commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "repository": "opensoft/openxfactory",
+      "sha256": "8bb6fe496f3bc0b6aba76e16e8bd3fc04db3c941a9dbd1b7f86d52599b8a6ee0"
+    }
+  },
+  "evidence_class": "Q0-O",
+  "history": [],
+  "incidents": [],
+  "instance": null,
+  "output": {
+    "commit": "e6353219f464eaecfd2180ea94405fed1ad59beb",
+    "path": "specs/043-private-connectivity-production/evidence/T015.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "59300a3f0e1be7df46146742f4d44c972a6f13d9d4b500d2e668bd935befd6dc"
+  },
+  "owner": "C",
+  "pin_inventory": [
+    {
+      "openxfactory_commit": "c7f2d0d5ecce53a1f2a8bb0129dbfcfd0b23c003",
+      "repository": "opensoft/openxfactory"
+    },
+    {
+      "openxfactory_commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "repository": "opensoft/openxfactory"
+    },
+    {
+      "openxfactory_commit": "e6353219f464eaecfd2180ea94405fed1ad59beb",
+      "repository": "opensoft/openxfactory"
+    },
+    {
+      "openxfactory_commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
+      "repository": "opensoft/openxfactory"
+    }
+  ],
+  "schema": "043-task-evidence-v1",
+  "scope": {
+    "candidate": "043-ops-managed-source",
+    "customer": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "operations",
+    "phase": "source",
+    "profile": "private-connectivity-ops",
+    "region": "not-applicable",
+    "run": "043-q0-ops-source",
+    "site": "not-applicable",
+    "target": "not-applicable",
+    "wave": "not-applicable"
+  },
+  "source": {
+    "base": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+    "repository": "opensoft/openxfactory",
+    "revision": "dcb3413dda317533485b52a784dc43e5ee3278bc"
+  },
+  "task": "T015",
+  "verdict": "pass"
+}

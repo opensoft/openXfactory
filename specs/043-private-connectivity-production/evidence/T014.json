@@ -1,0 +1,122 @@
+{
+  "admission_state": "Candidate only. Actual custodian authentication and default verification remain pending.",
+  "artifacts": [
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/.openspec.yaml",
+      "repository": "opensoft/openxfactory",
+      "sha256": "02c2e84480373dd34c2eaf4c973753edb3c2048d9a043732223a968f8faedef2"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/design.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "79d4938d86d0358f6262918e9a38506560dcdee103f17778486cb3d2d3f8b49c"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/proposal.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "5d924ff1fe57fee7ba05e61fe24c03f63dfb843396e087d0a4ea269884ef3492"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/review/ratification.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "288b757d0f9d865aa537ef825259714681307884bbbd3e6d48e03642df9b86b9"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/specs/hosted-domain-connectivity-production/spec.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "aaf8e688bfc317144a6bf3ee36b9a95cfc91ccc5c2c951585b3132e28a9e3cf6"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "openspec/changes/commission-hosted-domain-production/tasks.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "394449a1c3c49f0b03e7aef7169ab35544324e4ee0d931d3b84735f6dad36cc0"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "specs/043-private-connectivity-production/tasks.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "461933b7990e825b57a18ff106d931c8dd5b548de41e200f743537825737d64e"
+    },
+    {
+      "commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
+      "repository": "opensoft/openxfactory",
+      "sha256": "2bc0e5aaf7b6dc496bca05e4968204bc98d0ca72b9db4024a28924d7e1b7de85"
+    }
+  ],
+  "attempt": "domain-protected-audit-1",
+  "authority": {
+    "commit": "3461f13bc2c9e8adf01a458c8ff3b8e412768251",
+    "path": "openspec/changes/commission-hosted-domain-production/review/source-owner-permission.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "dcfd3f093890a0ea5a475794e4e4cfb415f6156e4d4c93f511be96df85b9b163"
+  },
+  "command": "python3 -",
+  "dependencies": {
+    "T010": {
+      "commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
+      "path": "specs/043-private-connectivity-production/evidence/T010.json",
+      "repository": "opensoft/openxfactory",
+      "sha256": "8bb6fe496f3bc0b6aba76e16e8bd3fc04db3c941a9dbd1b7f86d52599b8a6ee0"
+    }
+  },
+  "evidence_class": "Q0-D",
+  "history": [],
+  "incidents": [],
+  "instance": null,
+  "output": {
+    "commit": "8e0a2501c5501a220911f3a02c41a5a43fa73414",
+    "path": "specs/043-private-connectivity-production/evidence/T014.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "f4ff61495eaf0e56b7f2a056dabd854d0588228d66e2367200aba1cf15d933c2"
+  },
+  "owner": "C",
+  "pin_inventory": [
+    {
+      "openxfactory_commit": "3461f13bc2c9e8adf01a458c8ff3b8e412768251",
+      "repository": "opensoft/openxfactory"
+    },
+    {
+      "openxfactory_commit": "8e0a2501c5501a220911f3a02c41a5a43fa73414",
+      "repository": "opensoft/openxfactory"
+    },
+    {
+      "openxfactory_commit": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+      "repository": "opensoft/openxfactory"
+    },
+    {
+      "openxfactory_commit": "f5d945d2cd2b8489b79fd4ffbea1f229cbe88413",
+      "repository": "opensoft/openxfactory"
+    }
+  ],
+  "schema": "043-task-evidence-v1",
+  "scope": {
+    "candidate": "043-domain-source",
+    "customer": "not-applicable",
+    "domain": "not-applicable",
+    "environment": "source",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "hosted-domainxfactory",
+    "phase": "source",
+    "profile": "043-domain-commissioning",
+    "region": "not-applicable",
+    "run": "043-q0-domain-source",
+    "site": "not-applicable",
+    "target": "not-applicable",
+    "wave": "not-applicable"
+  },
+  "source": {
+    "base": "dcb3413dda317533485b52a784dc43e5ee3278bc",
+    "repository": "opensoft/openxfactory",
+    "revision": "dcb3413dda317533485b52a784dc43e5ee3278bc"
+  },
+  "task": "T014",
+  "verdict": "pass"
+}

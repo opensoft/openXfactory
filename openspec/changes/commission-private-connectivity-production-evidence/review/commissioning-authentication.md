@@ -1,27 +1,23 @@
-# T018 and T019 contract-v4.4 source evidence authentication
+# T017 program commissioning source authentication
 
-Codex authenticated the exact neutral publication and independent consumer readback after the nine-role review and protected GitHub provider checks. The commissioning control preserves the original 17 bindings, the preceding accepted control and the original audit authority. Brett Heap remains the accountable owner.
+Status: record
 
-This record covers the release evidence and compatibility readback. Full Q0 and Q1–Q5 remain pending.
+Brett Heap authenticated the actual T017 program output for this exact manifest. The T014–T015 source authentication is independently preserved at 127818662babec50ffd88315e6d6696fbc5d8272. The recorded time is when this acceptance was captured.
+
+> Authenticate the exact T017 program packet
 
 ```json
 {
-  "accountable_owner": "Brett Heap",
-  "actor": "Codex",
-  "attestation": {
-    "commit": "ffc58c7d1786a160beb99743caf1d90dda610004",
-    "path": "specs/043-private-connectivity-production/evidence/T018.json",
-    "repository": "opensoft/openxfactory",
-    "sha256": "6cbcb33c51103869fc8d3f00df73094a7052d767bbdb27976f70066b1cad09d6"
-  },
-  "content_sha256": "f8b9f88d4657a2682bcc5fdee3c8eefb9b0bc2d3b1d5d05ea8b29cf40aa09428",
+  "content_sha256": "c98562e7468d1ea89dee2b8d4a7d4a918ddb305008a97a3089c83a5feb815c81",
+  "custodian": "Brett Heap",
   "decision": "accepted",
+  "reviewed_at": "2026-11-21T19:34:50.413426+00:00",
   "reviewed_manifest": {
-    "commit": "65fe30cf3ee23d2df5167a073ced7d406972ef33",
+    "commit": "9b9bfa515d9a52197fe6364bc26ee63674ce89a7",
     "path": "specs/043-private-connectivity-production/evidence/commissioning.json",
     "repository": "opensoft/openxfactory",
-    "sha256": "329ad8caf65420ffe8ef6e0f17c8bd375a81d01e78e24b9a67d2333dd9fd20c1"
+    "sha256": "0532ab8e184f4eab0c157ec006ab3cd9c9b001bfb6fde957749abe289d101072"
   },
-  "schema": "043-delegated-source-authentication-v1"
+  "schema": "043-source-authentication-v1"
 }
 ```

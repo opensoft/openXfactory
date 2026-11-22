@@ -459,6 +459,18 @@ PIN_CLASS: tuple[PinMember, ...] = (
         note="Only the exact human-root policy references; all pins owe local "
              "resolution. Classification supplies no authentication or gate authority.",
     ),
+    PinMember(
+        id="private-connectivity-q0-owner-ratification",
+        paths=(
+            "openspec/changes/commission-connectivity-operations-production/review/source-owner-permission.json",
+            "openspec/changes/commission-hosted-domain-production/review/source-owner-permission.json",
+        ),
+        key="commit", key_form="field",
+        generator="feature 043 authenticated Q0 owner ratification records",
+        reproduction=MEASURED, locality=REPO_LOCAL, presence=CURRENT,
+        note="The two exact Ops and domain ratification records bind the "
+             "coordinator's reviewed base. Local reachability remains required.",
+    ),
     # Original Git references remain verbatim in the source container and
     # receipts. The inventory does not exempt their commit/revision fields
     # from the vocabulary sweep. Per-reference repository ownership decides
