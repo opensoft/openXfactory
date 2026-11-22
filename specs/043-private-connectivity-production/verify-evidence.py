@@ -1262,9 +1262,12 @@ class Verifier:
                                  start=published_at, end=published_at, historical=True)
         require(approved["source_revision"] == revision and approved["tag"] == tag
                 and approved["review_sha256"] == readback["review_sha256"], "T023 distinct release authority required")
+        observed_at = timestamp(readback["observed_at"])
         require(timestamp(review["reviewed_at"]) <= timestamp(approved["approved_at"])
-                <= published_at < timestamp(readback["observed_at"]) <= self.now,
-                "T023 release approval and readback chronology differs")
+                <= published_at < observed_at, "T023 release approval and readback chronology differs")
+        admission = self.read(binding["admission"], binding)
+        require(observed_at <= timestamp(admission["reviewed_at"]) <= self.now,
+                "T023 release readback must precede its admission review")
 
     def prior_acceptance(self, key, start, message):
         self.verify(key)

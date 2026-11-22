@@ -1138,7 +1138,8 @@ def assert_t023_release_boundary():
     guard = review["hotspots"]
     reader = world.verifier()
     reader.store = SimpleNamespace(blob=lambda ref: b"source inventory")
-    reader.read = lambda ref, binding: approval
+    records = {"selected-source-decision": approval, "selected-actual-admission": {"reviewed_at": shifted(END, 2)}}
+    reader.read = lambda ref, binding: records[ref]
     runs = {name: {"run_id": 111, "job_id": 222, "revision": revision} for name in v.T023_CI}
     binding = dict(task="T023", scope=scope, source={"repository": repo, "revision": revision},
                    ci={"package-owner-qualification": 171, "package-production-runner": 49},
@@ -1172,6 +1173,10 @@ def assert_t023_release_boundary():
     altered = deepcopy(proof)
     altered["readback"]["tag_commit"] = "c" * 40
     with pytest.raises(v.EvidenceError, match="readback differs"):
+        check(altered)
+    altered = deepcopy(proof)
+    altered["readback"]["observed_at"] = shifted(END, 3)
+    with pytest.raises(v.EvidenceError, match="readback must precede its admission review"):
         check(altered)
     for field, value, message in (
         ("kind", "C-01", "required decision is not accepted"),
