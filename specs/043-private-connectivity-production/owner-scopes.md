@@ -182,7 +182,8 @@ Neither the scope review nor these source records authorize runtime.
 
 Brett Heap approved the exact T023 L/E C-01 scope. L implements the private
 source gate, the listed endpoint, instance, recovery and qualification-runner
-repairs, and their named tests and inputs. L retains the separate real-client
+repairs, and their named tests and inputs. The approved T023 input-manifest
+refinement permits only the helper SHA-256 refresh. L retains the separate real-client
 guard collection and keeps raw reports in private custody. E reviews the
 complete successor freeze, verifies the immutable redacted quality and release
 proof in the existing evidence path, and preserves the authenticated

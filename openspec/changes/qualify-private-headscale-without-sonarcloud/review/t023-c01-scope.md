@@ -12,8 +12,13 @@ criteria, exact tool wheels, the T023 file handoff, and the full Feature 043
 definition refresh. The local packet and raw package evidence are retained
 in their existing custody.
 
+Brett Heap subsequently approved adding the package input manifest to T023
+solely for its helper SHA-256 field. The repair binds the existing helper slot
+to the refactored instance code already in scope. The existing release
+inventory is regenerated from the resultant bytes.
+
 The resulting candidate freeze has SHA-256
-b987ca77d1932c86b8a0286d1602a10273af6cbf01bfdda56b610a747e9ef484.
+9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af.
 It preserves all other frozen task fields, the selected T017/Q0 control and
 the original independently authenticated outputs. New protected source results
 need their own acceptance and authentication. CI remains subject to current

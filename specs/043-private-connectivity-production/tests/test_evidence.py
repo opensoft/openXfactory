@@ -1179,7 +1179,8 @@ def test_registry_has_all_68_tasks_and_current_freeze():
     assert TASKS["T050"]["dependencies"][-1] == "T049"
     assert TASKS["T023"]["dependencies"] == ["T021", "T022"]
     assert TASKS["T023"]["class"] == "release-L"
-    assert len(TASKS["T023"]["files"]) == 14
+    assert len(TASKS["T023"]["files"]) == 15
+    assert "packaging/production-images.json" in TASKS["T023"]["files"]
     assert_t023_release_boundary()
 
 
