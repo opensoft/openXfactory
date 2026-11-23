@@ -2656,6 +2656,34 @@ def test_qa_edge_handoff_base_references_are_exact_local_pins(tmp_path):
                for result in report.orphans)
 
 
+def test_qa_edge_c01_receipt_commit_refs_owe_local_reachability(tmp_path):
+    import json
+
+    repo, main, orphan = orphaned_pin_repo(tmp_path)
+    review = Path("openspec/changes/qualify-private-connectivity-qa-edge-handoff/review")
+    receipt = (review / "c01-qa-edge-receipt.json").as_posix()
+    neighbor = (review / "c01-other-receipt.json").as_posix()
+    _write(repo, receipt, json.dumps({
+        "root": {"commit": main, "repository": "opensoft/openxfactory"},
+        "independent_review": {"commit": orphan, "repository": "foreign/foreign"},
+        "unregistered_commit": main,
+    }, indent=2))
+    _write(repo, neighbor, json.dumps({"commit": main}, indent=2))
+    _commit(repo, "record synthetic C-01 receipt commit refs")
+
+    sites = pc.member_sites(repo, "HEAD", paths=[receipt, neighbor])
+    assert {(site.path, site.key, site.pin, site.locality) for site in sites} == {
+        (receipt, "commit", main, pc.REPO_LOCAL),
+        (receipt, "commit", orphan, pc.REPO_LOCAL),
+    }
+    report = _verify(repo)
+    assert any(result.site.path == receipt and result.site.pin == main
+               and result.verdict == pc.PASS for result in report.results)
+    assert any(result.site.path == receipt and result.site.pin == orphan
+               for result in report.orphans)
+    assert any(site.path == neighbor for site in pc.uncovered_sites(repo))
+
+
 def test_private_connectivity_conformance_has_one_nonmember_path(tmp_path):
     import json
 

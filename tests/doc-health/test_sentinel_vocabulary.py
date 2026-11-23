@@ -1203,7 +1203,9 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # The two exact owner ratification sites add one standing local member.
     # Stage 1 registers two local protected-base sites and one Tenant site
     # under two exact file/field members, measured on the committed artifacts.
-    assert (standing_sites, standing_members) == (1576, 42)
+    # The protected QA edge C-01 receipt adds six measured local sites
+    # under one exact-path commit member. All six owe local reachability.
+    assert (standing_sites, standing_members) == (1582, 43)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]
