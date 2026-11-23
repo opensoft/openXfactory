@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-11-17
+skip_specs: true
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-17-classify-headscale-production-tests
+  reason: Prepare the exact L and E scope needed to classify genuine package tests while preserving all runtime analysis under the existing zero-new-CI-spend constraint.
+  proposed_by: Codex under the finite internal-production preparation authority
+  proposed_on: '2026-11-17'
+related:
+  - openXfactory:change:commission-headscale-production
+  - openXfactory:change:authorize-private-connectivity-internal-production
