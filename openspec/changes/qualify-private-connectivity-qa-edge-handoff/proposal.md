@@ -1,5 +1,6 @@
 ---
-code_surface: openXfactory Feature 043 — exact delegated source-only C-01 receipt registration
+code_surface: openxFactory — exact delegated source-only C-01 receipt registration for Feature 043
+sequenced_after: []
 target_release: implemented — one independently qualified protected reference followed by a separate definition activation
 ---
 
