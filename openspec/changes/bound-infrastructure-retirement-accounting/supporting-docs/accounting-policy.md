@@ -77,17 +77,41 @@ never an inferred rerun or renewal of the old proof/cleanup scope.
 
 The existing proof/readback Decision default of10seconds, ordinary private12/
 ARM24 and all other old phases/limits remain byte-identical. Only accepted new
-source constructors may select this new infrastructure policy.
+source constructors may select this new infrastructure policy. The later additive
+infrastructure cleanup/observation constructors must carry an explicit intrinsic
+accounting context selecting the applicable original prepaid pool; their physical
+calls route through that context, not through ordinary `Provider._call`/ReadBudget
+with an enlarged allowance. Share existing validation/identity/dependency/one-send
+checks without modifying old constructors, methods or setup clipping. No ambient
+configuration can select the new account. This is a source seam for later P07
+implementation, not a claim that unchanged product code already supplies it.
 
 ## Durable ownership without a recursive metering journal
 
 Before ownership handoff or a first destructive send, the trusted external
-registration service durably assigns the entire fixed maximum allocation to
-one authenticated execution-owner incarnation. It uses a single original
-conditional claim with non-reused ETag. Allocation is prepaid and never refunded.
-Registration acknowledgement is forbidden before its durable claim; an ambiguous
-claim/ack is not permission to resend. The provisioner retains its original
-rollback obligation until actual acknowledged external ownership is established.
+registration service durably reserves the fixed maximum allocations under one
+permanent registration slot, using the single original conditional claim and
+non-reused ETag. Registration and cleanup pools belong to the authenticated
+execution-owner incarnation named by `registration_owner_incarnation_ref`.
+The observation pool is reserved separately; its original current read-only
+authority durably assigns and consumes it once to its own independent observer
+incarnation before observation work. Reservation of its ref in the anchor neither
+appoints the execution owner as observer nor spends/transfers that pool. Each
+pool has exactly one original owner and is prepaid and never refunded.
+
+Handoff has one authenticated durable authority switch in the protected
+registration/action state: the provisioner is fenced from rollback before the
+external owner may execute cleanup. Its original rollback obligation is not
+permission for a destructive send while a claim, activation or acknowledgement
+is ambiguous. Provisioner rollback requires current proof that ownership remains
+exclusively with it; external cleanup requires current proof of the completed
+switch and provisioner exclusion. A lost acknowledgement cannot make both actors
+mutators. No acknowledgement precedes its durable evidence, and no ambiguous
+claim/ack permits resend. Repeated registration of the exact reservation/owner
+may only resolve the original immutable slot read-only under original authority/
+clock/account; it cannot create another allocation or activate another owner.
+Conflicting registration refuses. These handoff state calls are charged inside
+the existing registration claim/readback schedule, never an extra free pool.
 
 A live owner keeps exact before-call counters and byte counts for its prepaid
 pool. Journal read/CAS/checkpoint calls themselves consume the journal pool;
@@ -99,8 +123,12 @@ a single advertised call. Required nested work must be exposed to that same
 meter or use a preassigned, disjoint, independently enforced slice of its pool.
 
 A duplicate trigger can inspect only the original claim and cannot claim another
-cleanup pool. Admit at most four trigger deliveries (one owner plus three duplicate
-checks) under this policy; further delivery is refused before work. There are
+cleanup pool. The original owner serializes trigger admission and all before-call
+debits/byte reservations in the same execution; a duplicate never becomes another
+worker with its own counter. Admit at most four trigger deliveries (one owner plus
+three duplicate checks) under this policy; the admission bound is checked before
+any duplicate state read or other pool work. Further delivery refuses before that
+work. There are
 at most three observations of each original creation operation and three of each
 original deletion operation, charged to the same cleanup pool. A failed/uncertain
 DELETE attempt is never resent; pending or ambiguous effects stay truthful.
@@ -108,7 +136,10 @@ DELETE attempt is never resent; pending or ambiguous effects stay truthful.
 This pilot deliberately does not implement transferable/restartable mutation
 budgets. On loss of a pool's owning process/incarnation, its unused allocation is
 burned; retained records never appoint a new mutator, recover a fresh timer or
-refund unknown charges. Mutation continuation after that loss refuses. The
+refund unknown charges. Mutation continuation after that loss refuses. Losing the
+execution owner burns its registration/cleanup remainder, not the separately
+reserved observation pool or that pool's distinct original current owner. Loss of
+the observer itself burns its own remainder and permits no replacement. The
 separately current independent observer can reconstruct original immutable
 operations/namespace state and report an incomplete/indeterminate/late-failed
 outcome using only its original observation pool. Loss of the control/gate/worker
@@ -153,7 +184,10 @@ The immutable cleanup claim has exactly `profile`, `anchor_digest`,
 `:cleanup-claim` suffix; end milliseconds is an integer1..9007199254740991 in
 the selected local monotonic clock domain. Original cleanup authority remains
 separately authenticated; labels cannot appoint it. The claim fixes the entire
-cleanup allocation and its original clock once. Missing, ambiguous, rebound,
+cleanup allocation and its original clock once. Its `owner_incarnation_ref` MUST
+equal the anchor's authenticated `registration_owner_incarnation_ref`, and its
+`allocation_ref` MUST equal the anchor's `cleanup_allocation_ref`; a distinct
+first claimant has no authority to adopt either. Missing, ambiguous, rebound,
 expired or differently owned claims refuse mutation.
 
 The genuine run-binding addition is a separate immutable record with exactly

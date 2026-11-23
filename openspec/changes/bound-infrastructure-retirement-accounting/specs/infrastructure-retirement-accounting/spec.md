@@ -25,7 +25,10 @@ the old24-resource parser maximum MUST NOT authorize additional resources.
 
 The implementation SHALL charge attempted facade exchanges and physical namespace/
 journal/provider/backend calls before use, including failures, polls, uncertainty
-reloads and journal I/O itself. It MUST enforce disjoint fixed allocations without
+reloads and journal I/O itself. The later additive infrastructure constructors
+MUST select the intrinsic prepaid accounting context at physical I/O boundaries;
+old constructors/methods MUST retain ordinary ReadBudget and setup clipping.
+It MUST enforce disjoint fixed allocations without
 refund, transfer, recursive metering writes or hidden SDK retry/pagination.
 Allocation maxima MUST be durably assigned before handoff/effects. Actual private
 state/tokens/URLs/exception payloads MUST NOT enter retained evidence.
@@ -42,9 +45,24 @@ state/tokens/URLs/exception payloads MUST NOT enter retained evidence.
 
 The service SHALL use the closed source allocation/claim/run-binding evidence
 defined in supporting-docs/accounting-policy.md, authenticated independently of
-labels and digests. It MUST consume allocations once to one original incarnation,
+labels and digests. It MUST consume each pool once to its respective original incarnation,
 retain original operations and burn unused allowance on owner loss. This pilot
-MUST refuse mutation continuation/transfer after loss of that owner process.
+MUST refuse mutation continuation/transfer after loss of that execution-owner
+process. Registration/cleanup belong to the anchor execution owner; the reserved
+observation pool has its separate current independent owner. The cleanup claim
+MUST match the anchor's owner and cleanup allocation. The protected durable
+handoff MUST fence provisioner rollback before external cleanup; ambiguous
+claim/activation/acknowledgement MUST NOT grant destructive authority. Trigger
+admission and pool debits MUST serialize under their original owner before work;
+a repeated registration MUST NOT create another allocation or owner.
+
+#### Scenario: Registration commits but its acknowledgement is lost
+- **WHEN** an activation or acknowledgement is uncertain while rollback and cleanup triggers race
+- **THEN** only the actor with current proof of exclusive durably switched ownership may mutate, an ambiguous actor refuses, and read-only resolution retains the original slot, allocation and clock
+
+#### Scenario: Observation follows execution-owner loss
+- **WHEN** the original execution owner is lost but the independently approved original observer remains current
+- **THEN** only the mutation owner's remainder burns and the observer may consume its own separately reserved single-use read-only pool without replacing any mutator or renewing cleanup
 
 #### Scenario: Only the three fixture hosts are lost
 - **WHEN** control, gate and worker terminate but the independently administered external owner and original state remain current

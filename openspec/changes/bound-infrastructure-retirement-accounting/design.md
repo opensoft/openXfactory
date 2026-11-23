@@ -57,6 +57,10 @@ These are proposed engineering limits for this exact graph. Headroom is finite
 for variation/failure, not authority to add graph resources, retry a DELETE or
 skip a required fact. Every pool/class refuses before the next call on exhaustion.
 Full physical accounting and elapsed-time fit remain implementation gates.
+Later additive infrastructure constructors explicitly select the intrinsic
+prepaid account at the owning transport/physical I/O boundary. They share the
+old validations while old constructors/methods keep ordinary ReadBudget and
+setup clipping; no widened ordinary budget or ambient switch is introduced.
 
 Rejected alternatives: global private-cap increase, borrowing qualification/
 finalization allowance, one fresh budget per resource, omitted state/observer I/O,
@@ -65,8 +69,15 @@ or treating an ordinary RPC wrapper as the complete backend cost.
 ### D3: Prepay to one original owner and burn on owner loss
 
 A durable conditional allocation claim precedes ownership acknowledgement or a
-destructive send. It binds the full fixed allocation to one actual owner
-incarnation. Live counters charge every actual attempt before use; journal calls
+destructive send. Registration/cleanup belong to one actual execution-owner
+incarnation; the reserved observation pool belongs separately to its original
+current independent observer. The durable handoff fences provisioner rollback
+before external cleanup; ambiguous claim/activation/acknowledgement grants neither
+actor a destructive send without exclusive current authority. Replays can only
+resolve the original fixed slot read-only, never allocate twice. The cleanup
+claim must match the anchor's execution owner and cleanup allocation. Trigger
+admission and debits serialize in that owner before duplicate pool work.
+Live counters charge every actual attempt before use; journal calls
 consume journal slots. The grant prepays maximums, so recording every debit does
 not require an infinite sequence of metering-journal writes.
 
@@ -75,7 +86,9 @@ budgets across reconciler process loss: retain original attempts/operations and
 refuse mutation continuation. The separately current observer can reconstruct
 state and report incomplete/indeterminate/late-failed from its single original
 pool. The external owner survives loss of control/gate/worker; loss of the owner
-itself is an explicit fail-closed boundary. No watchdog-restart cleanup SLA is
+itself is an explicit fail-closed boundary. Only its own registration/cleanup
+remainder burns; the distinct observer retains its own original single-use pool.
+No watchdog-restart cleanup SLA is
 claimed. A resumable/transferred mutation design would need fresh governance.
 
 A genuine later run-binding record adds actual provisioned/final-scope authority
