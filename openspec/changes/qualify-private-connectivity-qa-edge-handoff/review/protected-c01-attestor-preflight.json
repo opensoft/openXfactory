@@ -1,0 +1,12 @@
+{
+  "kind": "protected-c01-attestor-preflight",
+  "actual_protected_base": "1caab36751dc1af729afe94ea1509c4fb9a09114",
+  "current_delegation_root_id": "pc043-internal-20261117-e995d2290328",
+  "current_delegation_root_expiry": "2026-12-17T08:38:55.473Z",
+  "verified_at": "2026-11-23T04:47:26.152946+00:00",
+  "main_checks_and_evaluated_sonar": "verified by the protected producer",
+  "protected_producer_hash": "da4ab3aca3759eb4b9c2b97bfffb621351201d0b969305125d62f78097a1e5f5",
+  "active_definition": "9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af",
+  "task_count": 68,
+  "decision_issued": false
+}
