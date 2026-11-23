@@ -1,0 +1,13 @@
+schema: spec-driven
+created: '2026-11-23'
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-23-bound-infrastructure-retirement-accounting
+  reason: Prepare the governed factory/adapter amendment required by accepted feature017
+    P07 eligibility after measured original-budget exhaustion and unmetered namespace
+    I/O.
+  approved_by: 'Brett Heap: Implement and test T013P07 in isolation using plan 33b2502818fb,
+    starting with both eligibility gates. This local draft follows that plan''s explicit
+    fallback; no acceptance of new policy, cap, publication or operational authority
+    is inferred.'
+  approved_on: '2026-11-23'
