@@ -1,72 +1,88 @@
 ## Purpose
 
-Require complete, source-selected and durable infrastructure retirement accounting
-without silently expanding runtime proof, cleanup or observation authority.
+Bound the complete first-pilot infrastructure retirement without silently
+expanding runtime proof or transferring consumed cleanup authority.
 
 ## ADDED Requirements
 
-### Requirement: Complete source policy precedes infrastructure implementation
+### Requirement: A concrete intrinsic policy bounds the exact first pilot
 
-The composition SHALL retain the failed original-budget gate and require an exact
-reviewed first-pilot inventory, finite numeric accounting policy and paired factory/
-adapter source acceptance before dependent P07 implementation. A draft without
-those numeric selections MUST NOT authorize a new phase or increased cap.
+The composition SHALL select only the graph and finite pool/class/byte/time limits
+in supporting-docs/accounting-policy.md and call-inventory.json. It MUST preserve
+old proof/readback limits, roles, inputs, pins and closed profiles. Graph changes,
+including the explicit three role-specific NSGs, MUST require owner source review;
+the old24-resource parser maximum MUST NOT authorize additional resources.
 
-#### Scenario: Original complete-graph gate refuses
-- **WHEN** a substantive diagnostic exhausts original allowance before the full selected graph is complete
-- **THEN** dependent implementation remains blocked and the measured partial outcome is retained without resetting a Decision or omitting a required call
+#### Scenario: The concrete source candidate is ratified
+- **WHEN** exact paired source acceptance names this bounded policy and its14-resource16-edge graph
+- **THEN** only the existing T013P07 row becomes eligible for later isolated implementation and no operational permission advances
 
-#### Scenario: Only a per-resource cost estimate exists
-- **WHEN** separate per-resource Decisions fit but registration, observers or recovery are not included
-- **THEN** their sum is diagnostic and cannot establish complete-graph fit or select accepted limits
+#### Scenario: Another phase or graph is substituted
+- **WHEN** a caller borrows a proof budget, adds a resource, selects through environment/config/plugin or changes the graph without acceptance
+- **THEN** selection refuses without changing old routes or default operational refusal
 
-### Requirement: Every actual nested call consumes its original scope
+### Requirement: Every actual nested call consumes its selected fixed pool
 
-A later selected infrastructure policy SHALL account for authenticated registration,
-namespace/conditional state, provider/ARM, fence, immutable receipt, revocation,
-preservation, observation and audit calls before use. It MUST bind durable
-cumulative charges and one-send attempts to original registration authority across
-duplicates/reconstruction and MUST NOT make hidden remote I/O free or refresh
-consumption after lost acknowledgement.
+The implementation SHALL charge attempted façade exchanges and physical namespace/
+journal/provider/backend calls before use, including failures, polls, uncertainty
+reloads and journal I/O itself. It MUST enforce disjoint fixed allocations without
+refund, transfer, recursive metering writes or hidden SDK retry/pagination.
+Allocation maxima MUST be durably assigned before handoff/effects. Actual private
+state/tokens/URLs/exception payloads MUST NOT enter retained evidence.
 
-#### Scenario: A full call trace matches independent effects
-- **WHEN** a complete selected graph fits explicitly accepted counters, clocks and complete-byte limits with every nested call charged
-- **THEN** that source gate can qualify only alongside independent actual effects and preserved predecessor behavior
+#### Scenario: Actual complete work fits every declared bound
+- **WHEN** a full selected graph has working authenticated ports and all physical calls/complete bytes stay within their original selected pools and clocks
+- **THEN** only the accounting gate passes and independent actual cleanup/provenance gates remain mandatory
 
-#### Scenario: State calls or recovery evade accounting
-- **WHEN** a backend call is uncharged, a replacement Decision resets consumption or reconstruction replenishes a consumed attempt
-- **THEN** eligibility refuses without claiming complete retirement
+#### Scenario: A nested or failed operation evades accounting
+- **WHEN** a façade hides backend work, a failed CAS is uncharged, counters reset or an exhausted class borrows another allowance
+- **THEN** the next effect refuses and full qualification fails without increasing caps or omitting observations
 
-### Requirement: Separate authority preserves expired setup and cleanup limits
+### Requirement: Allocation ownership remains single use across loss
 
-Additive cleanup paths SHALL bind genuine original cleanup authority, exact
-registration/incarnations, consumed attempts, original expiry and current fence
-without changing setup-only refusals. A separately current read-only observer
-MUST NOT admit a writer, delete, renew proof/cleanup or reset its counters.
-Late observation at or after original exclusive cleanup expiry MUST derive failed;
-unavailable observation authority MUST refuse receipt emission.
+The service SHALL use the closed source allocation/claim/run-binding evidence
+defined in supporting-docs/accounting-policy.md, authenticated independently of
+labels and digests. It MUST consume allocations once to one original incarnation,
+retain original operations and burn unused allowance on owner loss. This pilot
+MUST refuse mutation continuation/transfer after loss of that owner process.
 
-#### Scenario: Setup is expired but a genuine cleanup scope remains
-- **WHEN** independently selected cleanup authority is valid for the exact original registered set
-- **THEN** only its accepted bounded cleanup path is eligible and old setup-only routes still refuse
+#### Scenario: Only the three fixture hosts are lost
+- **WHEN** control, gate and worker terminate but the independently administered external owner and original state remain current
+- **THEN** bounded cleanup can continue under its same original allocation, attempts and clock
 
-#### Scenario: A late observer has no mutation authority
-- **WHEN** current independent observation occurs after the original cleanup deadline
-- **THEN** it can only derive a truthful failed projection from actual observations with zero new mutation and no renewed original authority
+#### Scenario: The external execution owner is lost
+- **WHEN** its process/incarnation or required allocation state becomes unavailable or ambiguous
+- **THEN** no replacement mutator/timer/budget is created and only separately current bounded read-only reconciliation can report truthful incomplete or failed outcomes
 
-### Requirement: Qualification retains the exact pilot and predecessor boundaries
+### Requirement: Original expiry and current read-only authority remain distinct
 
-The composition SHALL preserve exact first-pilot set equality, the existing
-24-resource maximum, complete 16,384-byte cap, receipt/profile fields, API/kind/
-generation/dependency rules, retained exclusions and original one-send semantics.
-Frozen-clock or partial diagnostics MUST NOT substitute for complete elapsed-time
-qualification, independent cleanup or exact-source full/native/hosted acceptance.
-Setup/dispatch and live/human/consumer acceptance MUST remain separate.
+The additive cleanup path SHALL retain exact original registration/authority/
+incarnations, one-send attempts and current per-send fence, with the original
+cleanup clock capped at300seconds and original approved absolute expiry.
+Registration transactions MUST be <=30seconds, observation <=60seconds and calls
+<=10seconds, clipped as specified by the policy. Late read-only authority MUST NOT
+admit, mutate or renew proof/cleanup; at/after cleanup expiry it MUST derive failed.
 
-#### Scenario: Diagnostics succeed without a full positive
-- **WHEN** expiry refusal and accounting controls pass but complete first-pilot fit is absent
-- **THEN** T013P07 remains incomplete and no later task or operational grant advances
+#### Scenario: Setup is expired but genuine cleanup authority remains
+- **WHEN** independently selected original cleanup authority is valid for the exact registration
+- **THEN** only its additive bounded path is eligible while old setup routes retain their original refusal
 
-#### Scenario: A candidate changes an old route or skips a predecessor
-- **WHEN** a candidate broadens old budgets/profiles, changes a pin, omits required cases or activates through request/flag/environment
-- **THEN** the candidate refuses eligibility and must resolve the owning source gate before dependent code continues
+#### Scenario: Observation is late or unavailable
+- **WHEN** current read-only observation occurs after original cleanup expiry or its own capability is absent/spent/expired
+- **THEN** the current authorized case can only derive truthful failed without mutation, while absent authority refuses emission without an invented origin
+
+### Requirement: Source planning does not replace runtime qualification
+
+The conservative call inventory and synthetic unchanged-parser sizes SHALL remain
+classified as source planning/serialization evidence. Exact paired source
+ratification MUST precede dependent code. T013P07 MUST remain incomplete until a
+full actual graph, original real clocks, physical accounting, privacy, one-send/
+loss controls, prior full/native/hosted source checks and independent cleanup pass.
+
+#### Scenario: Inventory and source CI pass before implementation
+- **WHEN** the proposed call schedule, complete fixture bytes and candidate checks succeed
+- **THEN** they can support source-only ratification but do not complete P07, grant setup/dispatch or establish live/human/consumer acceptance
+
+#### Scenario: An actual bound fails after ratification
+- **WHEN** implementation cannot fit the full positive without changing a selected cap or dropping a required fact
+- **THEN** eligibility refuses and the measured blocker returns through governance before dependent changes

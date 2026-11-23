@@ -1,25 +1,21 @@
 # Governed implementation handoff
 
-Status: local draft; complete measured numeric policy and exact paired acceptance
-are blocking. Artifact presence does not mean implementation readiness.
+Status: source candidate; exact paired source ratification pending.
 
 The sole executable implementation list is opensoft/openXwallet feature017,
-`specs/017-protected-runtime-qualification/tasks.md`, existing task T013P07.
-The paired proposed subplan is `p3-retirement-accounting-plan.md` in that feature.
-This packet records governance and acceptance criteria, not a second executable
-task list.
+`specs/017-protected-runtime-qualification/tasks.md`, existing unchecked T013P07.
+Its paired proposed subplan is `p3-retirement-accounting-plan.md`. This packet
+defines source acceptance/qualification criteria, not another implementation list.
 
-Brett's isolated P07 commission begins with the two eligibility gates. The plan
-at `33b2502818fb` expressly requires this local corrective preparation when
-unchanged caps cannot express the complete positive. Neither that commission nor
-this draft accepts a replacement cap/phase, approves publication or waives the
-gate. Finish the complete call inventory and finite numeric source selections
-before requesting exact paired source acceptance; dependent product code remains
-blocked until that acceptance. T013P07 stays unchecked.
+Brett commissioned completion of the call inventory and bounded amendment, both
+candidate PRs, CI and local Codex review, then presentation for ratification.
+The original eligibility failure remains recorded. Complete graph14/edges16,
+fixed pools, timers and loss semantics are selected in the policy for owner
+review; none is accepted merely by preparation, passing CI or artifact presence.
 
-Publication must use the normal factory/adapter process, including the generated
-corpus ledger seeded with the actual PR identity, applicable checks and local
-review. No PR identity or ledger receipt is fabricated during local preparation.
-No operational accepted_commit, service/role appointment, T001/T013/T014/T015,
-P08/P09 or live/human/consumer gate advances. Setup/dispatch unauthorized;
-feedback deferred; historical blocked writes unreplayed.
+Exact paired source acceptance precedes dependent product code. Later isolated
+P07 must demonstrate the full actual positive and all source/clock/accounting/
+privacy/crash/refusal/cleanup gates under those fixed limits. No checkbox advances
+from the inventory or parser measurements. P08/P09 and T001/T013/T014/T015,
+actual services/roles, accepted_commit, live/human/consumer acceptance, setup and
+dispatch remain separate. Feedback deferred; blocked writes unreplayed.

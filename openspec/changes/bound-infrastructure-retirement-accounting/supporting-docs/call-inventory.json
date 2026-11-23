@@ -1,0 +1,468 @@
+{
+  "classification": "source planning inventory and conservative schedule; not a measured full P07 runtime positive",
+  "date": "2026-11-23 America/La_Paz",
+  "basis": {
+    "adapter": "b39feb3a5e9c30f25b28eb55751beb2ad4ff3e87",
+    "factory": "afb20ce1df21199e75550e48732b56ee67069c51",
+    "provider_sha256": "f5176be191d5bc3edbfa1f864a468380ba6d27c532274ada9bd7e0664dee9138",
+    "namespace_sha256": "bec90c6af1279267006f858243bb6096284b1862890ff5dbe1b3765c59803061"
+  },
+  "selection": "proposed source refinement of S1: three role-specific NSGs; not deployed IDs or create authority",
+  "graph": {
+    "ephemeral_count": 14,
+    "dependency_edges": 16,
+    "resources": [
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/disks/osdisk-wallet-mfa-control-qa-01",
+        "kind": "os_disk",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-control-qa-01"
+        ],
+        "resource_policy_ref": "policy:os_disk:control",
+        "create_attempt_ref": "create:os_disk:control",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/disks/osdisk-wallet-mfa-gate-qa-01",
+        "kind": "os_disk",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-gate-qa-01"
+        ],
+        "resource_policy_ref": "policy:os_disk:gate",
+        "create_attempt_ref": "create:os_disk:gate",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/disks/osdisk-wallet-mfa-worker-qa-01",
+        "kind": "os_disk",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-worker-qa-01"
+        ],
+        "resource_policy_ref": "policy:os_disk:worker",
+        "create_attempt_ref": "create:os_disk:worker",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-control-qa-01",
+        "kind": "vm",
+        "dependency_paths": [],
+        "resource_policy_ref": "policy:vm:control",
+        "create_attempt_ref": "create:vm:control",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-gate-qa-01",
+        "kind": "vm",
+        "dependency_paths": [],
+        "resource_policy_ref": "policy:vm:gate",
+        "create_attempt_ref": "create:vm:gate",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-worker-qa-01",
+        "kind": "vm",
+        "dependency_paths": [],
+        "resource_policy_ref": "policy:vm:worker",
+        "create_attempt_ref": "create:vm:worker",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-control-qa-01",
+        "kind": "nic",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-control-qa-01"
+        ],
+        "resource_policy_ref": "policy:nic:control",
+        "create_attempt_ref": "create:nic:control",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-gate-qa-01",
+        "kind": "nic",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-gate-qa-01"
+        ],
+        "resource_policy_ref": "policy:nic:gate",
+        "create_attempt_ref": "create:nic:gate",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-worker-qa-01",
+        "kind": "nic",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Compute/virtualMachines/vm-wallet-mfa-worker-qa-01"
+        ],
+        "resource_policy_ref": "policy:nic:worker",
+        "create_attempt_ref": "create:nic:worker",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkSecurityGroups/nsg-wallet-mfa-control-qa-01",
+        "kind": "nsg",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-control-qa-01",
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/virtualNetworks/vnet-wallet-mfa-qa-01"
+        ],
+        "resource_policy_ref": "policy:nsg:control",
+        "create_attempt_ref": "create:nsg:control",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkSecurityGroups/nsg-wallet-mfa-gate-qa-01",
+        "kind": "nsg",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-gate-qa-01",
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/virtualNetworks/vnet-wallet-mfa-qa-01"
+        ],
+        "resource_policy_ref": "policy:nsg:gate",
+        "create_attempt_ref": "create:nsg:gate",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkSecurityGroups/nsg-wallet-mfa-worker-qa-01",
+        "kind": "nsg",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-worker-qa-01",
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/virtualNetworks/vnet-wallet-mfa-qa-01"
+        ],
+        "resource_policy_ref": "policy:nsg:worker",
+        "create_attempt_ref": "create:nsg:worker",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/publicIPAddresses/pip-wallet-mfa-control-qa-01",
+        "kind": "public_ip",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-control-qa-01"
+        ],
+        "resource_policy_ref": "policy:public_ip:control",
+        "create_attempt_ref": "create:public_ip:control",
+        "disposition": "ephemeral"
+      },
+      {
+        "resource_path": "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/virtualNetworks/vnet-wallet-mfa-qa-01",
+        "kind": "vnet",
+        "dependency_paths": [
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-control-qa-01",
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-gate-qa-01",
+          "/subscriptions/297b2389-33bf-48c8-8deb-0b92838431e4/resourceGroups/rg-opensoft-wallet-mfa-qa/providers/Microsoft.Network/networkInterfaces/nic-wallet-mfa-worker-qa-01"
+        ],
+        "resource_policy_ref": "policy:vnet:pilot",
+        "create_attempt_ref": "create:vnet:pilot",
+        "disposition": "ephemeral"
+      }
+    ],
+    "retained_ARM_observation_slots": [
+      "control-data-disk",
+      "gate-data-disk",
+      "measured-managed-image",
+      "credential-vault",
+      "redacted-evidence-storage",
+      "watchdog-function",
+      "watchdog-plan",
+      "watchdog-storage",
+      "watchdog-identity",
+      "disposable-parent-RG",
+      "retained-parent-RG",
+      "watchdog-parent-RG"
+    ],
+    "protected_state_observation_slots": [
+      "permanent-namespace-catalog",
+      "retained-registration/action-state",
+      "retained-runtime-authority/replay-state"
+    ],
+    "registered_credential_handle_cap": 16
+  },
+  "rows": {
+    "registration": [
+      {
+        "name": "selected authority and source",
+        "private": 8,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "namespace exact-set inspection",
+        "private": 0,
+        "arm": 0,
+        "namespace": 28,
+        "journal": 0,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "one registration claim and acknowledged readback",
+        "private": 0,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 6,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "P02 reservation sensitivity allowance; no authorization to rerun P02",
+        "private": 0,
+        "arm": 0,
+        "namespace": 17,
+        "journal": 0,
+        "basis": "existing source formula; separately owned P02 normally outside P07"
+      },
+      {
+        "name": "genuine run-link registration",
+        "private": 6,
+        "arm": 0,
+        "namespace": 28,
+        "journal": 4,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "authenticated state-facade exchanges, one per modeled namespace/journal backend call",
+        "private": 83,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "proposed conservative remote-facade schedule; backend calls remain separately counted"
+      }
+    ],
+    "cleanup": [
+      {
+        "name": "close write/run admission",
+        "private": 4,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 4,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "per-kind retirement core",
+        "private": 142,
+        "arm": 58,
+        "namespace": 228,
+        "journal": 0,
+        "basis": "conservative sum of measured old per-resource costs; historical receipt-cache reuse can only lower this line"
+      },
+      {
+        "name": "distinct historic creation terminal receipts",
+        "private": 14,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "existing source upper bound"
+      },
+      {
+        "name": "at most three original-create and three original-delete polls per resource",
+        "private": 84,
+        "arm": 84,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "proposed finite original-operation schedule, never a resend"
+      },
+      {
+        "name": "uncertain conditional-write read-only reloads",
+        "private": 0,
+        "arm": 0,
+        "namespace": 28,
+        "journal": 0,
+        "basis": "existing source upper bound: one reload per each of two transitions"
+      },
+      {
+        "name": "same-owner original-state reconstruction",
+        "private": 0,
+        "arm": 0,
+        "namespace": 56,
+        "journal": 28,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "new action/terminal bookkeeping",
+        "private": 0,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 64,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "owner plus at most three duplicate trigger deliveries",
+        "private": 4,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 12,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "two current outcome reads for at most sixteen actual registered credentials",
+        "private": 32,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "authenticated state-facade exchanges, one per modeled namespace/journal backend call",
+        "private": 420,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "proposed conservative remote-facade schedule; backend calls remain separately counted"
+      }
+    ],
+    "observation": [
+      {
+        "name": "independent current resource absence",
+        "private": 14,
+        "arm": 14,
+        "namespace": 28,
+        "journal": 0,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "twelve retained ARM objects and three protected-state objects",
+        "private": 12,
+        "arm": 12,
+        "namespace": 6,
+        "journal": 0,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "independent current refusal evidence for actual registered credentials",
+        "private": 16,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "current observer identity and authority",
+        "private": 4,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "original operation and exact-set crosscheck",
+        "private": 14,
+        "arm": 0,
+        "namespace": 28,
+        "journal": 0,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "immutable final result and independent audit",
+        "private": 4,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 4,
+        "basis": "proposed schedule"
+      },
+      {
+        "name": "authenticated state-facade exchanges, one per modeled namespace/journal backend call",
+        "private": 66,
+        "arm": 0,
+        "namespace": 0,
+        "journal": 0,
+        "basis": "proposed conservative remote-facade schedule; backend calls remain separately counted"
+      }
+    ]
+  },
+  "modeled_totals": {
+    "registration": {
+      "private": 97,
+      "arm": 0,
+      "namespace": 73,
+      "journal": 10
+    },
+    "cleanup": {
+      "private": 700,
+      "arm": 142,
+      "namespace": 312,
+      "journal": 108
+    },
+    "observation": {
+      "private": 130,
+      "arm": 26,
+      "namespace": 62,
+      "journal": 4
+    }
+  },
+  "selected_limits": {
+    "registration": {
+      "private": 128,
+      "arm": 0,
+      "namespace": 128,
+      "journal": 32
+    },
+    "cleanup": {
+      "private": 768,
+      "arm": 160,
+      "namespace": 512,
+      "journal": 128
+    },
+    "observation": {
+      "private": 192,
+      "arm": 48,
+      "namespace": 128,
+      "journal": 32
+    }
+  },
+  "whole_modeled": {
+    "private": 927,
+    "arm": 168,
+    "namespace": 447,
+    "journal": 122
+  },
+  "whole_limits": {
+    "private": 1088,
+    "arm": 208,
+    "namespace": 768,
+    "journal": 192
+  },
+  "application_byte_limits": {
+    "registration": 1048576,
+    "cleanup": 12582912,
+    "observation": 3145728,
+    "whole": 16777216,
+    "scope": "complete application request/response bytes, including metadata and backend state; existing individual body caps remain"
+  },
+  "time_limits": {
+    "registration_transaction_seconds": 30,
+    "cleanup_original_seconds": 300,
+    "observation_original_seconds": 60,
+    "per_call_seconds": 10,
+    "current_observation_max_validity_seconds": 60,
+    "original_absolute_cleanup_deadline": "independently approved and clipping; never extended by this policy",
+    "registration_absolute_window": "existing approved maximum 86400 seconds; no UTC window selected"
+  },
+  "parser_fixture_measurement": {
+    "kind": "complete synthetic closed-record serialization only; parser equality is not authenticated service provenance",
+    "records": {
+      "reservation": {
+        "bytes": 8056,
+        "sha256": "d5b344fd2cd233d07c0cc964fc70d5eb1f93c44e1e40299f195b6f970b31ce4b"
+      },
+      "provisioned": {
+        "bytes": 9855,
+        "sha256": "e425bb673280e63056c6a20187a3bb43030935d1085b532bb33655ff0fb47610"
+      },
+      "final_link": {
+        "bytes": 716,
+        "sha256": "c1a41752dbc87839e4d8ed5eb53a3742454ec7c18121a4383eba9bb70ee3767a"
+      },
+      "setup_receipt": {
+        "bytes": 4720,
+        "sha256": "6a3465242a4be3da0ccd04dcba2304f393eb925e53e0130bb595b559727d9925"
+      },
+      "run_receipt": {
+        "bytes": 5908,
+        "sha256": "847bfd840c72036d602644289f91dc3febf3ee8a1da412305f570b6bc5647254"
+      }
+    },
+    "all_under_existing_16384_cap": true
+  },
+  "remaining_runtime_gate": "after exact source ratification: actual full-graph positive, physical/nested call accounting, real clocks, privacy, crash/refusal controls, full/native/hosted qualification and independent cleanup",
+  "operations": {
+    "setup_dispatch": "unauthorized",
+    "feedback": "deferred",
+    "blocked_writes": "unreplayed"
+  }
+}
