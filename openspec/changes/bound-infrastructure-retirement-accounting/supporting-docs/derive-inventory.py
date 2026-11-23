@@ -6,7 +6,7 @@ parser=argparse.ArgumentParser(description="Derive the source-planning inventory
 parser.add_argument("--adapter-root",type=Path,required=True)
 W=parser.parse_args().adapter_root.resolve()
 
-EXPECTED_PARSER_INPUTS = {'scripts/workload_factory_binding_runtime/azure_composition/selection.py': '2fe1ea02b2c8eb2af5e4c13331637250c6560b221623201e6ba4cc8ab009e833', 'tests/runtime_binding/test_azure_namespace.py': 'e767136c3d281c320b1b90e08c97a0c489d4fd6464284640dfd799b3ca1567da', 'scripts/workload_factory_binding/evidence.py': '1f95c2b3488574c69b37cd4aaf8af3a2c0cdcd69c64ebdcbc8b43201c51491c0'}
+EXPECTED_PARSER_INPUTS = {'scripts/workload_factory_binding_runtime/azure_composition/selection.py': '2fe1ea02b2c8eb2af5e4c13331637250c6560b221623201e6ba4cc8ab009e833', 'tests/runtime_binding/test_azure_namespace.py': 'e767136c3d281c320b1b90e08c97a0c489d4fd6464284640dfd799b3ca1567da', 'scripts/workload_factory_binding/evidence.py': '1f95c2b3488574c69b37cd4aaf8af3a2c0cdcd69c64ebdcbc8b43201c51491c0', 'scripts/workload_factory_binding_runtime/azure_composition/provider.py': 'f5176be191d5bc3edbfa1f864a468380ba6d27c532274ada9bd7e0664dee9138', 'scripts/workload_factory_binding_runtime/azure_composition/namespace.py': 'bec90c6af1279267006f858243bb6096284b1862890ff5dbe1b3765c59803061'}
 for relative, expected in EXPECTED_PARSER_INPUTS.items():
  actual=hashlib.sha256((W/relative).read_bytes()).hexdigest()
  if actual != expected:
@@ -54,7 +54,7 @@ modeled={k:sum(totals[p][k] for p in totals) for k in whole}
 record={
 "classification":"source planning inventory and conservative schedule; not a measured full P07 runtime positive",
 "date":"2026-11-23 America/La_Paz",
-"basis":{"adapter":"b39feb3a5e9c30f25b28eb55751beb2ad4ff3e87","factory":"afb20ce1df21199e75550e48732b56ee67069c51","provider_sha256":hashlib.sha256((W/"scripts/workload_factory_binding_runtime/azure_composition/provider.py").read_bytes()).hexdigest(),"namespace_sha256":hashlib.sha256((W/"scripts/workload_factory_binding_runtime/azure_composition/namespace.py").read_bytes()).hexdigest(),"parser_inputs_sha256":EXPECTED_PARSER_INPUTS},
+"basis":{"provider_sha256":hashlib.sha256((W/"scripts/workload_factory_binding_runtime/azure_composition/provider.py").read_bytes()).hexdigest(),"namespace_sha256":hashlib.sha256((W/"scripts/workload_factory_binding_runtime/azure_composition/namespace.py").read_bytes()).hexdigest(),"parser_inputs_sha256":EXPECTED_PARSER_INPUTS},
 "selection":"proposed source refinement of S1: three role-specific NSGs; not deployed IDs or create authority",
 "graph":{"ephemeral_count":N,"dependency_edges":D,"resources":nodes,"retained_ARM_observation_slots":["control-data-disk","gate-data-disk","measured-managed-image","credential-vault","redacted-evidence-storage","watchdog-function","watchdog-plan","watchdog-storage","watchdog-identity","disposable-parent-RG","retained-parent-RG","watchdog-parent-RG"],"protected_state_observation_slots":["permanent-namespace-catalog","retained-registration/action-state","retained-runtime-authority/replay-state"],"registered_credential_handle_cap":16},
 "rows":rows,"modeled_totals":totals,"selected_limits":limits,"whole_modeled":modeled,"whole_limits":whole,

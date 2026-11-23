@@ -28,7 +28,7 @@ No class or pool borrows unused allowance from another. Charges are for attempte
 I/O, including failure, losing CAS, polling, uncertainty reloads, callbacks and
 reconstruction. Registration/run-link transactions share the same original
 registration pool; none of these limits is per resource, trigger or poll.
-Private exchanges include real namespace/journal façade RPCs when present.
+Private exchanges include real namespace/journal facade RPCs when present.
 Their actual physical backend reads/writes are additionally charged in their
 respective columns. A local pure method/cache hit is not an invented RPC;
 hidden backend calls are never free. A backend roundtrip is charged once in its
@@ -57,7 +57,10 @@ fix one original <=300-second wall/monotonic execution end, clipped to the
 independently approved original absolute cleanup deadline. Every nested call,
 resource and poll uses that same original cleanup clock/account. A per-call
 timeout is <=10 seconds and <=remaining original interval/current source fence.
-A new current fence can shorten a call, never extend the original cleanup end.
+A new current writer fence can shorten a destructive call, never extend the
+original cleanup end. Original-operation GET polls/dependency reads keep their
+selected read authority and operation binding; they do not acquire writer authority
+or require new writer-fence RPCs merely to read.
 Existing setup-bound routes keep their current refusal and global clipping.
 The additive cleanup route enforces current fencing at each send without using
 successive fences to renew the original execution or original mutation authority.
@@ -127,7 +130,16 @@ policy identity), `registration_ref`, `reservation_digest`,
 `registration_owner_incarnation_ref`, `registration_allocation_ref`,
 `cleanup_allocation_ref`, `observation_allocation_ref`, `not_after`.
 The refs identify only the source-selected fixed pools above. They are not bearer
-grants. policy_digest addresses the exact accepted policy; every identity matches
+grants. policy_digest is SHA256 over the literal ASCII policy identity followed by one
+NUL byte and the existing canonical UTF8 JSON encoding of exactly
+`inventory_sha256` and `policy_sha256`: each value is the64 lowercase hex SHA256
+of the complete exact committed bytes of `call-inventory.json` and this
+`accounting-policy.md`, respectively, including final newlines. No whitespace/
+line-ending normalization occurs before either leaf hash. The outer value uses
+the existing `sha256:` Digest prefix. The recipe contains no computed digest of
+itself. It binds graph, limits, clocks, ownership rules and closed record shapes;
+source constructors must compare the independently selected accepted commitment.
+Every identity matches
 independently approved source/authority/current storage provenance. not_after is
 clipped to the approved registration/setup scope. This registration-only not_after is not a cleanup expiry; historical anchor
 matching after setup expiry still requires separately current original cleanup

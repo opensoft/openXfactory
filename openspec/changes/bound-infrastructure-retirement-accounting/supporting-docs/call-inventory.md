@@ -23,7 +23,7 @@ no new credential-revocation API or fresh signing use. P07 observes those outcom
 ## Every planned call centre
 
 Columns count actual attempted exchanges or physical state calls, not semantic
-successes. The façade line charges the separate RPC in addition to each backend
+successes. The facade line charges the separate RPC in addition to each backend
 call. Existing per-kind costs are a conservative sum of measured P03 controls;
 new orchestration lines are explicit proposed bounds. They are not fabricated
 measurements of a P07 service that has not been implemented.
@@ -99,7 +99,9 @@ No new UTC window or live timing guarantee exists. Old proof/readback limits sta
 Run the source-only [deriver](derive-inventory.py) with the openXwallet checkout
 as --adapter-root, using its existing locked test environment. It imports unchanged
 closed parsers and pure planning fixture helpers, makes no network/provider call,
-prints the JSON inventory and writes no files. Compare its complete output with
+prints the JSON inventory and writes no files. Actual input files are verified
+by SHA256 before imports; unused historical draft labels are retained separately
+in [source context](source-context.md), not presented as derivation pins. Compare its complete output with
 call-inventory.json. The small earlier real-clock attempt remains a retained fixture
 diagnostic; no failed run is promoted to a new full positive.
 

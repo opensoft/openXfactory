@@ -24,7 +24,7 @@ dependent implementation, as the accepted P07 guard requires.
   fixed nontransferable registration/cleanup/observation pools, with whole maxima
   private1088 / ARM208 / namespace768 / journal192 and16MiB application bytes.
   The [policy](supporting-docs/accounting-policy.md) fixes every pool and clock.
-- Count both authenticated state façade RPCs and physical backend I/O. Prepay
+- Count both authenticated state facade RPCs and physical backend I/O. Prepay
   each maximum allocation durably to one owner incarnation, charge live calls
   before use, burn unused allowance on owner loss, and refuse mutation transfer/
   restart. Journal calls consume their own fixed pool without recursive debits.

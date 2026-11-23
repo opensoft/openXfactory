@@ -23,7 +23,7 @@ the old24-resource parser maximum MUST NOT authorize additional resources.
 
 ### Requirement: Every actual nested call consumes its selected fixed pool
 
-The implementation SHALL charge attempted façade exchanges and physical namespace/
+The implementation SHALL charge attempted facade exchanges and physical namespace/
 journal/provider/backend calls before use, including failures, polls, uncertainty
 reloads and journal I/O itself. It MUST enforce disjoint fixed allocations without
 refund, transfer, recursive metering writes or hidden SDK retry/pagination.
@@ -35,7 +35,7 @@ state/tokens/URLs/exception payloads MUST NOT enter retained evidence.
 - **THEN** only the accounting gate passes and independent actual cleanup/provenance gates remain mandatory
 
 #### Scenario: A nested or failed operation evades accounting
-- **WHEN** a façade hides backend work, a failed CAS is uncharged, counters reset or an exhausted class borrows another allowance
+- **WHEN** a facade hides backend work, a failed CAS is uncharged, counters reset or an exhausted class borrows another allowance
 - **THEN** the next effect refuses and full qualification fails without increasing caps or omitting observations
 
 ### Requirement: Allocation ownership remains single use across loss
@@ -57,7 +57,7 @@ MUST refuse mutation continuation/transfer after loss of that owner process.
 ### Requirement: Original expiry and current read-only authority remain distinct
 
 The additive cleanup path SHALL retain exact original registration/authority/
-incarnations, one-send attempts and current per-send fence, with the original
+incarnations, one-send attempts and current fence before every destructive send, with the original
 cleanup clock capped at300seconds and original approved absolute expiry.
 Registration transactions MUST be <=30seconds, observation <=60seconds and calls
 <=10seconds, clipped as specified by the policy. Late read-only authority MUST NOT

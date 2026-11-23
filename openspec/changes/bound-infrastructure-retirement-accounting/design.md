@@ -42,7 +42,7 @@ are never presented as actual provider incarnations or authentication.
 The [policy](supporting-docs/accounting-policy.md) is authoritative for the three
 fixed pools. Whole limits are private1088, ARM208, namespace768, journal192 and
 16MiB application bytes. The conservative source schedule totals private927,
-ARM168, namespace447 and journal122. It includes both real façade exchanges and
+ARM168, namespace447 and journal122. It includes both real facade exchanges and
 physical backend calls, uncertain writes, original-operation polls, trigger
 checks, credential outcome evidence and independent final observation/audit.
 It does not assume authenticated aggregate provenance or free nested services.
@@ -87,7 +87,7 @@ every nested call is <=10seconds and remaining original time. A current fence ca
 shorten a call, never extend the original cleanup clock. No new proof authority or
 new UTC window is selected; all old runtime phase limits remain unchanged.
 
-The later additive cleanup path must enforce a fresh fence at each actual send.
+The later additive cleanup path must enforce a fresh writer fence at each destructive send.
 It cannot borrow an expired setup grant or chain new fences into a renewed
 cleanup execution. Old setup-bound methods retain their exact old clipping.
 Late current observation derives failed after exclusive cleanup expiry and has
@@ -109,7 +109,7 @@ does not increase these caps or relabel diagnostics.
 
 ## Risks / Trade-offs
 
-- State façade/backend work may cost more: meter both physically and refuse; no
+- State facade/backend work may cost more: meter both physically and refuse; no
   hidden SDK retry, redirect or pagination under one advertised call.
 - Timers/cost models may not fit live behavior: require a real full positive in
   isolation before task completion and separate provider/service qualification.
