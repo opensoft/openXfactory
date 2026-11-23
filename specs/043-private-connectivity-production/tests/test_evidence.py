@@ -2075,6 +2075,7 @@ def test_delegation_producer_uses_qualified_pin_and_refuses_inactive_state(monke
     assert v.require_delegation_producer(store, dict(ref)) == raw
     assert sorted(v.DELEGATED_ATTESTATIONS) == [
         "08dc067d95a6199571d26983e1cd0d289329e8fde58fa338853961a68b365fea",
+        "7fd81406012634e848a541cf48035344c93d7121c0c5e3b39c72b542580aacec",
         "9b521406a9c221269c9332b6852579ea26135a723547f8e4720988e2d8ae5bdb",
         "a8fe2c36d22fc1a08bdac7619aa84122ba23fa22d6728db5c7dccf19211aca2f",
         "b131505270619a34adbc9eb0208460a93ab37b3b5b9492296f671a7db9b7fb04",
@@ -2089,7 +2090,10 @@ def test_delegation_producer_uses_qualified_pin_and_refuses_inactive_state(monke
             "b131505270619a34adbc9eb0208460a93ab37b3b5b9492296f671a7db9b7fb04": "T015",
             "bb6d9c4f29f55f7c633dbadd71c56907fa297800395d4dec961d9f529341990d": "T018",
         }.get(subject_sha256, "T010")
-        assert evidence_ref['path'] == v.FEATURE_PATH + f'/evidence/{task}.json'
+        if subject_sha256 == "7fd81406012634e848a541cf48035344c93d7121c0c5e3b39c72b542580aacec":
+            assert evidence_ref["path"] == "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/c01-qa-edge-receipt.json"
+        else:
+            assert evidence_ref['path'] == v.FEATURE_PATH + f'/evidence/{task}.json'
         assert record['schema'] == '043-delegated-attestation-v1'
         assert record['producer'] == ref
         assert v.digest(v.canonical_json(record['subject'])) == subject_sha256

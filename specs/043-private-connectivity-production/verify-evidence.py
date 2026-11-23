@@ -200,7 +200,13 @@ DELEGATED_ATTESTATIONS = {
         "path": "specs/043-private-connectivity-production/evidence/T015.json",
         "repository": "opensoft/openxfactory",
         "sha256": "57720b82aae201553c1382b38319beed646a6f29cc793dd6fa0608ee6384bc0e"
-    }
+    },
+    "7fd81406012634e848a541cf48035344c93d7121c0c5e3b39c72b542580aacec": {
+        "commit": "51503c98c4e03e7f17b390aa8886a6757d3a681d",
+        "path": "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/c01-qa-edge-receipt.json",
+        "repository": "opensoft/openxfactory",
+        "sha256": "b1dc1572219fac0b2567a23c18c871d1468a1d553428890c57d009e94f0b8d63",
+    },
 }
 
 
