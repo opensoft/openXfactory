@@ -1201,7 +1201,9 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # references under the existing member declarations.
     # Authenticated Q0 adds 87 evidence sites under the existing declarations.
     # The two exact owner ratification sites add one standing local member.
-    assert (standing_sites, standing_members) == (1573, 40)
+    # Stage 1 registers two local protected-base sites and one Tenant site
+    # under two exact file/field members, measured on the committed artifacts.
+    assert (standing_sites, standing_members) == (1576, 42)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]

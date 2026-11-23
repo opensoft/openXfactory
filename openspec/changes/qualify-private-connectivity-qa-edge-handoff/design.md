@@ -29,10 +29,15 @@ the same draft materials commit. A read-only ancestry preview using that
 materials commit as the proposed main revision found all six reachable.
 
 1. Land the four separately reviewed source-material files in approved
-   protected coordinator history. Their targeted census found no uncovered
-   sites. Keep the receipt, classifier declaration and verifier entry out of
-   that change. Verify protected readback and current checks before producing
-   a receipt pinned to the landed materials.
+   protected coordinator history. Declare their two protected-base references
+   as current, repo-local pins. The declarations cover only
+   `c01-scope-and-freeze.json` at `protected_head` and
+   `protected-c01-attestor-preflight.json` at `actual_protected_base`.
+   The scope record also uses the same key for the Tenant. Resolve each
+   scope-record pin in its declared repository, with local reachability
+   still required for the coordinator. Verify protected readback and current
+   checks before producing a receipt pinned to the landed materials. Steps 2
+   and 3 own the receipt declaration and registration.
 2. Independently qualify the exact receipt on that protected base. Review
    and land the receipt and its single path-specific `commit` declaration
    together. The one required classifier path is

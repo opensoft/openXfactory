@@ -2619,6 +2619,43 @@ def test_private_connectivity_q0_owner_ratification_is_local_and_path_scoped(tmp
     assert any(site.path == neighbor for site in pc.uncovered_sites(repo))
 
 
+def test_qa_edge_handoff_base_references_are_exact_local_pins(tmp_path):
+    import json
+
+    repo, main, orphan = orphaned_pin_repo(tmp_path)
+    review = Path("openspec/changes/qualify-private-connectivity-qa-edge-handoff/review")
+    scope = (review / "c01-scope-and-freeze.json").as_posix()
+    preflight = (review / "protected-c01-attestor-preflight.json").as_posix()
+    neighbor = (review / "neighbor.json").as_posix()
+    _write(repo, scope, json.dumps({
+        "coordinator": {"protected_head": main, "repository": "opensoft/openxfactory"},
+        "target": {"protected_head": orphan, "repository": "opensoft/opensoft-tenant"},
+        "actual_protected_base": orphan,
+    }, indent=2))
+    _write(repo, preflight, json.dumps({
+        "actual_protected_base": orphan, "repository": "foreign/foreign",
+        "protected_head": main,
+    }, indent=2))
+    _write(repo, neighbor, json.dumps({
+        "protected_head": main, "actual_protected_base": main,
+    }, indent=2))
+    _commit(repo, "record synthetic QA edge protected-base pins")
+
+    sites = pc.member_sites(repo, "HEAD", paths=[scope, preflight, neighbor])
+    assert {(site.path, site.key, site.pin, site.locality) for site in sites} == {
+        (scope, "protected_head", main, pc.REPO_LOCAL),
+        (scope, "protected_head", orphan, pc.CROSS_REPOSITORY),
+        (preflight, "actual_protected_base", orphan, pc.REPO_LOCAL),
+    }
+    report = _verify(repo)
+    assert any(result.site.path == scope and result.verdict == pc.PASS
+               for result in report.results)
+    assert any(result.site.path == scope and result.site.pin == orphan
+               and result.verdict == pc.NOT_APPLICABLE for result in report.results)
+    assert any(result.site.path == preflight and result.site.pin == orphan
+               for result in report.orphans)
+
+
 def test_private_connectivity_conformance_has_one_nonmember_path(tmp_path):
     import json
 
