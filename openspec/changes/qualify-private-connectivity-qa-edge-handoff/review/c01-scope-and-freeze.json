@@ -1,0 +1,168 @@
+{
+  "amendment_sha256": {
+    "design.md": "9121c87653b26bcc2bf73dfb040ce76f1ff308ed29e3b8d8418710e9c457b7c7",
+    "proposal.md": "d4ad36939670fc6d13ec30c829927a85a1d4a581814036cba7a4480cfd2a4eb7",
+    "spec.md": "ae58a03677af1a2748a5cc685b0ae05a0071ac2810be092caf8001d1e7e0c830",
+    "tasks.md": "457506ad501677a184f28fca5739355f1abdbb97da9769bc807e63e51e0423d5"
+  },
+  "candidate_coordinator_files": [
+    {
+      "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
+      "sha256": "1563cdc049abd6ea8b33e1198274857faf1c09697f1af33d8da3ed6c7baf70c7"
+    },
+    {
+      "path": "specs/043-private-connectivity-production/owner-scopes.md",
+      "sha256": "386e1b1c39f775fafbdab25f9746c08d13066ead9c98939c4b16bdef886bec7d"
+    }
+  ],
+  "coordinator": {
+    "base": "3678dcc5c2d7d6f1a11b0c40b346311ff2ffdc2c",
+    "protected_head": "1caab36751dc1af729afe94ea1509c4fb9a09114",
+    "repository": "opensoft/openxfactory"
+  },
+  "exact_tenant_paths": [
+    {
+      "effect": "Default-off QA host and method/path routing and feature loopback upstream",
+      "path": "infra/aks-security/prod-network-security/charts/edge/templates/envoy-config.yaml",
+      "phases": [
+        "Tenant source",
+        "T049 release and source input"
+      ]
+    },
+    {
+      "effect": "Defaults and strict QA applicability guards only",
+      "path": "infra/aks-security/prod-network-security/charts/edge/values.yaml",
+      "phases": [
+        "Tenant source",
+        "T049 release and source input"
+      ]
+    },
+    {
+      "effect": "Exact shared SAN additions, per-boundary flags, loopback entry point/defaults, file routers and validated public CA inputs, and scoped edge egress resource",
+      "path": "gitops/azure/clusters/qa/edge/helmrelease.yaml",
+      "phases": [
+        "Tenant source",
+        "T050 preparation",
+        "T053 managed activation"
+      ]
+    },
+    {
+      "effect": "Verified immutable QA chart digest pin and recorded rollback reference",
+      "path": "gitops/azure/clusters/qa/edge/ocirepository.yaml",
+      "phases": [
+        "T050 exact approved dark digest pin"
+      ]
+    },
+    {
+      "effect": "Exact namespaced bootstrap, CA and issuer definitions with no private key bytes",
+      "path": "gitops/azure/clusters/qa/platform/private-connectivity/certificates.yaml",
+      "phases": [
+        "T050 preparation under exact operator approval"
+      ]
+    },
+    {
+      "effect": "Gated certificate data root reference",
+      "path": "gitops/azure/clusters/qa/platform/private-connectivity/kustomization.yaml",
+      "phases": [
+        "T050 preparation under exact operator approval"
+      ]
+    },
+    {
+      "effect": "Exact approved A generation's leaf Certificate and projected leaf files",
+      "path": "gitops/azure/clusters/qa/workloads/private-connectivity/customer-a.yaml",
+      "phases": [
+        "T050 separately approved preparation",
+        "T053 managed observation or authorized A change"
+      ]
+    },
+    {
+      "effect": "Exact B leaf Certificate and projection only under its approved managed-new operation",
+      "path": "gitops/azure/clusters/qa/workloads/private-connectivity/customer-b.yaml",
+      "phases": [
+        "T053 separately approved original managed-new operation only"
+      ]
+    },
+    {
+      "effect": "Exact matching target ingress from the edge on TCP 8443",
+      "path": "gitops/azure/clusters/qa/platform/private-connectivity/networkpolicy.yaml",
+      "phases": [
+        "T050 disabled preparation",
+        "T053 exact generation path"
+      ]
+    },
+    {
+      "effect": "Ordered approval, verification, renewal, containment and rollback",
+      "path": "docs/runbooks/private-connectivity-qa.md",
+      "phases": [
+        "Tenant source",
+        "T049 release and source input"
+      ]
+    },
+    {
+      "effect": "Preserve exact SAN-set and uniqueness assertions; allow only the two reviewed additions",
+      "path": "tests/test_dox_auth_oidc.py",
+      "phases": [
+        "Tenant source",
+        "closed hostname regression"
+      ]
+    },
+    {
+      "effect": "Retain the full closed QA edge comparator and admit only the reviewed phase-specific delta",
+      "path": "tests/test_qa_unused_cleanup.py",
+      "phases": [
+        "Tenant source",
+        "closed QA edge comparator"
+      ]
+    }
+  ],
+  "freeze": {
+    "admitted_by_current_reader": false,
+    "candidate": "1e5d1a03b2d7cfab1bea57d838cbc080bc62b0951661b7508c901b432484ec11",
+    "changed_input_bodies": [
+      "owner-scopes.md"
+    ],
+    "current_reader_refusal": "unreviewed task/case/file/command definitions",
+    "inputs": {
+      "commissioning.md": "8f5917f9bdbee09a8fd6f93bbe53f34b371213196b6e38611a3a6850373f829c",
+      "contracts/owner-handoff.md": "d8fec9881a390420c41d6bc1dfef8fb44ab35457054611ae3751a8a98ca9fd78",
+      "contracts/product-interfaces.md": "5643be4adba7bb0ac5413a1ddb74bab863af981c945d92c4fde14d97fd0d94e7",
+      "contracts/qualification-evidence.md": "8d7d4ab79a6bb456a2dabef0d6ec4d5ba40da296e5ba19ceab2c7e907df31e92",
+      "contracts/task-evidence.md": "d6c679b7d38e6927fcb1d9b8c7d6cb733af4f246c5fae1d63ca970f144703931",
+      "data-model.md": "16a1351ef27a1924be4ce4e1c77197adfc48a40391b3e4ea20d5f849a72c4391",
+      "hosted-domainxfactories.md": "c0b94352f89013a28dbc1008d988e7aca94c58b05511a14f52c9cf81cf2b9cc6",
+      "local-headscale.md": "aa764a126e7b1d2c12c257e9d2d1ef2416fb49a47dffeddf93de6a901882c481",
+      "owner-scopes.md": "386e1b1c39f775fafbdab25f9746c08d13066ead9c98939c4b16bdef886bec7d",
+      "plan.md": "2edb9ad4eb75621218dadbeefedf961cdb64221f51d20c84bd281564cefc9818",
+      "policy-coverage.md": "e30154c88b29ce5a21b23d235d0ec863a105a433d7ea23e7fb6937cba928f37b",
+      "research.md": "295751853b252eafabbcaf64933a577df88370f7c457f01fe69a479c9df7f9d2",
+      "rollout-gates.md": "0815198f6c67e4eaf02d18efbd9558821747c8560ed338b626de34f993c9b32d",
+      "spec.md": "c8bebd78c2f1e919874fdf385796557c577d1d55aba2740bc498e906ec274134",
+      "standalone-hosted-headscale.md": "b25c3d8ab2642912d1dcbe557b51f9820df8986906c3d1ccb950146efd8ee479",
+      "validation-matrix.md": "7ebee6a87bee75ea50ca70d30a64ae50460ef6081a5489dd75d5c83a4f481f53"
+    },
+    "predecessor": "9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af",
+    "registry_rows": 68,
+    "task_rows": 68,
+    "task_rows_changed": 0
+  },
+  "held": [
+    "source approval",
+    "definition activation",
+    "chart publication",
+    "target writes",
+    "spend",
+    "enrollment",
+    "Q1-Q5",
+    "macOS",
+    "external Q5"
+  ],
+  "kind": "c01-owner-scope-and-definition-candidate",
+  "source_scope_only": true,
+  "status": "proposed",
+  "target": {
+    "accepted_target_plan": "7126c555d8389fe688f5b84bb0063938fa1f0fe7",
+    "protected_head": "18b464d64211cb681eacc88f3efcdf5ebbca6466",
+    "repository": "opensoft/opensoft-tenant",
+    "reviewed_design_sha256": "9121c87653b26bcc2bf73dfb040ce76f1ff308ed29e3b8d8418710e9c457b7c7"
+  }
+}

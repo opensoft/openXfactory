@@ -1,0 +1,80 @@
+{
+  "accountable_owner": "Brett Heap",
+  "actor": "Codex",
+  "decision": "accepted",
+  "details": {
+    "activation_requirements": [
+      "independent E qualification and authentication",
+      "protected-base acceptance"
+    ],
+    "active_definition_retained": "9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af",
+    "canonical_owner": "opensoft/opensoft-tenant",
+    "changed_task_rows": 0,
+    "definition_activated": false,
+    "exact_candidate_coordinator_files": [
+      {
+        "path": "specs/043-private-connectivity-production/contracts/task-evidence.md",
+        "sha256": "1563cdc049abd6ea8b33e1198274857faf1c09697f1af33d8da3ed6c7baf70c7"
+      },
+      {
+        "path": "specs/043-private-connectivity-production/owner-scopes.md",
+        "sha256": "386e1b1c39f775fafbdab25f9746c08d13066ead9c98939c4b16bdef886bec7d"
+      }
+    ],
+    "exact_candidate_definition": "1e5d1a03b2d7cfab1bea57d838cbc080bc62b0951661b7508c901b432484ec11",
+    "exact_tenant_paths": [
+      "infra/aks-security/prod-network-security/charts/edge/templates/envoy-config.yaml",
+      "infra/aks-security/prod-network-security/charts/edge/values.yaml",
+      "gitops/azure/clusters/qa/edge/helmrelease.yaml",
+      "gitops/azure/clusters/qa/edge/ocirepository.yaml",
+      "gitops/azure/clusters/qa/platform/private-connectivity/certificates.yaml",
+      "gitops/azure/clusters/qa/platform/private-connectivity/kustomization.yaml",
+      "gitops/azure/clusters/qa/workloads/private-connectivity/customer-a.yaml",
+      "gitops/azure/clusters/qa/workloads/private-connectivity/customer-b.yaml",
+      "gitops/azure/clusters/qa/platform/private-connectivity/networkpolicy.yaml",
+      "docs/runbooks/private-connectivity-qa.md",
+      "tests/test_dox_auth_oidc.py",
+      "tests/test_qa_unused_cleanup.py"
+    ],
+    "held": [
+      "definition activation",
+      "chart publication",
+      "target writes",
+      "spend",
+      "enrollment",
+      "Q1-Q5",
+      "macOS",
+      "external Q5"
+    ],
+    "immutable_scope_packet_sha256": "a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7",
+    "preserved_task_rows": 68,
+    "reviewed_amendment_design_sha256": "9121c87653b26bcc2bf73dfb040ce76f1ff308ed29e3b8d8418710e9c457b7c7",
+    "runtime_authority": false,
+    "source_scope_only": true,
+    "tenant_base": "18b464d64211cb681eacc88f3efcdf5ebbca6466",
+    "tenant_target_plan": "7126c555d8389fe688f5b84bb0063938fa1f0fe7"
+  },
+  "id": "pc043-c01-tenant-qa-edge-20261123",
+  "kind": "C-01",
+  "owner": "Codex",
+  "reviewed_at": "2026-11-23T04:51:20.340811+00:00",
+  "schema": "043-delegated-source-decision-v1",
+  "scope": {
+    "candidate": "1e5d1a03b2d7cfab1bea57d838cbc080bc62b0951661b7508c901b432484ec11",
+    "customer": "Opensoft Inc",
+    "domain": "not-applicable",
+    "environment": "qa",
+    "network": "not-applicable",
+    "offer": "not-applicable",
+    "offering": "hosted-headscale",
+    "phase": "source",
+    "profile": "tenant-qa-edge",
+    "region": "westus",
+    "run": "pc043-qa-edge-c01",
+    "site": "aks-opensoft-platform-qa-01",
+    "target": "opensoft/opensoft-tenant",
+    "wave": "not-applicable"
+  },
+  "valid_from": "2026-11-23T04:51:20.340811+00:00",
+  "valid_until": "2026-12-17T08:38:55.473Z"
+}

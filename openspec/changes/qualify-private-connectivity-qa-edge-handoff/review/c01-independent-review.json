@@ -1,0 +1,56 @@
+{
+  "reviewed_at": "2026-11-23T04:51:20.340811+00:00",
+  "roles": {
+    "architecture": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Hash-checked both coordinator files and all four amendment files and matched the ordered 12-path table. Verified the unchanged T049/C, T050/O, T051/C and T053/H ownership and dependency chain, with original B activation a separately accepted Ops operation. Independent E activation remains required.",
+      "reviewer": "/root/c04_architecture",
+      "verdict": "clear"
+    },
+    "contracts": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Hashed packet, both proposed coordinator files and the design and matched all 12 ordered path/effect rows. Verified exact producer/consumer roles, B activation only through its separately accepted post-Q1 Ops operation, no additional effect, and separate OCI publication, C-03/C-07 and E gates.",
+      "reviewer": "/root/c04_c01_contracts",
+      "verdict": "clear"
+    },
+    "integrity": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Independently computed both canonical definition digests and verified all 16 input hashes, 68 byte-identical registry and task rows and 12 unique design paths. Only the owner-scopes input body changes. The unmodified current reader refuses activation under the old definition and both exact hashes produce identical parsed tasks.",
+      "reviewer": "/root/c04_integrity",
+      "verdict": "clear"
+    },
+    "maintainability": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Rehashed both candidate coordinator files and the design. All 12 paths are unique, closed and ordered, with no wildcard, new task owner or broad validator. Existing closed tests remain. The current reader refuses the preview and independent activation is held.",
+      "reviewer": "/root/c04_c01_maintainability",
+      "verdict": "clear"
+    },
+    "performance": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Rehashed exact candidate and design. Confirmed 12 file scopes, no task edits and no global budget or timeout increase. The finite idle and one-unavailable rollout bounds remain. Only the two exact Headscale upgrades remove the overall deadline and native long-lived checks remain Q2-gated.",
+      "reviewer": "/root/c04_c01_performance",
+      "verdict": "clear"
+    },
+    "qa": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Rehashed packet and candidate files and checked both named protected test bodies. Closed SAN-set, uniqueness and complete HelmRelease comparator assertions are preserved. Verified dark/readback/negative coverage, exact EndpointSlice and Pod identity, one writer, B absence and independent E, Q1 and T053 gates.",
+      "reviewer": "/root/c04_qa",
+      "verdict": "clear"
+    },
+    "reliability": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Rehashed all three candidate exports and compared the 12 unique declared paths to the design. T050 remains preparation and T051 remains admission. B requires the original accepted post-Q1 T053 operation. Rollback retains current authority, stream and writer fencing, and neighbor verification.",
+      "reviewer": "/root/c04_reliability",
+      "verdict": "clear"
+    },
+    "security": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Recomputed both candidate coordinator file hashes and the reviewed design hash. Verified all 12 paths retain role and phase restrictions and B remains absent pre-Q1. Found no widened authority. Current reader refusal and independent E review, chart publication, reconciliation, spend, enrollment and gate holds are preserved.",
+      "reviewer": "/root/c04_security",
+      "verdict": "clear"
+    },
+    "static": {
+      "report": "Exact packet SHA-256 a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7. Compared all 12 path/effect pairs, all four amendment hashes and all 16 inputs against coordinator base. Preview loader returned all 68 prior parsed tasks and the old digest refused the candidate. The existing Tenant platform validation covers both named tests. No workflow or CI execution, chart publication, current definition, task or gate change is authorized.",
+      "reviewer": "/root/c04_delivery",
+      "verdict": "clear"
+    }
+  },
+  "schema": "043-independent-review-v1",
+  "subject": {
+    "definition": "9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af",
+    "kind": "decision",
+    "record_sha256": "27ab7410cfb7fb7c5ff77e5071431cf0e7cf1ca6e0cb9b7e4e6cff5f2092f315"
+  }
+}

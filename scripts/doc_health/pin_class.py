@@ -471,6 +471,29 @@ PIN_CLASS: tuple[PinMember, ...] = (
         note="The two exact Ops and domain ratification records bind the "
              "coordinator's reviewed base. Local reachability remains required.",
     ),
+    PinMember(
+        id="private-connectivity-qa-edge-scope-protected-head",
+        paths=(
+            "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/c01-scope-and-freeze.json",
+        ),
+        key="protected_head", key_form="field",
+        generator="feature 043 QA edge C-01 scope and freeze record",
+        reproduction=MEASURED, locality=REPO_LOCAL, presence=CURRENT,
+        locality_from=("repository",),
+        note="The coordinator and the Tenant each declare a protected head. "
+             "The local pin owes reachability; the Tenant pin keeps its owner.",
+    ),
+    PinMember(
+        id="private-connectivity-qa-edge-attestor-protected-base",
+        paths=(
+            "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/protected-c01-attestor-preflight.json",
+        ),
+        key="actual_protected_base", key_form="field",
+        generator="feature 043 QA edge protected C-01 attestor preflight",
+        reproduction=MEASURED, locality=REPO_LOCAL, presence=CURRENT,
+        note="The attestor preflight cites the actual coordinator base. "
+             "This exact field owes local reachability.",
+    ),
     # Original Git references remain verbatim in the source container and
     # receipts. The inventory does not exempt their commit/revision fields
     # from the vocabulary sweep. Per-reference repository ownership decides
