@@ -34,7 +34,13 @@ observations, never delete targets. Two retained data disks remain the P3 limit.
 
 Pure unchanged parsers accept all complete synthetic reservation/provisioned/link/
 setup-result/run-result records; the largest is9,855bytes, below16KiB. That result
-establishes serialization compatibility only. Placeholder fixture identity refs
+establishes serialization compatibility only. The packet retains those canonical
+synthetic bytes and their hashes for offline arithmetic/artifact tests. Default
+derivation verifies the recorded bytes without importing an adapter checkout;
+`--adapter-root` additionally verifies all five source hashes before repeating
+the actual unchanged baseline parsers. The factory's older admitted wallet pin
+contains no P3 parsers, so offline tests do not pretend to import them or fetch
+a new unratified dependency. Placeholder fixture identity refs
 are never presented as actual provider incarnations or authentication.
 
 ### D2: Use explicit disjoint infrastructure pools

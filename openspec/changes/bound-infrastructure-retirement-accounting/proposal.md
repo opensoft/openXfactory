@@ -4,7 +4,7 @@ Authored: 2026-11-23
 Kind: governance
 sequenced_after:
   - add-protected-runtime-azure-composition
-code_surface: openXwallet (existing feature017 T013P07 after exact paired source acceptance); openXfactory (this source-policy packet, non-product inventory deriver and generated corpus ledger)
+code_surface: openXwallet (existing feature017 T013P07 after exact paired source acceptance); openXfactory (this source-policy packet, non-product inventory deriver with offline reproduction tests and generated corpus ledger)
 target_release: implemented (source acceptance of bounded accounting policy only; dependent isolated implementation later; no activation, setup, dispatch or release cut)
 ---
 
@@ -52,7 +52,10 @@ earlier budget amendments or old proof/readback policies.
 ## Impact
 
 Factory owns the policy, [complete call inventory](supporting-docs/call-inventory.md)
-and reproducible non-product derivation. Its conservative schedule totals
+and reproducible non-product derivation, with offline artifact/tamper tests. Default
+reproduction checks recorded canonical fixtures and arithmetic; the optional
+`--adapter-root` check repeats actual hash-guarded baseline parsers. Neither
+authenticates a service. Its conservative schedule totals
 private927 / ARM168 / namespace447 / journal122, within every selected pool.
 Existing per-kind costs and synthetic complete parser sizes are measured;
 new service/orchestration lines are proposed bounds, not fabricated runtime data.

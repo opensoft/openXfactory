@@ -1,0 +1,102 @@
+{
+  "classification": "source planning inventory and conservative schedule; not a measured full P07 runtime positive",
+  "date": "2026-11-23 America/La_Paz",
+  "basis": {
+    "provider_sha256": "f5176be191d5bc3edbfa1f864a468380ba6d27c532274ada9bd7e0664dee9138",
+    "namespace_sha256": "bec90c6af1279267006f858243bb6096284b1862890ff5dbe1b3765c59803061",
+    "parser_inputs_sha256": {
+      "scripts/workload_factory_binding_runtime/azure_composition/selection.py": "2fe1ea02b2c8eb2af5e4c13331637250c6560b221623201e6ba4cc8ab009e833",
+      "tests/runtime_binding/test_azure_namespace.py": "e767136c3d281c320b1b90e08c97a0c489d4fd6464284640dfd799b3ca1567da",
+      "scripts/workload_factory_binding/evidence.py": "1f95c2b3488574c69b37cd4aaf8af3a2c0cdcd69c64ebdcbc8b43201c51491c0",
+      "scripts/workload_factory_binding_runtime/azure_composition/provider.py": "f5176be191d5bc3edbfa1f864a468380ba6d27c532274ada9bd7e0664dee9138",
+      "scripts/workload_factory_binding_runtime/azure_composition/namespace.py": "bec90c6af1279267006f858243bb6096284b1862890ff5dbe1b3765c59803061"
+    }
+  },
+  "selection": "proposed source refinement of S1: three role-specific NSGs; not deployed IDs or create authority",
+  "selected_limits": {
+    "registration": {
+      "private": 128,
+      "arm": 0,
+      "namespace": 128,
+      "journal": 32
+    },
+    "cleanup": {
+      "private": 768,
+      "arm": 160,
+      "namespace": 512,
+      "journal": 128
+    },
+    "observation": {
+      "private": 192,
+      "arm": 48,
+      "namespace": 128,
+      "journal": 32
+    }
+  },
+  "application_byte_limits": {
+    "registration": 1048576,
+    "cleanup": 12582912,
+    "observation": 3145728,
+    "whole": 16777216,
+    "scope": "complete application request/response bytes, including metadata and backend state; existing individual body caps remain"
+  },
+  "time_limits": {
+    "registration_transaction_seconds": 30,
+    "cleanup_original_seconds": 300,
+    "observation_original_seconds": 60,
+    "per_call_seconds": 10,
+    "current_observation_max_validity_seconds": 60,
+    "original_absolute_cleanup_deadline": "independently approved and clipping; never extended by this policy",
+    "registration_absolute_window": "existing approved maximum 86400 seconds; no UTC window selected"
+  },
+  "remaining_runtime_gate": "after exact source ratification: actual full-graph positive, physical/nested call accounting, real clocks, privacy, crash/refusal controls, full/native/hosted qualification and independent cleanup",
+  "operations": {
+    "setup_dispatch": "unauthorized",
+    "feedback": "deferred",
+    "blocked_writes": "unreplayed"
+  },
+  "graph_scope": {
+    "retained_ARM_observation_slots": [
+      "control-data-disk",
+      "gate-data-disk",
+      "measured-managed-image",
+      "credential-vault",
+      "redacted-evidence-storage",
+      "watchdog-function",
+      "watchdog-plan",
+      "watchdog-storage",
+      "watchdog-identity",
+      "disposable-parent-RG",
+      "retained-parent-RG",
+      "watchdog-parent-RG"
+    ],
+    "protected_state_observation_slots": [
+      "permanent-namespace-catalog",
+      "retained-registration/action-state",
+      "retained-runtime-authority/replay-state"
+    ],
+    "registered_credential_handle_cap": 16
+  },
+  "recorded_parser_fixtures": {
+    "reservation": {
+      "bytes": 8056,
+      "sha256": "d5b344fd2cd233d07c0cc964fc70d5eb1f93c44e1e40299f195b6f970b31ce4b"
+    },
+    "provisioned": {
+      "bytes": 9855,
+      "sha256": "e425bb673280e63056c6a20187a3bb43030935d1085b532bb33655ff0fb47610"
+    },
+    "final_link": {
+      "bytes": 716,
+      "sha256": "c1a41752dbc87839e4d8ed5eb53a3742454ec7c18121a4383eba9bb70ee3767a"
+    },
+    "setup_receipt": {
+      "bytes": 4720,
+      "sha256": "6a3465242a4be3da0ccd04dcba2304f393eb925e53e0130bb595b559727d9925"
+    },
+    "run_receipt": {
+      "bytes": 5908,
+      "sha256": "847bfd840c72036d602644289f91dc3febf3ee8a1da412305f570b6bc5647254"
+    }
+  }
+}

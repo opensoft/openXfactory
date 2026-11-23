@@ -13,6 +13,48 @@
     }
   },
   "selection": "proposed source refinement of S1: three role-specific NSGs; not deployed IDs or create authority",
+  "selected_limits": {
+    "registration": {
+      "private": 128,
+      "arm": 0,
+      "namespace": 128,
+      "journal": 32
+    },
+    "cleanup": {
+      "private": 768,
+      "arm": 160,
+      "namespace": 512,
+      "journal": 128
+    },
+    "observation": {
+      "private": 192,
+      "arm": 48,
+      "namespace": 128,
+      "journal": 32
+    }
+  },
+  "application_byte_limits": {
+    "registration": 1048576,
+    "cleanup": 12582912,
+    "observation": 3145728,
+    "whole": 16777216,
+    "scope": "complete application request/response bytes, including metadata and backend state; existing individual body caps remain"
+  },
+  "time_limits": {
+    "registration_transaction_seconds": 30,
+    "cleanup_original_seconds": 300,
+    "observation_original_seconds": 60,
+    "per_call_seconds": 10,
+    "current_observation_max_validity_seconds": 60,
+    "original_absolute_cleanup_deadline": "independently approved and clipping; never extended by this policy",
+    "registration_absolute_window": "existing approved maximum 86400 seconds; no UTC window selected"
+  },
+  "remaining_runtime_gate": "after exact source ratification: actual full-graph positive, physical/nested call accounting, real clocks, privacy, crash/refusal controls, full/native/hosted qualification and independent cleanup",
+  "operations": {
+    "setup_dispatch": "unauthorized",
+    "feedback": "deferred",
+    "blocked_writes": "unreplayed"
+  },
   "graph": {
     "ephemeral_count": 14,
     "dependency_edges": 16,
@@ -390,26 +432,6 @@
       "journal": 4
     }
   },
-  "selected_limits": {
-    "registration": {
-      "private": 128,
-      "arm": 0,
-      "namespace": 128,
-      "journal": 32
-    },
-    "cleanup": {
-      "private": 768,
-      "arm": 160,
-      "namespace": 512,
-      "journal": 128
-    },
-    "observation": {
-      "private": 192,
-      "arm": 48,
-      "namespace": 128,
-      "journal": 32
-    }
-  },
   "whole_modeled": {
     "private": 927,
     "arm": 168,
@@ -422,24 +444,8 @@
     "namespace": 768,
     "journal": 192
   },
-  "application_byte_limits": {
-    "registration": 1048576,
-    "cleanup": 12582912,
-    "observation": 3145728,
-    "whole": 16777216,
-    "scope": "complete application request/response bytes, including metadata and backend state; existing individual body caps remain"
-  },
-  "time_limits": {
-    "registration_transaction_seconds": 30,
-    "cleanup_original_seconds": 300,
-    "observation_original_seconds": 60,
-    "per_call_seconds": 10,
-    "current_observation_max_validity_seconds": 60,
-    "original_absolute_cleanup_deadline": "independently approved and clipping; never extended by this policy",
-    "registration_absolute_window": "existing approved maximum 86400 seconds; no UTC window selected"
-  },
   "parser_fixture_measurement": {
-    "kind": "complete synthetic closed-record serialization only; parser equality is not authenticated service provenance",
+    "kind": "recorded baseline closed-parser acceptance; default reproduction checks exact canonical fixture bytes and arithmetic; --adapter-root repeats actual baseline parsers; none is authenticated service provenance",
     "records": {
       "reservation": {
         "bytes": 8056,
@@ -463,11 +469,5 @@
       }
     },
     "all_under_existing_16384_cap": true
-  },
-  "remaining_runtime_gate": "after exact source ratification: actual full-graph positive, physical/nested call accounting, real clocks, privacy, crash/refusal controls, full/native/hosted qualification and independent cleanup",
-  "operations": {
-    "setup_dispatch": "unauthorized",
-    "feedback": "deferred",
-    "blocked_writes": "unreplayed"
   }
 }

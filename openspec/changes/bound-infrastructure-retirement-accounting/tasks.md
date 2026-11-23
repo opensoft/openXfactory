@@ -13,6 +13,11 @@ The original eligibility failure remains recorded. Complete graph14/edges16,
 fixed pools, timers and loss semantics are selected in the policy for owner
 review; none is accepted merely by preparation, passing CI or artifact presence.
 
+The non-product helper and its offline reproduction/tamper tests are part of this
+source packet. Passing those tests checks the model and recorded bytes, not a
+P07 runtime positive or a current authenticated service. Optional baseline-parser
+reproduction separately guards all five actual source inputs before imports.
+
 Exact paired source acceptance precedes dependent product code. Later isolated
 P07 must demonstrate the full actual positive and all source/clock/accounting/
 privacy/crash/refusal/cleanup gates under those fixed limits. No checkbox advances

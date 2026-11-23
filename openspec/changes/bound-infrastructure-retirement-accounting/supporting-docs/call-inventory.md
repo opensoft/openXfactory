@@ -96,14 +96,26 @@ No new UTC window or live timing guarantee exists. Old proof/readback limits sta
 
 ## Reproduction and outstanding qualification
 
-Run the source-only [deriver](derive-inventory.py) with the openXwallet checkout
-as --adapter-root, using its existing locked test environment. It imports unchanged
-closed parsers and pure planning fixture helpers, makes no network/provider call,
-prints the JSON inventory and writes no files. Actual input files are verified
-by SHA256 before imports; unused historical draft labels are retained separately
-in [source context](source-context.md), not presented as derivation pins. Compare its complete output with
-call-inventory.json. The small earlier real-clock attempt remains a retained fixture
-diagnostic; no failed run is promoted to a new full positive.
+Run `python3 supporting-docs/derive-inventory.py` from this change directory for
+offline reproduction. The helper checks the exact recorded canonical synthetic
+fixtures against their measured hashes and sizes, recomputes the graph/call totals
+and refuses an insufficient pool. Compare its complete output byte-for-byte with
+`supporting-docs/call-inventory.json`. The non-product tests under
+`tests/proposal-support/test_retirement_inventory.py` exercise reproduction,
+dependency closure, measured six-kind arithmetic, policy caps and tamper refusal.
+They do not simulate an authenticated service or import substitute parsers.
+
+To repeat actual closed-parser compatibility, add `--adapter-root` pointing to
+the openXwallet baseline checkout in its existing locked test environment. This
+option verifies all five recorded source-file hashes before importing the actual
+unchanged parsers and pure planning fixture helpers. The factory's older admitted
+wallet pin has no P3 parser files; default offline reproduction needs no new
+pin, network fetch or fake parser. Both modes print JSON and write no files;
+neither makes a provider/network call. Recorded parser acceptance is historical
+serialization evidence, distinct from default byte/arithmetic reproduction.
+Unused historical draft labels remain in [source context](source-context.md),
+not derivation pins. The small earlier real-clock attempt remains a retained
+fixture diagnostic; no failed run is promoted to a new full positive.
 
 Existing six-kind scope/counter measurements remain in [eligibility](eligibility.md).
 This full source schedule resolves which calls/graphs/pools must be implemented;
