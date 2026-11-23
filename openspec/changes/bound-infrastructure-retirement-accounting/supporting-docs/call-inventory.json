@@ -5,7 +5,12 @@
     "adapter": "b39feb3a5e9c30f25b28eb55751beb2ad4ff3e87",
     "factory": "afb20ce1df21199e75550e48732b56ee67069c51",
     "provider_sha256": "f5176be191d5bc3edbfa1f864a468380ba6d27c532274ada9bd7e0664dee9138",
-    "namespace_sha256": "bec90c6af1279267006f858243bb6096284b1862890ff5dbe1b3765c59803061"
+    "namespace_sha256": "bec90c6af1279267006f858243bb6096284b1862890ff5dbe1b3765c59803061",
+    "parser_inputs_sha256": {
+      "scripts/workload_factory_binding_runtime/azure_composition/selection.py": "2fe1ea02b2c8eb2af5e4c13331637250c6560b221623201e6ba4cc8ab009e833",
+      "tests/runtime_binding/test_azure_namespace.py": "e767136c3d281c320b1b90e08c97a0c489d4fd6464284640dfd799b3ca1567da",
+      "scripts/workload_factory_binding/evidence.py": "1f95c2b3488574c69b37cd4aaf8af3a2c0cdcd69c64ebdcbc8b43201c51491c0"
+    }
   },
   "selection": "proposed source refinement of S1: three role-specific NSGs; not deployed IDs or create authority",
   "graph": {

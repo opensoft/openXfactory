@@ -129,7 +129,9 @@ policy identity), `registration_ref`, `reservation_digest`,
 The refs identify only the source-selected fixed pools above. They are not bearer
 grants. policy_digest addresses the exact accepted policy; every identity matches
 independently approved source/authority/current storage provenance. not_after is
-clipped to the approved registration/setup scope. No run/link/incarnation of an
+clipped to the approved registration/setup scope. This registration-only not_after is not a cleanup expiry; historical anchor
+matching after setup expiry still requires separately current original cleanup
+authority. No run/link/incarnation of an
 uncreated resource or chosen operational accepted_commit appears in this anchor.
 
 The immutable cleanup claim has exactly `profile`, `anchor_digest`,
