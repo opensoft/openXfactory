@@ -189,3 +189,46 @@ complete successor freeze, verifies the immutable redacted quality and release
 proof in the existing evidence path, and preserves the authenticated
 predecessor. Source implementation and local checks do not select a new active
 commissioning manifest. See the [decision record](../../openspec/changes/qualify-private-headscale-without-sonarcloud/review/t023-c01-scope.md).
+
+## Proposed exact C-01 Tenant edge handoff
+
+Candidate only. This proposal refers to reviewed Tenant edge design SHA-256
+9121c87653b26bcc2bf73dfb040ce76f1ff308ed29e3b8d8418710e9c457b7c7, protected Tenant 18b464d64211cb681eacc88f3efcdf5ebbca6466,
+and the existing accepted Tenant target-plan commit 7126c555d8389fe688f5b84bb0063938fa1f0fe7.
+Its distinct source-scope decision and independent E activation are pending.
+
+Opensoft-Tenant is the producer of the exact bounded edge, certificate and
+declarative target materials below. The chart source and existing closed test
+adjustments precede the immutable release proof that T049 consumes. The new
+scope does not introduce a Tenant task owner alias. T049 remains the C-owned
+release and compatibility join. Ops owns the original-scope T050 preparation,
+source validation, Service generation and runtime execution. C owns T051
+acceptance. H owns T053 observation and invokes the separately accepted Ops
+operation for B. T053 is not an authority to write Tenant files directly.
+The proposed Tenant source/target authority is limited to the table below.
+
+| Opensoft-Tenant path | Reviewed effect | Applicable phase |
+| --- | --- | --- |
+| `infra/aks-security/prod-network-security/charts/edge/templates/envoy-config.yaml` | Default-off QA host and method/path routing and feature loopback upstream | Tenant source, T049 release and source input |
+| `infra/aks-security/prod-network-security/charts/edge/values.yaml` | Defaults and strict QA applicability guards only | Tenant source, T049 release and source input |
+| `gitops/azure/clusters/qa/edge/helmrelease.yaml` | Exact shared SAN additions, per-boundary flags, loopback entry point/defaults, file routers and validated public CA inputs, and scoped edge egress resource | Tenant source, T050 preparation, T053 managed activation |
+| `gitops/azure/clusters/qa/edge/ocirepository.yaml` | Verified immutable QA chart digest pin and recorded rollback reference | T050 exact approved dark digest pin |
+| `gitops/azure/clusters/qa/platform/private-connectivity/certificates.yaml` | Exact namespaced bootstrap, CA and issuer definitions with no private key bytes | T050 preparation under exact operator approval |
+| `gitops/azure/clusters/qa/platform/private-connectivity/kustomization.yaml` | Gated certificate data root reference | T050 preparation under exact operator approval |
+| `gitops/azure/clusters/qa/workloads/private-connectivity/customer-a.yaml` | Exact approved A generation's leaf Certificate and projected leaf files | T050 separately approved preparation, T053 managed observation or authorized A change |
+| `gitops/azure/clusters/qa/workloads/private-connectivity/customer-b.yaml` | Exact B leaf Certificate and projection only under its approved managed-new operation | T053 separately approved original managed-new operation only |
+| `gitops/azure/clusters/qa/platform/private-connectivity/networkpolicy.yaml` | Exact matching target ingress from the edge on TCP 8443 | T050 disabled preparation, T053 exact generation path |
+| `docs/runbooks/private-connectivity-qa.md` | Ordered approval, verification, renewal, containment and rollback | Tenant source, T049 release and source input |
+| `tests/test_dox_auth_oidc.py` | Preserve exact SAN-set and uniqueness assertions; allow only the two reviewed additions | Tenant source, closed hostname regression |
+| `tests/test_qa_unused_cleanup.py` | Retain the full closed QA edge comparator and admit only the reviewed phase-specific delta | Tenant source, closed QA edge comparator |
+
+All 68 existing task rows and commands remain the sole executable list. The
+earlier Tenant authorization limiting source and validation remains in force
+outside these exact shared chart and two closed existing-test refinements.
+The amendment adds no workflow, owner alias or new validation entry point.
+Terms for C-03 through C-08, source CI, actual E authentication, chart
+publication, release readback, storage and STUN remain separate. Before Q1,
+record B's missing leaf, Service, active route and network. B target writes
+require the original accepted post-Q1 managed-new operation. No chart push,
+target reconciliation, spend, enrollment, gate disposition or commercial
+authorization follows from this candidate. macOS and external Q5 are held.

@@ -32,7 +32,7 @@ FEATURE_PATH = "specs/" + FEATURE
 COORDINATOR = "opensoft/openxfactory"
 HISTORICAL_CONTROL_ERROR = "unaccepted historical control"
 T010_CUSTODY_SUCCESSOR = "93cf7d7f7b4e228220ca8d04f4cc351ac16c56a66f3722d4d214aebbca2918cc"
-DEFINITION = "9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af"
+DEFINITION = "1e5d1a03b2d7cfab1bea57d838cbc080bc62b0951661b7508c901b432484ec11"
 LEGACY_DEFINITION = "66db63ec98e366f141230d22e6e4e159916bb997f159916159dcc7b6ae3f32d0"
 LEGACY_CONTROL_SHA256 = "0dc18a4053e07fd484534dcd4b572a5f8c6b72718b6901ac1323298d4ec7243e"
 LEGACY_READER_SHA256 = "0ce860921467e94e942274905c45c99295a830a3f14b8a0b66ddb944103f697f"
@@ -101,6 +101,33 @@ REF_FIELDS = frozenset(("repository", "commit", "path", "sha256"))
 INSTANCE_TASKS = frozenset(f"T{i:03}" for i in range(57, 65))
 COMMISSIONING_PATH = FEATURE_PATH + "/evidence/commissioning.json"
 AUTHENTICATION_PATH = "openspec/changes/commission-private-connectivity-production-evidence/review/commissioning-authentication.md"
+# Only the accepted private T023 commissioning record and its byte-identical
+# closure can replay under the registered predecessor reader. These inputs stay
+# in accepted private custody and are not required inputs for hosted CI.
+QA_EDGE_PREDECESSOR = {
+    "references": (
+        {
+            "repository": COORDINATOR,
+            "commit": "6f44f8f479394f56ee3452d7571aa6168a966304",
+            "path": COMMISSIONING_PATH,
+            "sha256": "ea5da9a5d0443abb8f1960c209d0562a378efe3dbfb068c09a9662ec1a6d87b5",
+        },
+        {
+            "repository": COORDINATOR,
+            "commit": "3678dcc5c2d7d6f1a11b0c40b346311ff2ffdc2c",
+            "path": COMMISSIONING_PATH,
+            "sha256": "ea5da9a5d0443abb8f1960c209d0562a378efe3dbfb068c09a9662ec1a6d87b5",
+        },
+    ),
+    "definition": "9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af",
+    "reader": {
+        "repository": COORDINATOR,
+        "commit": "5a861217630bc16b0db69d9c7a8daaa8ae22ab57",
+        "path": FEATURE_PATH + "/verify-evidence.py",
+        "sha256": "b1d86bcf31532edde7ef3a3b9fcc9af84ae45cb46349e5bd3e8c8b7903514488",
+    },
+    "content_sha256": "d519283aa9d0b50b786afbd340ba188a4783d72df43c896d5e12b9a18093f122",
+}
 T023_PREDECESSOR = {
     "reference": {
         "repository": COORDINATOR,
@@ -148,7 +175,6 @@ T010_CUSTODY_PREDECESSOR = {
     },
     "content_sha256": "c32b7c97e96a3cdde3bf1ac2c202eac854bede4b7119267062aff795c6197516",
 }
-T010_ORIGINAL_SCOPE_DECISION = "4f7060b31899c5b1a04452bd8b968edc42e9de04d47d6204287792c9c1e0cbcb"
 T010_ORIGINAL_SCOPE_PROOF = {
     "repository": COORDINATOR,
     "commit": "5d82621d28fe94a9f0bef663015dcc8cd2f6d10f",
@@ -669,11 +695,18 @@ def require_t023_review(review, summary, binding, runs):
             "T023 approved test collection differs")
 
 
+def is_qa_edge_predecessor(ref):
+    return any(_same_reference(ref, accepted) for accepted in QA_EDGE_PREDECESSOR["references"])
+
+
 def is_t023_predecessor(ref):
     return any(_same_reference(ref, T023_PREDECESSOR[key]) for key in ("reference", "approved_original"))
 
 
 def historical_source_parameters(ref):
+    predecessor = QA_EDGE_PREDECESSOR
+    if is_qa_edge_predecessor(ref):
+        return predecessor, predecessor["definition"], predecessor["reader"]
     predecessor = T023_PREDECESSOR
     if is_t023_predecessor(ref):
         return predecessor, predecessor["definition"], predecessor["reader"]
@@ -747,7 +780,7 @@ def verify_t010_transition_predecessor(provider, store, protected_base, now=None
 def make_verifier(tasks, store, ref, now=None, *, prepare=False):
     known = ({LEGACY_CONTROL_SHA256} | {item["reference"]["sha256"] for item in C37_CONTROLS.values()}
              | {item["reference"]["sha256"] for item in CONTROLS_2A46.values()})
-    if is_t023_predecessor(ref):
+    if is_qa_edge_predecessor(ref) or is_t023_predecessor(ref):
         return historical_verifier(store, ref, now, prepare=prepare)
     if ref.get("sha256") in known:
         return historical_verifier(store, ref, now, prepare=prepare)
@@ -910,11 +943,6 @@ class Verifier:
         subject = {"kind": "decision", "definition": self.definition,
                    "record_sha256": digest(canonical_json({key: value for key, value in decision.items()
                                                          if key != "delegation"}))}
-        if (self.definition in {T010_CUSTODY_SUCCESSOR, DEFINITION} and binding["task"] == "T010" and not post_run
-                and decision.get("kind") == "C-01" and subject["record_sha256"] == T010_ORIGINAL_SCOPE_DECISION
-                and binding["scope"]["phase"] == decision["scope"]["phase"] == "source"
-                and _same_reference(decision["delegation"], T010_ORIGINAL_SCOPE_PROOF)):
-            subject["definition"] = T010_CUSTODY_PREDECESSOR["definition"]
         reviewed = require_delegated_review(self.store, decision["delegation"], subject, self.now,
                                            self.trust["revoked_authorities"])
         root = load_delegation_root(self.store, DELEGATION_ROOT_REF, reviewed,
@@ -1526,7 +1554,8 @@ def main(argv=None):
             verifier.verify(key, data)
         print(arguments.task + ": structurally verified; owner/gate acceptance remains independent")
         return 0
-    except (EvidenceError, OSError, KeyError, TypeError, AttributeError, RecursionError) as exc:
+    # A pinned reader defines its own EvidenceError in a separate namespace.
+    except (ValueError, OSError, KeyError, TypeError, AttributeError, RecursionError) as exc:
         print("BLOCKED: " + str(exc), file=sys.stderr)
         return 1
 

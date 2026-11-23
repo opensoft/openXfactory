@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import subprocess
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
@@ -38,7 +39,7 @@ def accepted_historical_control():
     return anchor
 
 
-def test_actual_historical_control_uses_matching_frozen_reader(accepted_historical_control):
+def test_actual_historical_control_uses_matching_frozen_reader(accepted_historical_control, monkeypatch):
     store = v.GitStore({v.COORDINATOR: str(ROOT)})
     prior = v.make_verifier(TASKS, store, accepted_historical_control)
     predecessor = v.T023_PREDECESSOR["reference"]
@@ -50,6 +51,34 @@ def test_actual_historical_control_uses_matching_frozen_reader(accepted_historic
     assert prior.definition == v.LEGACY_DEFINITION
     for task in ("T010", "T011", "T012", "T016"):
         prior.verify(task)
+    transition = v.QA_EDGE_PREDECESSOR
+    assert transition["definition"] != v.DEFINITION
+    assert store.blob(transition["reader"])
+    # Exercise the default dispatch without loading either private manifest.
+    historical_reader = Mock(return_value=object())
+    current_reader = Mock(return_value=object())
+    monkeypatch.setattr(v, "historical_verifier", historical_reader)
+    monkeypatch.setattr(v, "Verifier", current_reader)
+    for approved_ref in transition["references"]:
+        assert v.make_verifier(TASKS, store, approved_ref) is historical_reader.return_value
+        historical_reader.assert_called_with(store, approved_ref, None, prepare=False)
+        assert v.make_verifier(TASKS, store, approved_ref, NOW, prepare=True) is historical_reader.return_value
+        historical_reader.assert_called_with(store, approved_ref, NOW, prepare=True)
+        assert v.historical_source_parameters(approved_ref) == (
+            transition, transition["definition"], transition["reader"])
+        for field, other in (
+            ("repository", "opensoft/unaccepted-owner"),
+            ("commit", "0" * 40),
+            ("path", v.FEATURE_PATH + "/evidence/copied-commissioning.json"),
+            ("sha256", "0" * 64),
+        ):
+            changed = dict(approved_ref, **{field: other})
+            assert not v.is_qa_edge_predecessor(changed)
+            with pytest.raises(v.EvidenceError, match=v.HISTORICAL_CONTROL_ERROR):
+                v.historical_source_parameters(changed)
+            assert v.make_verifier(TASKS, store, changed) is current_reader.return_value
+            current_reader.assert_called_with(TASKS, store, changed, None, prepare=False)
+    assert historical_reader.call_count == 2 * len(transition["references"])
 
 
 def test_historical_fixture_resolves_retained_objects_after_squash(tmp_path, monkeypatch):
@@ -1087,11 +1116,32 @@ def test_verifier_never_executes_evidence_commands_or_writes(world, monkeypatch)
     assert world.store.objects == before
 
 
-def test_cli_fails_closed_without_custody_anchor(tmp_path):
+def test_cli_reports_current_and_historical_refusals(tmp_path, monkeypatch, capsys):
     result = subprocess.run(["python3", str(MODULE), "--task", "T007", str(tmp_path / "invented.json")],
                             capture_output=True, text=True, env={"PATH": "/usr/bin:/bin"})
     assert result.returncode == 1
     assert "PC_EVIDENCE_TRUST is required" in result.stderr
+
+    class HistoricalEvidenceError(ValueError):
+        pass
+
+    reference = v.QA_EDGE_PREDECESSOR["references"][0]
+    receipt = tmp_path / "source.json"
+    receipt.write_text("{}")
+    reader = SimpleNamespace(
+        trust={"repositories": {"C": v.COORDINATOR}},
+        binding=Mock(side_effect=HistoricalEvidenceError("uncommissioned task/instance")),
+    )
+    monkeypatch.setenv("PC_EVIDENCE_TRUST", reference["commit"] + ":" + reference["path"])
+    monkeypatch.setenv("PC_EVIDENCE_TRUST_SHA256", reference["sha256"])
+    monkeypatch.delenv("PC_EVIDENCE_ROOTS", raising=False)
+    monkeypatch.setattr(v, "GitStore", lambda roots: SimpleNamespace(root=lambda repository: tmp_path))
+    monkeypatch.setattr(v, "historical_verifier", Mock(return_value=reader))
+    assert v.main(["--task", "T027", str(receipt)]) == 1
+    reader.binding.assert_called_once_with("T027")
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == "BLOCKED: uncommissioned task/instance\n"
 
 
 def synthetic_t023_proof(repo, revision, run_id, job_id, scope):
