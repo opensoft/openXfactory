@@ -494,6 +494,16 @@ PIN_CLASS: tuple[PinMember, ...] = (
         note="The attestor preflight cites the actual coordinator base. "
              "This exact field owes local reachability.",
     ),
+    PinMember(
+        id="private-connectivity-qa-edge-c01-receipt",
+        paths=(
+            "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/c01-qa-edge-receipt.json",
+        ),
+        key="commit", key_form="field",
+        generator="feature 043 protected C-01 source attestor",
+        reproduction=MEASURED, locality=REPO_LOCAL, presence=CURRENT,
+        note="The receipt's six coordinator references each owe local reachability.",
+    ),
     # Original Git references remain verbatim in the source container and
     # receipts. The inventory does not exempt their commit/revision fields
     # from the vocabulary sweep. Per-reference repository ownership decides

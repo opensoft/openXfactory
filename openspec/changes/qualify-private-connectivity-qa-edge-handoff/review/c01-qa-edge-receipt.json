@@ -1,0 +1,50 @@
+{
+  "accountable_owner": "Brett Heap",
+  "actor": "Codex",
+  "evidence": [
+    {
+      "commit": "01006b2d332110e7cc836151566f0788277d7fdd",
+      "path": "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/c01-source-decision.json",
+      "repository": "opensoft/openxfactory",
+      "sha256": "4bf5ce773ff7e32a83639fb96c130caf6aa4e2cd20b6d3ca65e72c7c24f89739"
+    },
+    {
+      "commit": "01006b2d332110e7cc836151566f0788277d7fdd",
+      "path": "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/c01-scope-and-freeze.json",
+      "repository": "opensoft/openxfactory",
+      "sha256": "a0568136f55cb062685543a52231d730c11339945e98686e76520713dcd667f7"
+    },
+    {
+      "commit": "01006b2d332110e7cc836151566f0788277d7fdd",
+      "path": "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/protected-c01-attestor-preflight.json",
+      "repository": "opensoft/openxfactory",
+      "sha256": "5183c64591ffc939ea6362e33c1222d6c14fb67c91cbae34378b959df7858d55"
+    }
+  ],
+  "independent_review": {
+    "commit": "01006b2d332110e7cc836151566f0788277d7fdd",
+    "path": "openspec/changes/qualify-private-connectivity-qa-edge-handoff/review/c01-independent-review.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "9cf3bc9a6d6e143ebccd92b07dea275ddfaa30581cac28867ec16e80c8ffdbc1"
+  },
+  "producer": {
+    "commit": "ba911daab0ed791641e19d7954f5b625a9b3c81c",
+    "path": "specs/043-private-connectivity-production/attest-delegated-evidence.py",
+    "repository": "opensoft/openxfactory",
+    "sha256": "da4ab3aca3759eb4b9c2b97bfffb621351201d0b969305125d62f78097a1e5f5"
+  },
+  "provider_observations": [],
+  "reviewed_at": "2026-11-23T04:51:20.340811+00:00",
+  "root": {
+    "commit": "d2528306ab6fe95c9235073f10c9150822b3f86e",
+    "path": "openspec/changes/authorize-private-connectivity-internal-production/review/human-root-grant.json",
+    "repository": "opensoft/openxfactory",
+    "sha256": "57d5d91c35a7db3bf6030572841cd836137749aff4c27a29e8081d8d201704aa"
+  },
+  "schema": "043-delegated-attestation-v1",
+  "subject": {
+    "definition": "9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af",
+    "kind": "decision",
+    "record_sha256": "27ab7410cfb7fb7c5ff77e5071431cf0e7cf1ca6e0cb9b7e4e6cff5f2092f315"
+  }
+}
