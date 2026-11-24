@@ -1,0 +1,8 @@
+schema: spec-driven
+created: '2026-11-24'
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-24-bound-remote-lifecycle-accounting
+  reason: P08's accepted eligibility fallback requires a governed factory/adapter amendment after complete physical lifecycle accounting exceeds private12.
+  proposed_by: 'Codex for Brett Heap under the isolated P08 commission at plan 75fc1feb3474; prospective source preparation, not policy acceptance.'
+  proposed_on: '2026-11-24'

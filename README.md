@@ -78,6 +78,8 @@ OpsxFactory
 
 Core domain-neutral docs:
 
+- [Remote lifecycle physical accounting proposal (draft)](openspec/changes/bound-remote-lifecycle-accounting/proposal.md): [design](openspec/changes/bound-remote-lifecycle-accounting/design.md), [requirements](openspec/changes/bound-remote-lifecycle-accounting/specs/remote-lifecycle-accounting/spec.md), [policy and call inventory](openspec/changes/bound-remote-lifecycle-accounting/supporting-docs/call-inventory.md), [source-only handoff](openspec/changes/bound-remote-lifecycle-accounting/tasks.md). Exact paired acceptance is pending.
+
 - [Protected runtime hosting/issuance source proposal (draft)](openspec/changes/add-protected-runtime-hosting-issuance/proposal.md): [design](openspec/changes/add-protected-runtime-hosting-issuance/design.md), [finalization requirements](openspec/changes/add-protected-runtime-hosting-issuance/specs/hosted-runtime-finalization/spec.md), [hosting requirements](openspec/changes/add-protected-runtime-hosting-issuance/specs/protected-runtime-hosting-issuance/spec.md) and [feature017 handoff](openspec/changes/add-protected-runtime-hosting-issuance/tasks.md). Source preparation only; no operational authority.
 
 - [Private connectivity binding candidate](contracts/private-connectivity/README.md)
