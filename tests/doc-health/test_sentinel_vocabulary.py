@@ -1205,7 +1205,8 @@ def test_the_pin_counts_did_not_move_and_no_site_is_classified_twice():
     # under two exact file/field members, measured on the committed artifacts.
     # The protected QA edge C-01 receipt adds six measured local sites
     # under one exact-path commit member. All six owe local reachability.
-    assert (standing_sites, standing_members) == (1582, 43)
+    # P08 adds exactly the factory and adapter measured baseline sites/members.
+    assert (standing_sites, standing_members) == (1584, 45)
     # ...and the exclusion is exactly one declared row, not a hole a later
     # member can fall into unnoticed.
     assert [m.id for m in pc.rolling_members()] == ["gate-intent-snapshot-rev"]

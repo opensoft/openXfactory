@@ -75,3 +75,10 @@ adapter_base is a measured cross-repository member owned by openXwallet. Both ar
 current artifacts. No blanket non-member exclusion, historical exemption, resolver,
 retention namespace or existing member changes. Existing pin-reachability tests
 and hosted doc-health checks must cover the registration.
+
+The committed inventory measurement for these exact two new pin members is
+1,584 standing sites /45 standing members (prior1,582/43). Update only that existing
+sentinel-vocabulary assertion and its explanatory comment to retain the exact
+inventory guard. The new inventory test module uses a unique filename so ordinary
+whole-suite pytest collection keeps the existing doc-health module. Test functions
+and cases remain, with no import-mode, workflow, exclusion or threshold change.
