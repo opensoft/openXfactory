@@ -10,17 +10,18 @@ subplan. This packet adds no duplicate implementation task list.
 Before dependent wire/record code, publish the actual paired source candidates,
 complete the factory corpus ledger through its existing generator, run required
 source CI and local Codex review, resolve findings and obtain exact paired source
-ratification. The route-A source design is proposed and unratified; source preparation does not
+ratification. The v2 route-B source design is proposed and unratified; source preparation does not
 confer implementation or operational authority.
 
 After that source act, existing T013P08 must demonstrate real original controller
-placement/identity, authenticated owner capture, schema/route isolation, cross-phase
-materialization and one original durable claim before repeating both eligibility
+placement/identity, authenticated owner capture, schema/route isolation, the explicit
+runner acquisition and one original durable claim before repeating both eligibility
 gates and the complete unchanged full-admission/qualification path. All local
 retention and physical transports must be measured. Source schemas/arithmetic or
 a fixture-private pointer do not qualify the runtime.
 
-Original caps, deadlines, body bounds, old APIs, source/role/input/resource counts,
+The explicitly proposed acquisition/compound bounds require source acceptance; all
+other original caps, deadlines, body bounds, old APIs, source/role/input/resource counts,
 test identities and default refusal stay constraints. Another missing original
 capability or a changed budget/backend/grant stops for governance. T013P08/P09,
 T001/T013/T014/T015, source/live/human/consumer acceptance and operational grants

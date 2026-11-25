@@ -25,8 +25,8 @@ caller-supplied count. Existing owning-resource equality checks MUST remain.
 
 The new internal descriptor wire SHALL be source-selected and closed. Ordinary
 v1 traffic and companion traffic MUST NOT negotiate or activate each other.
-Existing request operations and physical RPCs MUST remain; no new lookup is
-introduced. No environment, file, profile field, callback string or manual input
+Existing staging operations and physical RPCs MUST remain unchanged. The sole
+additional acquisition is the explicitly governed companion claim operation below. No environment, file, profile field, callback string or manual input
 may choose a source constructor or ceiling.
 
 #### Scenario: Old and companion source paths are crossed
@@ -48,23 +48,27 @@ NOT initialize, copy, migrate, repair, restore or recompute a replacement store.
 - **WHEN** the directory, database, kind, schema, scope, capture or original identity is absent or changed
 - **THEN** materialization refuses without creating or accepting a replacement backend
 
-### Requirement: Caller materialization precedes selected handoff I/O
+### Requirement: Runner acquisition preserves the original proof location
 
-Trusted source SHALL materialize a sealed original-registration view locally before
-per-manifest selection or dependent handoff I/O. N MUST be derived from all original
-credential rows and remain bound before/after blocking work. A future final plan,
-fixture-private owner pointer, serialized caller assertion or extra unbudgeted read
-MUST NOT substitute. A remote-only controller lacking original local access is ineligible.
+The original GitHub runner SHALL retain its exact local Qualifier/full proof.
+One explicit fixed companion claim endpoint SHALL authenticate the original scope
+and preselected trusted principal, consume the original slot and return descriptor/
+store-binding facts over pinned mTLS. No controller proof bridge, local store access,
+JSON/count assertion or new runtime role may substitute. Ordinary phase APIs stay exact.
 
-#### Scenario: Original view is unavailable at construction
-- **WHEN** the caller cannot demonstrate access to the genuine retained capture
-- **THEN** eligibility refuses before selected accounting or handoff RPCs and returns to governance
+#### Scenario: A separate runner obtains original facts
+- **WHEN** its one authorized acquisition receives the actual checked original-scope claim reply
+- **THEN** owner-module code can materialize the sealed view/attempt locally before handoff
+
+#### Scenario: Original provenance or permission is unavailable
+- **WHEN** original store/capture, caller authorization or reply/source/time bindings are unavailable
+- **THEN** acquisition refuses with no handoff or replacement claim and original cleanup remains separate
 
 ### Requirement: One original handoff claim is consumed before authority I/O
 
 The existing controller row SHALL durably reserve one consumed handoff claim under
-its original launch reference before returning an attempt capability or sending
-subsequent authority I/O. The claim MUST bind the descriptor, approved source/plan,
+its original launch reference before returning the authenticated claim reply or an attempt capability and before sending
+subsequent handoff authority I/O. The claim MUST bind the descriptor, approved source/plan,
 run/attempt scope, original store and clipped deadline. It confers no approval.
 No new nonce backend, replacement attempt or copied approval may provide it.
 
@@ -89,14 +93,17 @@ their original disjoint authorization, deadlines and no-resend behavior.
 
 ### Requirement: Bounds and qualification remain explicit
 
-The accepted remote-lifecycle accounting commitment and all ordinary budgets,
+The parent remote-lifecycle policy bytes and all ordinary budgets,
 body caps, source/role/input counts, managed resources and default operational
-refusal SHALL remain unchanged. The descriptor MUST fit its8192-byte canonical
+refusal SHALL remain unchanged. A separately identified source compound policy SHALL
+prepay exactly one acquisition before the unchanged12+2N handoff, retaining one
+original ledger/counters/clocks and a cumulative13+2N bound (max19). It MUST NOT
+upgrade an ordinary or previously selected ledger, retry, reset, refund or borrow. The descriptor MUST fit its8192-byte canonical
 bound within existing65536-byte envelopes. Actual full transport, local retention,
 clock, refusal/crash, old/new identity and cleanup evidence MUST precede qualification.
 
 #### Scenario: The connected route does not fit
-- **WHEN** genuine complete work needs another RPC, resource, authority, body size, deadline or pool
+- **WHEN** genuine complete work needs another RPC, resource, authority, unbudgeted body size, deadline or pool
 - **THEN** implementation stops for governance without raising a cap or omitting a check
 
 ### Requirement: Source acceptance does not confer operational authority
