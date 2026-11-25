@@ -1,0 +1,8 @@
+schema: spec-driven
+created: '2026-11-25'
+origin:
+  kind: ad_hoc
+  id: openXfactory:adhoc:2026-11-25-retain-original-registration-manifest
+  reason: Accepted isolated P08 eligibility confirms that the caller lacks the original registration manifest and retained-store capability required before selected handoff I/O.
+  proposed_by: 'Codex for Brett Heap under the resumed isolated P08 eligibility and governed fallback; provisional route-A source design only, no new contract acceptance.'
+  proposed_on: '2026-11-25'
