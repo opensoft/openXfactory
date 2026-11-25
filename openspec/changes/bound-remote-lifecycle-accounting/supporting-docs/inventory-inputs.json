@@ -1,0 +1,8 @@
+{
+  "kind": "non-product-inventory-inputs",
+  "schema_version": 1,
+  "sha256": {
+    "measurements.json": "7191aed3feae3fd624a284b300c9c86d08dd5745bde14fb977536caf1fe74908",
+    "policy.json": "fd198b7d7e8e786b5d5f64257ec0e276e881ea5364b265cb9ccb519208f77fa7"
+  }
+}

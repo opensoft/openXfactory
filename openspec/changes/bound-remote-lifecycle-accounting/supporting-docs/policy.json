@@ -1,0 +1,82 @@
+{
+  "authority": "existing-original-nonce-and-lifecycle-registration; no-new-journal-or-serialized-contract",
+  "clocks": "existing-original-deadlines-and-expiries; callee-clipped-to-original-remainder",
+  "credential_count": {
+    "binding": "original-registration-digest-retained-store-identity-and-scope; later-RunPlan-resource-equality",
+    "maximum": 3,
+    "minimum": 1,
+    "source": "immutable-original-lifecycle-registration-resources"
+  },
+  "identity": "openxfactory-remote-lifecycle-accounting-internal-v1",
+  "kind": "proposed-internal-source-policy",
+  "manifest_eligibility": "prove trusted caller retention/authentication before handoff I/O; unavailable without new wire/role/authority means refuse for governance",
+  "maxima": {
+    "audit-only": 4,
+    "handoff": 18,
+    "original-runtime-cleanup": 17
+  },
+  "operational_authorization": false,
+  "prepayment": "before-each-rpc-charge-rpc-plus-fixed-maximum-nested-cost; no-refund-retry-reset-borrow-or-transfer",
+  "runtime_qualification": false,
+  "schedules": {
+    "audit-only": [
+      {
+        "fixed": 1,
+        "operation": "independent-cleanup-audit-rpc-and-observations",
+        "per_credential": 1
+      }
+    ],
+    "handoff": [
+      {
+        "fixed": 3,
+        "operation": "p05-independent-observers",
+        "per_credential": 0
+      },
+      {
+        "fixed": 6,
+        "operation": "six-fresh-stage-leases",
+        "per_credential": 0
+      },
+      {
+        "fixed": 1,
+        "operation": "prepare-rpc-and-resource-observations",
+        "per_credential": 1
+      },
+      {
+        "fixed": 1,
+        "operation": "ack-final-rpc-and-resource-observations",
+        "per_credential": 1
+      },
+      {
+        "fixed": 1,
+        "operation": "release-stage-rpc",
+        "per_credential": 0
+      }
+    ],
+    "original-runtime-cleanup": [
+      {
+        "fixed": 1,
+        "operation": "original-cleanup-rpc-and-credential-retirement",
+        "per_credential": 4
+      },
+      {
+        "fixed": 1,
+        "operation": "independent-cleanup-audit-rpc-and-observations",
+        "per_credential": 1
+      }
+    ]
+  },
+  "schema_version": 1,
+  "selection": "trusted-source-only-before-first-io",
+  "status": "draft",
+  "unchanged": {
+    "finalization_members": 2,
+    "finalization_seconds": 10,
+    "github": 28,
+    "ordinary_private": 12,
+    "protection": 18,
+    "protection_observations": 6,
+    "qualification_private": 39,
+    "staging_private": 16
+  }
+}
