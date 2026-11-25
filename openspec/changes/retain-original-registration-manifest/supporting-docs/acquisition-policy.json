@@ -1,0 +1,43 @@
+{
+  "identity": "openxfactory-original-registration-acquisition-internal-v1",
+  "status": "proposed-source-policy-not-runtime-qualified",
+  "parent_policy_sha256": "fd198b7d7e8e786b5d5f64257ec0e276e881ea5364b265cb9ccb519208f77fa7",
+  "selection": "new-source-fixed-compound-policy-before-first-IO; never-upgrade-existing-ledger",
+  "acquisition": {
+    "rpc_maximum": 1,
+    "nested_network_maximum": 0,
+    "nested_credential_maximum": 0,
+    "prepay_before_transport": true,
+    "mutates": "one-original-controller-row-handoff-slot; no proof approval",
+    "retry": false
+  },
+  "handoff": {
+    "fixed": 12,
+    "per_credential": 2,
+    "maximum": 18
+  },
+  "cumulative_acquisition_and_handoff": {
+    "fixed": 13,
+    "per_credential": 2,
+    "N1": 15,
+    "N2": 17,
+    "N3": 19,
+    "maximum": 19,
+    "same_original_counters_and_clocks": true
+  },
+  "unchanged": {
+    "ordinary_private": 12,
+    "cleanup_maximum": 17,
+    "audit_only_maximum": 4,
+    "staging_private": 16,
+    "qualification_private": 39,
+    "github": 28,
+    "protection": 18,
+    "members": 2,
+    "passes": 3,
+    "protection_observations": 6,
+    "finalization_seconds": 10
+  },
+  "qualification": "new arithmetic intent only; genuine separate-process transport and complete owning-proof measurements remain required, any additional work or cap mismatch stops for governance",
+  "operational_authorization": false
+}

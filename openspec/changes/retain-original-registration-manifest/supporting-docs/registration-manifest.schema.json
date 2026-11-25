@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:openxfactory:registration-manifest:internal:v1",
+  "title": "Proposed original registration descriptor; structural shape is not authentication",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile",
+    "registration_digest",
+    "scope_digest",
+    "unit_digest",
+    "lifecycle_store_binding",
+    "resource_epoch",
+    "credentials",
+    "issued_at",
+    "expires_at",
+    "cleanup_until"
+  ],
+  "properties": {
+    "profile": {
+      "const": "openxfactory-registration-manifest-internal-v1"
+    },
+    "registration_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "scope_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "unit_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "lifecycle_store_binding": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "resource_epoch": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "credentials": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref",
+          "instance_ref",
+          "kind",
+          "retention"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instance_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "const": "credential"
+          },
+          "retention": {
+            "const": "run"
+          }
+        }
+      }
+    },
+    "issued_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "expires_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cleanup_until": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "$comment": "Existing handle validators, complete unique credential projection, owner/peer/store/scope binding, original time ordering, canonical8192-byte cap and all authority checks remain normative in contract.md."
+}
