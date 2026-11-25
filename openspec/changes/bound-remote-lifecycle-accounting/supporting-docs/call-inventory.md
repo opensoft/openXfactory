@@ -2,7 +2,7 @@
 
 Status: draft
 Policy: `openxfactory-remote-lifecycle-accounting-internal-v1`
-Policy file SHA-256: `a5cf053187a03dfcf8fa6d41b2a121c338606520a3cd7e2f7d7b4be41a2a9c54`.
+Policy file SHA-256: `fd198b7d7e8e786b5d5f64257ec0e276e881ea5364b265cb9ccb519208f77fa7`.
 
 This is prospective source policy. [Measurements](measurements.json) are isolated
 diagnostics at adapter75fc1feb3474, not P08 qualification. [Inputs](inventory-inputs.json)

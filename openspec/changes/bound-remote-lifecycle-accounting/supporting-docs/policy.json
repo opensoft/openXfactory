@@ -2,12 +2,14 @@
   "authority": "existing-original-nonce-and-lifecycle-registration; no-new-journal-or-serialized-contract",
   "clocks": "existing-original-deadlines-and-expiries; callee-clipped-to-original-remainder",
   "credential_count": {
+    "binding": "original-registration-digest-retained-store-identity-and-scope; later-RunPlan-resource-equality",
     "maximum": 3,
     "minimum": 1,
-    "source": "immutable-original-registered-runplan"
+    "source": "immutable-original-lifecycle-registration-resources"
   },
   "identity": "openxfactory-remote-lifecycle-accounting-internal-v1",
   "kind": "proposed-internal-source-policy",
+  "manifest_eligibility": "prove trusted caller retention/authentication before handoff I/O; unavailable without new wire/role/authority means refuse for governance",
   "maxima": {
     "audit-only": 4,
     "handoff": 18,

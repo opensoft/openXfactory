@@ -446,7 +446,32 @@ _PC043_EVIDENCE_PATHS = tuple(
 _PC043_EVIDENCE_PATHS += ("specs/043-private-connectivity-production/evidence/commissioning.json",)
 
 
+_P3_REMOTE_LIFECYCLE_EVIDENCE_PATHS = (
+    "openspec/changes/bound-remote-lifecycle-accounting/supporting-docs/measurements.json",
+    "openspec/changes/archive/*-bound-remote-lifecycle-accounting/supporting-docs/measurements.json",
+)
+
+
 PIN_CLASS: tuple[PinMember, ...] = (
+    PinMember(
+        id="p3-remote-lifecycle-factory-baseline",
+        paths=_P3_REMOTE_LIFECYCLE_EVIDENCE_PATHS,
+        key="factory_base", key_form="field",
+        generator="the isolated P08 physical lifecycle accounting measurement",
+        reproduction=MEASURED, locality=REPO_LOCAL, presence=CURRENT,
+        note="The governing factory source of the measured diagnostic. It remains "
+             "a normal must-resolve derivation pin; no historical exemption.",
+    ),
+    PinMember(
+        id="p3-remote-lifecycle-adapter-baseline",
+        paths=_P3_REMOTE_LIFECYCLE_EVIDENCE_PATHS,
+        key="adapter_base", key_form="field",
+        generator="the isolated P08 adapter eligibility source capture",
+        reproduction=MEASURED, locality=CROSS_REPOSITORY, presence=CURRENT,
+        note="The opensoft/openXwallet source where the isolated diagnostic was "
+             "taken. Its remote authority is distinct from the factory's refs.",
+    ),
+
     # The human authority record is separate from task receipts/inventories.
     # Its reviewed policy refs all belong to this repository; a caller-supplied
     # repository string cannot turn an unreachable local pin into foreign proof.

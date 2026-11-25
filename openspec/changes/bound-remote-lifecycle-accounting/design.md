@@ -14,7 +14,7 @@ amendment changes accounting selection only. It supplies no missing identity,
 plan approval, role appointment or full-admission authority.
 
 The new [policy](supporting-docs/policy.json) is an internal source selection.
-N is read from the immutable authenticated original RunPlan credential manifest
+N is read from the immutable authenticated original registration credential-resource manifest
 before any associated I/O, with1<=N<=3. Workers, input JSON, environment, callbacks
 and plugins cannot choose N or the policy. Missing/mismatched manifests refuse;
 removing a credential/check to fit a cap is forbidden. Existing zero-credential
@@ -70,3 +70,21 @@ local Codex review and exact paired owner acceptance. Only then may dependent
 isolated implementation resume: rerun both eligibility gates, whole connected
 positive/refusals/crashes, original full/native identities, independent cleanup,
 and source-review evidence. P09 and operational gates remain ungranted.
+
+## Pre-I/O manifest eligibility
+
+The existing durable source is registration.resources, created before finalization,
+not a final RunPlan that is constructed afterward. Bind its exact credential rows
+to the original registration digest, retained-store identity and scope. Existing
+prepare_final later requires the RunPlan resources to equal resources_for(state);
+that equality remains mandatory, not a substitute for the earlier source binding.
+
+The current caller does not yet demonstrate retention of this material:
+RemoteBindings has no registration/resource capability and the lifecycle wire
+receipts expose a digest, not the manifest. Before selected accounting or handoff
+I/O, eligibility must prove how trusted source construction retains/authenticates
+the original material at that caller. A supplied count, a later RunPlan, a newly
+constructed approval or an extra unbudgeted lookup cannot supply it. If existing
+retained inputs cannot do so without a new wire contract, role or authority,
+refuse and return to governance. This amendment does not claim that proof or
+silently add its missing port. No product implementation is accepted by this plan.
