@@ -288,7 +288,7 @@ Historical source-scope note, retained without changing its old facts:
 > handoff input changes. Original freezes, controls, readers and actual accepted
 > observations remain immutable at their exact historical source references.
 
-Review packet SHA-256: 9e37dfbc5f0ebddbedefce871a89933cc5e09c98a20165cdee4b9b4243a996af
+Review packet SHA-256: 1e5d1a03b2d7cfab1bea57d838cbc080bc62b0951661b7508c901b432484ec11
 
 This digest covers canonical UTF-8 JSON keys inputs, registry and tasks,
 sorted keys, compact comma/colon separators, ensure_ascii=false and no terminal
@@ -302,7 +302,7 @@ body before the T005 heading. No partial task/input freeze is accepted.
 | plan.md | 2edb9ad4eb75621218dadbeefedf961cdb64221f51d20c84bd281564cefc9818 |
 | research.md | 295751853b252eafabbcaf64933a577df88370f7c457f01fe69a479c9df7f9d2 |
 | data-model.md | 16a1351ef27a1924be4ce4e1c77197adfc48a40391b3e4ea20d5f849a72c4391 |
-| owner-scopes.md | c4e37b1765057172b41bfcfec6cc74a6ad281cea6a6b488105ac0d1531e9e4fd |
+| owner-scopes.md | 386e1b1c39f775fafbdab25f9746c08d13066ead9c98939c4b16bdef886bec7d |
 | commissioning.md | 8f5917f9bdbee09a8fd6f93bbe53f34b371213196b6e38611a3a6850373f829c |
 | rollout-gates.md | 0815198f6c67e4eaf02d18efbd9558821747c8560ed338b626de34f993c9b32d |
 | validation-matrix.md | 7ebee6a87bee75ea50ca70d30a64ae50460ef6081a5489dd75d5c83a4f481f53 |

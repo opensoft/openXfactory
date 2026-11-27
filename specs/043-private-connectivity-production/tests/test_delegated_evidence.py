@@ -406,9 +406,14 @@ def source_decision_fixture(source_fixture, kind="C-02", mutation=None):
     return world, ref, review, evidence, subject
 
 
-def _assert_original_t010_scope_carry():
-    v = load(HERE.parent / "verify-evidence.py", "exact_t010_custody_reader")
-    store = v.GitStore({v.COORDINATOR: str(ROOT)})
+def _assert_original_t010_scope_carry(tmp_path):
+    successor = h.v
+    store = successor.GitStore({successor.COORDINATOR: str(ROOT)})
+    predecessor = successor.QA_EDGE_PREDECESSOR
+    reader_path = tmp_path / "predecessor_reader.py"
+    reader_path.write_bytes(store.blob(predecessor["reader"]))
+    v = load(reader_path, "exact_t010_custody_reader")
+    assert v.DEFINITION == predecessor["definition"]
     ref = v.T010_ORIGINAL_SCOPE_PROOF
     stored_proof = v.decode(v._pinned_blob(store, ref))
     decision = v.decode(v._pinned_blob(store, stored_proof["evidence"][0]))
@@ -418,6 +423,11 @@ def _assert_original_t010_scope_carry():
     binding = {"task": "T010", "scope": decision["scope"]}
     v.Verifier.delegated_decision(reader, decision, binding)
     original_grant_id = reader.delegated_root_id
+
+    current = SimpleNamespace(definition=successor.DEFINITION, store=store, now=reader.now,
+                              trust={"revoked_authorities": []})
+    with pytest.raises(successor.EvidenceError, match="delegated output is not independently qualified"):
+        successor.Verifier.delegated_decision(current, decision, binding)
 
     mismatches = (
         ({**decision, "id": decision["id"] + "-changed"}, binding, False),
@@ -529,7 +539,7 @@ def _assert_protected_predecessor_transition(monkeypatch):
 
 
 @pytest.mark.parametrize("kind", ["C-01", "C-02", "C-08", "C-13", "source-authority", "evidence-admission"])
-def test_source_decisions_are_reviewed_data_and_remain_unregistered(source_fixture, kind, monkeypatch):
+def test_source_decisions_are_reviewed_data_and_remain_unregistered(source_fixture, kind, monkeypatch, tmp_path):
     world, ref, review, evidence, subject = source_decision_fixture(source_fixture, kind)
     result = a.attest_source_decision(h.v, world.store, ref, review, evidence, h.DELEGATION_TIME.replace(day=19))
     assert result["subject"] == subject
@@ -546,7 +556,7 @@ def test_source_decisions_are_reviewed_data_and_remain_unregistered(source_fixtu
                                  trust={"revoked_authorities": []})
         v.Verifier.delegated_decision(reader, fresh, {"task": "T010", "scope": fresh["scope"]})
         assert reader.delegated_root_id
-        _assert_original_t010_scope_carry()
+        _assert_original_t010_scope_carry(tmp_path)
         _assert_protected_predecessor_transition(monkeypatch)
 
 
